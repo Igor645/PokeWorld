@@ -10,6 +10,7 @@
     background-color: var(--background-color);
     border-radius: 10px;
     box-shadow: 0 4px 12px var(--shadow-color);
+    animation: fadeIn 1s ease-in-out;
 }
 
 .dexSearch-container {
@@ -22,15 +23,29 @@
     margin: 2vh auto;
     padding: 2rem;
     border-radius: 10px;
+    animation: fadeIn 1s ease-in-out;
 }
 
 .dexTitle {
-    font-size: 4rem;
-    font-family: "Exo 2", serif;
-    color: var(--title-color);
+    font-size: 8rem;
+    font-family: 'Montserrat', sans-serif; /* Use Montserrat font */
+    color: white; /* Set text color to white */
+    -webkit-text-stroke: 0.3rem var(--title-color); /* Outline color */
     text-align: center;
-    text-shadow: 2px 2px 4px var(--title-shadow-color);
+    text-shadow: 4px 4px 8px var(--title-shadow-color); /* Increase text shadow */
     margin-bottom: 1rem;
+    font-weight: 900;
+}
+
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .dex-searchbar {

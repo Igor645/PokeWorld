@@ -35,9 +35,9 @@
 
     function animatePokeball(pokeball, initialX, initialY) {
         const img = createPokeballElement(pokeball);
-        const size = getRandomInRange(100, 170);
+        const size = getRandomInRange(80, 160);
         const speed = getRandomInRange(0.4, 0.6);
-        const rotationSpeed = getRandomInRange(40, 180);
+        const rotationSpeed = getRandomInRange(10, 60);
 
         img.style.width = `${size}px`;
         img.style.height = `${size}px`;
