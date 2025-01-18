@@ -9,9 +9,11 @@ namespace Pokedex.Components.Pages
     public partial class DexOverview : ComponentBase, IDisposable
     {
         [Inject] private IPokemonService PokemonService { get; set; }
+        [Inject] private IItemService ItemService { get; set; }
         [Inject] private IJSRuntime JSRuntime { get; set; }
         private DotNetObjectReference<DexOverview> _dotNetHelper;
         private List<PokemonSpeciesDto> PokemonSpecies { get; set; } = new();
+        private List<ItemDto> Pokeballs { get; set; } = new();
         private bool isLoading = false;
         private bool allDataLoaded = false;
         private int currentPage = 1;
@@ -29,20 +31,19 @@ namespace Pokedex.Components.Pages
         {
             if (firstRender && !listenersInitialized)
             {
+                await LoadPokeballsAsync(); // Ensure Pokeballs are loaded
                 InitializeJavaScriptListeners();
                 listenersInitialized = true;
             }
         }
 
-        private async void InitializeJavaScriptListeners()
+        private async Task InitializeJavaScriptListeners()
         {
             _dotNetHelper = DotNetObjectReference.Create(this);
 
-            // Add listener for "Scroll to Top" logic
             await JSRuntime.InvokeVoidAsync("addScrollListener", _dotNetHelper, ".content", 1000);
-
-            // Add listener for infinite scrolling
             await JSRuntime.InvokeVoidAsync("addSmoothScrollListener", ".content", _dotNetHelper, 100);
+            await JSRuntime.InvokeVoidAsync("startPokeballAnimation", Pokeballs);
         }
 
         [JSInvokable("HandleScrollChanged")]
@@ -83,6 +84,11 @@ namespace Pokedex.Components.Pages
 
             isLoading = false;
             StateHasChanged();
+        }
+
+        private async Task LoadPokeballsAsync()
+        {
+            Pokeballs = (await ItemService.GetAllPokeBallsAsync()).ToList();
         }
 
         private async Task ScrollToTopAsync()

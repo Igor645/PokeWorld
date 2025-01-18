@@ -26,7 +26,6 @@ namespace Pokedex.Service
 
         public async Task<IEnumerable<PokemonSpeciesDto>> GetPokemonSpeciesPaginated(int limit, int offset)
         {
-            // Step 1: Get the paginated species list
             string endpoint = TemplateProcessor.ProcessEndpointTemplate(_apiPaths.PokemonSpecies, new { limit, offset });
 
             var response = await _httpClient.GetAsync(endpoint);
@@ -35,7 +34,6 @@ namespace Pokedex.Service
             var jsonResponse = await response.Content.ReadAsStringAsync();
             var speciesList = JsonConvert.DeserializeObject<PokeApiResponseDto<EndpointLookupDto>>(jsonResponse);
 
-            // Step 2: Fetch details for each species in parallel
             var tasks = speciesList.Results.Select(async species =>
             {
                 var detailResponse = await _httpClient.GetAsync(species.Url);
@@ -45,7 +43,6 @@ namespace Pokedex.Service
                 return JsonConvert.DeserializeObject<PokemonSpeciesDto>(detailJson);
             });
 
-            // Step 3: Wait for all tasks to complete and return the results
             var detailedSpecies = await Task.WhenAll(tasks);
             return detailedSpecies;
         }

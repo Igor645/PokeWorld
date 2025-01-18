@@ -14,6 +14,7 @@ builder.Services.AddScoped(sp =>
     new HttpClient { BaseAddress = new Uri(httpClientSettings["BaseAddress"]) });
 
 builder.Services.AddScoped<IPokemonService, PokemonService>();
+builder.Services.AddScoped<IItemService, ItemService>();
 builder.Services.Configure<ApiPaths>(builder.Configuration.GetSection("ApiPaths"));
 
 var app = builder.Build();

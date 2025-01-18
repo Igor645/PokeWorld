@@ -5,26 +5,23 @@
     width: 85%;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 2rem;
-    padding-bottom: 100px;
+    padding: 2rem 2rem 100px;
     margin: 0 auto;
     background-color: var(--background-color);
     border-radius: 10px;
     box-shadow: 0 4px 12px var(--shadow-color);
-    padding: 2rem;
 }
 
 .dexSearch-container {
-    border-radius: 10px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 30vh;
     width: 90vw;
+    height: 30vh;
     margin: 2vh auto;
-    background-color: var(--background-hover-color);
-    box-shadow: 0 4px 12px var(--shadow-color);
     padding: 2rem;
+    border-radius: 10px;
 }
 
 .dexTitle {
@@ -38,11 +35,11 @@
 
 .dex-searchbar {
     width: 60vw;
-    border-radius: 10px;
-    padding: 10px;
     height: 2.5rem;
+    padding: 10px;
     font-size: 1.2rem;
-    border: var(--border-color) solid 2px;
+    border: 2px solid var(--border-color);
+    border-radius: 10px;
     box-shadow: 0 4px 8px var(--shadow-color), 0 6px 20px var(--shadow-color);
     transition: box-shadow 0.3s ease, border-color 0.3s ease;
 }

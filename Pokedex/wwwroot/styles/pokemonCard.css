@@ -7,9 +7,8 @@
     min-height: 15rem;
     height: fit-content;
     background-color: rgba(38, 143, 255, 0.3);
-    border: var(--border-color) solid 2px;
+    border: 2px solid var(--border-color);
     backdrop-filter: blur(1px);
-    -webkit-backdrop-filter: blur(1px);
     box-shadow: 0 4px 8px var(--shadow-color), 0 6px 20px var(--shadow-color);
     position: relative;
     overflow: hidden;
@@ -20,7 +19,7 @@
 
 .pokemonCard__image {
     width: 100%;
-    filter: drop-shadow(0 4px 6px var(--shadow-color));
+    filter: drop-shadow(0 4px 6px var(--pokemon-img-shadow-color));
     z-index: 2;
     position: relative;
     will-change: transform;
@@ -48,7 +47,7 @@
     text-align: center;
     word-wrap: anywhere;
     font-family: "Exo 2", serif;
-    color: var(--text-color);
+    color: var(--pokemon-card-text-color);
 }
 
 .pokemonCard__image.pop-in {
@@ -130,15 +129,15 @@
 
 @keyframes floatUpDown {
     0% {
-        transform: translateY(5px) perspective(1000px) scale(1.1); /* Start at the original position */
+        transform: translateY(5px) perspective(1000px) scale(1.1);
     }
 
     50% {
-        transform: translateY(-5px) perspective(1000px) scale(1.1); /* Move up by 10px */
+        transform: translateY(-5px) perspective(1000px) scale(1.1);
     }
 
     100% {
-        transform: translateY(5px) perspective(1000px) scale(1.1); /* Return to the original position */
+        transform: translateY(5px) perspective(1000px) scale(1.1);
     }
 }
 
