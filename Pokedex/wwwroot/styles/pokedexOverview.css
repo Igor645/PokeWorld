@@ -1,0 +1,38 @@
+﻿.pokedexOverview {
+    display: grid;
+    width: 85%;
+    grid-template-columns: repeat(6, 1fr);
+    flex-wrap: wrap;
+    gap: 2rem;
+    padding-bottom: 100px;
+    margin: 0 auto;
+}
+
+.dexSearch-container {
+    border-radius: 5px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 30vh;
+    width: 90vw;
+    margin: 2vh auto;
+}
+
+.dexTitle {
+    font-size: 6rem;
+    font-family: "Exo 2", serif;
+    color: rgba(38, 143, 255, 0.8);
+    text-align: center;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
+}
+
+.dex-searchbar {
+    width: 60vw;
+    border-radius: 10px;
+    padding: 10px;
+    height: 1.5rem;
+    font-size: 1.2rem;
+    border: rgba(38, 143, 255, 0.5) solid 2px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}

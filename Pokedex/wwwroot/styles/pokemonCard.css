@@ -2,17 +2,15 @@
     display: grid;
     align-items: center;
     width: 100%;
-    min-height: 20rem;
+    min-height: 15rem;
     height: fit-content;
-    /* Glass Effect */
     background-color: rgba(38, 143, 255, 0.3);
-    border: rgba(38, 143, 255, 0.2) solid 3px;
+    border: rgba(38, 143, 255, 0.2) solid 2px;
     backdrop-filter: blur(1px);
     -webkit-backdrop-filter: blur(1px);
-    box-shadow: 0 0 18px 3px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
     position: relative;
     overflow: hidden;
-    /* Transition for Hover */
     transform: perspective(1000px) rotateX(0) rotateY(0);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
@@ -37,7 +35,7 @@
     left: 50%;
     transform: translate(-50%, -50%);
     z-index: 1;
-    width: 130%;
+    width: 120%;
     height: auto;
 }
 
@@ -71,7 +69,7 @@
 }
 
 .pokemonCard__id, .pokemonCard__text__container {
-    background-color: rgba(255, 255, 255, 0.9);
+    background-color: rgba(255, 255, 255, 1);
     width: 100%;
     position: relative;
     z-index: 10;

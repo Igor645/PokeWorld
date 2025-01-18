@@ -10,13 +10,14 @@ namespace Pokedex.Components.Pages
     {
         [Inject] private IPokemonService PokemonService { get; set; }
         [Inject] private IJSRuntime JSRuntime { get; set; }
-
+        private DotNetObjectReference<DexOverview> _dotNetHelper;
         private List<PokemonSpeciesDto> PokemonSpecies { get; set; } = new();
         private bool isLoading = false;
         private bool allDataLoaded = false;
         private int currentPage = 1;
-        private const int Limit = 30; // Number of Pokémon to fetch per page
+        private const int Limit = 30;
         private int Offset => (currentPage - 1) * Limit;
+        private bool showScrollToTop = false;
 
         protected override async Task OnInitializedAsync()
         {
@@ -27,8 +28,23 @@ namespace Pokedex.Components.Pages
         {
             if (firstRender)
             {
-                await JSRuntime.InvokeVoidAsync("addSmoothScrollListener", ".content",
-                    DotNetObjectReference.Create(this), 100);
+                _dotNetHelper = DotNetObjectReference.Create(this);
+
+                // Add listener for "Scroll to Top" logic
+                await JSRuntime.InvokeVoidAsync("addScrollListener", _dotNetHelper, ".content");
+
+                // Add listener for infinite scrolling
+                await JSRuntime.InvokeVoidAsync("addSmoothScrollListener", ".content", _dotNetHelper, 100);
+            }
+        }
+
+        [JSInvokable("HandleScrollChanged")]
+        public void OnScrollChanged(int scrollPosition, bool showButton)
+        {
+            if (showScrollToTop != showButton)
+            {
+                showScrollToTop = showButton;
+                StateHasChanged();
             }
         }
 
@@ -61,5 +77,16 @@ namespace Pokedex.Components.Pages
             isLoading = false;
             StateHasChanged();
         }
+
+        private async Task ScrollToTop()
+        {
+            await JSRuntime.InvokeVoidAsync("scrollToTop", ".content");
+        }
+
+        public void Dispose()
+        {
+            _dotNetHelper?.Dispose();
+        }
+
     }
 }

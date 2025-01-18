@@ -51,22 +51,23 @@ h1:focus {
 }
 
 input {
-    all: unset; /* Remove default styles */
-    display: block; /* Ensure it behaves as a block or inline-block element */
-    width: 100%; /* Make it responsive */
-    padding: 8px; /* Add spacing inside the input */
-    border: 1px solid #ccc; /* Define a custom border */
-    border-radius: 4px; /* Optional: rounded corners */
-    font-size: 16px; /* Set a readable font size */
-    background-color: #fff; /* Set a custom background color */
-    color: #333; /* Set a custom text color */
+    all: unset;
+    display: block;
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+    background-color: #fff;
+    color: #333; 
 }
 
 
 body {
     width: 100vw;
     height: 90vh;
-    background: radial-gradient(circle, white, rgba(38, 143, 255, 0.2));
+    background-color: rgb(224, 231, 255);
+    /*background: radial-gradient(circle, rgba(38, 143, 255, 0.2), white);*/
 }
 
 article {
@@ -76,42 +77,32 @@ article {
     padding: 0 !important;
 }
 
-
-.pokedexOverview {
-    display: grid;
-    width: 85%;
-    grid-template-columns: repeat(6, 1fr);
-    flex-wrap: wrap;
-    gap: 2rem;
-    margin-bottom: 5%;
-    margin: 0 auto;
-}
-
-.dexSearch-container {
-    border-radius: 5px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 30vh;
-    width: 90vw;
-    margin: 2vh auto;
-    box-shadow: 0 0 18px 3px rgba(0, 0, 0, 0.3);
+.scroll-to-top {
+    position: fixed;
+    bottom: 20px;
+    right: 2vw;
+    width: 3vw;
+    height: 3vw;
+    border-radius: 50%;
     background-color: white;
+    color: #333;
+    border: none;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    opacity: 0.8;
+    transition: all 0.3s;
 }
 
-.dexTitle {
-    font-size: 6rem;
-    font-family: "Exo 2", serif;
-    color: rgba(38, 143, 255, 0.8);
-    text-align: center;
-}
+    .scroll-to-top .material-icons {
+        font-size: 2.7rem;
+    }
 
-.dex-searchbar {
-    width: 60vw;
-    border-radius: 10px;
-    padding: 10px;
-    height: 1.5rem;
-    font-size: 1.2rem;
-    border: rgba(38, 143, 255, 0.5) solid 2px;
-}
+    .scroll-to-top:hover {
+        opacity: 1;
+        transform: scale(1.1);
+    }
+
