@@ -4,15 +4,21 @@
 
 <div class="dexSearch-container">
     <div class="dexTitle">PokéWorld</div>
-    <input class="dex-searchbar" placeholder="Search for Pokemon..."/>
+    <input class="dex-searchbar" placeholder="Search for Pokemon..." />
 </div>
 
 <div class="pokedexOverview">
-
-@if(!isLoading){
-    foreach(var pokemonSpecies in PokemonSpecies){
-        <PokemonCard PokemonSpecies=pokemonSpecies />
+    @if (!isLoading)
+    {
+        foreach (var pokemonSpecies in PokemonSpecies)
+        {
+            <PokemonCard PokemonSpecies="pokemonSpecies" />
+        }
     }
-}
-
 </div>
+
+<button class="scroll-to-top hide" @onclick="ScrollToTopAsync">
+    <span class="material-icons">keyboard_arrow_up</span>
+</button>
+
+
