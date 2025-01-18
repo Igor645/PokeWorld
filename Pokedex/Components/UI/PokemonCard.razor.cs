@@ -23,12 +23,11 @@ namespace Pokedex.Components.UI
             if (string.IsNullOrWhiteSpace(generation))
                 return string.Empty;
 
-            // Split by '-' and capitalize the second part (roman numeral)
             var parts = generation.Split('-');
             if (parts.Length != 2)
-                return generation; // Return the original string if it's not in the expected format
+                return generation; 
 
-            string romanNumeral = parts[1].ToUpper(); // Convert 'i', 'ii', etc., to uppercase
+            string romanNumeral = parts[1].ToUpper(); 
             return $"Generation {romanNumeral}";
         }
     }
