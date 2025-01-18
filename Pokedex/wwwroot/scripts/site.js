@@ -1,7 +1,7 @@
 ﻿function startPokeballAnimation(pokeballs) {
     const minVerticalSpacing = 100;
     const recentYPositions = [];
-    const maxPokeballs = 3; // Limit the number of simultaneous animations
+    const maxPokeballs = 6; // Limit the number of simultaneous animations
 
     function getRandomInRange(min, max) {
         return Math.random() * (max - min) + min;
@@ -35,9 +35,9 @@
 
     function animatePokeball(pokeball, initialX, initialY) {
         const img = createPokeballElement(pokeball);
-        const size = getRandomInRange(80, 160);
-        const speed = getRandomInRange(0.4, 0.6);
-        const rotationSpeed = getRandomInRange(10, 60);
+        const size = getRandomInRange(120, 170);
+        const speed = getRandomInRange(0.2, 0.4);
+        const rotationSpeed = getRandomInRange(10, 40);
 
         img.style.width = `${size}px`;
         img.style.height = `${size}px`;
@@ -49,7 +49,7 @@
             if (!start) start = timestamp;
             const progress = timestamp - start;
             const xPosition = (progress / 1000) * speed * 100;
-            img.style.transform = `translateX(${xPosition}px) rotate(${(progress / 1000) * rotationSpeed}deg) translateY(${Math.sin(progress / 500) * 10}px)`; // Add slight bounce effect
+            img.style.transform = `translateX(${xPosition}px) rotate(${(progress / 1000) * rotationSpeed}deg)`; // Remove bounce effect
 
             if (xPosition < window.innerWidth + size * 1.1) {
                 requestAnimationFrame(step);
