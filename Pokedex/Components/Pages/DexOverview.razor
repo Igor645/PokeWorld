@@ -1,0 +1,18 @@
+﻿@page "/"
+@rendermode InteractiveServer
+@using Pokedex.Components.UI
+
+<div class="dexSearch-container">
+    <div class="dexTitle">PokéWorld</div>
+    <input class="dex-searchbar" placeholder="Search for Pokemon..."/>
+</div>
+
+<div class="pokedexOverview">
+
+@if(!isLoading){
+    foreach(var pokemonSpecies in PokemonSpecies){
+        <PokemonCard PokemonSpecies=pokemonSpecies />
+    }
+}
+
+</div>
