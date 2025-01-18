@@ -1,7 +1,8 @@
 ﻿function startPokeballAnimation(pokeballs) {
-    const minVerticalSpacing = 100;
+    const minVerticalSpacing = 200;
+    const maxAttempts = 100;
     const recentYPositions = [];
-    const maxPokeballs = 6; // Limit the number of simultaneous animations
+    const maxPokeballs = 6;
 
     function getRandomInRange(min, max) {
         return Math.random() * (max - min) + min;
@@ -10,11 +11,11 @@
     function createPokeballElement(pokeball) {
         const img = document.createElement('img');
         img.src = pokeball.sprites.default;
-        img.classList.add('pokeball'); // Add the pokeball class
+        img.classList.add('pokeball');
         img.style.position = 'fixed';
         img.style.zIndex = '0';
         img.style.pointerEvents = 'none';
-        img.style.opacity = getRandomInRange(0.7, 1); // Vary opacity
+        img.style.opacity = getRandomInRange(0.7, 1);
         document.body.appendChild(img);
         return img;
     }
@@ -22,10 +23,12 @@
     function getNonClusteringYPosition() {
         let yPosition;
         let isTooClose;
+        let attempts = 0;
         do {
             yPosition = getRandomInRange(0, window.innerHeight - 170);
             isTooClose = recentYPositions.some(pos => Math.abs(pos - yPosition) < minVerticalSpacing);
-        } while (isTooClose);
+            attempts++;
+        } while (isTooClose && attempts < maxAttempts);
         recentYPositions.push(yPosition);
         if (recentYPositions.length > 5) {
             recentYPositions.shift();
@@ -49,7 +52,7 @@
             if (!start) start = timestamp;
             const progress = timestamp - start;
             const xPosition = (progress / 1000) * speed * 100;
-            img.style.transform = `translateX(${xPosition}px) rotate(${(progress / 1000) * rotationSpeed}deg)`; // Remove bounce effect
+            img.style.transform = `translateX(${xPosition}px) rotate(${(progress / 1000) * rotationSpeed}deg)`;
 
             if (xPosition < window.innerWidth + size * 1.1) {
                 requestAnimationFrame(step);
@@ -67,11 +70,10 @@
         const randomIndex = Math.floor(Math.random() * pokeballs.length);
         const initialY = getNonClusteringYPosition();
         animatePokeball(pokeballs[randomIndex], -170, initialY);
-        const randomDelay = getRandomInRange(3000, 6000); // Random delay between 3 and 6 seconds
+        const randomDelay = getRandomInRange(6000, 8000);
         setTimeout(startAnimation, randomDelay);
     }
 
-    // Start a limited number of animations
     for (let i = 0; i < maxPokeballs; i++) {
         const randomIndex = Math.floor(Math.random() * pokeballs.length);
         const initialX = getRandomInRange(0, window.innerWidth - 170);

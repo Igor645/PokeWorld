@@ -14,10 +14,10 @@
     --shadow-color: rgba(0, 0, 0, 0.2);
     --pokemon-img-shadow-color: rgba(0, 0, 0, 0.6);
     --shadow-hover-color: rgba(0, 0, 0, 0.3);
-    --title-color: rgba(38, 143, 255, 1);
-    --title-shadow-color: rgba(0, 0, 0, 0.8);
+    --title-color: rgba(38, 143, 255, 0.8);
+    --title-shadow-color: rgba(0, 0, 0, 0.4);
     --input-border-color: #ccc;
     --input-focus-border-color: #258cfb;
     --input-focus-shadow-color: rgba(37, 140, 251, 0.5);
-    --body-background-color: #f0f0f0; /* Light Gray */
+    --body-background-color: #F0F8FF;
 }
