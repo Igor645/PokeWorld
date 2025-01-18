@@ -18,6 +18,7 @@ function addScrollListener(dotNetHelper, selector) {
                 const showButton = currentScrollPosition > 300;
                 dotNetHelper.invokeMethodAsync("HandleScrollChanged", currentScrollPosition, showButton)
                     .catch(err => console.error("Error calling OnScrollChanged:", err));
+                toggleScrollToTopButton(showButton);
                 ticking = false;
             });
 
@@ -38,6 +39,22 @@ function scrollToTop(selector) {
 
     contentElement.scrollTo({ top: 0, behavior: 'smooth' });
 }
+
+function toggleScrollToTopButton(show) {
+    const scrollToTopButton = document.querySelector('.scroll-to-top');
+    console.log(scrollToTopButton.classList);
+
+    if (scrollToTopButton) {
+        if (show) {
+            scrollToTopButton.classList.remove('hide');
+            scrollToTopButton.classList.add('show');
+        } else {
+            scrollToTopButton.classList.remove('show');
+            scrollToTopButton.classList.add('hide');
+        }
+    }
+}
+
 
 window.addScrollListener = addScrollListener;
 window.scrollToTop = scrollToTop;

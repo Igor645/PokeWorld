@@ -1,15 +1,20 @@
-﻿.pokedexOverview {
+﻿@import 'variables.css';
+
+.pokedexOverview {
     display: grid;
     width: 85%;
-    grid-template-columns: repeat(6, 1fr);
-    flex-wrap: wrap;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 2rem;
     padding-bottom: 100px;
     margin: 0 auto;
+    background-color: var(--background-color);
+    border-radius: 10px;
+    box-shadow: 0 4px 12px var(--shadow-color);
+    padding: 2rem;
 }
 
 .dexSearch-container {
-    border-radius: 5px;
+    border-radius: 10px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -17,22 +22,33 @@
     height: 30vh;
     width: 90vw;
     margin: 2vh auto;
+    background-color: var(--background-hover-color);
+    box-shadow: 0 4px 12px var(--shadow-color);
+    padding: 2rem;
 }
 
 .dexTitle {
-    font-size: 6rem;
+    font-size: 4rem;
     font-family: "Exo 2", serif;
-    color: rgba(38, 143, 255, 0.8);
+    color: var(--title-color);
     text-align: center;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
+    text-shadow: 2px 2px 4px var(--title-shadow-color);
+    margin-bottom: 1rem;
 }
 
 .dex-searchbar {
     width: 60vw;
     border-radius: 10px;
     padding: 10px;
-    height: 1.5rem;
+    height: 2.5rem;
     font-size: 1.2rem;
-    border: rgba(38, 143, 255, 0.5) solid 2px;
-    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    border: var(--border-color) solid 2px;
+    box-shadow: 0 4px 8px var(--shadow-color), 0 6px 20px var(--shadow-color);
+    transition: box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.dex-searchbar:focus {
+    border-color: var(--border-focus-color);
+    box-shadow: 0 4px 12px var(--shadow-hover-color);
+    outline: none;
 }

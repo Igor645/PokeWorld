@@ -1,29 +1,23 @@
-﻿window.isScrollBottom = (elementId) => {
-    const element = document.querySelector(`${elementId}`);
+﻿window.isScrollBottom = (elementId, buffer = 500) => {
+    const element = document.querySelector(elementId);
     if (!element) return false;
 
     const { scrollTop, scrollHeight, clientHeight } = element;
-
-    console.log('Scroll Top:', scrollTop);
-    console.log('Scroll Height:', scrollHeight);
-    console.log('Client Height:', clientHeight);
-
-    return scrollTop + clientHeight >= scrollHeight - 500;
+    return scrollTop + clientHeight >= scrollHeight - buffer;
 };
 
 function throttle(func, limit) {
     let lastFunc;
     let lastRan;
-    return function () {
+    return function (...args) {
         const context = this;
-        const args = arguments;
         if (!lastRan) {
             func.apply(context, args);
             lastRan = Date.now();
         } else {
             clearTimeout(lastFunc);
-            lastFunc = setTimeout(function () {
-                if ((Date.now() - lastRan) >= limit) {
+            lastFunc = setTimeout(() => {
+                if (Date.now() - lastRan >= limit) {
                     func.apply(context, args);
                     lastRan = Date.now();
                 }
@@ -32,8 +26,7 @@ function throttle(func, limit) {
     };
 }
 
-
-window.addSmoothScrollListener = (elementId, dotNetHelper, delay = 100) => {
+window.addSmoothScrollListener = (elementId, dotNetHelper, delay = 100, buffer = 500) => {
     const element = document.querySelector(elementId);
     if (!element) {
         console.error(`Element with selector '${elementId}' not found.`);
@@ -41,8 +34,9 @@ window.addSmoothScrollListener = (elementId, dotNetHelper, delay = 100) => {
     }
 
     const onScroll = throttle(() => {
-        if (window.isScrollBottom(elementId)) {
-            dotNetHelper.invokeMethodAsync("OnScrollReachedBottom");
+        if (window.isScrollBottom(elementId, buffer)) {
+            dotNetHelper.invokeMethodAsync("OnScrollReachedBottom")
+                .catch(err => console.error("Error invoking OnScrollReachedBottom:", err));
         }
     }, delay);
 
@@ -50,4 +44,3 @@ window.addSmoothScrollListener = (elementId, dotNetHelper, delay = 100) => {
 
     return () => element.removeEventListener("scroll", onScroll);
 };
-

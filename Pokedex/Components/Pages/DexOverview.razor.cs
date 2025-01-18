@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace Pokedex.Components.Pages
 {
-    public partial class DexOverview : ComponentBase
+    public partial class DexOverview : ComponentBase, IDisposable
     {
         [Inject] private IPokemonService PokemonService { get; set; }
         [Inject] private IJSRuntime JSRuntime { get; set; }
@@ -15,35 +15,42 @@ namespace Pokedex.Components.Pages
         private bool isLoading = false;
         private bool allDataLoaded = false;
         private int currentPage = 1;
-        private const int Limit = 30;
-        private int Offset => (currentPage - 1) * Limit;
-        private bool showScrollToTop = false;
+        private const int PageSize = 30;
+        private int Offset => (currentPage - 1) * PageSize;
+        private bool showScrollToTopButton = false;
+        private bool listenersInitialized = false;
 
         protected override async Task OnInitializedAsync()
         {
-            await FetchPokemons();
+            await LoadPokemonSpeciesAsync();
         }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
-            if (firstRender)
+            if (firstRender && !listenersInitialized)
             {
-                _dotNetHelper = DotNetObjectReference.Create(this);
-
-                // Add listener for "Scroll to Top" logic
-                await JSRuntime.InvokeVoidAsync("addScrollListener", _dotNetHelper, ".content");
-
-                // Add listener for infinite scrolling
-                await JSRuntime.InvokeVoidAsync("addSmoothScrollListener", ".content", _dotNetHelper, 100);
+                InitializeJavaScriptListeners();
+                listenersInitialized = true;
             }
+        }
+
+        private async void InitializeJavaScriptListeners()
+        {
+            _dotNetHelper = DotNetObjectReference.Create(this);
+
+            // Add listener for "Scroll to Top" logic
+            await JSRuntime.InvokeVoidAsync("addScrollListener", _dotNetHelper, ".content", 1000);
+
+            // Add listener for infinite scrolling
+            await JSRuntime.InvokeVoidAsync("addSmoothScrollListener", ".content", _dotNetHelper, 100);
         }
 
         [JSInvokable("HandleScrollChanged")]
         public void OnScrollChanged(int scrollPosition, bool showButton)
         {
-            if (showScrollToTop != showButton)
+            if (showScrollToTopButton != showButton)
             {
-                showScrollToTop = showButton;
+                showScrollToTopButton = showButton;
                 StateHasChanged();
             }
         }
@@ -53,17 +60,17 @@ namespace Pokedex.Components.Pages
         {
             if (!isLoading && !allDataLoaded)
             {
-                await FetchPokemons();
+                await LoadPokemonSpeciesAsync();
             }
         }
 
-        private async Task FetchPokemons()
+        private async Task LoadPokemonSpeciesAsync()
         {
             if (isLoading || allDataLoaded) return;
 
             isLoading = true;
 
-            var paginatedPokemons = await PokemonService.GetPokemonSpeciesPaginated(Limit, Offset);
+            var paginatedPokemons = await PokemonService.GetPokemonSpeciesPaginated(PageSize, Offset);
             if (paginatedPokemons?.Any() == true)
             {
                 PokemonSpecies.AddRange(paginatedPokemons);
@@ -78,7 +85,7 @@ namespace Pokedex.Components.Pages
             StateHasChanged();
         }
 
-        private async Task ScrollToTop()
+        private async Task ScrollToTopAsync()
         {
             await JSRuntime.InvokeVoidAsync("scrollToTop", ".content");
         }
@@ -87,6 +94,5 @@ namespace Pokedex.Components.Pages
         {
             _dotNetHelper?.Dispose();
         }
-
     }
 }

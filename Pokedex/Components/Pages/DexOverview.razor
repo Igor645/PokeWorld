@@ -17,11 +17,8 @@
     }
 </div>
 
-@if (showScrollToTop)
-{
-    <button class="scroll-to-top" @onclick="ScrollToTop">
-        <span class="material-icons">keyboard_arrow_up</span>
-    </button>
-}
+<button class="scroll-to-top hide" @onclick="ScrollToTopAsync">
+    <span class="material-icons">keyboard_arrow_up</span>
+</button>
 
 

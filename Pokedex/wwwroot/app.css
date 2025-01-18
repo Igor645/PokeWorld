@@ -1,19 +1,38 @@
+@import 'variables.css';
+
 html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: linear-gradient(135deg, var(--body-background-color), rgba(255, 255, 255, 1));
 }
 
 a, .btn-link {
-    color: #006bb7;
+    color: var(--secondary-color);
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+a:hover, .btn-link:hover {
+    color: var(--secondary-hover-color);
 }
 
 .btn-primary {
     color: #fff;
-    background-color: #1b6ec2;
-    border-color: #1861ac;
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-hover-color);
+    box-shadow: 0 4px 8px var(--shadow-color);
 }
 
 .btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem var(--input-focus-border-color);
 }
 
 .content {
@@ -25,15 +44,15 @@ h1:focus {
 }
 
 .valid.modified:not([type=checkbox]) {
-    outline: 1px solid #26b050;
+    outline: 1px solid var(--valid-color);
 }
 
 .invalid {
-    outline: 1px solid #e50000;
+    outline: 1px solid var(--error-color);
 }
 
 .validation-message {
-    color: #e50000;
+    color: var(--error-color);
 }
 
 .blazor-error-boundary {
@@ -55,18 +74,24 @@ input {
     display: block;
     width: 100%;
     padding: 8px;
-    border: 1px solid #ccc;
+    border: 1px solid var(--input-border-color);
     border-radius: 4px;
     font-size: 16px;
     background-color: #fff;
-    color: #333; 
+    color: var(--text-color);
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
+input:focus {
+    border-color: var(--input-focus-border-color);
+    box-shadow: 0 0 5px var(--input-focus-shadow-color);
+    outline: none;
+}
 
 body {
     width: 100vw;
-    height: 90vh;
-    background-color: rgb(224, 231, 255);
+    height: 100vh;
+    background-color: var(--body-background-color);
     /*background: radial-gradient(circle, rgba(38, 143, 255, 0.2), white);*/
 }
 
@@ -79,22 +104,21 @@ article {
 
 .scroll-to-top {
     position: fixed;
-    bottom: 20px;
+    bottom: -10vh; /* Initially hidden below the screen */
     right: 2vw;
     width: 3vw;
     height: 3vw;
     border-radius: 50%;
     background-color: white;
-    color: #333;
+    color: var(--text-color);
     border: none;
-    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    box-shadow: 0 4px 8px var(--shadow-color), 0 6px 20px var(--shadow-color);
     cursor: pointer;
     display: flex;
     justify-content: center;
     align-items: center;
     z-index: 1000;
-    opacity: 0.8;
-    transition: all 0.3s;
+    transition: transform 0.3s ease, opacity 0.3s ease, bottom 0.3s ease; /* Smooth transition */
 }
 
     .scroll-to-top .material-icons {
@@ -106,3 +130,14 @@ article {
         transform: scale(1.1);
     }
 
+    .scroll-to-top.show {
+        opacity: 0.8;
+        transform: translateY(0);
+        bottom: 20px;
+    }
+
+    .scroll-to-top.hide {
+        opacity: 0;
+        transform: translateY(100px);
+        bottom: -10vh; /* Adjusted to match the initial hidden position */
+}

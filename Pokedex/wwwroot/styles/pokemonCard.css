@@ -1,23 +1,26 @@
-﻿.pokemonCard {
+﻿@import 'variables.css';
+
+.pokemonCard {
     display: grid;
     align-items: center;
     width: 100%;
     min-height: 15rem;
     height: fit-content;
     background-color: rgba(38, 143, 255, 0.3);
-    border: rgba(38, 143, 255, 0.2) solid 2px;
+    border: var(--border-color) solid 2px;
     backdrop-filter: blur(1px);
     -webkit-backdrop-filter: blur(1px);
-    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    box-shadow: 0 4px 8px var(--shadow-color), 0 6px 20px var(--shadow-color);
     position: relative;
     overflow: hidden;
     transform: perspective(1000px) rotateX(0) rotateY(0);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border-radius: 10px;
 }
 
 .pokemonCard__image {
     width: 100%;
-    filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.5));
+    filter: drop-shadow(0 4px 6px var(--shadow-color));
     z-index: 2;
     position: relative;
     will-change: transform;
@@ -41,10 +44,11 @@
 
 .pokemonCard__id,
 .pokemonCard__text {
-    font-size: 150%;
+    font-size: 1.5rem;
     text-align: center;
     word-wrap: anywhere;
     font-family: "Exo 2", serif;
+    color: var(--text-color);
 }
 
 .pokemonCard__image.pop-in {
@@ -69,16 +73,18 @@
 }
 
 .pokemonCard__id, .pokemonCard__text__container {
-    background-color: rgba(255, 255, 255, 1);
+    background-color: var(--background-hover-color);
     width: 100%;
     position: relative;
     z-index: 10;
     display: flex;
     flex-direction: column;
-    filter: drop-shadow(0 1px 5px rgba(0, 0, 0, 0.5));
+    filter: drop-shadow(0 1px 5px var(--shadow-color));
+    padding: 0.5rem;
+    border-radius: 0 0 10px 10px;
 }
 
-.pokemonCard__text{
+.pokemonCard__text {
     font-weight: 700;
 }
 
@@ -87,7 +93,6 @@
     font-weight: unset;
 }
 
-
 .pokemonCard__id {
     font-size: 1.2rem;
     margin-bottom: auto;
@@ -95,6 +100,7 @@
 
 .pokemonCard__text__container {
     margin-top: auto;
+    border-radius: 10px;
 }
 
 .pokemonCard::before {
@@ -115,6 +121,7 @@
 .pokemonCard:hover {
     transform: perspective(1000px) scale(1.05) rotateX(8deg);
     cursor: pointer;
+    box-shadow: 0 8px 16px var(--shadow-hover-color), 0 12px 24px var(--shadow-hover-color);
 }
 
 .pokemonCard:hover .pokemonCard__image {
