@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web.Virtualization;
 using Microsoft.JSInterop;
 using Pokedex.Model;
 using Pokedex.Service.Interface;
@@ -22,18 +23,17 @@ namespace Pokedex.Components.Pages
         private int Offset => (currentPage - 1) * PageSize;
         private bool showScrollToTopButton = false;
         private bool listenersInitialized = false;
-
-        protected override async Task OnInitializedAsync()
+        public PokemonSpeciesDto loadingSpecies = new PokemonSpeciesDto
         {
-            await LoadPokemonSpeciesAsync();
-        }
+            Id = 0,
+        };
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             if (firstRender && !listenersInitialized)
             {
                 await LoadPokeballsAsync(); // Ensure Pokeballs are loaded
-                InitializeJavaScriptListeners();
+                await InitializeJavaScriptListeners();
                 listenersInitialized = true;
             }
         }
@@ -43,7 +43,6 @@ namespace Pokedex.Components.Pages
             _dotNetHelper = DotNetObjectReference.Create(this);
 
             await JSRuntime.InvokeVoidAsync("addScrollListener", _dotNetHelper, ".content", 1000);
-            await JSRuntime.InvokeVoidAsync("addSmoothScrollListener", ".content", _dotNetHelper, 100);
             await JSRuntime.InvokeVoidAsync("startPokeballAnimation", Pokeballs);
         }
 
@@ -57,37 +56,34 @@ namespace Pokedex.Components.Pages
             }
         }
 
-        [JSInvokable]
-        public async Task OnScrollReachedBottom()
+        private async ValueTask<ItemsProviderResult<SpeciesRowDto>> LoadPokemonSpeciesAsync(ItemsProviderRequest request)
         {
-            if (!isLoading && !allDataLoaded)
-            {
-                await LoadPokemonSpeciesAsync();
-            }
-        }
+            int offset = request.StartIndex * 6; // Start index for pagination
+            int pageSize = request.Count * 6;   // Fetch enough items for `Count` rows, each row having 6 Pokémon
 
-        private async Task LoadPokemonSpeciesAsync()
-        {
-            if (isLoading || allDataLoaded) return;
+            var response = await PokemonService.GetPokemonSpeciesPaginated(pageSize, offset);
 
-            isLoading = true;
-
-            var response = await PokemonService.GetPokemonSpeciesPaginated(PageSize, Offset);
-            var paginatedPokemons = response.Results;
             count = response.Count;
-            if (paginatedPokemons?.Any() == true)
-            {
-                PokemonSpecies.AddRange(paginatedPokemons);
-                currentPage++;
-            }
-            else
-            {
-                allDataLoaded = true;
-            }
 
-            isLoading = false;
-            StateHasChanged();
+            // Create rows with unique RowId and grouped Pokémon species
+            var rows = response.Results
+                .OrderBy(pokemon => pokemon.Id) // Assuming each Pokémon has a unique Id
+                .Select((pokemon, index) => new { pokemon, RowId = (index + offset) / 6 })
+                .GroupBy(x => x.RowId)
+                .Select(g => new SpeciesRowDto
+                {
+                    RowId = g.Key,
+                    PokemonSpecies = g.Select(x => x.pokemon).ToList()
+                })
+                .ToList();
+
+            int totalRowCount = (int)Math.Ceiling((double)response.Count / 6);
+
+            return new ItemsProviderResult<SpeciesRowDto>(rows, totalRowCount);
         }
+
+
+
 
         private async Task LoadPokeballsAsync()
         {
