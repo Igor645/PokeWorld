@@ -74,7 +74,7 @@
         const randomIndex = Math.floor(Math.random() * pokeballs.length);
         const initialX = getNonClusteringXPosition();
         animatePokeball(pokeballs[randomIndex], initialX, -170);
-        const randomDelay = getRandomInRange(6000, 8000);
+        const randomDelay = getRandomInRange(3000, 5000);
         timeoutId = setTimeout(startAnimation, randomDelay);
     }
 
