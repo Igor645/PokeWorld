@@ -2,7 +2,7 @@
     const minHorizontalSpacing = 200;
     const maxAttempts = 100;
     const recentXPositions = [];
-    const maxPokeballs = 6;
+    const maxPokeballs = 10;
     let animationFrameId;
     let timeoutId;
 
@@ -74,7 +74,7 @@
         const randomIndex = Math.floor(Math.random() * pokeballs.length);
         const initialX = getNonClusteringXPosition();
         animatePokeball(pokeballs[randomIndex], initialX, -170);
-        const randomDelay = getRandomInRange(3000, 5000);
+        const randomDelay = getRandomInRange(2000, 4000);
         timeoutId = setTimeout(startAnimation, randomDelay);
     }
 

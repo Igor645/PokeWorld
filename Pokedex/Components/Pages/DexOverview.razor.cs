@@ -64,7 +64,7 @@ namespace Pokedex.Components.Pages
             var response = await PokemonService.GetPokemonSpeciesPaginated(pageSize, offset);
 
             count = response.Count;
-
+            StateHasChanged();
             // Create rows with unique RowId and grouped Pokémon species
             var rows = response.Results
                 .OrderBy(pokemon => pokemon.Id) // Assuming each Pokémon has a unique Id
