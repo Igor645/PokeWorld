@@ -1,7 +1,7 @@
 ﻿function startPokeballAnimation(pokeballs) {
-    const minVerticalSpacing = 200;
+    const minHorizontalSpacing = 200;
     const maxAttempts = 100;
-    const recentYPositions = [];
+    const recentXPositions = [];
     const maxPokeballs = 6;
 
     function getRandomInRange(min, max) {
@@ -20,20 +20,20 @@
         return img;
     }
 
-    function getNonClusteringYPosition() {
-        let yPosition;
+    function getNonClusteringXPosition() {
+        let xPosition;
         let isTooClose;
         let attempts = 0;
         do {
-            yPosition = getRandomInRange(0, window.innerHeight - 170);
-            isTooClose = recentYPositions.some(pos => Math.abs(pos - yPosition) < minVerticalSpacing);
+            xPosition = getRandomInRange(0, window.innerWidth - 170);
+            isTooClose = recentXPositions.some(pos => Math.abs(pos - xPosition) < minHorizontalSpacing);
             attempts++;
         } while (isTooClose && attempts < maxAttempts);
-        recentYPositions.push(yPosition);
-        if (recentYPositions.length > 5) {
-            recentYPositions.shift();
+        recentXPositions.push(xPosition);
+        if (recentXPositions.length > 5) {
+            recentXPositions.shift();
         }
-        return yPosition;
+        return xPosition;
     }
 
     function animatePokeball(pokeball, initialX, initialY) {
@@ -44,17 +44,17 @@
 
         img.style.width = `${size}px`;
         img.style.height = `${size}px`;
-        img.style.top = `${initialY}px`;
         img.style.left = `${initialX}px`;
+        img.style.bottom = `${initialY}px`;
 
         let start = null;
         function step(timestamp) {
             if (!start) start = timestamp;
             const progress = timestamp - start;
-            const xPosition = (progress / 1000) * speed * 100;
-            img.style.transform = `translateX(${xPosition}px) rotate(${(progress / 1000) * rotationSpeed}deg)`;
+            const yPosition = (progress / 1000) * speed * 100;
+            img.style.transform = `translateY(-${yPosition}px) rotate(${(progress / 1000) * rotationSpeed}deg)`;
 
-            if (xPosition < window.innerWidth + size * 1.1) {
+            if (yPosition < window.innerHeight + size * 1.4) {
                 requestAnimationFrame(step);
             } else {
                 img.remove();
@@ -68,16 +68,16 @@
             return;
         }
         const randomIndex = Math.floor(Math.random() * pokeballs.length);
-        const initialY = getNonClusteringYPosition();
-        animatePokeball(pokeballs[randomIndex], -170, initialY);
+        const initialX = getNonClusteringXPosition();
+        animatePokeball(pokeballs[randomIndex], initialX, -170);
         const randomDelay = getRandomInRange(6000, 8000);
         setTimeout(startAnimation, randomDelay);
     }
 
     for (let i = 0; i < maxPokeballs; i++) {
         const randomIndex = Math.floor(Math.random() * pokeballs.length);
-        const initialX = getRandomInRange(0, window.innerWidth - 170);
-        const initialY = getNonClusteringYPosition();
+        const initialX = getNonClusteringXPosition();
+        const initialY = getRandomInRange(0, window.innerHeight - 170);
         animatePokeball(pokeballs[randomIndex], initialX, initialY);
     }
 

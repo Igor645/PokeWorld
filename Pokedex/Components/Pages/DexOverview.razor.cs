@@ -18,6 +18,7 @@ namespace Pokedex.Components.Pages
         private bool allDataLoaded = false;
         private int currentPage = 1;
         private const int PageSize = 30;
+        private int count = 0;
         private int Offset => (currentPage - 1) * PageSize;
         private bool showScrollToTopButton = false;
         private bool listenersInitialized = false;
@@ -71,7 +72,9 @@ namespace Pokedex.Components.Pages
 
             isLoading = true;
 
-            var paginatedPokemons = await PokemonService.GetPokemonSpeciesPaginated(PageSize, Offset);
+            var response = await PokemonService.GetPokemonSpeciesPaginated(PageSize, Offset);
+            var paginatedPokemons = response.Results;
+            count = response.Count;
             if (paginatedPokemons?.Any() == true)
             {
                 PokemonSpecies.AddRange(paginatedPokemons);

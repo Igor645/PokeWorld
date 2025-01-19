@@ -5,10 +5,10 @@
     --secondary-hover-color: #004a8f;
     --border-color: rgba(38, 143, 255, 0.5);
     --border-focus-color: rgba(38, 143, 255, 0.8);
-    --background-color: rgba(255, 255, 255, 0.8);
+    --background-color: rgba(255, 255, 255, 0.9);
     --background-hover-color: rgba(255, 255, 255, 0.9);
     --text-color: #333;
-    --pokemon-card-text-color: #004a8f;
+    --accent-text-color: #004a8f;
     --error-color: #e50000;
     --valid-color: #26b050;
     --shadow-color: rgba(0, 0, 0, 0.2);
@@ -19,6 +19,6 @@
     --input-border-color: #ccc;
     --input-focus-border-color: #258cfb;
     --input-focus-shadow-color: rgba(37, 140, 251, 0.5);
-    --body-background-color: #F0F8FF;
-    --seperator-color: #268fff80;
+    --body-background-color: #cdd6fa;
+    --seperator-color: rgba(38, 143, 255, 0.5);
 }

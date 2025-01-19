@@ -47,7 +47,7 @@
     text-align: center;
     word-wrap: anywhere;
     font-family: "Exo 2", serif;
-    color: var(--pokemon-card-text-color);
+    color: var(--accent-text-color);
 }
 
 .pokemonCard__image.pop-in {

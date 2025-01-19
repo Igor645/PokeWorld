@@ -24,7 +24,7 @@ namespace Pokedex.Service
             _apiPaths = apiPaths.Value;
         }
 
-        public async Task<IEnumerable<PokemonSpeciesDto>> GetPokemonSpeciesPaginated(int limit, int offset)
+        public async Task<PokeApiResponseDto<PokemonSpeciesDto>> GetPokemonSpeciesPaginated(int limit, int offset)
         {
             string endpoint = TemplateProcessor.ProcessEndpointTemplate(_apiPaths.PokemonSpecies, new { limit, offset });
 
@@ -44,7 +44,14 @@ namespace Pokedex.Service
             });
 
             var detailedSpecies = await Task.WhenAll(tasks);
-            return detailedSpecies;
+
+            return new PokeApiResponseDto<PokemonSpeciesDto>
+            {
+                Count = speciesList.Count,
+                Next = speciesList.Next,
+                Previous = speciesList.Previous,
+                Results = detailedSpecies.ToList()
+            };
         }
 
     }
