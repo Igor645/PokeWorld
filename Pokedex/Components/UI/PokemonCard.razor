@@ -6,10 +6,24 @@
     </div>
     <div class="pokemonCard__text__container">
         <div class="pokemonCard__text">
-            @PokemonSpecies.Names.Where(x => x.Language.Name == "en").Single().Name
+            @{
+                var englishName = PokemonSpecies.Names?
+                .FirstOrDefault(x => x.Language?.Name == "en")?.Name;
+            }
+            @if (!string.IsNullOrEmpty(englishName))
+            {
+                @englishName
+            }
+            else
+            {
+                <span>Loading...</span>
+            }
         </div>
         <div class="pokemonCard__text pokemonCard__generation">
-            @ParseGenerationName(PokemonSpecies.Generation.Name)
+            @if (!string.IsNullOrEmpty(PokemonSpecies.Generation?.Name))
+            {
+                @ParseGenerationName(PokemonSpecies.Generation.Name)
+            }
         </div>
     </div>
 </div>

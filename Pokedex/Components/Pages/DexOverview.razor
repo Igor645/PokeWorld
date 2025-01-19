@@ -16,9 +16,28 @@
 <div class="pokedexOverview">
     @if (!isLoading)
     {
-        <Virtualize ItemsProvider="LoadPokemonSpeciesAsync" ItemSize="36" Context="pokemonSpecies">
-            <PokemonCard PokemonSpecies="pokemonSpecies" />
+
+        <Virtualize ItemsProvider="LoadPokemonSpeciesAsync" Context="speciesList" ItemSize="3"  OverscanCount="20">
+            <ItemContent>
+                <div class="row">
+                    @foreach (var species in speciesList)
+                    {
+                        <PokemonCard @key="species.Id" PokemonSpecies="species" />
+                    }
+                </div>
+            </ItemContent>
+            <Placeholder>
+                <div class="row">
+                    @for (int i = 0; i < 6; i++) // Simulate 6 items per row
+                    {
+                        <PokemonCard @key="loadingSpecies.Id" PokemonSpecies="loadingSpecies" />
+                    }
+                </div>
+            </Placeholder>
         </Virtualize>
+
+
+
     }
 </div>
 

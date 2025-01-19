@@ -23,6 +23,10 @@ namespace Pokedex.Components.Pages
         private int Offset => (currentPage - 1) * PageSize;
         private bool showScrollToTopButton = false;
         private bool listenersInitialized = false;
+        public PokemonSpeciesDto loadingSpecies = new PokemonSpeciesDto
+        {
+            Id = 0,
+        };
 
         protected override async Task OnInitializedAsync()
         {
@@ -58,20 +62,26 @@ namespace Pokedex.Components.Pages
             }
         }
 
-        private async ValueTask<ItemsProviderResult<PokemonSpeciesDto>> LoadPokemonSpeciesAsync(ItemsProviderRequest request)
+        private async ValueTask<ItemsProviderResult<List<PokemonSpeciesDto>>> LoadPokemonSpeciesAsync(ItemsProviderRequest request)
         {
-            // Calculate the offset and size for data fetching
-            int offset = request.StartIndex;
-            int pageSize = request.Count;
+            int offset = request.StartIndex * 6; // Start index for pagination
+            int pageSize = request.Count * 6; // Fetch enough items for `Count` rows, each row having 6 Pokémon
 
-            // Fetch paginated data from the service
             var response = await PokemonService.GetPokemonSpeciesPaginated(pageSize, offset);
 
-            // Update the total count of items
-            count = response.Count;
+            // Group the Pokémon into rows of 6 items each
+            var groupedResults = response.Results
+                .Select((pokemon, index) => new { pokemon, index })
+                .GroupBy(x => x.index / 6) // Group by rows of 6
+                .Select(g => g.Select(x => x.pokemon).ToList())
+                .ToList();
 
-            return new ItemsProviderResult<PokemonSpeciesDto>(response.Results, count);
+            int totalRowCount = (int)Math.Ceiling((double)response.Count / 6);
+
+            return new ItemsProviderResult<List<PokemonSpeciesDto>>(groupedResults, totalRowCount);
         }
+
+
 
         private async Task LoadPokeballsAsync()
         {
