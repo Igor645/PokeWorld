@@ -25,10 +25,9 @@ namespace Pokedex.Service
         public async Task<IEnumerable<ItemDto>> GetAllPokeBallsAsync()
         {
             var items = new List<ItemDto>();
-            var categoryUrl = _httpClient.BaseAddress + _apiPaths.Pokeballs;
 
             // Fetch items from the item-category endpoint
-            var response = await _httpClient.GetAsync(categoryUrl);
+            var response = await _httpClient.GetAsync(_apiPaths.Pokeballs);
             response.EnsureSuccessStatusCode();
 
             var jsonResponse = await response.Content.ReadAsStringAsync();

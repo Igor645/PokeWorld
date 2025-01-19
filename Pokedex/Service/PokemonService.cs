@@ -7,6 +7,8 @@ using Pokedex.Constants;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Pokedex.Utilities;
+using System.Threading.Tasks.Dataflow;
+
 namespace Pokedex.Service
 {
     public class PokemonService : IPokemonService
@@ -18,6 +20,7 @@ namespace Pokedex.Service
         {
             PropertyNameCaseInsensitive = true
         };
+
         public PokemonService(HttpClient httpClient, IOptions<ApiPaths> apiPaths)
         {
             _httpClient = httpClient;
@@ -34,25 +37,42 @@ namespace Pokedex.Service
             var jsonResponse = await response.Content.ReadAsStringAsync();
             var speciesList = JsonConvert.DeserializeObject<PokeApiResponseDto<EndpointLookupDto>>(jsonResponse);
 
-            var tasks = speciesList.Results.Select(async species =>
+            var detailedSpecies = new List<PokemonSpeciesDto>();
+
+            var block = new ActionBlock<EndpointLookupDto>(
+                async species =>
+                {
+                    var detailResponse = await _httpClient.GetAsync(species.Url);
+                    detailResponse.EnsureSuccessStatusCode();
+
+                    var detailJson = await detailResponse.Content.ReadAsStringAsync();
+                    var speciesDetail = JsonConvert.DeserializeObject<PokemonSpeciesDto>(detailJson);
+
+                    lock (detailedSpecies)
+                    {
+                        detailedSpecies.Add(speciesDetail);
+                    }
+                },
+                new ExecutionDataflowBlockOptions
+                {
+                    MaxDegreeOfParallelism = 10 // Adjust based on your system capacity
+                });
+
+            foreach (var species in speciesList.Results)
             {
-                var detailResponse = await _httpClient.GetAsync(species.Url);
-                detailResponse.EnsureSuccessStatusCode();
+                block.Post(species);
+            }
 
-                var detailJson = await detailResponse.Content.ReadAsStringAsync();
-                return JsonConvert.DeserializeObject<PokemonSpeciesDto>(detailJson);
-            });
-
-            var detailedSpecies = await Task.WhenAll(tasks);
+            block.Complete();
+            await block.Completion;
 
             return new PokeApiResponseDto<PokemonSpeciesDto>
             {
                 Count = speciesList.Count,
                 Next = speciesList.Next,
                 Previous = speciesList.Previous,
-                Results = detailedSpecies.ToList()
+                Results = detailedSpecies
             };
         }
-
     }
 }
