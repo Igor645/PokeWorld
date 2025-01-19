@@ -16,10 +16,9 @@
 <div class="pokedexOverview">
     @if (!isLoading)
     {
-        foreach (var pokemonSpecies in PokemonSpecies)
-        {
+        <Virtualize ItemsProvider="LoadPokemonSpeciesAsync" ItemSize="36" Context="pokemonSpecies">
             <PokemonCard PokemonSpecies="pokemonSpecies" />
-        }
+        </Virtualize>
     }
 </div>
 

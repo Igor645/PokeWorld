@@ -3,16 +3,17 @@
 .pokedexOverview {
     display: grid;
     width: 80%;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    grid-template-columns: repeat(6, 200px);
+    grid-auto-rows: 500px;
     gap: 2rem;
     padding: 2rem;
     margin: 2rem auto;
     background-color: var(--background-color);
     border-radius: 10px;
     box-shadow: 0 2px 6px var(--shadow-color);
-    animation: fadeIn 1s ease-in-out;
-    contain: layout paint;
+    /* Removed animation and containment for testing */
 }
+
 
 .dexSearch-container {
     display: flex;

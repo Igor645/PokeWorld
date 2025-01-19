@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web.Virtualization;
 using Microsoft.JSInterop;
 using Pokedex.Model;
 using Pokedex.Service.Interface;
@@ -25,7 +26,7 @@ namespace Pokedex.Components.Pages
 
         protected override async Task OnInitializedAsync()
         {
-            await LoadPokemonSpeciesAsync();
+            //await LoadPokemonSpeciesAsync();
         }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -42,7 +43,7 @@ namespace Pokedex.Components.Pages
         {
             _dotNetHelper = DotNetObjectReference.Create(this);
 
-            await JSRuntime.InvokeVoidAsync("addScrollListener", _dotNetHelper, ".content", 1000);
+            //await JSRuntime.InvokeVoidAsync("addScrollListener", _dotNetHelper, ".content", 1000);
             await JSRuntime.InvokeVoidAsync("addSmoothScrollListener", ".content", _dotNetHelper, 100);
             await JSRuntime.InvokeVoidAsync("startPokeballAnimation", Pokeballs);
         }
@@ -57,36 +58,19 @@ namespace Pokedex.Components.Pages
             }
         }
 
-        [JSInvokable]
-        public async Task OnScrollReachedBottom()
+        private async ValueTask<ItemsProviderResult<PokemonSpeciesDto>> LoadPokemonSpeciesAsync(ItemsProviderRequest request)
         {
-            if (!isLoading && !allDataLoaded)
-            {
-                await LoadPokemonSpeciesAsync();
-            }
-        }
+            // Calculate the offset and size for data fetching
+            int offset = request.StartIndex;
+            int pageSize = request.Count;
 
-        private async Task LoadPokemonSpeciesAsync()
-        {
-            if (isLoading || allDataLoaded) return;
+            // Fetch paginated data from the service
+            var response = await PokemonService.GetPokemonSpeciesPaginated(pageSize, offset);
 
-            isLoading = true;
-
-            var response = await PokemonService.GetPokemonSpeciesPaginated(PageSize, Offset);
-            var paginatedPokemons = response.Results;
+            // Update the total count of items
             count = response.Count;
-            if (paginatedPokemons?.Any() == true)
-            {
-                PokemonSpecies.AddRange(paginatedPokemons);
-                currentPage++;
-            }
-            else
-            {
-                allDataLoaded = true;
-            }
 
-            isLoading = false;
-            StateHasChanged();
+            return new ItemsProviderResult<PokemonSpeciesDto>(response.Results, count);
         }
 
         private async Task LoadPokeballsAsync()
