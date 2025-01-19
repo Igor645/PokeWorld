@@ -3,6 +3,8 @@
     const maxAttempts = 100;
     const recentXPositions = [];
     const maxPokeballs = 6;
+    let animationFrameId;
+    let timeoutId;
 
     function getRandomInRange(min, max) {
         return Math.random() * (max - min) + min;
@@ -55,12 +57,12 @@
             img.style.transform = `translateY(-${yPosition}px) rotate(${(progress / 1000) * rotationSpeed}deg)`;
 
             if (yPosition < window.innerHeight + size * 1.4) {
-                requestAnimationFrame(step);
+                animationFrameId = requestAnimationFrame(step);
             } else {
                 img.remove();
             }
         }
-        requestAnimationFrame(step);
+        animationFrameId = requestAnimationFrame(step);
     }
 
     function startAnimation() {
@@ -71,8 +73,25 @@
         const initialX = getNonClusteringXPosition();
         animatePokeball(pokeballs[randomIndex], initialX, -170);
         const randomDelay = getRandomInRange(6000, 8000);
-        setTimeout(startAnimation, randomDelay);
+        timeoutId = setTimeout(startAnimation, randomDelay);
     }
+
+    function pauseAnimation() {
+        cancelAnimationFrame(animationFrameId);
+        clearTimeout(timeoutId);
+    }
+
+    function resumeAnimation() {
+        startAnimation();
+    }
+
+    document.addEventListener('visibilitychange', () => {
+        if (document.hidden) {
+            pauseAnimation();
+        } else {
+            resumeAnimation();
+        }
+    });
 
     for (let i = 0; i < maxPokeballs; i++) {
         const randomIndex = Math.floor(Math.random() * pokeballs.length);
