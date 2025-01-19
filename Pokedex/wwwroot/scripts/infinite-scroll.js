@@ -44,3 +44,4 @@ window.addSmoothScrollListener = (elementId, dotNetHelper, delay = 100, buffer =
 
     return () => element.removeEventListener("scroll", onScroll);
 };
+
