@@ -20,9 +20,9 @@
     align-items: center;
     justify-content: center;
     width: 85%;
-    height: 30vh;
+    min-height: 30vh;
     margin: 2vh auto;
-    padding: 2rem;
+    padding: 3rem;
     border: 1px solid var(--border-color);
     border-radius: 10px;
     animation: fadeIn 1s ease-in-out;
