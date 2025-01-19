@@ -49,8 +49,17 @@
     }
 }
 
+.separator-line {
+    width: 90%;
+    margin: 1rem auto;
+    border: none;
+    border-top: 5px solid var(--seperator-color); 
+    background-color: unset;
+    opacity: 1;
+}
+
 .dex-searchbar {
-    width: 60vw;
+    width: 25vw;
     height: 2.5rem;
     padding: 10px;
     font-size: 1.2rem;

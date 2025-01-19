@@ -15,7 +15,7 @@
         img.style.position = 'fixed';
         img.style.zIndex = '0';
         img.style.pointerEvents = 'none';
-        img.style.opacity = getRandomInRange(0.7, 1);
+        img.style.opacity = getRandomInRange(1, 1);
         document.body.appendChild(img);
         return img;
     }
