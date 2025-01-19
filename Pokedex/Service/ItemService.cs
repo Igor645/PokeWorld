@@ -3,7 +3,9 @@ using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using Pokedex.Constants;
 using Pokedex.Model;
 using Pokedex.Service.Interface;
 
@@ -12,16 +14,18 @@ namespace Pokedex.Service
     public class ItemService : IItemService
     {
         private readonly HttpClient _httpClient;
+        private readonly ApiPaths _apiPaths;
 
-        public ItemService(HttpClient httpClient)
+        public ItemService(HttpClient httpClient, IOptions<ApiPaths> apiPath)
         {
             _httpClient = httpClient;
+            _apiPaths = apiPath.Value;
         }
 
         public async Task<IEnumerable<ItemDto>> GetAllPokeBallsAsync()
         {
             var items = new List<ItemDto>();
-            var categoryUrl = "https://pokeapi.co/api/v2/item-category/standard-balls";
+            var categoryUrl = _httpClient.BaseAddress + _apiPaths.Pokeballs;
 
             // Fetch items from the item-category endpoint
             var response = await _httpClient.GetAsync(categoryUrl);
