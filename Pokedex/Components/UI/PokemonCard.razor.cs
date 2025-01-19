@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Options;
+using Microsoft.JSInterop;
 using Pokedex.Constants;
 using Pokedex.Model;
 using Pokedex.Utilities;
@@ -13,6 +14,16 @@ namespace Pokedex.Components.UI
 
         [Inject]
         private IOptions<ApiPaths> ApiPaths { get; set; }
+        [Inject] private IJSRuntime JSRuntime { get; set; }
+
+
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            if (firstRender)
+            {
+                await JSRuntime.InvokeVoidAsync("removeInitialLoad");
+            }
+        }
 
         public string GetOfficialArtwork(int id)
         {

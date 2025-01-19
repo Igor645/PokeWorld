@@ -28,17 +28,12 @@ namespace Pokedex.Components.Pages
             Id = 0,
         };
 
-        protected override async Task OnInitializedAsync()
-        {
-            //await LoadPokemonSpeciesAsync();
-        }
-
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             if (firstRender && !listenersInitialized)
             {
                 await LoadPokeballsAsync(); // Ensure Pokeballs are loaded
-                InitializeJavaScriptListeners();
+                await InitializeJavaScriptListeners();
                 listenersInitialized = true;
             }
         }
@@ -47,8 +42,7 @@ namespace Pokedex.Components.Pages
         {
             _dotNetHelper = DotNetObjectReference.Create(this);
 
-            //await JSRuntime.InvokeVoidAsync("addScrollListener", _dotNetHelper, ".content", 1000);
-            await JSRuntime.InvokeVoidAsync("addSmoothScrollListener", ".content", _dotNetHelper, 100);
+            await JSRuntime.InvokeVoidAsync("addScrollListener", _dotNetHelper, ".content", 1000);
             await JSRuntime.InvokeVoidAsync("startPokeballAnimation", Pokeballs);
         }
 
@@ -62,24 +56,32 @@ namespace Pokedex.Components.Pages
             }
         }
 
-        private async ValueTask<ItemsProviderResult<List<PokemonSpeciesDto>>> LoadPokemonSpeciesAsync(ItemsProviderRequest request)
+        private async ValueTask<ItemsProviderResult<SpeciesRowDto>> LoadPokemonSpeciesAsync(ItemsProviderRequest request)
         {
             int offset = request.StartIndex * 6; // Start index for pagination
-            int pageSize = request.Count * 6; // Fetch enough items for `Count` rows, each row having 6 Pokémon
+            int pageSize = request.Count * 6;   // Fetch enough items for `Count` rows, each row having 6 Pokémon
 
             var response = await PokemonService.GetPokemonSpeciesPaginated(pageSize, offset);
 
-            // Group the Pokémon into rows of 6 items each
-            var groupedResults = response.Results
-                .Select((pokemon, index) => new { pokemon, index })
-                .GroupBy(x => x.index / 6) // Group by rows of 6
-                .Select(g => g.Select(x => x.pokemon).ToList())
+            count = response.Count;
+
+            // Create rows with unique RowId and grouped Pokémon species
+            var rows = response.Results
+                .OrderBy(pokemon => pokemon.Id) // Assuming each Pokémon has a unique Id
+                .Select((pokemon, index) => new { pokemon, RowId = (index + offset) / 6 })
+                .GroupBy(x => x.RowId)
+                .Select(g => new SpeciesRowDto
+                {
+                    RowId = g.Key,
+                    PokemonSpecies = g.Select(x => x.pokemon).ToList()
+                })
                 .ToList();
 
             int totalRowCount = (int)Math.Ceiling((double)response.Count / 6);
 
-            return new ItemsProviderResult<List<PokemonSpeciesDto>>(groupedResults, totalRowCount);
+            return new ItemsProviderResult<SpeciesRowDto>(rows, totalRowCount);
         }
+
 
 
 
