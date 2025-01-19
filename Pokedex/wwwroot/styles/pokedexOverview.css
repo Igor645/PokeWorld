@@ -13,10 +13,10 @@
 
 .placeholder-card {
     background-color: #f0f0f0;
-    height: 150px; /* Match the height of a PokemonCard */
+    height: 150px;
     border: 1px solid #ddd;
     border-radius: 8px;
-    flex: 1 1 calc(100% / 6); /* Ensure it matches layout of PokemonCard */
+    flex: 1 1 calc(100% / 6);
     margin: 5px;
 }
 
@@ -26,9 +26,12 @@
     display: flex;
     flex-wrap: nowrap;
     margin: 1rem 0;
-    justify-content: space-between;
     padding: 0 1rem;
     height: 35vh;
+}
+
+.row > .pokemonCard:not(:last-child) {
+    margin-right: 1.4%;
 }
 
 .dexSearch-container {
