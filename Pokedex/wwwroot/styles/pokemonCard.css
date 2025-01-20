@@ -124,11 +124,8 @@
 .pokemonCard:hover {
     transform: perspective(1000px) scale(1.05) rotateX(8deg);
     cursor: pointer;
+    transition: transform 0.5s ease;
     box-shadow: 0 8px 16px var(--shadow-hover-color), 0 12px 24px var(--shadow-hover-color);
-}
-
-.pokemonCard:hover .pokemonCard__image:not(.shaking_egg):not(.initial-load) {
-    animation: floatUpDown 3s ease-in-out infinite;
 }
 
 .pokemonCard__image.initial-load:not(.shaking_egg) {
@@ -138,12 +135,12 @@
 
 @keyframes popUp {
     0% {
-        transform: translateY(50px) scale(0.8); 
-        opacity: 0; 
+        transform: translateY(50px) scale(0.8);
+        opacity: 0;
     }
 
     60% {
-        transform: translateY(-10px) scale(1.1); 
+        transform: translateY(-10px) scale(1.1);
         opacity: 1;
     }
 
@@ -153,6 +150,12 @@
     }
 }
 
+.pokemonCard:hover .pokemonCard__image:not(.shaking_egg):not(.initial-load) {
+    transform: translateY(5px) scale(1.1);
+    transition: transform 0.5s ease;
+    animation: floatUpDown 3s ease-in-out infinite;
+    animation-delay: 0.5s;
+}
 
 @keyframes floatUpDown {
     0%, 100% {
