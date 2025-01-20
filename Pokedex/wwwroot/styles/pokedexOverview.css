@@ -12,7 +12,7 @@
     margin: 2rem auto;
     background-color: var(--background-color);
     border-radius: 10px;
-    box-shadow: 0 2px 6px var(--shadow-color);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 6px 12px rgba(0, 0, 0, 0.1);
     animation: fadeIn 1s ease-in-out;
 }
 
@@ -140,13 +140,13 @@
     font-size: 2.7rem;
 }
 
-.scroll-to-top:hover {
+.scroll-to-top.show:hover {
     opacity: 1;
     transform: scale(1.1);
 }
 
 .scroll-to-top.show {
-    opacity: 0.8;
+    opacity: 1;
     transform: translateY(0);
     bottom: 20px;
 }
