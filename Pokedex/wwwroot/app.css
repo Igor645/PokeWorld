@@ -113,7 +113,12 @@ body {
     grid-template-rows: auto 1fr;
     width: 100vw;
     height: 100vh;
-    background-color: var(--body-background-color);
+    position: relative;
+    overflow: hidden;
+    background-image: url('images/background-wave.svg'); /* Add background image */
+    background-size: cover; /* Scale the image to cover the entire area */
+    background-repeat: no-repeat; /* Prevent the image from repeating */
+    background-position: center; /* Center the image */
 }
 
 article {
