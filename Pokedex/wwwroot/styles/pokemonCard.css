@@ -21,13 +21,13 @@
 .pokemonCard__image {
     width: 100%;
     filter: drop-shadow(0 4px 6px var(--pokemon-img-shadow-color));
-    z-index: 2;
+    z-index: 15;
     position: relative;
     will-change: transform;
 }
 
 .pokemonCard__img__container {
-    width: 85%;
+    width: 80%;
     position: relative;
     margin: 0 auto;
     display: flex;
@@ -151,7 +151,7 @@
 }
 
 .pokemonCard:hover .pokemonCard__image:not(.shaking_egg):not(.initial-load) {
-    transform: translateY(5px) scale(1.1);
+    transform: translateY(5px) scale(1.1) ;
     transition: transform 0.5s ease;
     animation: floatUpDown 3s ease-in-out infinite;
     animation-delay: 0.5s;

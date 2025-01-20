@@ -9,6 +9,7 @@
         public string PokemonDreamWorldArtworkTemplate { get; set; } 
 
         public string PokemonSpecies { get; set; }
-        public string Pokeballs { get; set; }
+        public string StandardPokeballs { get; set; }
+        public string SpecialPokeballs { get; set; }
     }
 }

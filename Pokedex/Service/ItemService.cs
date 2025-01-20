@@ -26,15 +26,24 @@ namespace Pokedex.Service
         {
             var items = new List<ItemDto>();
 
-            // Fetch items from the item-category endpoint
-            var response = await _httpClient.GetAsync(_apiPaths.Pokeballs);
-            response.EnsureSuccessStatusCode();
+            // Fetch items from both the standard and special ball endpoints
+            var standardResponse = await _httpClient.GetAsync(_apiPaths.StandardPokeballs);
+            standardResponse.EnsureSuccessStatusCode();
 
-            var jsonResponse = await response.Content.ReadAsStringAsync();
-            var categoryList = JsonConvert.DeserializeObject<ItemCategoryDto>(jsonResponse);
+            var specialResponse = await _httpClient.GetAsync(_apiPaths.SpecialPokeballs);
+            specialResponse.EnsureSuccessStatusCode();
+
+            var standardJsonResponse = await standardResponse.Content.ReadAsStringAsync();
+            var specialJsonResponse = await specialResponse.Content.ReadAsStringAsync();
+
+            var standardCategoryList = JsonConvert.DeserializeObject<ItemCategoryDto>(standardJsonResponse);
+            var specialCategoryList = JsonConvert.DeserializeObject<ItemCategoryDto>(specialJsonResponse);
+
+            // Combine items from both categories
+            var allItems = standardCategoryList.Items.Concat(specialCategoryList.Items);
 
             // Fetch details for each item
-            var detailTasks = categoryList.Items.Select(async item =>
+            var detailTasks = allItems.Select(async item =>
             {
                 var itemDetailsResponse = await _httpClient.GetAsync(item.Url);
                 itemDetailsResponse.EnsureSuccessStatusCode();
@@ -50,5 +59,6 @@ namespace Pokedex.Service
 
             return items;
         }
+
     }
 }

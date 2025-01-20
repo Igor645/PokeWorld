@@ -1,7 +1,12 @@
 ﻿@import 'variables.css';
 
+:root {
+    --pokedex-width: 85%;
+}
+
+
 .pokedexOverview {
-    width: 80%;
+    width: var(--pokedex-width);
     gap: 2rem;
     padding: 2rem;
     margin: 2rem auto;
@@ -39,7 +44,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    width: 80%;
+    width: var(--pokedex-width);
     min-height: 30vh;
     margin: 2vh auto;
     padding: 3rem;
@@ -71,7 +76,7 @@
     }
 }
 
-.seperator-line-wrapper {
+/*.seperator-line-wrapper {
     width: 85%;
     padding: 0.2rem;
     margin: 1rem auto;
@@ -88,7 +93,7 @@
     border-top: 4px solid var(--seperator-color);
     background-color: var(--seperator-color);
     opacity: 1;
-}
+}*/
 
 .dex-searchbar {
     width: 25vw;
@@ -166,7 +171,7 @@
     color: var(--accent-text-color);
     font-size: 1.8rem;
     background-color: var(--background-color);
-    margin: 0 10%;
+    margin: 0 calc((100% - var(--pokedex-width)) / 2);
     width: fit-content;
     padding: 1rem;
     border-radius: 8px;

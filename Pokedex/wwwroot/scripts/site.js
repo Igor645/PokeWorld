@@ -5,8 +5,9 @@
     const maxPokeballs = 10;
     let animationFrameId;
     let timeoutId;
+    let lastDirectionClockwise = true; // To alternate directions
 
-    console.log("start")
+    console.log("start");
 
     function getRandomInRange(min, max) {
         return Math.random() * (max - min) + min;
@@ -44,7 +45,8 @@
         const img = createPokeballElement(pokeball);
         const size = getRandomInRange(120, 170);
         const speed = getRandomInRange(0.2, 0.4);
-        const rotationSpeed = getRandomInRange(10, 40);
+        const rotationSpeed = getRandomInRange(10, 40) * (lastDirectionClockwise ? 1 : -1); // Alternate direction
+        lastDirectionClockwise = !lastDirectionClockwise; // Flip the direction for the next pokeball
 
         img.style.width = `${size}px`;
         img.style.height = `${size}px`;
@@ -104,4 +106,3 @@
 
     startAnimation();
 }
-
