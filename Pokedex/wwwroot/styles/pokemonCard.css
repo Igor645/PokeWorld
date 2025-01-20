@@ -27,7 +27,7 @@
 }
 
 .pokemonCard__img__container {
-    width: 80%;
+    width: 85%;
     position: relative;
     margin: 0 auto;
     display: flex;
@@ -195,5 +195,5 @@
 .shaking_egg {
     animation: shake 0.5s infinite;
     animation-timing-function: ease-in-out;
-    width: 45%;
+    width: 40%;
 }
