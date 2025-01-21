@@ -74,5 +74,56 @@ namespace Pokedex.Service
                 Results = detailedSpecies
             };
         }
+
+        public async Task<List<PokemonSpeciesDto>> GetPokemonSpeciesByPrefix(string prefix)
+        {
+            const int batchSize = 100; // Number of species to fetch per request
+            int offset = 0;           // Start from the first entry
+            int matchCount = 0;       // Count of matching species
+            var detailedSpecies = new List<PokemonSpeciesDto>();
+
+            while (matchCount < 15)
+            {
+                string endpoint = TemplateProcessor.ProcessEndpointTemplate(_apiPaths.PokemonSpecies, new { limit = batchSize, offset });
+
+                var response = await _httpClient.GetAsync(endpoint);
+                response.EnsureSuccessStatusCode();
+
+                var jsonResponse = await response.Content.ReadAsStringAsync();
+                var speciesList = JsonConvert.DeserializeObject<PokeApiResponseDto<EndpointLookupDto>>(jsonResponse);
+
+                // Filter matching species by prefix
+                var filteredSpecies = speciesList.Results
+                    .Where(s => s.Name.StartsWith(prefix, StringComparison.OrdinalIgnoreCase))
+                    .ToList();
+
+                // Fetch details for filtered species
+                foreach (var species in filteredSpecies)
+                {
+                    if (matchCount >= 15) break;
+
+                    var detailResponse = await _httpClient.GetAsync(species.Url);
+                    detailResponse.EnsureSuccessStatusCode();
+
+                    var detailJson = await detailResponse.Content.ReadAsStringAsync();
+                    var speciesDetail = JsonConvert.DeserializeObject<PokemonSpeciesDto>(detailJson);
+
+                    detailedSpecies.Add(speciesDetail);
+                    matchCount++;
+                }
+
+                // Stop if we've reached the last page
+                if (string.IsNullOrEmpty(speciesList.Next))
+                {
+                    break;
+                }
+
+                // Move to the next batch
+                offset += batchSize;
+            }
+
+            return detailedSpecies;
+        }
+
     }
 }

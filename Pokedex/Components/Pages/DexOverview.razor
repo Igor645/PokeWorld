@@ -4,8 +4,33 @@
 
 <div class="dexSearch-container">
     <div class="dexTitle">PokéWorld</div>
-    <input class="dex-searchbar" placeholder="Search for a Pokémon..." />
+    <div class="dropdown-container" @ref="searchContainerRef">
+        <input class="dex-searchbar"
+               placeholder="Search for a Pokémon..."
+               @onfocus="ShowDropdown"
+               @oninput="HandleSearchChange" />
+
+        @if (showDropdown)
+        {
+            <div class="dex-search-dropdown">
+                @if (FilteredPokemonSpecies.Any())
+                {
+                    @foreach (var pokemon in FilteredPokemonSpecies)
+                    {
+                        <div class="dropdown-item" @onclick="() => SelectPokemon(pokemon.Name)">
+                            @pokemon.Name
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="dropdown-item">No Pokémon found</div>
+                }
+            </div>
+        }
+    </div>
 </div>
+
 
 @* <div class="seperator-line-wrapper">
     <hr class="separator-line" />

@@ -97,7 +97,7 @@
 
 .dex-searchbar {
     width: 25vw;
-    height: 2.5rem;
+    height: 3rem;
     padding: 10px;
     font-size: 1.2rem;
     border: 2px solid var(--border-color);
@@ -116,6 +116,37 @@
 .dex-searchbar:hover {
     box-shadow: 0 4px 12px var(--shadow-hover-color);
 }
+
+.dropdown-container {
+    position: relative;
+}
+
+.dex-search-dropdown {
+    position: absolute;
+    top: calc(100%);
+    left: 0;
+    width: 100%;
+    font-size: 1.2rem;
+    border: 2px solid var(--border-color);
+    border-radius: 15px;
+    background-color: white;
+    max-height: 25rem;
+    overflow-y: auto;
+    z-index: 999;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    mask-image: radial-gradient(ellipse at center, white 99%, transparent 100%);
+    -webkit-mask-image: radial-gradient(ellipse at center, white 99%, transparent 100%);
+}
+
+.dropdown-item {
+    padding: 8px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+    .dropdown-item:hover {
+        background-color: #f0f0f0;
+    }
 
 .scroll-to-top {
     position: fixed;

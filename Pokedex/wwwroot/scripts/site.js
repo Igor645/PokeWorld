@@ -106,3 +106,11 @@
 
     startAnimation();
 }
+
+function initializeClickOutsideHandler(container, dotNetHelper) {
+    document.addEventListener("click", function (event) {
+        if (!container.contains(event.target)) {
+            dotNetHelper.invokeMethodAsync("HideDropdown");
+        }
+    });
+}
