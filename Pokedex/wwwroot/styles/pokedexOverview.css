@@ -8,7 +8,7 @@
 .pokedexOverview {
     width: var(--pokedex-width);
     gap: 2rem;
-    padding: 2rem;
+    padding: 1rem;
     margin: 2rem auto;
     background-color: var(--background-color);
     border-radius: 10px;
@@ -47,7 +47,7 @@
     width: var(--pokedex-width);
     min-height: 30vh;
     margin: 2vh auto;
-    padding: 3rem;
+    padding: 1rem;
     border-radius: 10px;
     animation: fadeIn 1s ease-in-out;
     background-color: var(--background-color);
