@@ -108,9 +108,16 @@
 }
 
 function initializeClickOutsideHandler(container, dotNetHelper) {
-    document.addEventListener("click", function (event) {
-        if (!container.contains(event.target)) {
+    let isMouseDownInside = false;
+
+    container.addEventListener("mousedown", function () {
+        isMouseDownInside = true;
+    });
+
+    document.addEventListener("mouseup", function (event) {
+        if (!isMouseDownInside && !container.contains(event.target)) {
             dotNetHelper.invokeMethodAsync("HideDropdown");
         }
+        isMouseDownInside = false; // Reset after every mouseup
     });
 }

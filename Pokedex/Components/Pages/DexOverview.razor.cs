@@ -5,11 +5,15 @@ using Pokedex.Model;
 using Pokedex.Service.Interface;
 using Pokedex.Extensions;
 using System.Collections.Generic;
+using Pokedex.Constants;
+using Pokedex.Utilities;
+using Microsoft.Extensions.Options;
 
 namespace Pokedex.Components.Pages
 {
     public partial class DexOverview : ComponentBase, IDisposable
     {
+        [Inject] private IOptions<ApiPaths> ApiPaths { get; set; }
         [Inject] private IPokemonService PokemonService { get; set; }
         [Inject] private IItemService ItemService { get; set; }
         [Inject] private IJSRuntime JSRuntime { get; set; }
@@ -55,6 +59,11 @@ namespace Pokedex.Components.Pages
             }
         }
 
+        public string GetOfficialArtwork(int id)
+        {
+            return string.Format(ApiPaths.Value.PokemonOfficialArtworkTemplate, id);
+        }
+
         private async Task InitializeJavaScriptListeners()
         {
             _dotNetHelper = DotNetObjectReference.Create(this);
@@ -85,7 +94,7 @@ namespace Pokedex.Components.Pages
             StateHasChanged();
             // Create rows with unique RowId and grouped Pokémon species
             var rows = response.Results
-                .OrderBy(pokemon => pokemon.Id) // Assuming each Pokémon has a unique Id
+                // Assuming each Pokémon has a unique Id
                 .Select((pokemon, index) => new { pokemon, RowId = (index + offset) / 6 })
                 .GroupBy(x => x.RowId)
                 .Select(g => new SpeciesRowDto
@@ -117,42 +126,38 @@ namespace Pokedex.Components.Pages
         {
             searchQuery = e.Value?.ToString() ?? string.Empty;
 
-            // Cancel any ongoing fetch and create a new CancellationTokenSource
+            // Cancel the previous cancellation token and create a new one
             _cancellationTokenSource?.Cancel();
+            _cancellationTokenSource?.Dispose(); // Dispose of old token source
             _cancellationTokenSource = new CancellationTokenSource();
 
-            // Debounce logic
-            debounceTimer?.Dispose(); // Cancel previous timer if any
+            // Clear filtered results for immediate UI feedback
+            FilteredPokemonSpecies.Clear();
+            StateHasChanged();
+
+            // Debounce logic using Task.Delay
+            debounceTimer?.Dispose(); // Cancel any previous debounce timer
             debounceTimer = new Timer(async _ =>
             {
-                await InvokeAsync(() => FilterPokemonSpecies(_cancellationTokenSource.Token));
-            }, null, 300, Timeout.Infinite); // 300ms debounce delay
+                await InvokeAsync(() => FilterPokemonSpeciesAsync(_cancellationTokenSource.Token));
+            }, null, 200, Timeout.Infinite); // 300ms debounce delay
         }
 
-        private async Task FilterPokemonSpecies(CancellationToken cancellationToken)
+        private async Task FilterPokemonSpeciesAsync(CancellationToken cancellationToken)
         {
-            isLoading = true;
-
             try
             {
-                if (string.IsNullOrWhiteSpace(searchQuery))
-                {
-                    FilteredPokemonSpecies = PokemonSpecies.Take(15).ToList(); // Default to first 15 if no query
-                }
-                else
-                {
-                    var response = await PokemonService.GetPokemonSpeciesByPrefix(searchQuery)
-                                                       .WithCancellation(cancellationToken);
-                    FilteredPokemonSpecies = response.Take(15).ToList(); // Limit to first 15 results
-                }
+                // Fetch filtered results
+                var response = await PokemonService.GetPokemonSpeciesByPrefix(searchQuery)
+                                                   .WithCancellation(cancellationToken);
+                FilteredPokemonSpecies = response.Take(15).ToList();
             }
             catch (OperationCanceledException)
             {
-                // Fetch operation was canceled, no need to do anything
+                // Ignore cancellation errors
             }
             finally
             {
-                isLoading = false;
                 StateHasChanged();
             }
         }

@@ -18,7 +18,8 @@
                     @foreach (var pokemon in FilteredPokemonSpecies)
                     {
                         <div class="dropdown-item" @onclick="() => SelectPokemon(pokemon.Name)">
-                            @pokemon.Name
+                            <img src="@GetOfficialArtwork(pokemon.Id)" alt="@pokemon.Name" class="dropdown-item-image" />
+                            <span class="dropdown-item-name">@($"{char.ToUpper(pokemon.Name[0])}{pokemon.Name.Substring(1)}")</span>
                         </div>
                     }
                 }

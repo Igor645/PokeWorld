@@ -148,6 +148,13 @@
         background-color: #f0f0f0;
     }
 
+.dropdown-item-image {
+    width: 28%;
+    transform: perspective(1000px);
+    filter: drop-shadow(0 4px 6px var(--pokemon-img-shadow-color));
+    will-change: transform;
+}
+
 .scroll-to-top {
     position: fixed;
     bottom: -10vh;
