@@ -3,23 +3,36 @@ using Microsoft.AspNetCore.Components.Web.Virtualization;
 using Microsoft.JSInterop;
 using Pokedex.Model;
 using Pokedex.Service.Interface;
+using Pokedex.Extensions;
 using System.Collections.Generic;
+using Pokedex.Constants;
+using Pokedex.Utilities;
+using Microsoft.Extensions.Options;
 
 namespace Pokedex.Components.Pages
 {
     public partial class DexOverview : ComponentBase, IDisposable
     {
+        [Inject] private IOptions<ApiPaths> ApiPaths { get; set; }
         [Inject] private IPokemonService PokemonService { get; set; }
         [Inject] private IItemService ItemService { get; set; }
         [Inject] private IJSRuntime JSRuntime { get; set; }
         private DotNetObjectReference<DexOverview> _dotNetHelper;
         private List<PokemonSpeciesDto> PokemonSpecies { get; set; } = new();
+        private List<PokemonSpeciesDto> FilteredPokemonSpecies { get; set; } = new();
+        private Timer debounceTimer;
+        private string searchQuery = string.Empty;
         private List<ItemDto> Pokeballs { get; set; } = new();
         private bool isLoading = false;
         private bool allDataLoaded = false;
         private int currentPage = 1;
         private const int PageSize = 30;
         private int count = 0;
+        private string selectedPokemon = string.Empty;
+        private bool showDropdown = false;
+        private ElementReference searchContainerRef;
+        private CancellationTokenSource _cancellationTokenSource;
+
         private int Offset => (currentPage - 1) * PageSize;
         private bool showScrollToTopButton = false;
         private bool listenersInitialized = false;
@@ -28,14 +41,27 @@ namespace Pokedex.Components.Pages
             Id = 0,
         };
 
+        protected override async Task OnInitializedAsync()
+        {
+            isLoading = true;
+            FilteredPokemonSpecies = (await PokemonService.GetPokemonSpeciesPaginated(15, 0)).Results;
+            isLoading = false;
+        }
+
+
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             if (firstRender && !listenersInitialized)
             {
-                await LoadPokeballsAsync(); // Ensure Pokeballs are loaded
+                await LoadPokeballsAsync();
                 await InitializeJavaScriptListeners();
                 listenersInitialized = true;
             }
+        }
+
+        public string GetOfficialArtwork(int id)
+        {
+            return string.Format(ApiPaths.Value.PokemonOfficialArtworkTemplate, id);
         }
 
         private async Task InitializeJavaScriptListeners()
@@ -44,6 +70,7 @@ namespace Pokedex.Components.Pages
 
             await JSRuntime.InvokeVoidAsync("addScrollListener", _dotNetHelper, ".content", 1000);
             await JSRuntime.InvokeVoidAsync("startPokeballAnimation", Pokeballs);
+            await JSRuntime.InvokeVoidAsync("initializeClickOutsideHandler", searchContainerRef, DotNetObjectReference.Create(this));
         }
 
         [JSInvokable("HandleScrollChanged")]
@@ -67,7 +94,7 @@ namespace Pokedex.Components.Pages
             StateHasChanged();
             // Create rows with unique RowId and grouped Pokémon species
             var rows = response.Results
-                .OrderBy(pokemon => pokemon.Id) // Assuming each Pokémon has a unique Id
+                // Assuming each Pokémon has a unique Id
                 .Select((pokemon, index) => new { pokemon, RowId = (index + offset) / 6 })
                 .GroupBy(x => x.RowId)
                 .Select(g => new SpeciesRowDto
@@ -95,8 +122,68 @@ namespace Pokedex.Components.Pages
             await JSRuntime.InvokeVoidAsync("scrollToTop", ".content");
         }
 
+        private void HandleSearchChange(ChangeEventArgs e)
+        {
+            searchQuery = e.Value?.ToString() ?? string.Empty;
+
+            // Cancel the previous cancellation token and create a new one
+            _cancellationTokenSource?.Cancel();
+            _cancellationTokenSource?.Dispose(); // Dispose of old token source
+            _cancellationTokenSource = new CancellationTokenSource();
+
+            // Clear filtered results for immediate UI feedback
+            FilteredPokemonSpecies.Clear();
+            StateHasChanged();
+
+            // Debounce logic using Task.Delay
+            debounceTimer?.Dispose(); // Cancel any previous debounce timer
+            debounceTimer = new Timer(async _ =>
+            {
+                await InvokeAsync(() => FilterPokemonSpeciesAsync(_cancellationTokenSource.Token));
+            }, null, 200, Timeout.Infinite); // 300ms debounce delay
+        }
+
+        private async Task FilterPokemonSpeciesAsync(CancellationToken cancellationToken)
+        {
+            try
+            {
+                // Fetch filtered results
+                var response = await PokemonService.GetPokemonSpeciesByPrefix(searchQuery)
+                                                   .WithCancellation(cancellationToken);
+                FilteredPokemonSpecies = response.Take(15).ToList();
+            }
+            catch (OperationCanceledException)
+            {
+                // Ignore cancellation errors
+            }
+            finally
+            {
+                StateHasChanged();
+            }
+        }
+
+        private void SelectPokemon(string name)
+        {
+            selectedPokemon = name;
+            showDropdown = false; // Close the dropdown after selection
+        }
+
+        private void ShowDropdown()
+        {
+            showDropdown = true;
+        }
+
+        [JSInvokable("HideDropdown")]
+        public void HideDropdown()
+        {
+            showDropdown = false;
+            StateHasChanged();
+        }
+
+
         public void Dispose()
         {
+            debounceTimer?.Dispose();
             _dotNetHelper?.Dispose();
         }
     }
