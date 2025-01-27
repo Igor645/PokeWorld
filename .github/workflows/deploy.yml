@@ -67,11 +67,8 @@ jobs:
         docker tag pokeapi-pokedex:latest ${{ secrets.DOCKER_HUB_USERNAME }}/pokeapi-pokedex:latest
         docker push ${{ secrets.DOCKER_HUB_USERNAME }}/pokeapi-pokedex:latest
 
-    - name: Install Scalingo CLI
-      run: curl -sL https://cli.scalingo.io/install | bash
-
     - name: Deploy to Scalingo
       run: |
-        scalingo login --token ${{ secrets.SCALINGO_TOKEN }}
+        scalingo login --api-token ${{ secrets.SCALINGO_TOKEN }}
         scalingo deploy -a your-app ./PokeAPI/docker-compose.yml
 
