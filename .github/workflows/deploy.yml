@@ -45,8 +45,9 @@ jobs:
       working-directory: ./PokeAPI
 
     - name: Run make hasura-apply
-      run: |
-        HASURA_GRAPHQL_ADMIN_SECRET=${{ secrets.HASURA_GRAPHQL_ADMIN_SECRET }} make hasura-apply
+    env:
+      HASURA_GRAPHQL_ADMIN_SECRET: ${{ secrets.HASURA_GRAPHQL_ADMIN_SECRET }}
+      run: make hasura-apply
       working-directory: ./PokeAPI
 
     - name: Run make docker-setup
