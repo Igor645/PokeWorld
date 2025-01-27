@@ -10,7 +10,7 @@ namespace Pokedex.Components.UI
     public partial class PokemonCard : ComponentBase
     {
         [Parameter]
-        public PokemonSpeciesDto PokemonSpecies { get; set; }
+        public GraphQLPokemonSpeciesDTO PokemonSpecies { get; set; }
 
         [Inject]
         private IOptions<ApiPaths> ApiPaths { get; set; }
@@ -25,10 +25,12 @@ namespace Pokedex.Components.UI
             }
         }
 
-        public string GetOfficialArtwork(int id)
+        private string GetPokemonImage(GraphQLPokemonSpeciesDTO pokemonSpecies)
         {
-            return string.Format(ApiPaths.Value.PokemonOfficialArtworkTemplate, id);
+            var imageUrl = pokemonSpecies?.Pokemons?.FirstOrDefault()?.PokemonSprites?.FirstOrDefault()?.Sprites?.Other?.OfficialArtwork?.FrontDefault;
+            return !string.IsNullOrEmpty(imageUrl) ? imageUrl : "/images/egg.png";
         }
+
         public static string ParseGenerationName(string generation)
         {
             if (string.IsNullOrWhiteSpace(generation))

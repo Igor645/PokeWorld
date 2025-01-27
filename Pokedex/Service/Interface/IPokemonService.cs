@@ -4,7 +4,7 @@ namespace Pokedex.Service.Interface
 {
     public interface IPokemonService
     {
-        Task<PokeApiResponseDto<PokemonSpeciesDto>> GetPokemonSpeciesPaginated(int limit, int offset);
-        Task<List<PokemonSpeciesDto>> GetPokemonSpeciesByPrefix(string prefix);
+        Task<PokemonSpeciesResponseDto> GetPokemonSpeciesByPrefix(string prefix);
+        Task<PokemonSpeciesResponseDto> GetPokemonSpeciesPaginatedGraphQL(int limit, int offset);
     }
 }

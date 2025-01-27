@@ -6,6 +6,6 @@ namespace Pokedex.Service.Interface
 {
     public interface IItemService
     {
-        Task<IEnumerable<ItemDto>> GetAllPokeBallsAsync();
+        Task<ItemResponseDto> GetAllPokeBallsAsync();
     }
 }

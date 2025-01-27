@@ -15,129 +15,109 @@ namespace Pokedex.Service
     {
         private readonly HttpClient _httpClient;
         private readonly ApiPaths _apiPaths;
+        private readonly GraphQLService _graphQLService;
 
         private JsonSerializerOptions options = new JsonSerializerOptions
         {
             PropertyNameCaseInsensitive = true
         };
 
-        public PokemonService(HttpClient httpClient, IOptions<ApiPaths> apiPaths)
+        public PokemonService(HttpClient httpClient, GraphQLService graphQLService, IOptions<ApiPaths> apiPaths)
         {
             _httpClient = httpClient;
             _apiPaths = apiPaths.Value;
+            _graphQLService = graphQLService;
         }
 
-        public async Task<PokeApiResponseDto<PokemonSpeciesDto>> GetPokemonSpeciesPaginated(int limit, int offset)
+        public async Task<PokemonSpeciesResponseDto> GetPokemonSpeciesPaginatedGraphQL(int limit, int offset)
         {
-            // Build the endpoint URL
-            string endpoint = TemplateProcessor.ProcessEndpointTemplate(_apiPaths.PokemonSpecies, new { limit, offset });
+            // Define the GraphQL query
+            string query = @"
+        query PokemonSpeciesOverview($limit: Int, $offset: Int) {
+  pokemon_v2_pokemonspecies(limit: $limit, offset: $offset, order_by: {id: asc}) {
+            pokemon_v2_pokemons(where: {is_default: {_eq: true}}) {
+              id
+              pokemon_v2_pokemonsprites {
+                sprites
+              }
+            }
+            id
+            pokemon_v2_pokemonspeciesnames(where: {pokemon_v2_language: {name: {_eq: ""en""}}}) {
+              name
+              pokemon_v2_language {
+                name
+              }
+            }
+            pokemon_v2_generation {
+              name
+            }
+          }
+          pokemon_v2_pokemonspecies_aggregate {
+            aggregate {
+              count
+            }
+          }
+        }";
 
-            // Fetch the paginated species list
-            var response = await _httpClient.GetAsync(endpoint);
-            response.EnsureSuccessStatusCode();
-
-            var jsonResponse = await response.Content.ReadAsStringAsync();
-            var speciesList = JsonConvert.DeserializeObject<PokeApiResponseDto<EndpointLookupDto>>(jsonResponse);
-
-            // Use FetchSpeciesDetailsAsync to get detailed species info
-            var detailedSpecies = await FetchSpeciesDetailsAsync(speciesList.Results);
-
-            // Return the response with detailed species
-            return new PokeApiResponseDto<PokemonSpeciesDto>
+            // Define variables for the query
+            var variables = new
             {
-                Count = speciesList.Count,
-                Next = speciesList.Next,
-                Previous = speciesList.Previous,
-                Results = detailedSpecies.OrderBy(pokemon => pokemon.Id).ToList() // Ensure results are ordered
+                limit,
+                offset
             };
+
+            // Execute the query using GraphQLService
+            var response = await _graphQLService.ExecuteQueryAsync<PokemonSpeciesResponseDto>(query, variables);
+
+            // Return the response directly
+            return response;
         }
 
-
-        public async Task<List<PokemonSpeciesDto>> GetPokemonSpeciesByPrefix(string prefix)
+        public async Task<PokemonSpeciesResponseDto> GetPokemonSpeciesByPrefix(string prefix)
         {
-            if (string.IsNullOrWhiteSpace(prefix))
-            {
-                // Fetch the first 15 species when no prefix is provided
-                return await GetFirstNSpeciesAsync(15);
+            // Check if the prefix is empty
+            bool isPrefixEmpty = string.IsNullOrWhiteSpace(prefix);
+
+            // Build the query dynamically
+            string query = isPrefixEmpty
+                ? @"
+query MyQuery {
+    pokemon_v2_pokemonspecies(order_by: {id: asc}, limit: 15) {
+        id
+        name
+        pokemon_v2_pokemons {
+            pokemon_v2_pokemonsprites {
+                sprites
             }
-
-            const int batchSize = 50; // Reduced batch size for more efficient API calls
-            int offset = 0;           // Start from the first entry
-            var detailedSpecies = new List<PokemonSpeciesDto>();
-
-            while (detailedSpecies.Count < 15)
-            {
-                string endpoint = TemplateProcessor.ProcessEndpointTemplate(
-                    _apiPaths.PokemonSpecies,
-                    new { limit = batchSize, offset }
-                );
-
-                // Fetch a batch of Pokémon species
-                var response = await _httpClient.GetAsync(endpoint);
-                response.EnsureSuccessStatusCode();
-
-                var jsonResponse = await response.Content.ReadAsStringAsync();
-                var speciesList = JsonConvert.DeserializeObject<PokeApiResponseDto<EndpointLookupDto>>(jsonResponse);
-
-                // Filter matching species by prefix
-                var filteredSpecies = speciesList.Results
-                    .Where(s => s.Name.StartsWith(prefix, StringComparison.OrdinalIgnoreCase))
-                    .ToList();
-
-                // Stop if no more matching species and no further pages
-                if (!filteredSpecies.Any() && string.IsNullOrEmpty(speciesList.Next))
-                {
-                    break;
-                }
-
-                // Fetch details for filtered species concurrently
-                var speciesDetails = await FetchSpeciesDetailsAsync(filteredSpecies.Take(15 - detailedSpecies.Count));
-                detailedSpecies.AddRange(speciesDetails);
-
-                // Stop early if we already have 15 species
-                if (detailedSpecies.Count >= 15)
-                {
-                    break;
-                }
-
-                offset += batchSize; // Move to the next batch
+        }
+    }
+}"
+                : @"
+query MyQuery($search: String) {
+    pokemon_v2_pokemonspecies(where: {name: {_ilike: $search}}, order_by: {id: asc}) {
+        id
+        name
+        pokemon_v2_pokemons {
+            pokemon_v2_pokemonsprites {
+                sprites
             }
-
-            return detailedSpecies;
         }
+    }
+}";
 
+            // Prepare variables only if prefix is not empty
+            object? variables = isPrefixEmpty
+                ? null
+                : new
+                {
+                    search = $"{prefix}%" // Append % for prefix search
+                };
 
-        private async Task<List<PokemonSpeciesDto>> GetFirstNSpeciesAsync(int count)
-        {
-            string endpoint = TemplateProcessor.ProcessEndpointTemplate(
-                _apiPaths.PokemonSpecies,
-                new { limit = count, offset = 0 }
-            );
+            // Execute the query using the GraphQL service
+            var response = await _graphQLService.ExecuteQueryAsync<PokemonSpeciesResponseDto>(query, variables);
 
-            var response = await _httpClient.GetAsync(endpoint);
-            response.EnsureSuccessStatusCode();
-
-            var jsonResponse = await response.Content.ReadAsStringAsync();
-            var speciesList = JsonConvert.DeserializeObject<PokeApiResponseDto<EndpointLookupDto>>(jsonResponse);
-
-            return await FetchSpeciesDetailsAsync(speciesList.Results.Take(count));
+            return response;
         }
-
-        private async Task<List<PokemonSpeciesDto>> FetchSpeciesDetailsAsync(IEnumerable<EndpointLookupDto> speciesList)
-        {
-            var fetchTasks = speciesList.Select(async species =>
-            {
-                var detailResponse = await _httpClient.GetAsync(species.Url);
-                detailResponse.EnsureSuccessStatusCode();
-
-                var detailJson = await detailResponse.Content.ReadAsStringAsync();
-                return JsonConvert.DeserializeObject<PokemonSpeciesDto>(detailJson);
-            });
-
-            List<PokemonSpeciesDto?> list = (await Task.WhenAll(fetchTasks)).ToList();
-            return list;
-        }
-
 
     }
 }

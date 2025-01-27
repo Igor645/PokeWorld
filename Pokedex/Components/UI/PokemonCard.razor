@@ -2,16 +2,19 @@
     <div class="pokemonCard__id">Nr. @(PokemonSpecies.Id != 0 ? PokemonSpecies.Id.ToString() : "-")</div>
     <div class="pokemonCard__img__container">
         <img class="pokemonCard__image initial-load"
-             src="@GetOfficialArtwork(PokemonSpecies.Id)"
+             src="@GetPokemonImage(PokemonSpecies)"
              alt="Default Pokemon"
-             onerror="this.src='/images/egg.png'; this.classList.add('shaking_egg');" />
+             onerror="handleImageError(this)" />
         <img class="pokemonCard__bg" src="/images/pokeball-for-card.svg" />
     </div>
     <div class="pokemonCard__text__container">
         <div class="pokemonCard__text">
             @{
-                var englishName = PokemonSpecies.Names?
-                .FirstOrDefault(x => x.Language?.Name == "en")?.Name;
+                var englishName = PokemonSpecies?.SpeciesNames != null && PokemonSpecies.SpeciesNames.Any()
+                ? PokemonSpecies.SpeciesNames
+                .FirstOrDefault(x => x.Language?.Name == "en")?.Name
+                : null;
+
             }
             @if (!string.IsNullOrEmpty(englishName))
             {
@@ -27,7 +30,8 @@
             {
                 @ParseGenerationName(PokemonSpecies.Generation.Name)
             }
-            else{
+            else
+            {
                 <span>...</span>
             }
         </div>
@@ -35,6 +39,11 @@
 </div>
 
 <script>
+        function handleImageError(img) {
+        img.src = '/images/egg.png';
+        img.classList.add('shaking_egg');
+    }
+
     function removeInitialLoad() {
         document.querySelectorAll('.pokemonCard__image.initial-load').forEach(img => {
             setTimeout(() => {

@@ -16,6 +16,10 @@ builder.Services.AddScoped(sp =>
 builder.Services.AddScoped<IPokemonService, PokemonService>();
 builder.Services.AddScoped<IItemService, ItemService>();
 builder.Services.Configure<ApiPaths>(builder.Configuration.GetSection("ApiPaths"));
+var graphQLSettings = builder.Configuration.GetSection("GraphQLSettings");
+builder.Services.AddSingleton(provider =>
+    new GraphQLService(graphQLSettings["Endpoint"]));
+
 
 var app = builder.Build();
 

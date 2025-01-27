@@ -14,8 +14,9 @@
     }
 
     function createPokeballElement(pokeball) {
+        console.log(pokeball)
         const img = document.createElement('img');
-        img.src = pokeball.sprites.default;
+        img.src = pokeball.pokemon_v2_itemsprites[0].sprites.default;
         img.classList.add('pokeball');
         img.style.position = 'fixed';
         img.style.zIndex = '0';

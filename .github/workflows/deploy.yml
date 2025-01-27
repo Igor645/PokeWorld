@@ -1,0 +1,43 @@
+name: Deploy Docker Container
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    env:
+      HASURA_GRAPHQL_ADMIN_SECRET: ${{ secrets.HASURA_GRAPHQL_ADMIN_SECRET }}
+
+    steps:
+    - name: Checkout Repository with Submodules
+      uses: actions/checkout@v3
+      with:
+        submodules: recursive
+
+    - name: Replace docker-compose.yml in PokeAPI
+      run: |
+        cp ./docker-compose.yml ./PokeAPI/docker-compose.yml
+
+    - name: Run make install
+      run: make install
+      working-directory: ./PokeAPI
+
+    - name: Run make setup
+      run: make setup
+      working-directory: ./PokeAPI
+
+    - name: Run make hasura-apply
+      run: |
+        HASURA_GRAPHQL_ADMIN_SECRET=${{ secrets.HASURA_GRAPHQL_ADMIN_SECRET }} make hasura-apply
+      working-directory: ./PokeAPI
+
+    - name: Run make docker-setup
+      run: make docker-setup
+      working-directory: ./PokeAPI
