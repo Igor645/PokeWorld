@@ -58,6 +58,6 @@ jobs:
         run: railway login --token ${{ secrets.RAILWAY_TOKEN }}
 
     - name: Deploy to Railway
-      run: |
-        railway up --detach
+        run: |
+          railway up --detach
 
