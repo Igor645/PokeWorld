@@ -8,6 +8,9 @@ using System.Collections.Generic;
 using Pokedex.Constants;
 using Pokedex.Utilities;
 using Microsoft.Extensions.Options;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Pokedex.Components.Pages
 {
@@ -17,30 +20,28 @@ namespace Pokedex.Components.Pages
         [Inject] private IPokemonService PokemonService { get; set; }
         [Inject] private IItemService ItemService { get; set; }
         [Inject] private IJSRuntime JSRuntime { get; set; }
+
         private DotNetObjectReference<DexOverview> _dotNetHelper;
         private List<GraphQLPokemonSpeciesDTO> PokemonSpecies { get; set; } = new();
         private List<GraphQLPokemonSpeciesDTO> FilteredPokemonSpecies { get; set; } = new();
         private Timer debounceTimer;
         private string searchQuery = string.Empty;
         private List<GraphQLItemDTO> Pokeballs { get; set; } = new();
-        private bool isLoading = false;
-        private int count = 0;
-        private bool showDropdown = false;
+        private bool isLoading;
+        private int count;
+        private bool showDropdown;
         private ElementReference searchContainerRef;
         private CancellationTokenSource _cancellationTokenSource;
-
-        private bool showScrollToTopButton = false;
-        private bool listenersInitialized = false;
-        public GraphQLPokemonSpeciesDTO loadingSpecies = new GraphQLPokemonSpeciesDTO();
+        private bool showScrollToTopButton;
+        private bool listenersInitialized;
+        private GraphQLPokemonSpeciesDTO loadingSpecies = new();
 
         protected override async Task OnInitializedAsync()
         {
             isLoading = true;
             FilteredPokemonSpecies = (await PokemonService.GetPokemonSpeciesByPrefix(string.Empty)).PokemonSpecies;
             isLoading = false;
-            Test();
         }
-
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
@@ -52,28 +53,14 @@ namespace Pokedex.Components.Pages
             }
         }
 
-        public string GetOfficialArtwork(int id)
-        {
-            return string.Format(ApiPaths.Value.PokemonOfficialArtworkTemplate, id);
-        }
+        public string GetOfficialArtwork(int id) => string.Format(ApiPaths.Value.PokemonOfficialArtworkTemplate, id);
 
         private async Task InitializeJavaScriptListeners()
         {
             _dotNetHelper = DotNetObjectReference.Create(this);
-
             await JSRuntime.InvokeVoidAsync("addScrollListener", _dotNetHelper, ".content", 1000);
             await JSRuntime.InvokeVoidAsync("startPokeballAnimation", Pokeballs);
             await JSRuntime.InvokeVoidAsync("initializeClickOutsideHandler", searchContainerRef, DotNetObjectReference.Create(this));
-        }
-
-        public async void Test()
-        {
-            var speciesResponse = await PokemonService.GetPokemonSpeciesPaginatedGraphQL(10, 0);
-
-            foreach (var species in speciesResponse.PokemonSpecies)
-            {
-                Console.WriteLine($"Species ID: {species.Id}, Name: {species.SpeciesNames.FirstOrDefault()?.Name}");
-            }
         }
 
         [JSInvokable("HandleScrollChanged")]
@@ -92,9 +79,8 @@ namespace Pokedex.Components.Pages
             int pageSize = request.Count * 6;
 
             var response = await PokemonService.GetPokemonSpeciesPaginatedGraphQL(pageSize, offset);
-
             count = response.Aggregate.Aggregate.Count;
-            StateHasChanged();
+
             var rows = response.PokemonSpecies
                 .Select((pokemon, index) => new { pokemon, RowId = (index + offset) / 6 })
                 .GroupBy(x => x.RowId)
@@ -106,12 +92,8 @@ namespace Pokedex.Components.Pages
                 .ToList();
 
             int totalRowCount = (int)Math.Ceiling((double)response.Aggregate.Aggregate.Count / 6);
-
             return new ItemsProviderResult<SpeciesRowDto>(rows, totalRowCount);
         }
-
-
-
 
         private async Task LoadPokeballsAsync()
         {
@@ -165,10 +147,7 @@ namespace Pokedex.Components.Pages
             showDropdown = false;
         }
 
-        private void ShowDropdown()
-        {
-            showDropdown = true;
-        }
+        private void ShowDropdown() => showDropdown = true;
 
         [JSInvokable("HideDropdown")]
         public void HideDropdown()
@@ -176,7 +155,6 @@ namespace Pokedex.Components.Pages
             showDropdown = false;
             StateHasChanged();
         }
-
 
         public void Dispose()
         {

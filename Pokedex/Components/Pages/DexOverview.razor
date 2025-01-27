@@ -2,7 +2,6 @@
 @rendermode InteractiveServer
 @using Pokedex.Components.UI
 
-
 <div class="dexSearch-container">
     <div class="dexTitle">PokéWorld</div>
     <div class="dropdown-container" @ref="searchContainerRef">
@@ -19,8 +18,12 @@
                     @foreach (var pokemon in FilteredPokemonSpecies)
                     {
                         <div class="dropdown-item" @onclick="() => SelectPokemon(pokemon.Name)">
-                            <img src="@GetOfficialArtwork(pokemon.Id)" alt="@pokemon.Name" class="dropdown-item-image" />
-                            <span class="dropdown-item-name">@($"{char.ToUpper(pokemon.Name[0])}{pokemon.Name.Substring(1)}")</span>
+                            <img src="@GetOfficialArtwork(pokemon.Id)"
+                                 alt="@pokemon.Name"
+                                 class="dropdown-item-image" />
+                            <span class="dropdown-item-name">
+                                @($"{char.ToUpper(pokemon.Name[0])}{pokemon.Name[1..]}")
+                            </span>
                         </div>
                     }
                 }
@@ -33,17 +36,13 @@
     </div>
 </div>
 
-
-@* <div class="seperator-line-wrapper">
-    <hr class="separator-line" />
-</div> *@
-
-<div class="pokemonCount">Select your Pokémon (@count)</div>
+<div class="pokemonCount">
+    Select your Pokémon (@count)
+</div>
 
 <div class="pokedexOverview">
     @if (!isLoading)
     {
-
         <Virtualize ItemsProvider="LoadPokemonSpeciesAsync" Context="speciesList" ItemSize="350">
             <ItemContent>
                 <div @key="speciesList.RowId" class="row">
@@ -62,14 +61,9 @@
                 </div>
             </Placeholder>
         </Virtualize>
-
-
-
     }
 </div>
 
 <button class="scroll-to-top hide" @onclick="ScrollToTopAsync">
     <span class="material-icons">keyboard_arrow_up</span>
 </button>
-
-

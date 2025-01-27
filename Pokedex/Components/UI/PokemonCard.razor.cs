@@ -14,8 +14,9 @@ namespace Pokedex.Components.UI
 
         [Inject]
         private IOptions<ApiPaths> ApiPaths { get; set; }
-        [Inject] private IJSRuntime JSRuntime { get; set; }
 
+        [Inject]
+        private IJSRuntime JSRuntime { get; set; }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
@@ -27,21 +28,22 @@ namespace Pokedex.Components.UI
 
         private string GetPokemonImage(GraphQLPokemonSpeciesDTO pokemonSpecies)
         {
-            var imageUrl = pokemonSpecies?.Pokemons?.FirstOrDefault()?.PokemonSprites?.FirstOrDefault()?.Sprites?.Other?.OfficialArtwork?.FrontDefault;
-            return !string.IsNullOrEmpty(imageUrl) ? imageUrl : "/images/egg.png";
+            return pokemonSpecies?.Pokemons?.FirstOrDefault()?.PokemonSprites?.FirstOrDefault()?.Sprites?.Other?.OfficialArtwork?.FrontDefault
+                   ?? "/images/egg.png";
         }
 
         public static string ParseGenerationName(string generation)
         {
-            if (string.IsNullOrWhiteSpace(generation))
-                return string.Empty;
+            if (string.IsNullOrWhiteSpace(generation)) return string.Empty;
 
             var parts = generation.Split('-');
-            if (parts.Length != 2)
-                return generation; 
+            if (parts.Length == 2)
+            {
+                string romanNumeral = parts[1].ToUpper();
+                return $"Generation {romanNumeral}";
+            }
 
-            string romanNumeral = parts[1].ToUpper(); 
-            return $"Generation {romanNumeral}";
+            return generation;
         }
     }
 }
