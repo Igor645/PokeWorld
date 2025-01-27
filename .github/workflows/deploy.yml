@@ -34,7 +34,9 @@ jobs:
 
     - name: Install Scalingo CLI
       run: |
-        curl -L https://cli.scalingo.io/install | sh
+        curl -L https://github.com/Scalingo/cli/releases/download/v1.28.0/scalingo_1.34.0_linux_amd64.tar.gz -o scalingo.tar.gz
+        tar -xvzf scalingo.tar.gz -C $HOME/.scalingo/bin
+        chmod +x $HOME/.scalingo/bin/scalingo
         echo "$HOME/.scalingo/bin" >> $GITHUB_PATH
 
     - name: Replace docker-compose.yml in PokeAPI
