@@ -16,11 +16,17 @@ jobs:
       HASURA_GRAPHQL_ADMIN_SECRET: ${{ secrets.HASURA_GRAPHQL_ADMIN_SECRET }}
 
     steps:
+    - name: Debug Secrets
+      run: |
+        echo "Admin Secret is: ${HASURA_GRAPHQL_ADMIN_SECRET:+Set}"
+      env:
+        HASURA_GRAPHQL_ADMIN_SECRET: ${{ secrets.HASURA_GRAPHQL_ADMIN_SECRET }}
+
     - name: Checkout Repository with Submodules
       uses: actions/checkout@v3
       with:
         submodules: recursive
-        
+
     - name: Install Hasura CLI
       run: |
         curl -L https://github.com/hasura/graphql-engine/raw/stable/cli/get.sh | bash
