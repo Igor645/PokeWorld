@@ -54,8 +54,8 @@ jobs:
       run: make hasura-apply
       working-directory: ./PokeAPI
       
-  - name: Log in to Railway
-      run: railway login --token ${{ secrets.RAILWAY_TOKEN }}
+    - name: Log in to Railway
+        run: railway login --token ${{ secrets.RAILWAY_TOKEN }}
 
     - name: Deploy to Railway
       run: |
