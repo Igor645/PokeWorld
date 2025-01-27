@@ -22,7 +22,7 @@ namespace Pokedex.Components.Pages
         private List<GraphQLPokemonSpeciesDTO> FilteredPokemonSpecies { get; set; } = new();
         private Timer debounceTimer;
         private string searchQuery = string.Empty;
-        private List<ItemGraphQLDto> Pokeballs { get; set; } = new();
+        private List<GraphQLItemDTO> Pokeballs { get; set; } = new();
         private bool isLoading = false;
         private bool allDataLoaded = false;
         private int currentPage = 1;
