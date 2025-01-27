@@ -32,10 +32,6 @@ jobs:
         curl -L https://github.com/hasura/graphql-engine/raw/stable/cli/get.sh | bash
       shell: bash
 
-    - name: Replace docker-compose.yml in PokeAPI
-      run: |
-        cp ./docker-compose.yml ./PokeAPI/docker-compose.yml
-
     - name: Run make install
       run: make install
       working-directory: ./PokeAPI
