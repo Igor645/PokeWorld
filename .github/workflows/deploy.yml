@@ -32,6 +32,11 @@ jobs:
         curl -L https://github.com/hasura/graphql-engine/raw/stable/cli/get.sh | bash
       shell: bash
 
+    - name: Install Scalingo CLI
+      run: |
+        curl -L https://cli.scalingo.io/install | sh
+        echo "$HOME/.scalingo/bin" >> $GITHUB_PATH
+
     - name: Replace docker-compose.yml in PokeAPI
       run: |
         cp ./docker-compose.yml ./PokeAPI/docker-compose.yml
