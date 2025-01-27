@@ -54,10 +54,10 @@ jobs:
       run: make hasura-apply
       working-directory: ./PokeAPI
       
-    - name: Log in to Railway
-      run: railway login --token ${{ secrets.RAILWAY_TOKEN }}
+    - name: Log in to Docker Hub
+      run: echo ${{ secrets.DOCKER_HUB_PASSWORD }} | docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} --password-stdin
 
-    - name: Deploy to Railway
+    - name: Tag and Push Container
       run: |
-        railway up --detach
-
+        docker tag pokeapi-app:latest ${{ secrets.DOCKER_HUB_USERNAME }}/pokeapi-app:latest
+        docker push ${{ secrets.DOCKER_HUB_USERNAME }}/pokeapi-app:latest
