@@ -44,12 +44,13 @@ jobs:
       run: make setup
       working-directory: ./PokeAPI
 
+    - name: Run make docker-setup
+      run: make docker-setup
+      working-directory: ./PokeAPI
+
     - name: Run make hasura-apply
       env:
         HASURA_GRAPHQL_ADMIN_SECRET: ${{ secrets.HASURA_GRAPHQL_ADMIN_SECRET }}
       run: make hasura-apply
       working-directory: ./PokeAPI
 
-    - name: Run make docker-setup
-      run: make docker-setup
-      working-directory: ./PokeAPI
