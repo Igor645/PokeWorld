@@ -11,7 +11,7 @@ public class GraphQLService
     {
         var options = new JsonSerializerOptions
         {
-            PropertyNameCaseInsensitive = true // Ignore case when mapping properties
+            PropertyNameCaseInsensitive = true
         };
 
         _graphqlEndpoint = graphqlEndpoint;
@@ -26,13 +26,10 @@ public class GraphQLService
             Variables = variables
         };
 
-        // Send the query and fetch the raw HTTP response
         var httpResponse = await _client.HttpClient.PostAsJsonAsync(_graphqlEndpoint, request);
 
-        // Ensure the request succeeded
         httpResponse.EnsureSuccessStatusCode();
 
-        // Read and return the raw response content as a string
         var rawResponse = await httpResponse.Content.ReadAsStringAsync();
         return rawResponse;
     }
@@ -45,11 +42,9 @@ public class GraphQLService
             Variables = variables
         };
 
-        // Log the raw response for debugging purposes
         var rawResponse = await ExecuteQueryRawAsync(query, variables);
         Console.WriteLine($"Raw GraphQL Response: {rawResponse}");
 
-        // Send the query and deserialize the response
         var response = await _client.SendQueryAsync<T>(request);
         return response.Data;
     }

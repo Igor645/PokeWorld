@@ -7,7 +7,6 @@ namespace Pokedex.Model
         [JsonPropertyName("sprites")]
         public PokemonSpritesDto Sprites { get; set; }
 
-        // Default Constructor
         public PokemonSpriteWrapperDto()
         {
             Sprites = new PokemonSpritesDto();

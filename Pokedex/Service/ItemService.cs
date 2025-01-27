@@ -18,7 +18,6 @@ namespace Pokedex.Service
 
         public async Task<ItemResponseDto> GetAllPokeBallsAsync()
         {
-            // Define the GraphQL query
             string query = @"            
             query ItemImages {
               pokemon_v2_item(where: {pokemon_v2_itemcategory: {name: {_in: [""standard-balls"", ""special-balls""]}}}) {
@@ -30,7 +29,6 @@ namespace Pokedex.Service
               }
             }";
 
-            // Execute the query using GraphQLService
             var response = await _graphQLService.ExecuteQueryAsync<ItemResponseDto>(query, null);
 
             return response;

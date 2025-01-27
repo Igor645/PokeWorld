@@ -14,7 +14,6 @@ function addScrollListener(dotNetHelper, selector) {
 
         if (!ticking) {
             window.requestAnimationFrame(() => {
-                // Call Blazor method to update button visibility
                 const showButton = currentScrollPosition > 300;
                 dotNetHelper.invokeMethodAsync("HandleScrollChanged", currentScrollPosition, showButton)
                     .catch(err => console.error("Error calling OnScrollChanged:", err));

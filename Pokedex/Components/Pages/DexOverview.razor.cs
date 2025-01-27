@@ -24,16 +24,11 @@ namespace Pokedex.Components.Pages
         private string searchQuery = string.Empty;
         private List<GraphQLItemDTO> Pokeballs { get; set; } = new();
         private bool isLoading = false;
-        private bool allDataLoaded = false;
-        private int currentPage = 1;
-        private const int PageSize = 30;
         private int count = 0;
-        private string selectedPokemon = string.Empty;
         private bool showDropdown = false;
         private ElementReference searchContainerRef;
         private CancellationTokenSource _cancellationTokenSource;
 
-        private int Offset => (currentPage - 1) * PageSize;
         private bool showScrollToTopButton = false;
         private bool listenersInitialized = false;
         public GraphQLPokemonSpeciesDTO loadingSpecies = new GraphQLPokemonSpeciesDTO();
@@ -75,7 +70,6 @@ namespace Pokedex.Components.Pages
         {
             var speciesResponse = await PokemonService.GetPokemonSpeciesPaginatedGraphQL(10, 0);
 
-            // Example: Accessing results
             foreach (var species in speciesResponse.PokemonSpecies)
             {
                 Console.WriteLine($"Species ID: {species.Id}, Name: {species.SpeciesNames.FirstOrDefault()?.Name}");
@@ -94,16 +88,14 @@ namespace Pokedex.Components.Pages
 
         private async ValueTask<ItemsProviderResult<SpeciesRowDto>> LoadPokemonSpeciesAsync(ItemsProviderRequest request)
         {
-            int offset = request.StartIndex * 6; // Start index for pagination
-            int pageSize = request.Count * 6;   // Fetch enough items for `Count` rows, each row having 6 Pokémon
+            int offset = request.StartIndex * 6;
+            int pageSize = request.Count * 6;
 
             var response = await PokemonService.GetPokemonSpeciesPaginatedGraphQL(pageSize, offset);
 
             count = response.Aggregate.Aggregate.Count;
             StateHasChanged();
-            // Create rows with unique RowId and grouped Pokémon species
             var rows = response.PokemonSpecies
-                // Assuming each Pokémon has a unique Id
                 .Select((pokemon, index) => new { pokemon, RowId = (index + offset) / 6 })
                 .GroupBy(x => x.RowId)
                 .Select(g => new SpeciesRowDto
@@ -135,21 +127,18 @@ namespace Pokedex.Components.Pages
         {
             searchQuery = e.Value?.ToString() ?? string.Empty;
 
-            // Cancel the previous cancellation token and create a new one
             _cancellationTokenSource?.Cancel();
-            _cancellationTokenSource?.Dispose(); // Dispose of old token source
+            _cancellationTokenSource?.Dispose();
             _cancellationTokenSource = new CancellationTokenSource();
 
-            // Clear filtered results for immediate UI feedback
             FilteredPokemonSpecies.Clear();
             StateHasChanged();
 
-            // Debounce logic using Task.Delay
-            debounceTimer?.Dispose(); // Cancel any previous debounce timer
+            debounceTimer?.Dispose();
             debounceTimer = new Timer(async _ =>
             {
                 await InvokeAsync(() => FilterPokemonSpeciesAsync(_cancellationTokenSource.Token));
-            }, null, 200, Timeout.Infinite); // 300ms debounce delay
+            }, null, 200, Timeout.Infinite);
         }
 
         private async Task FilterPokemonSpeciesAsync(CancellationToken cancellationToken)
@@ -172,7 +161,7 @@ namespace Pokedex.Components.Pages
 
         private void SelectPokemon(string name)
         {
-            selectedPokemon = name;
+            Console.WriteLine(name);
             showDropdown = false;
         }
 

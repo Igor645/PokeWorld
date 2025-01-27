@@ -5,7 +5,7 @@
     const maxPokeballs = 10;
     let animationFrameId;
     let timeoutId;
-    let lastDirectionClockwise = true; // To alternate directions
+    let lastDirectionClockwise = true;
 
     console.log("start");
 
@@ -46,8 +46,8 @@
         const img = createPokeballElement(pokeball);
         const size = getRandomInRange(120, 170);
         const speed = getRandomInRange(0.2, 0.4);
-        const rotationSpeed = getRandomInRange(10, 40) * (lastDirectionClockwise ? 1 : -1); // Alternate direction
-        lastDirectionClockwise = !lastDirectionClockwise; // Flip the direction for the next pokeball
+        const rotationSpeed = getRandomInRange(10, 40) * (lastDirectionClockwise ? 1 : -1);
+        lastDirectionClockwise = !lastDirectionClockwise;
 
         img.style.width = `${size}px`;
         img.style.height = `${size}px`;
@@ -119,6 +119,6 @@ function initializeClickOutsideHandler(container, dotNetHelper) {
         if (!isMouseDownInside && !container.contains(event.target)) {
             dotNetHelper.invokeMethodAsync("HideDropdown");
         }
-        isMouseDownInside = false; // Reset after every mouseup
+        isMouseDownInside = false;
     });
 }

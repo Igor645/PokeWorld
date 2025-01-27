@@ -2,7 +2,7 @@
 {
     public class SpeciesRowDto
     {
-        public int RowId { get; set; } // Unique identifier for the row
+        public int RowId { get; set; }
         public List<GraphQLPokemonSpeciesDTO> PokemonSpecies { get; set; } = new();
 
     }

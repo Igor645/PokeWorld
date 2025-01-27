@@ -1,20 +1,26 @@
 ﻿<div class="pokemonCard">
-    <div class="pokemonCard__id">Nr. @(PokemonSpecies.Id != 0 ? PokemonSpecies.Id.ToString() : "-")</div>
-    <div class="pokemonCard__img__container">
-        <img class="pokemonCard__image initial-load"
-             src="@GetPokemonImage(PokemonSpecies)"
-             alt="Default Pokemon"
-             onerror="handleImageError(this)" />
-        <img class="pokemonCard__bg" src="/images/pokeball-for-card.svg" />
+    <div class="pokemonCard__id">
+        Nr. @(PokemonSpecies.Id != 0 ? PokemonSpecies.Id.ToString() : "-")
     </div>
+
+    <div class="pokemonCard__img__container">
+        <img 
+            class="pokemonCard__image initial-load"
+            src="@GetPokemonImage(PokemonSpecies)"
+            alt="Default Pokemon"
+            onerror="handleImageError(this)" 
+        />
+        <img 
+            class="pokemonCard__bg" 
+            src="/images/pokeball-for-card.svg" 
+            alt="Pokeball Background" 
+        />
+    </div>
+
     <div class="pokemonCard__text__container">
         <div class="pokemonCard__text">
             @{
-                var englishName = PokemonSpecies?.SpeciesNames != null && PokemonSpecies.SpeciesNames.Any()
-                ? PokemonSpecies.SpeciesNames
-                .FirstOrDefault(x => x.Language?.Name == "en")?.Name
-                : null;
-
+                var englishName = PokemonSpecies?.SpeciesNames?.FirstOrDefault(x => x.Language?.Name == "en")?.Name;
             }
             @if (!string.IsNullOrEmpty(englishName))
             {
@@ -25,6 +31,7 @@
                 <span>Loading...</span>
             }
         </div>
+
         <div class="pokemonCard__text pokemonCard__generation">
             @if (!string.IsNullOrEmpty(PokemonSpecies.Generation?.Name))
             {
@@ -39,16 +46,15 @@
 </div>
 
 <script>
-        function handleImageError(img) {
+    function handleImageError(img) {
         img.src = '/images/egg.png';
         img.classList.add('shaking_egg');
     }
 
     function removeInitialLoad() {
-        document.querySelectorAll('.pokemonCard__image.initial-load').forEach(img => {
-            setTimeout(() => {
-                img.classList.remove('initial-load');
-            }, 600);
+        const images = document.querySelectorAll('.pokemonCard__image.initial-load');
+        images.forEach(img => {
+            setTimeout(() => img.classList.remove('initial-load'), 600);
         });
     }
 </script>
