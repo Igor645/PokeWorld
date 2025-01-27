@@ -66,7 +66,7 @@ namespace Pokedex.Service
 
             var response = await _graphQLService.ExecuteQueryAsync<PokemonSpeciesResponseDto>(query, variables);
 
-            await Task.Delay(250);
+            await Task.Delay(100);
 
             return response;
         }
