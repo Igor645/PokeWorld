@@ -32,11 +32,6 @@ jobs:
         curl -L https://github.com/hasura/graphql-engine/raw/stable/cli/get.sh | bash
       shell: bash
 
-    - name: Install Scalingo CLI
-      run: |
-        curl -O https://cli-dl.scalingo.com/install && bash install
-        echo "$HOME/.scalingo/bin" >> $GITHUB_PATH
-
     - name: Replace docker-compose.yml in PokeAPI
       run: |
         cp ./docker-compose.yml ./PokeAPI/docker-compose.yml
@@ -62,13 +57,8 @@ jobs:
     - name: Log in to Docker Hub
       run: echo ${{ secrets.DOCKER_HUB_PASSWORD }} | docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} --password-stdin
 
-    - name: Tag and Push Container
+    - name: Tag and Push BlazorApp Container
       run: |
         docker tag pokeapi-pokedex:latest ${{ secrets.DOCKER_HUB_USERNAME }}/pokeapi-pokedex:latest
         docker push ${{ secrets.DOCKER_HUB_USERNAME }}/pokeapi-pokedex:latest
-
-    - name: Deploy to Scalingo
-      run: |
-        scalingo login --api-token ${{ secrets.SCALINGO_TOKEN }}
-        scalingo deploy -a your-app ./PokeAPI/docker-compose.yml
 
