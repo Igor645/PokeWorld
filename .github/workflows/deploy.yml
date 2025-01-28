@@ -17,17 +17,17 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Read .NET Version
-            id: get-dotnet-version
-            run: |
-              if [ -f global.json ]; then
-                version=$(jq -r '.sdk.version' global.json)
-              elif [ -f ./Pokedex/Pokedex.csproj ]; then
-                version=$(grep -oPm1 "(?<=<TargetFramework>)[^<]+" ./Pokedex/Pokedex.csproj | sed 's/net//')
-              else
-                echo "Unable to determine .NET version."
-                exit 1
-              fi
-              echo "NET_VERSION=$version" >> $GITHUB_ENV
+        id: get-dotnet-version
+        run: |
+          if [ -f global.json ]; then
+            version=$(jq -r '.sdk.version' global.json)
+          elif [ -f ./Pokedex/Pokedex.csproj ]; then
+            version=$(grep -oPm1 "(?<=<TargetFramework>)[^<]+" ./Pokedex/Pokedex.csproj | sed 's/net//')
+          else
+            echo "Unable to determine .NET version."
+            exit 1
+          fi
+          echo "NET_VERSION=$version" >> $GITHUB_ENV
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v3
