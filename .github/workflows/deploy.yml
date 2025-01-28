@@ -9,6 +9,39 @@ on:
       - master
 
 jobs:
+  check-blazor-build:
+      runs-on: ubuntu-latest
+
+      steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Read .NET Version
+            id: get-dotnet-version
+            run: |
+              if [ -f global.json ]; then
+                version=$(jq -r '.sdk.version' global.json)
+              elif [ -f ./Pokedex/Pokedex.csproj ]; then
+                version=$(grep -oPm1 "(?<=<TargetFramework>)[^<]+" ./Pokedex/Pokedex.csproj | sed 's/net//')
+              else
+                echo "Unable to determine .NET version."
+                exit 1
+              fi
+              echo "NET_VERSION=$version" >> $GITHUB_ENV
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: ${{ env.NET_VERSION }}
+
+      - name: Restore Dependencies
+        working-directory: ./Pokedex
+        run: dotnet restore
+
+      - name: Build Blazor App
+        working-directory: ./Pokedex
+        run: dotnet build --configuration Release
+
   deploy:
     runs-on: ubuntu-latest
 
