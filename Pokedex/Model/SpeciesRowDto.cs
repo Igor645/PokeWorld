@@ -3,7 +3,7 @@
     public class SpeciesRowDto
     {
         public int RowId { get; set; }
-        public List<GraphQLPokemonSpeciesDTO> PokemonSpecies { get; set; } = new();
+        public List<PokemonSpeciesDTO> PokemonSpecies { get; set; } = new();
 
     }
 }

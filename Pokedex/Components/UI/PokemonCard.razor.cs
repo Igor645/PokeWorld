@@ -10,7 +10,7 @@ namespace Pokedex.Components.UI
     public partial class PokemonCard : ComponentBase
     {
         [Parameter]
-        public GraphQLPokemonSpeciesDTO PokemonSpecies { get; set; }
+        public PokemonSpeciesDTO PokemonSpecies { get; set; }
 
         [Inject]
         private IOptions<ApiPaths> ApiPaths { get; set; }
@@ -26,7 +26,7 @@ namespace Pokedex.Components.UI
             }
         }
 
-        private string GetPokemonImage(GraphQLPokemonSpeciesDTO pokemonSpecies)
+        private string GetPokemonImage(PokemonSpeciesDTO pokemonSpecies)
         {
             return pokemonSpecies?.Pokemons?.FirstOrDefault()?.PokemonSprites?.FirstOrDefault()?.Sprites?.Other?.OfficialArtwork?.FrontDefault
                    ?? "/images/egg.png";

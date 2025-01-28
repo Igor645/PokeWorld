@@ -8,14 +8,14 @@ namespace Pokedex.Model
         public int Id { get; set; }
 
         [JsonPropertyName("pokemon_v2_pokemonsprites")]
-        public List<PokemonSpriteWrapperDto> PokemonSprites { get; set; }
+        public List<SpriteWrapperDTO<PokemonSpritesDto>> PokemonSprites { get; set; }
 
         public PokemonDto()
         {
             Id = 0;
-            PokemonSprites = new List<PokemonSpriteWrapperDto>
+            PokemonSprites = new List<SpriteWrapperDTO<PokemonSpritesDto>>
             {
-                new PokemonSpriteWrapperDto()
+                new SpriteWrapperDTO<PokemonSpritesDto>()
             };
         }
     }

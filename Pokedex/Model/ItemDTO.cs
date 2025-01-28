@@ -2,7 +2,7 @@
 
 namespace Pokedex.Model
 {
-    public class GraphQLItemDTO
+    public class ItemDTO
     {
         [JsonPropertyName("id")]
         public int Id { get; set; }
@@ -11,6 +11,6 @@ namespace Pokedex.Model
         public string Name { get; set; }
 
         [JsonPropertyName("pokemon_v2_itemsprites")]
-        public List<ItemSpriteWrapperDto> ItemSprites { get; set; }
+        public List<SpriteWrapperDTO<ItemSpriteDto>> ItemSprites { get; set; }
     }
 }

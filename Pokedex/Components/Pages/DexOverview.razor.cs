@@ -22,11 +22,11 @@ namespace Pokedex.Components.Pages
         [Inject] private IJSRuntime JSRuntime { get; set; }
 
         private DotNetObjectReference<DexOverview> _dotNetHelper;
-        private List<GraphQLPokemonSpeciesDTO> PokemonSpecies { get; set; } = new();
-        private List<GraphQLPokemonSpeciesDTO> FilteredPokemonSpecies { get; set; } = new();
+        private List<PokemonSpeciesDTO> PokemonSpecies { get; set; } = new();
+        private List<PokemonSpeciesDTO> FilteredPokemonSpecies { get; set; } = new();
         private Timer debounceTimer;
         private string searchQuery = string.Empty;
-        private List<GraphQLItemDTO> Pokeballs { get; set; } = new();
+        private List<ItemDTO> Pokeballs { get; set; } = new();
         private bool isLoading;
         private int count;
         private bool showDropdown;
@@ -34,7 +34,7 @@ namespace Pokedex.Components.Pages
         private CancellationTokenSource _cancellationTokenSource;
         private bool showScrollToTopButton;
         private bool listenersInitialized;
-        private GraphQLPokemonSpeciesDTO loadingSpecies = new();
+        private PokemonSpeciesDTO loadingSpecies = new();
 
         protected override async Task OnInitializedAsync()
         {

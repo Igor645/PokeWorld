@@ -2,7 +2,7 @@
 
 namespace Pokedex.Model
 {
-    public class FlattenedPokemonSpritesDto
+    public class SpriteDto
     {
         [JsonPropertyName("front_default")]
         public string FrontDefault { get; set; }
@@ -28,7 +28,7 @@ namespace Pokedex.Model
         [JsonPropertyName("back_shiny_female")]
         public string BackShinyFemale { get; set; }
 
-        public FlattenedPokemonSpritesDto()
+        public SpriteDto()
         {
             FrontDefault = "/images/invalid-image.jpg";
         }

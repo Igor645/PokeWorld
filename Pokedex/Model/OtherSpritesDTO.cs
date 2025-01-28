@@ -5,17 +5,17 @@ namespace Pokedex.Model
     public class OtherSpritesDto
     {
         [JsonPropertyName("official-artwork")]
-        public FlattenedPokemonSpritesDto OfficialArtwork { get; set; }
+        public SpriteDto OfficialArtwork { get; set; }
 
         [JsonPropertyName("dream_world")]
-        public FlattenedPokemonSpritesDto DreamWorld { get; set; }
+        public SpriteDto DreamWorld { get; set; }
 
         [JsonPropertyName("home")]
-        public FlattenedPokemonSpritesDto Home { get; set; }
+        public SpriteDto Home { get; set; }
 
         public OtherSpritesDto()
         {
-            OfficialArtwork = new FlattenedPokemonSpritesDto();
+            OfficialArtwork = new SpriteDto();
         }
     }
 }

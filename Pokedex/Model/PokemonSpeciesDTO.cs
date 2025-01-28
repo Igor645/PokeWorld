@@ -2,7 +2,7 @@
 
 namespace Pokedex.Model
 {
-    public class GraphQLPokemonSpeciesDTO
+    public class PokemonSpeciesDTO
     {
         [JsonPropertyName("id")]
         public int Id { get; set; }
@@ -19,7 +19,7 @@ namespace Pokedex.Model
         [JsonPropertyName("pokemon_v2_generation")]
         public GenerationDto Generation { get; set; }
 
-        public GraphQLPokemonSpeciesDTO()
+        public PokemonSpeciesDTO()
         {
             Id = 0;
             Pokemons = new List<PokemonDto>
