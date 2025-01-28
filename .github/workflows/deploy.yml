@@ -43,6 +43,7 @@ jobs:
         run: dotnet build --configuration Release
 
   deploy:
+    needs: check-blazor-build
     runs-on: ubuntu-latest
 
     env:
