@@ -18,6 +18,9 @@ namespace Pokedex.Components.UI
         [Inject]
         private IJSRuntime JSRuntime { get; set; }
 
+        [Inject]
+        private NavigationManager NavigationManager { get; set; } = default!;
+
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             if (firstRender)
@@ -44,6 +47,11 @@ namespace Pokedex.Components.UI
             }
 
             return generation;
+        }
+
+        private void NavigateToPokemonDetails()
+        {
+            NavigationManager.NavigateTo($"/pokemon/{PokemonSpecies.Id}");
         }
     }
 }

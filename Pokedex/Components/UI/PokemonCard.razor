@@ -1,4 +1,4 @@
-﻿<div class="pokemonCard">
+﻿<div class="pokemonCard" @onclick="NavigateToPokemonDetails">
     <div class="pokemonCard__id">
         Nr. @(PokemonSpecies.Id != 0 ? PokemonSpecies.Id.ToString() : "-")
     </div>

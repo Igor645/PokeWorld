@@ -1,7 +1,7 @@
-let lastKnownScrollPosition = 0;
-let ticking = false;
 
 function addScrollListener(dotNetHelper, selector) {
+    let lastKnownScrollPosition = 0;
+    let ticking = false;
     const contentElement = document.querySelector(selector);
 
     if (!contentElement) {
@@ -53,7 +53,3 @@ function toggleScrollToTopButton(show) {
         }
     }
 }
-
-
-window.addScrollListener = addScrollListener;
-window.scrollToTop = scrollToTop;
