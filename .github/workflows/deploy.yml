@@ -29,10 +29,10 @@ jobs:
               fi
               echo "NET_VERSION=$version" >> $GITHUB_ENV
 
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v3
-      with:
-        dotnet-version: ${{ env.NET_VERSION }}
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: ${{ env.NET_VERSION }}
 
       - name: Restore Dependencies
         working-directory: ./Pokedex
