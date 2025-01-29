@@ -1,11 +1,4 @@
 ---
-name: Feature request
-about: Suggest an idea for this project
-title: ''
-labels: ''
-assignees: ''
----
----
 name: "Implementation Task"
 about: "Template for new implementation tasks"
 title: "[Feature] - "
