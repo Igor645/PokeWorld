@@ -1,63 +1,37 @@
-name: "💡 Feature Request"
-description: Create a new ticket for a new feature request
-title: "💡 [REQUEST] - <title>"
-labels: [
-  "question"
-]
-body:
-  - type: input
-    id: start_date
-    attributes:
-      label: "Start Date"
-      description: Start of development
-      placeholder: "month/day/year"
-    validations:
-      required: false
-  - type: textarea
-    id: implementation_pr
-    attributes:
-      label: "Implementation PR"
-      description: Pull request used
-      placeholder: "#Pull Request ID"
-    validations:
-      required: false
-  - type: textarea
-    id: reference_issues
-    attributes:
-      label: "Reference Issues"
-      description: Common issues
-      placeholder: "#Issues IDs"
-    validations:
-      required: false
-  - type: textarea
-    id: summary
-    attributes:
-      label: "Summary"
-      description: Provide a brief explanation of the feature
-      placeholder: Describe in a few lines your feature request
-    validations:
-      required: true
-  - type: textarea
-    id: basic_example
-    attributes:
-      label: "Basic Example"
-      description: Indicate here some basic examples of your feature.
-      placeholder: A few specific words about your feature request.
-    validations:
-      required: true
-  - type: textarea
-    id: drawbacks
-    attributes:
-      label: "Drawbacks"
-      description: What are the drawbacks/impacts of your feature request ?
-      placeholder: Identify the drawbacks and impacts while being neutral on your feature request
-    validations:
-      required: true
-  - type: textarea
-    id: unresolved_question
-    attributes:
-      label: "Unresolved questions"
-      description: What questions still remain unresolved ?
-      placeholder: Identify any unresolved issues.
-    validations:
-      required: false
+@@ -0,0 +1,46 @@
+---
+name: Feature request
+about: Suggest an idea for this project
+title: ''
+labels: ''
+assignees: ''
+---
+---
+name: "Implementation Task"
+about: "Template for new implementation tasks"
+title: "[Feature] - "
+labels: ["implementation", "to-do"]
+assignees: ""
+---
+## **📌 Task: [Short Descriptive Title]**
+### **🔹 Description**
+_A clear and concise explanation of what needs to be implemented._
+### **🎯 Goals**
+- [ ] Clearly define the expected outcome
+- [ ] List measurable objectives
+- [ ] Ensure alignment with the project's overall goals
+### **📋 Steps to Implement**
+1. [ ] Step 1: Describe the first action
+2. [ ] Step 2: Next step in the process
+3. [ ] Step 3: Final step before completion
+### **✅ Acceptance Criteria**
+- [ ] Feature/Functionality works as expected
+- [ ] Passes relevant tests
+- [ ] Meets design/UI requirements (if applicable)
+- [ ] No major performance or security concerns
+### **📂 Related Issues/Dependencies**
+🔗 _Link to any related issues, dependencies, or blockers._
+### **🛠️ Technical Notes**
+_Provide details on implementation approaches, potential pitfalls, or important considerations._
+### **🚀 Additional Context**
+_Add screenshots, links, or anything that helps clarify the task._
