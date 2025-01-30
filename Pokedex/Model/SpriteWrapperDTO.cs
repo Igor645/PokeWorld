@@ -2,12 +2,12 @@
 
 namespace Pokedex.Model
 {
-    public class SpriteWrapperDTO<T> where T : new()
+    public class SpriteWrapperDto<T> where T : new()
     {
         [JsonPropertyName("sprites")]
         public T Sprites { get; set; } = default!;
 
-        public SpriteWrapperDTO()
+        public SpriteWrapperDto()
         {
             Sprites = new T();
         }

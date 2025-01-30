@@ -1,24 +1,17 @@
-﻿@page "/pokemon/{speciesId:int}"
-
-@inject NavigationManager NavigationManager
-@inject HttpClient Http
+﻿@page "/pokemon/{speciesId:int?}"
+@page "/pokemon/{speciesName}"
 
 <h1>Pokémon Details</h1>
 
-@if (pokemonDetails == null)
+@if (pokemonSpeciesDetails == null)
 {
     <p>Loading Pokémon details...</p>
 }
 else
 {
     <div>
-        <h2>@pokemonDetails.Name</h2>
-        <p><strong>Type:</strong> @string.Join(", ", pokemonDetails.Types)</p>
-        <p><strong>Description:</strong> @pokemonDetails.Description</p>
-        <img src="@pokemonDetails.ImageUrl" alt="@pokemonDetails.Name" style="width: 200px;" />
+        <h2>@pokemonSpeciesDetails.SpeciesNames.First(x => x.Language.Name == "en").Name</h2>
+        <p><strong>Description:</strong> @pokemonSpeciesDetails.FlavorTexts.First(x => x.Language.Name == "en" && x.Version.Name == "sun").FlavorText</p>
+        <img src="@GetPokemonImage(selectedPokemon)" alt="@selectedPokemon.Name" style="width: 200px;" />
     </div>
-}
-
-@code {
-   
 }

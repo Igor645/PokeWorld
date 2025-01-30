@@ -2,13 +2,13 @@
 
 namespace Pokedex.Model
 {
-    public class PokemonSpeciesDTO
+    public class PokemonSpeciesDto
     {
         [JsonPropertyName("id")]
         public int Id { get; set; }
 
         [JsonPropertyName("name")]
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
 
         [JsonPropertyName("pokemon_v2_pokemons")]
         public List<PokemonDto> Pokemons { get; set; }
@@ -19,13 +19,20 @@ namespace Pokedex.Model
         [JsonPropertyName("pokemon_v2_generation")]
         public GenerationDto Generation { get; set; }
 
-        public PokemonSpeciesDTO()
+        [JsonPropertyName("pokemon_v2_pokemonsprites")]
+        public PokemonSpritesDto? Sprites { get; set; }
+
+        [JsonPropertyName("pokemon_v2_pokemonspeciesflavortexts")]
+        public List<FlavorTextDto> FlavorTexts { get; set; }
+
+        public PokemonSpeciesDto()
         {
             Id = 0;
-            Pokemons = new List<PokemonDto>
-            {
-                new PokemonDto()
-            };
+            Name = string.Empty;
+            Pokemons = new List<PokemonDto>();
+            SpeciesNames = new List<SpeciesNameDto>();
+            Generation = new GenerationDto();
+            Sprites = null;
         }
     }
 }

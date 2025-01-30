@@ -23,8 +23,8 @@ namespace Pokedex.Components.Pages
         [Inject] private NavigationManager NavigationManager { get; set; } = default!;
 
         private DotNetObjectReference<DexOverview> _dotNetHelper;
-        private List<PokemonSpeciesDTO> PokemonSpecies { get; set; } = new();
-        private List<PokemonSpeciesDTO> FilteredPokemonSpecies { get; set; } = new();
+        private List<PokemonSpeciesDto> PokemonSpecies { get; set; } = new();
+        private List<PokemonSpeciesDto> FilteredPokemonSpecies { get; set; } = new();
         private Timer debounceTimer;
         private string searchQuery = string.Empty;
         private bool isLoading;
@@ -34,7 +34,7 @@ namespace Pokedex.Components.Pages
         private CancellationTokenSource _cancellationTokenSource;
         private bool showScrollToTopButton;
         private bool listenersInitialized;
-        private PokemonSpeciesDTO loadingSpecies = new();
+        private PokemonSpeciesDto loadingSpecies = new();
 
         protected override async Task OnInitializedAsync()
         {
