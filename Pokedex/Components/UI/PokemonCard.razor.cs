@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Options;
 using Microsoft.JSInterop;
 using Pokedex.Constants;
-using Pokedex.Helpers;
+using Pokedex.Extensions;
 using Pokedex.Model;
 using Pokedex.Utilities;
 
@@ -32,8 +32,8 @@ namespace Pokedex.Components.UI
 
         private string GetPokemonImage(PokemonSpeciesDto pokemonSpecies)
         {
-            return PokemonDetailHelper.GetPokemonImage(pokemonSpecies?.Pokemons?.FirstOrDefault())
-                   ?? "/images/egg.png";
+            return pokemonSpecies?.Pokemons?.FirstOrDefault().GetPokemonImage()
+                   ?? "/invalid/image.png";
         }
 
         public static string ParseGenerationName(string generation)
@@ -52,7 +52,7 @@ namespace Pokedex.Components.UI
 
         private void NavigateToPokemonDetails()
         {
-            NavigationManager.NavigateTo($"/pokemon/{PokemonSpecies.Id}");
+            NavigationManager.NavigateTo($"/pokemon/{PokemonSpecies.GetPokemonSpeciesNameByLanguage("en")}");
         }
     }
 }

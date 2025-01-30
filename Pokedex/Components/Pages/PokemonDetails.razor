@@ -1,8 +1,6 @@
 ﻿@page "/pokemon/{speciesId:int?}"
 @page "/pokemon/{speciesName}"
-@using Pokedex.Helpers;
-
-<h1>Pokémon Details</h1>
+@using Pokedex.Extensions;
 
 @if (pokemonSpeciesDetails == null)
 {
@@ -10,9 +8,18 @@
 }
 else
 {
-    <div>
-        <h2>@pokemonSpeciesDetails.SpeciesNames.First(x => x.Language.Name == "en").Name</h2>
-        <p><strong>Description:</strong> @pokemonSpeciesDetails.FlavorTexts.First(x => x.Language.Name == "en").FlavorText</p>
-        <img src="@PokemonDetailHelper.GetPokemonImage(selectedPokemon)" alt="@selectedPokemon.Name" style="width: 200px;" />
+    <div class="pokemon-main-view-container">
+        <div class="pokemon-main-view">
+            <div class="pokemon-main-view-left">
+                <h1>@pokemonSpeciesDetails.GetPokemonSpeciesNameByLanguage("en")</h1>
+                <div class="pokemon-dex-entry">@pokemonSpeciesDetails.GetPokemonSpeciesDexEntryByLanguageAndVersion("en", null)</div>
+            </div>
+            <div class="pokemon-main-view-right">
+                <img class="pokemon-detail-img" src="@selectedPokemon.GetPokemonImage()" alt="@pokemonSpeciesDetails.GetPokemonSpeciesNameByLanguage("en")" />
+                <img class="pokemonCard__bg detail"
+                     src="/images/pokeball-for-card.svg"
+                     alt="Pokeball Background" />
+            </div>
+        </div>
     </div>
 }

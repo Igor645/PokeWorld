@@ -1,0 +1,72 @@
+﻿@import 'variables.css';
+
+.pokemon-main-view-container {
+    display: flex;
+    flex-direction: column;
+    width: var(--general-width);
+    background-color: var(--background-color);
+    gap: 2rem;
+    padding: 1rem;
+    margin: 2rem auto;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 6px 12px rgba(0, 0, 0, 0.1);
+    animation: fadeIn 1s ease-in-out;
+}
+
+.pokemon-main-view{
+    display: flex;
+    width: 100%;
+    justify-content: space-evenly;
+}
+
+.pokemon-main-view-left {
+    display: flex;
+    flex-direction: column;
+    width: 60%;
+    color: var(--accent-text-color);
+}
+
+
+.pokemon-main-view-left > h1{
+    font-weight: 600;
+}
+
+.pokemon-main-view-right {
+    display: flex;
+    flex-direction: column;
+    width: 40%;
+    margin: 0 auto;
+    background-color: var(--glass-color);
+    border-radius: 30px;
+    position: relative;
+    box-shadow: inset 0 4px 10px rgba(0, 0, 0, 0.2),
+    inset 0 -4px 10px rgba(255, 255, 255, 0.2);
+}
+
+
+.pokemon-detail-img {
+    width: 100%;
+    filter: drop-shadow(0 4px 6px var(--pokemon-img-shadow-color));
+    z-index: 15;
+    position: relative;
+    will-change: transform;
+    transform: perspective(1000px);
+    transform: translateY(5px) scale(1);
+    transition: transform 0.5s ease;
+    animation: floatUpDownNoScaling 3s ease-in-out infinite;
+    animation-delay: 0.5s;
+}
+
+@keyframes floatUpDownNoScaling {
+    0%, 100% {
+        transform: translateY(5px);
+    }
+
+    50% {
+        transform: translateY(-5px);
+    }
+}
+
+.pokemonCard__bg.detail{
+    width: 120%;
+}

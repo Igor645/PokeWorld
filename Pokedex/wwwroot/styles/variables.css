@@ -21,4 +21,6 @@
     --input-focus-shadow-color: rgba(37, 140, 251, 0.5);
     --body-background-color: #cdd6fa;
     --seperator-color: rgba(38, 143, 255, 0.5);
+    --glass-color: rgba(38, 143, 255, 0.3);
+    --general-width: 85%;
 }

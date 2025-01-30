@@ -32,7 +32,6 @@ namespace Pokedex.Components.Pages
             }
 
             selectedPokemon = pokemonSpeciesDetails?.Pokemons.First(x => x.IsDefault = true);
-            var test = @pokemonSpeciesDetails.FlavorTexts.Where(x => x.Language.Name == "de" && x.Version.Name == "sun");
         }
     }
 }
