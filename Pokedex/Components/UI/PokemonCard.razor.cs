@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Options;
 using Microsoft.JSInterop;
 using Pokedex.Constants;
+using Pokedex.Helpers;
 using Pokedex.Model;
 using Pokedex.Utilities;
 
@@ -31,7 +32,7 @@ namespace Pokedex.Components.UI
 
         private string GetPokemonImage(PokemonSpeciesDto pokemonSpecies)
         {
-            return pokemonSpecies?.Pokemons?.FirstOrDefault()?.PokemonSprites?.FirstOrDefault()?.Sprites?.Other?.OfficialArtwork?.FrontDefault
+            return PokemonDetailHelper.GetPokemonImage(pokemonSpecies?.Pokemons?.FirstOrDefault())
                    ?? "/images/egg.png";
         }
 

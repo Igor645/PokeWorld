@@ -1,5 +1,6 @@
 ﻿@page "/pokemon/{speciesId:int?}"
 @page "/pokemon/{speciesName}"
+@using Pokedex.Helpers;
 
 <h1>Pokémon Details</h1>
 
@@ -11,7 +12,7 @@ else
 {
     <div>
         <h2>@pokemonSpeciesDetails.SpeciesNames.First(x => x.Language.Name == "en").Name</h2>
-        <p><strong>Description:</strong> @pokemonSpeciesDetails.FlavorTexts.First(x => x.Language.Name == "en" && x.Version.Name == "sun").FlavorText</p>
-        <img src="@GetPokemonImage(selectedPokemon)" alt="@selectedPokemon.Name" style="width: 200px;" />
+        <p><strong>Description:</strong> @pokemonSpeciesDetails.FlavorTexts.First(x => x.Language.Name == "en").FlavorText</p>
+        <img src="@PokemonDetailHelper.GetPokemonImage(selectedPokemon)" alt="@selectedPokemon.Name" style="width: 200px;" />
     </div>
 }

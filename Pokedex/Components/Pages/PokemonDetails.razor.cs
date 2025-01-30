@@ -34,10 +34,5 @@ namespace Pokedex.Components.Pages
             selectedPokemon = pokemonSpeciesDetails?.Pokemons.First(x => x.IsDefault = true);
             var test = @pokemonSpeciesDetails.FlavorTexts.Where(x => x.Language.Name == "de" && x.Version.Name == "sun");
         }
-
-        private string GetPokemonImage(PokemonDto pokemon)
-        {
-            return pokemon?.PokemonSprites?.FirstOrDefault()?.Sprites?.Other?.OfficialArtwork?.FrontDefault;
-        }
     }
 }
