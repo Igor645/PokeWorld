@@ -17,7 +17,7 @@
                 {
                     @foreach (var pokemon in FilteredPokemonSpecies)
                     {
-                        <div class="dropdown-item" @onclick="() => SelectPokemon(pokemon.Name)">
+                        <div class="dropdown-item" @onclick="() => SelectPokemon(pokemon.Id)">
                             <img src="@GetOfficialArtwork(pokemon.Id)"
                                  alt="@pokemon.Name"
                                  class="dropdown-item-image" />
@@ -67,3 +67,6 @@
 <button class="scroll-to-top hide" @onclick="ScrollToTopAsync">
     <span class="material-icons">keyboard_arrow_up</span>
 </button>
+
+<script src="scripts/scroll-to-top-button.js"></script>
+<script src="scripts/outside-click-handler.js"></script>

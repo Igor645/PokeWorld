@@ -93,20 +93,36 @@ input:focus {
     align-items: center;
     position: relative;
     z-index: 1;
-    background: linear-gradient(135deg, #1b6ec2, #155a9c); /* Gradient background */
-    color: white;
+    background: white; /* Gradient background */
+    color: black;
     height: 7vh;
     text-align: center;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-    .main-header h1 {
-        margin: 0;
-        margin-left: 1%;
-        font-size: 2rem;
-        font-family: "Exo 2", serif;
+.main-header h1 {
+    margin: 0;
+    margin-left: 1%;
+    font-size: 2rem;
+    font-family: "Exo 2", serif;
+    font-weight: 800;
+    color: var(--accent-text-color);
+}
+
+    .main-header h1:hover {
+        cursor: pointer;
+        transform: scale(1.05);
+        transition: transform 0.3s ease;
     }
 
+.main-header h1 a {
+    color: var(--accent-text-color)
+}
+
+* {
+    font-family: "Exo 2", serif;
+    color: var(--accent-text-color);
+}
 
 body {
     display: grid;
@@ -115,10 +131,10 @@ body {
     height: 100vh;
     position: relative;
     overflow: hidden;
-    background-image: url('images/background-wave.svg'); /* Add background image */
-    background-size: cover; /* Scale the image to cover the entire area */
-    background-repeat: no-repeat; /* Prevent the image from repeating */
-    background-position: center; /* Center the image */
+    background-image: url('images/background-wave.svg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
 }
 
 article {

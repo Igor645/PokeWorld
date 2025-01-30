@@ -1,4 +1,6 @@
-﻿<div class="pokemonCard">
+﻿@using Pokedex.Extensions;
+
+<div class="pokemonCard" @onclick="NavigateToPokemonDetails">
     <div class="pokemonCard__id">
         Nr. @(PokemonSpecies.Id != 0 ? PokemonSpecies.Id.ToString() : "-")
     </div>
@@ -7,7 +9,6 @@
         <img 
             class="pokemonCard__image initial-load"
             src="@GetPokemonImage(PokemonSpecies)"
-            alt="Default Pokemon"
             onerror="handleImageError(this)" 
         />
         <img 
@@ -20,7 +21,7 @@
     <div class="pokemonCard__text__container">
         <div class="pokemonCard__text">
             @{
-                var englishName = PokemonSpecies?.SpeciesNames?.FirstOrDefault(x => x.Language?.Name == "en")?.Name;
+                var englishName = PokemonSpecies?.GetPokemonSpeciesNameByLanguage("en");
             }
             @if (!string.IsNullOrEmpty(englishName))
             {

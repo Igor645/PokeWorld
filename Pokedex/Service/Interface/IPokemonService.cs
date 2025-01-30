@@ -6,5 +6,6 @@ namespace Pokedex.Service.Interface
     {
         Task<PokemonSpeciesResponseDto> GetPokemonSpeciesByPrefix(string prefix);
         Task<PokemonSpeciesResponseDto> GetPokemonSpeciesPaginatedGraphQL(int limit, int offset);
+        Task<PokemonSpeciesResponseDto> GetPokemonDetailsGraphQL(int? id = null, string? name = null);
     }
 }

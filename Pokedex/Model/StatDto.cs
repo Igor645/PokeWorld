@@ -2,12 +2,12 @@
 
 namespace Pokedex.Model
 {
-    public class LanguageDto
+    public class StatDto
     {
-        [JsonPropertyName("name")]
-        public string Name { get; set; }
-
         [JsonPropertyName("id")]
         public int Id { get; set; }
+
+        [JsonPropertyName("name")]
+        public string Name { get; set; } = string.Empty;
     }
 }

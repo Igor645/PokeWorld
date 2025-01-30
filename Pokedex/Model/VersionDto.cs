@@ -2,15 +2,12 @@
 
 namespace Pokedex.Model
 {
-    public class ItemDto
+    public class VersionDto
     {
         [JsonPropertyName("id")]
         public int Id { get; set; }
 
         [JsonPropertyName("name")]
         public string Name { get; set; }
-
-        [JsonPropertyName("pokemon_v2_itemsprites")]
-        public List<SpriteWrapperDto<ItemSpriteDto>> ItemSprites { get; set; }
     }
 }

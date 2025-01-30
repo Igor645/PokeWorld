@@ -7,16 +7,28 @@ namespace Pokedex.Model
         [JsonPropertyName("id")]
         public int Id { get; set; }
 
+        [JsonPropertyName("name")]
+        public string Name { get; set; } = string.Empty;
+
+        [JsonPropertyName("is_default")]
+        public bool IsDefault { get; set; }
+
         [JsonPropertyName("pokemon_v2_pokemonsprites")]
-        public List<SpriteWrapperDTO<PokemonSpritesDto>> PokemonSprites { get; set; }
+        public List<SpriteWrapperDto<PokemonSpritesDto>> PokemonSprites { get; set; }
+
+        [JsonPropertyName("pokemon_v2_pokemonstats")]
+        public List<PokemonStatDto> Stats { get; set; }
 
         public PokemonDto()
         {
             Id = 0;
-            PokemonSprites = new List<SpriteWrapperDTO<PokemonSpritesDto>>
+            Name = string.Empty;
+            IsDefault = true;
+            PokemonSprites = new List<SpriteWrapperDto<PokemonSpritesDto>>
             {
-                new SpriteWrapperDTO<PokemonSpritesDto>()
+                new SpriteWrapperDto<PokemonSpritesDto>()
             };
+            Stats = new List<PokemonStatDto>();
         }
     }
 }

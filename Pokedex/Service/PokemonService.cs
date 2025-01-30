@@ -1,13 +1,10 @@
 ﻿using AutoMapper;
 using Pokedex.Model;
 using Pokedex.Service.Interface;
-using System.Text.Json;
-using Newtonsoft.Json.Linq;
-using Pokedex.Constants;
+using Pokedex.Constants; // Import the queries
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
-using Pokedex.Utilities;
-using System.Threading.Tasks.Dataflow;
+using System.Text.Json;
 
 namespace Pokedex.Service
 {
@@ -29,34 +26,44 @@ namespace Pokedex.Service
             _graphQLService = graphQLService;
         }
 
+        public async Task<PokemonSpeciesResponseDto> GetPokemonDetailsGraphQL(int? id = null, string? name = null)
+        {
+            if (id == null && string.IsNullOrWhiteSpace(name))
+                throw new ArgumentException("Either 'id' or 'name' must be provided.");
+
+            string? formattedName = name != null
+                ? char.ToUpper(name[0]) + name.Substring(1).ToLower()
+                : null;
+
+            string query = GraphQLQueries.GetPokemonDetails;
+
+            string filter;
+            string variableType;
+            object variables;
+
+            if (id.HasValue)
+            {
+                filter = "id: { _eq: $value }";
+                variableType = "Int";
+                variables = new { value = id.Value };
+            }
+            else
+            {
+                filter = "pokemon_v2_pokemonspeciesnames: { name: { _eq: $value } }";
+                variableType = "String";
+                variables = new { value = formattedName };
+            }
+
+            query = query.Replace("{FILTER}", filter).Replace("{TYPE}", variableType);
+
+            var response = await _graphQLService.ExecuteQueryAsync<PokemonSpeciesResponseDto>(query, variables);
+
+            return response;
+        }
+
         public async Task<PokemonSpeciesResponseDto> GetPokemonSpeciesPaginatedGraphQL(int limit, int offset)
         {
-            string query = @"
-    query PokemonSpeciesOverview($limit: Int, $offset: Int) {
-      pokemon_v2_pokemonspecies(limit: $limit, offset: $offset, order_by: {id: asc}) {
-        pokemon_v2_pokemons(where: {is_default: {_eq: true}}) {
-          id
-          pokemon_v2_pokemonsprites {
-            sprites
-          }
-        }
-        id
-        pokemon_v2_pokemonspeciesnames(where: {pokemon_v2_language: {name: {_eq: ""en""}}}) {
-          name
-          pokemon_v2_language {
-            name
-          }
-        }
-        pokemon_v2_generation {
-          name
-        }
-      }
-      pokemon_v2_pokemonspecies_aggregate {
-        aggregate {
-          count
-        }
-      }
-    }";
+            var query = GraphQLQueries.GetPokemonSpeciesPaginated;
 
             var variables = new
             {
@@ -69,36 +76,12 @@ namespace Pokedex.Service
             return response;
         }
 
-
         public async Task<PokemonSpeciesResponseDto> GetPokemonSpeciesByPrefix(string prefix)
         {
             bool isPrefixEmpty = string.IsNullOrWhiteSpace(prefix);
-
-            string query = isPrefixEmpty
-                ? @"
-query MyQuery {
-    pokemon_v2_pokemonspecies(order_by: {id: asc}, limit: 15) {
-        id
-        name
-        pokemon_v2_pokemons {
-            pokemon_v2_pokemonsprites {
-                sprites
-            }
-        }
-    }
-}"
-                : @"
-query MyQuery($search: String) {
-    pokemon_v2_pokemonspecies(where: {name: {_ilike: $search}}, order_by: {id: asc}) {
-        id
-        name
-        pokemon_v2_pokemons {
-            pokemon_v2_pokemonsprites {
-                sprites
-            }
-        }
-    }
-}";
+            string query = isPrefixEmpty 
+                ? GraphQLQueries.GetPokemonSpeciesWithoutPrefix 
+                : GraphQLQueries.GetPokemonSpeciesByPrefix;
 
             object? variables = isPrefixEmpty
                 ? null
@@ -111,6 +94,5 @@ query MyQuery($search: String) {
 
             return response;
         }
-
     }
 }

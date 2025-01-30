@@ -20,13 +20,13 @@ namespace Pokedex.Components.Pages
         [Inject] private IPokemonService PokemonService { get; set; }
         [Inject] private IItemService ItemService { get; set; }
         [Inject] private IJSRuntime JSRuntime { get; set; }
+        [Inject] private NavigationManager NavigationManager { get; set; } = default!;
 
         private DotNetObjectReference<DexOverview> _dotNetHelper;
-        private List<PokemonSpeciesDTO> PokemonSpecies { get; set; } = new();
-        private List<PokemonSpeciesDTO> FilteredPokemonSpecies { get; set; } = new();
+        private List<PokemonSpeciesDto> PokemonSpecies { get; set; } = new();
+        private List<PokemonSpeciesDto> FilteredPokemonSpecies { get; set; } = new();
         private Timer debounceTimer;
         private string searchQuery = string.Empty;
-        private List<ItemDTO> Pokeballs { get; set; } = new();
         private bool isLoading;
         private int count;
         private bool showDropdown;
@@ -34,7 +34,7 @@ namespace Pokedex.Components.Pages
         private CancellationTokenSource _cancellationTokenSource;
         private bool showScrollToTopButton;
         private bool listenersInitialized;
-        private PokemonSpeciesDTO loadingSpecies = new();
+        private PokemonSpeciesDto loadingSpecies = new();
 
         protected override async Task OnInitializedAsync()
         {
@@ -47,7 +47,6 @@ namespace Pokedex.Components.Pages
         {
             if (firstRender && !listenersInitialized)
             {
-                await LoadPokeballsAsync();
                 await InitializeJavaScriptListeners();
                 listenersInitialized = true;
             }
@@ -59,7 +58,6 @@ namespace Pokedex.Components.Pages
         {
             _dotNetHelper = DotNetObjectReference.Create(this);
             await JSRuntime.InvokeVoidAsync("addScrollListener", _dotNetHelper, ".content", 1000);
-            await JSRuntime.InvokeVoidAsync("startPokeballAnimation", Pokeballs);
             await JSRuntime.InvokeVoidAsync("initializeClickOutsideHandler", searchContainerRef, DotNetObjectReference.Create(this));
         }
 
@@ -80,7 +78,7 @@ namespace Pokedex.Components.Pages
 
             var response = await PokemonService.GetPokemonSpeciesPaginatedGraphQL(pageSize, offset);
             count = response.Aggregate.Aggregate.Count;
-
+            StateHasChanged();
             var rows = response.PokemonSpecies
                 .Select((pokemon, index) => new { pokemon, RowId = (index + offset) / 6 })
                 .GroupBy(x => x.RowId)
@@ -93,11 +91,6 @@ namespace Pokedex.Components.Pages
 
             int totalRowCount = (int)Math.Ceiling((double)response.Aggregate.Aggregate.Count / 6);
             return new ItemsProviderResult<SpeciesRowDto>(rows, totalRowCount);
-        }
-
-        private async Task LoadPokeballsAsync()
-        {
-            Pokeballs = (await ItemService.GetAllPokeBallsAsync()).Items.ToList();
         }
 
         private async Task ScrollToTopAsync()
@@ -141,9 +134,9 @@ namespace Pokedex.Components.Pages
             }
         }
 
-        private void SelectPokemon(string name)
+        private void SelectPokemon(int id)
         {
-            Console.WriteLine(name);
+            NavigationManager.NavigateTo($"/pokemon/{id}");
             showDropdown = false;
         }
 

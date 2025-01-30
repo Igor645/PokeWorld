@@ -1,0 +1,25 @@
+﻿@page "/pokemon/{speciesId:int?}"
+@page "/pokemon/{speciesName}"
+@using Pokedex.Extensions;
+
+@if (pokemonSpeciesDetails == null)
+{
+    <p>Loading Pokémon details...</p>
+}
+else
+{
+    <div class="pokemon-main-view-container">
+        <div class="pokemon-main-view">
+            <div class="pokemon-main-view-left">
+                <h1>@pokemonSpeciesDetails.GetPokemonSpeciesNameByLanguage("en")</h1>
+                <div class="pokemon-dex-entry">@pokemonSpeciesDetails.GetPokemonSpeciesDexEntryByLanguageAndVersion("en", null)</div>
+            </div>
+            <div class="pokemon-main-view-right">
+                <img class="pokemon-detail-img" src="@selectedPokemon.GetPokemonImage()" alt="@pokemonSpeciesDetails.GetPokemonSpeciesNameByLanguage("en")" />
+                <img class="pokemonCard__bg detail"
+                     src="/images/pokeball-for-card.svg"
+                     alt="Pokeball Background" />
+            </div>
+        </div>
+    </div>
+}

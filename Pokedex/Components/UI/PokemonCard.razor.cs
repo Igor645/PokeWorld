@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Options;
 using Microsoft.JSInterop;
 using Pokedex.Constants;
+using Pokedex.Extensions;
 using Pokedex.Model;
 using Pokedex.Utilities;
 
@@ -10,13 +11,16 @@ namespace Pokedex.Components.UI
     public partial class PokemonCard : ComponentBase
     {
         [Parameter]
-        public PokemonSpeciesDTO PokemonSpecies { get; set; }
+        public PokemonSpeciesDto PokemonSpecies { get; set; }
 
         [Inject]
         private IOptions<ApiPaths> ApiPaths { get; set; }
 
         [Inject]
         private IJSRuntime JSRuntime { get; set; }
+
+        [Inject]
+        private NavigationManager NavigationManager { get; set; } = default!;
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
@@ -26,10 +30,10 @@ namespace Pokedex.Components.UI
             }
         }
 
-        private string GetPokemonImage(PokemonSpeciesDTO pokemonSpecies)
+        private string GetPokemonImage(PokemonSpeciesDto pokemonSpecies)
         {
-            return pokemonSpecies?.Pokemons?.FirstOrDefault()?.PokemonSprites?.FirstOrDefault()?.Sprites?.Other?.OfficialArtwork?.FrontDefault
-                   ?? "/images/egg.png";
+            return pokemonSpecies?.Pokemons?.FirstOrDefault().GetPokemonImage()
+                   ?? "/invalid/image.png";
         }
 
         public static string ParseGenerationName(string generation)
@@ -44,6 +48,11 @@ namespace Pokedex.Components.UI
             }
 
             return generation;
+        }
+
+        private void NavigateToPokemonDetails()
+        {
+            NavigationManager.NavigateTo($"/pokemon/{PokemonSpecies.GetPokemonSpeciesNameByLanguage("en")}");
         }
     }
 }
