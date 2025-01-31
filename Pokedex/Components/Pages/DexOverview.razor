@@ -1,6 +1,7 @@
 ﻿@page "/"
 @rendermode InteractiveServer
 @using Pokedex.Components.UI
+@using Pokedex.Extensions
 
 <div class="dexSearch-container">
     <div class="dexTitle">PokéWorld</div>
@@ -17,7 +18,7 @@
                 {
                     @foreach (var pokemon in FilteredPokemonSpecies)
                     {
-                        <div class="dropdown-item" @onclick="() => SelectPokemon(pokemon.Id)">
+                        <div class="dropdown-item" @onclick="@(() => SelectPokemon(pokemon.GetPokemonSpeciesNameByLanguage("en")))">
                             <img src="@GetOfficialArtwork(pokemon.Id)"
                                  alt="@pokemon.Name"
                                  class="dropdown-item-image" />

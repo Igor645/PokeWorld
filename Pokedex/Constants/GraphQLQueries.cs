@@ -76,13 +76,22 @@
         }";
 
         public const string GetPokemonSpeciesByPrefix = @"
-        query MyQuery($search: String) {
-            pokemon_v2_pokemonspecies(where: {name: {_ilike: $search}}, order_by: {id: asc}) {
+        query MyQuery($search: String!) {
+            pokemon_v2_pokemonspecies(
+                where: { pokemon_v2_pokemonspeciesnames: { name: { _ilike: $search } } }
+                order_by: { id: asc }
+            ) {
                 id
                 name
                 pokemon_v2_pokemons {
                     pokemon_v2_pokemonsprites {
                         sprites
+                    }
+                }
+                pokemon_v2_pokemonspeciesnames {
+                    name
+                    pokemon_v2_language {
+                        name
                     }
                 }
             }
@@ -96,6 +105,12 @@
                 pokemon_v2_pokemons {
                     pokemon_v2_pokemonsprites {
                         sprites
+                    }
+                }
+                pokemon_v2_pokemonspeciesnames {
+                    name
+                    pokemon_v2_language {
+                        name
                     }
                 }
             }

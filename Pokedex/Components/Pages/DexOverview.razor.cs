@@ -134,9 +134,9 @@ namespace Pokedex.Components.Pages
             }
         }
 
-        private void SelectPokemon(int id)
+        private void SelectPokemon(string name)
         {
-            NavigationManager.NavigateTo($"/pokemon/{id}");
+            NavigationManager.NavigateTo($"/pokemon/{name}");
             showDropdown = false;
         }
 

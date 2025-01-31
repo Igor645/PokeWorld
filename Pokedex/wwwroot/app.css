@@ -122,6 +122,7 @@ input:focus {
 * {
     font-family: "Exo 2", serif;
     color: var(--accent-text-color);
+    transition: color 0.3s ease;
 }
 
 body {
