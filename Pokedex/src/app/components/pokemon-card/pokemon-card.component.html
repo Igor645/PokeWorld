@@ -1,0 +1,27 @@
+    <div class="pokemonCard__id">
+      Nr. {{ pokemonSpecies?.id || '-' }}
+    </div>
+  
+    <div class="pokemonCard__img__container">
+      <img 
+        class="pokemonCard__image initial-load"
+        [src]="getPokemonImage()"
+        (error)="handleImageError($event)"
+      />
+      <img 
+        class="pokemonCard__bg" 
+        src="images/pokeball-for-card.svg" 
+        alt="Pokeball Background" 
+      />
+    </div>
+  
+    <div class="pokemonCard__text__container">
+      <div class="pokemonCard__text">
+        {{ getPokemonSpeciesName() || 'Loading...' }}
+      </div>
+  
+      <div class="pokemonCard__text pokemonCard__generation">
+        {{ parseGenerationName(pokemonSpecies?.pokemon_v2_generation?.name) }}
+      </div>
+    </div>
+  

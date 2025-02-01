@@ -1,0 +1,28 @@
+<div class="dexSearch-container">
+    <div class="dexTitle">PokéWorld</div>
+    <app-pokeworld-search></app-pokeworld-search>
+</div>
+
+<div class="pokemonCount">
+    Select your Pokémon ({{ count }})
+</div>
+
+    <cdk-virtual-scroll-viewport 
+        scrollWindow="true"
+        itemSize="370"
+        class="pokedexOverview"
+    >
+        <div class="row" *cdkVirtualFor="let row of speciesRows$">
+            <app-pokemon-card 
+            *ngFor="let species of row.pokemon_species"
+            [pokemonSpecies]="species"
+            ></app-pokemon-card>
+    
+            <div 
+            *ngFor="let i of [].constructor(6 - row.pokemon_species.length)"
+            class="pokemon-placeholder"
+            ></div>
+        </div>
+    </cdk-virtual-scroll-viewport>
+    
+    <app-scroll-to-top></app-scroll-to-top>
