@@ -1,0 +1,7 @@
+{
+  "routes": {
+    "/": {},
+    "/pokemon/charizard": {},
+    "/pokemon/pikachu": {}
+  }
+}

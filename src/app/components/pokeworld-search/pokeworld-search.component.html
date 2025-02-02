@@ -1,0 +1,30 @@
+<div class="dropdown-container" #searchContainer>
+    <input 
+      class="dex-searchbar"
+      placeholder="Search for a Pokémon..."
+      (focus)="showSearchDropdown()"
+      (input)="handleSearchChange($event)"
+    />
+  
+    <div *ngIf="showDropdown" class="dex-search-dropdown">
+      <div *ngIf="filteredPokemonSpecies.length; else noResults">
+        <div 
+          class="dropdown-item" 
+          *ngFor="let pokemon of filteredPokemonSpecies"
+          (click)="selectPokemon(GetPokemonSpeciesName(pokemon, 'en'))">
+          <img 
+            [src]="GetPokemonOfficialImage(pokemon.pokemon_v2_pokemons[0])"
+            alt="{{ pokemon.name }}"
+            class="dropdown-item-image"
+          />
+          <span class="dropdown-item-name">
+            {{ pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1) }}
+          </span>
+        </div>
+      </div>
+      <ng-template #noResults>
+        <div class="dropdown-item">No Pokémon found</div>
+      </ng-template>
+    </div>
+  </div>
+  
