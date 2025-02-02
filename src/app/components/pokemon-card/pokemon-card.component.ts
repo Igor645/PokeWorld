@@ -1,4 +1,4 @@
-import { Component, Input, AfterViewInit } from '@angular/core';
+import { Component, Input, AfterViewInit, ElementRef, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { PokemonSpecies } from '../../models/pokemon-species.model';
 import { CommonModule } from '@angular/common';
@@ -18,6 +18,8 @@ import {
 })
 export class PokemonCardComponent implements AfterViewInit {
   @Input() pokemonSpecies!: PokemonSpecies;
+
+  @ViewChild('imgContainer', { static: true }) imgContainerRef!: ElementRef;
 
   constructor(private router: Router) {}
 
@@ -61,8 +63,10 @@ export class PokemonCardComponent implements AfterViewInit {
 
   private removeInitialLoad(): void {
     setTimeout(() => {
-      const images = document.querySelectorAll('.pokemonCard__image.initial-load');
-      images.forEach(img => img.classList.remove('initial-load'));
+      if (this.imgContainerRef) {
+        const images = this.imgContainerRef.nativeElement.querySelectorAll('.pokemonCard__image.initial-load');
+        images.forEach((img: HTMLElement) => img.classList.remove('initial-load'));
+      }
     }, 600);
   }
 }

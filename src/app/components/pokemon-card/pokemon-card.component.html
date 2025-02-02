@@ -2,7 +2,7 @@
       Nr. {{ pokemonSpecies?.id || '-' }}
     </div>
   
-    <div class="pokemonCard__img__container">
+    <div #imgContainer class="pokemonCard__img__container">
       <img 
         class="pokemonCard__image initial-load"
         [src]="getPokemonImage()"
