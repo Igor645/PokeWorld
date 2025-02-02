@@ -16,8 +16,8 @@ import {
   ɵɵdefineInjector,
   ɵɵdefineNgModule
 } from "./chunk-L2JS2ZNY.js";
-import "./chunk-VAKS3VHM.js";
 import "./chunk-WXE2RXOK.js";
+import "./chunk-VAKS3VHM.js";
 import {
   Observable
 } from "./chunk-XQ6PMOZA.js";
