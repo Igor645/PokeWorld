@@ -1,0 +1,2 @@
+/pokemon/charizard
+/pokemon/pikachu
