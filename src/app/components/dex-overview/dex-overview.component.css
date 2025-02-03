@@ -32,9 +32,9 @@
     justify-content: space-between; /* Distribute items evenly */
     align-items: center;
     margin: 20px 0;
-    padding: 0 1rem;
+    padding: 0 1.5rem;
     height: fit-content;
-    gap: 1rem;
+    gap: 1.5rem;
     height: 350px;
 }
 
@@ -71,17 +71,6 @@
     text-shadow: 4px 4px 8px var(--title-shadow-color);
     margin-bottom: 1rem;
     font-weight: 900;
-}
-
-@keyframes fadeIn {
-    0% {
-        opacity: 0;
-        transform: translateY(-20px);
-    }
-    100% {
-        opacity: 1;
-        transform: translateY(0);
-    }
 }
 
 .pokeball {
