@@ -44,12 +44,12 @@ export class PokemonCardComponent implements AfterViewInit {
 
   navigateToPokemonDetails(): void {
     const species = this.pokemonSpecies;
-    const name = species?.pokemon_v2_pokemonspeciesnames?.[0]?.name;
-  
-    if (species?.id) {
-      this.router.navigate(['/pokemon', species.id]);
-    } else if (name) {
+    const name = getPokemonSpeciesNameByLanguage(species, "en");
+
+    if (name) {
       this.router.navigate(['/pokemon', name]);
+    } else if (species?.id) {
+      this.router.navigate(['/pokemon', species.id]);
     } else {
       console.error('No valid Pokémon ID or name found.');
     }
