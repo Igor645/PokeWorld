@@ -1,5 +1,6 @@
 import { PokemonSpecies } from '../models/pokemon-species.model';
 import {Pokemon} from '../models/pokemon.model'
+import { Name } from '../models/species-name.model';
 
 /**
  * Get the official Pokémon image.
@@ -25,6 +26,22 @@ export function getPokemonSpeciesNameByLanguage(
 ): string {
   return (
     pokemonSpecies?.pokemon_v2_pokemonspeciesnames?.find((x) => x.pokemon_v2_language.name === language)
+      ?.name || 'Unknown'
+  );
+}
+
+/**
+ * Get the Pokémon species name by language.
+ * @param pokemonSpecies The Pokémon species DTO object.
+ * @param language The language code (e.g., 'en').
+ * @returns The Pokémon species name in the specified language.
+ */
+export function getNameByLanguage(
+  names: Name[] | undefined,
+  language: string
+): string {
+  return (
+    names?.find((x) => x.pokemon_v2_language.name === language)
       ?.name || 'Unknown'
   );
 }

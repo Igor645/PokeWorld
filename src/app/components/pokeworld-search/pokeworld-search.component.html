@@ -6,20 +6,18 @@
       (input)="handleSearchChange($event)"
     />
   
-    <div *ngIf="showDropdown" class="dex-search-dropdown">
-      <div *ngIf="filteredPokemonSpecies.length; else noResults">
-        <div 
-          class="dropdown-item" 
-          *ngFor="let pokemon of filteredPokemonSpecies"
-          (click)="selectPokemon(GetPokemonSpeciesName(pokemon, 'en'))">
-          <img 
-            [src]="GetPokemonOfficialImage(pokemon.pokemon_v2_pokemons[0])"
-            alt="{{ pokemon.name }}"
-            class="dropdown-item-image"
-          />
-          <span class="dropdown-item-name">
-            {{ pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1) }}
-          </span>
+    <div *ngIf="showDropdown" @slideDropdown class="dex-search-dropdown">
+      <div class="dex-search-dropdown-content">
+        
+        <div *ngIf="filteredPokemonSpecies.length; else noResults">
+          <app-pokemon-search-item 
+          [isSelectable]="false"
+          [names]="getCategoryNames('Pokémon', 'en')"/>
+          <app-pokemon-search-item 
+          *ngFor="let species of filteredPokemonSpecies"
+          [names]="species.pokemon_v2_pokemonspeciesnames"
+          endpoint="pokemon"
+          [imageSrc]="GetPokemonOfficialImage(species.pokemon_v2_pokemons[0])"/>
         </div>
       </div>
       <ng-template #noResults>
