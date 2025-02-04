@@ -4,19 +4,30 @@ import {
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { PokemonService } from '../../services/pokemon.service';
 import { PokemonSpecies } from '../../models/pokemon-species.model';
+import { Name } from '../../models/species-name.model';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
 import {getPokemonOfficialImage, getPokemonSpeciesNameByLanguage} from '../../utils/pokemon-utils';
 import { Pokemon } from '../../models/pokemon.model';
-import { Router } from '@angular/router';
+import { PokeworldSearchItemComponent } from '../pokeworld-search-item/pokeworld-search-item.component';
+import { trigger, state, style, transition, animate } from '@angular/animations';
 
 @Component({
   selector: 'app-pokeworld-search',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, PokeworldSearchItemComponent],
   templateUrl: './pokeworld-search.component.html',
   styleUrls: ['./pokeworld-search.component.css'],
+  animations: [
+    trigger('slideDropdown', [
+      state('void', style({ transform: 'translateY(-10%)', opacity: 0 })),
+      state('*', style({ transform: 'translateY(0)', opacity: 1 })),
+      transition(':enter', [animate('0.3s ease-out')]),
+      transition(':leave', [animate('0.2s ease-in', style({ transform: 'translateY(-10%)', opacity: 0 }))])
+    ])
+  ]
 })
+
 export class PokeworldSearchComponent implements AfterViewInit, OnDestroy {
   filteredPokemonSpecies: PokemonSpecies[] = [];
   showDropdown = false;
@@ -29,7 +40,6 @@ export class PokeworldSearchComponent implements AfterViewInit, OnDestroy {
   constructor(
     private pokemonService: PokemonService,
     private cdr: ChangeDetectorRef,
-    private router: Router,
     @Inject(PLATFORM_ID) private platformId: object
   ) {}
 
@@ -89,25 +99,38 @@ export class PokeworldSearchComponent implements AfterViewInit, OnDestroy {
     this.searchSubject.next(this.searchQuery);
   }
 
-  selectPokemon(name: string | undefined) {  
-    this.router.navigate(['/pokemon', name]);
-  }
-
   showSearchDropdown() {
     this.showDropdown = true;
     this.cdr.detectChanges();
   }
 
   handleClickOutside = (event: Event) => {
-    if (!this.isMouseDownInside && this.searchContainerRef?.nativeElement &&
-        !this.searchContainerRef.nativeElement.contains(event.target)) {
+    const searchContainer = this.searchContainerRef?.nativeElement;
+    const searchInput = searchContainer?.querySelector('input');
+  
+    if (
+      searchContainer &&
+      searchInput &&
+      document.activeElement !== searchInput &&
+      !searchContainer.contains(event.target)
+    ) {
       this.showDropdown = false;
       this.cdr.detectChanges();
     }
-    this.isMouseDownInside = false;
   };
+  
 
   onMouseDownInside() {
     this.isMouseDownInside = true;
   }
+
+  getCategoryNames(name: string, language: string): Name[] {
+    return [{
+      name: name,
+      pokemon_v2_language: {
+        name: language,
+        id: 0,
+      }
+    }];
+  }  
 }

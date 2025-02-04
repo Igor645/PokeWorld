@@ -1,6 +1,6 @@
 import { Language } from './language.model';
 
-export interface SpeciesName {
+export interface Name {
   name: string;
   pokemon_v2_language: Language;
 }
