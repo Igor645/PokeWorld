@@ -12,7 +12,7 @@
 }
 
 .dropdown-item-category {
-    background-color: var(--primary-color);
+    background-color: var(--title-color);
     width: calc(100% + 16px);
     margin: -8px;
     padding: 3%;
@@ -24,6 +24,7 @@
 
 .item__image {
     width: 90%;
+    object-fit: contain;
     filter: drop-shadow(0 4px 6px var(--pokemon-img-shadow-color));
     z-index: 15;
     position: relative;
@@ -33,7 +34,8 @@
 }
 
 .item__img__container {
-    width: 40%;
+    height: 10rem;
+    width: 10rem;
     position: relative;
     display: flex;
     justify-content: center;

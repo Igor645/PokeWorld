@@ -14,7 +14,7 @@
           [isSelectable]="false"
           [names]="getCategoryNames('Pokémon', 'en')"/>
           <app-pokemon-search-item 
-          *ngFor="let species of filteredPokemonSpecies"
+          *ngFor="let species of filteredPokemonSpecies; trackBy: trackByPokemon"
           [names]="species.pokemon_v2_pokemonspeciesnames"
           endpoint="pokemon"
           [imageSrc]="GetPokemonOfficialImage(species.pokemon_v2_pokemons[0])"/>
