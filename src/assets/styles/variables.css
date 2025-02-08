@@ -1,8 +1,6 @@
 :root {
-    --primary-color: #1b6ec2;
-    --primary-hover-color: #155a9c;
-    --secondary-color: #006bb7;
-    --secondary-hover-color: #004a8f;
+    --general-width: 85%;
+    
     --border-color: rgba(38, 143, 255, 0.5);
     --border-focus-color: rgba(38, 143, 255, 0.8);
     --background-color: rgba(255, 255, 255, 1);
@@ -16,32 +14,26 @@
     --shadow-hover-color: rgba(0, 0, 0, 0.3);
     --title-color: rgba(38, 143, 255, 0.8);
     --title-shadow-color: rgba(0, 0, 0, 0.4);
-    --input-border-color: #ccc;
-    --input-focus-border-color: #258cfb;
-    --input-focus-shadow-color: rgba(37, 140, 251, 0.5);
-    --body-background-color: #cdd6fa;
-    --seperator-color: rgba(38, 143, 255, 0.5);
     --glass-color: rgba(38, 143, 255, 0.3);
-    --general-width: 85%;
+    --svg-color: rgba(38, 143, 255, 0.2);
+    --option-active: #f0f0f0;
+    --scrollbar-thumb-color: rgba(0, 0, 0, 0.1);
+    --primary-background-color: rgb(206, 216, 247);
 }
 
 .dark-theme {
-    --primary-color: #0d47a1;
-    --primary-hover-color: #0b3b82;
-    --secondary-color: #002f6c;
-    --secondary-hover-color: #001b40;
-    --border-color: rgba(255, 255, 255, 0.5);
-    --border-focus-color: rgba(255, 255, 255, 0.8);
+    --border-color: rgba(63, 63, 63, 0.5);
+    --border-focus-color: rgba(122, 122, 122, 0.5);
     --background-color: #121212;
     --background-hover-color: #1e1e1e;
     --text-color: #e0e0e0;
     --accent-text-color: white;
     --error-color: #cf6679;
     --valid-color: #03dac6;
-    --title-color: royalblue;
-    --input-border-color: #333;
-    --input-focus-border-color: #bb86fc;
-    --body-background-color: #1e1e1e;
-    --seperator-color: rgba(255, 255, 255, 0.5);
+    --title-color: rgb(119, 137, 189);
     --glass-color: rgba(255, 255, 255, 0.1);
+    --svg-color: rgba(255, 255, 255, 0.1);
+    --option-active: #242323;
+    --scrollbar-thumb-color: rgba(255, 255, 255, 0.1);
+    --primary-background-color: #272727;
 }

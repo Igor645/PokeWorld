@@ -9,7 +9,7 @@ html, body {
 * {
     font-family: "Exo 2", serif;
     color: var(--accent-text-color);
-    transition: color 0.3s ease;
+    transition: color 0.3s ease, background-color 0.3s ease, background 0.3s ease, border-color 0.3s ease;
 }
 
 body {
@@ -23,8 +23,13 @@ body {
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center;
-    background-attachment: fixed
+    background-attachment: fixed;
 }
+
+.dark-theme body{
+    background-image: url('../public/images/background-wave-dark.svg');
+}
+
 
 app-root{
     min-height: 100vh;

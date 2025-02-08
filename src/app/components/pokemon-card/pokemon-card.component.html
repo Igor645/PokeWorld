@@ -8,11 +8,8 @@
         [src]="getPokemonImage()"
         (error)="handleImageError($event)"
       />
-      <img 
-        class="pokemonCard__bg" 
-        src="images/pokeball-for-card.svg" 
-        alt="Pokeball Background" 
-      />
+
+      <app-pokemon-bg-svg class="pokemonCard__bg"></app-pokemon-bg-svg>    
     </div>
   
     <div class="pokemonCard__text__container">
