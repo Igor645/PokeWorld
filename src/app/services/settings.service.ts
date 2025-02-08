@@ -60,7 +60,7 @@ export class SettingsService {
    * Loads settings from localStorage into BehaviorSubjects.
    */
   private loadSettingsFromStorage() {
-    if (!isPlatformBrowser(this.platformId)) return; // ✅ Prevents accessing localStorage in SSR
+    if (!isPlatformBrowser(this.platformId)) return; 
 
     Object.keys(localStorage).forEach(key => {
       const value = this.loadSettingFromStorage(key);
@@ -74,7 +74,7 @@ export class SettingsService {
    * @returns The parsed setting value.
    */
   private loadSettingFromStorage<T>(key: string): T | null {
-    if (!isPlatformBrowser(this.platformId)) return null; // ✅ Prevents SSR error
+    if (!isPlatformBrowser(this.platformId)) return null;
 
     const value = localStorage.getItem(key);
     return value ? JSON.parse(value) : null;

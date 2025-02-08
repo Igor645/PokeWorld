@@ -12,7 +12,6 @@ export class PokemonUtilsService {
   private selectedLanguageId$ = new BehaviorSubject<number>(9); // Default: English (ID 9)
 
   constructor(private settingsService: SettingsService) {
-    // ✅ Listen for language changes reactively
     this.settingsService.watchSetting<number>('selectedLanguageId')
       .subscribe(id => {
         this.selectedLanguageId$.next(id);
