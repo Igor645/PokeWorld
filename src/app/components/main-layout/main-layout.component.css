@@ -14,11 +14,19 @@ a:hover{
     align-items: center;
     position: relative;
     z-index: 1;
-    background: white; /* Gradient background */
+    background: var(--background-color); /* Gradient background */
     color: black;
     height: 7vh;
     text-align: center;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.main-header{
+    grid-area: header;
+}
+
+.main-footer{
+    grid-area: footer;
 }
 
 .main-header h1 {
@@ -38,4 +46,22 @@ a:hover{
 
 .main-header h1 a {
     color: var(--accent-text-color)
+}
+
+:host {
+    min-height: 100vh;
+    display: grid;
+    grid-template-areas:
+        "header"
+        "content"
+        "footer";
+    grid-template-rows: auto 1fr auto;
+}
+
+.main-content {
+    position: relative;
+    grid-area: content;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }

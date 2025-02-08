@@ -9,13 +9,14 @@ import { map, tap, filter } from 'rxjs/operators';
 import { SpeciesRow } from '../../models/species-row.model';
 import { PokemonSpecies } from '../../models/pokemon-species.model';
 import { PokeworldSearchComponent } from "../pokeworld-search/pokeworld-search.component";
+import { LanguageSelectorComponent } from '../language-selector/language-selector.component';
 import { ScrollToTopComponent } from "../scroll-to-top/scroll-to-top.component";
 
 @Component({
   selector: 'app-dex-overview',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, PokemonCardComponent, ScrollingModule, ExperimentalScrollingModule, PokeworldSearchComponent, ScrollToTopComponent],
+  imports: [CommonModule, PokemonCardComponent, ScrollingModule, ExperimentalScrollingModule, PokeworldSearchComponent, ScrollToTopComponent, LanguageSelectorComponent],
   templateUrl: './dex-overview.component.html',
   styleUrls: ['./dex-overview.component.css'],
 })

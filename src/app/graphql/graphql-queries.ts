@@ -59,6 +59,7 @@ export const GraphQLQueries = {
             name
             pokemon_v2_language {
               name
+              id
             }
           }
           pokemon_v2_generation {
@@ -83,10 +84,11 @@ export const GraphQLQueries = {
           }
         }
         id
-        pokemon_v2_pokemonspeciesnames(where: {pokemon_v2_language: {name: {_eq: "en"}}}) {
+        pokemon_v2_pokemonspeciesnames {
           name
           pokemon_v2_language {
             name
+            id
           }
         }
         pokemon_v2_generation {
@@ -102,9 +104,14 @@ export const GraphQLQueries = {
   `,
   
     GetPokemonSpeciesByPrefix: `
-      query MyQuery($search: String!) {
+      query MyQuery($search: String!, $languageId: Int!) {
         pokemon_v2_pokemonspecies(
-          where: { pokemon_v2_pokemonspeciesnames: { name: { _ilike: $search } } }
+          where: { 
+            pokemon_v2_pokemonspeciesnames: { 
+              name: { _ilike: $search }, 
+              pokemon_v2_language: { id: { _eq: $languageId } } 
+            } 
+          }
           order_by: { id: asc }
         ) {
           id
@@ -114,10 +121,13 @@ export const GraphQLQueries = {
               sprites
             }
           }
-          pokemon_v2_pokemonspeciesnames {
+          pokemon_v2_pokemonspeciesnames(
+            where: { pokemon_v2_language: { id: { _eq: $languageId } } }
+          ) {
             name
             pokemon_v2_language {
               name
+              id
             }
           }
         }
@@ -138,8 +148,18 @@ export const GraphQLQueries = {
             name
             pokemon_v2_language {
               name
+              id
             }
           }
+        }
+      }
+    `,
+
+    GetLanguages: `
+      query Languages { 
+        pokemon_v2_language {
+          name
+          id
         }
       }
     `

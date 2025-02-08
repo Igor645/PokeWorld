@@ -1,11 +1,10 @@
-import { Component, Input, AfterViewInit, ElementRef, ViewChild } from '@angular/core';
+import { Component, Input, AfterViewInit, ElementRef, ViewChild, ChangeDetectorRef, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { PokemonSpecies } from '../../models/pokemon-species.model';
 import { CommonModule } from '@angular/common';
-import {
-  getPokemonOfficialImage,
-  getPokemonSpeciesNameByLanguage
-} from '../../utils/pokemon-utils';
+import { PokemonUtilsService } from '../../utils/pokemon-utils';
+import { SettingsService } from '../../services/settings.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-pokemon-card',
@@ -16,24 +15,45 @@ import {
     '(click)': 'navigateToPokemonDetails()'
   }
 })
-export class PokemonCardComponent implements AfterViewInit {
+export class PokemonCardComponent implements OnInit, AfterViewInit, OnDestroy {
   @Input() pokemonSpecies!: PokemonSpecies;
-
   @ViewChild('imgContainer', { static: true }) imgContainerRef!: ElementRef;
 
-  constructor(private router: Router) {}
+  pokemonName: string = '';
+  private languageSubscription!: Subscription;
+
+  constructor(
+    private router: Router, 
+    private pokemonUtils: PokemonUtilsService,
+    private settingsService: SettingsService,
+    private cdr: ChangeDetectorRef
+  ) {}
+
+  ngOnInit(): void {
+    this.updatePokemonName();
+    this.languageSubscription = this.settingsService
+      .watchSetting<number>('selectedLanguageId')
+      .subscribe(() => {
+        this.updatePokemonName();
+        this.cdr.detectChanges();
+      });
+  }
 
   ngAfterViewInit(): void {
     this.removeInitialLoad();
   }
 
-  getPokemonImage(): string {
-    return getPokemonOfficialImage(this.pokemonSpecies?.pokemon_v2_pokemons?.[0]) 
-      || '/invalid/image.png';
+  ngOnDestroy(): void {
+    this.languageSubscription.unsubscribe();
   }
 
-  getPokemonSpeciesName(): string {
-    return getPokemonSpeciesNameByLanguage(this.pokemonSpecies, 'en');
+  updatePokemonName(): void {
+    this.pokemonName = this.pokemonUtils.getPokemonSpeciesNameByLanguage(this.pokemonSpecies);
+  }
+
+  getPokemonImage(): string {
+    return this.pokemonUtils.getPokemonOfficialImage(this.pokemonSpecies?.pokemon_v2_pokemons?.[0]) 
+      || '/invalid/image.png';
   }
 
   parseGenerationName(generation: string | undefined): string {
@@ -44,8 +64,7 @@ export class PokemonCardComponent implements AfterViewInit {
 
   navigateToPokemonDetails(): void {
     const species = this.pokemonSpecies;
-    const name = getPokemonSpeciesNameByLanguage(species, "en");
-
+    const name = this.pokemonName;
     if (name) {
       this.router.navigate(['/pokemon', name]);
     } else if (species?.id) {
@@ -55,7 +74,7 @@ export class PokemonCardComponent implements AfterViewInit {
     }
   }  
 
-  handleImageError(event: Event) {
+  handleImageError(event: Event): void {
     const img = event.target as HTMLImageElement;
     img.src = 'images/egg.png';
     img.classList.add('shaking_egg');

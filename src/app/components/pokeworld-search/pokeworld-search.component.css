@@ -1,12 +1,12 @@
 ::ng-deep mat-form-field{
-    background-color: white !important;
+    background-color: var(--background-color) !important;
     width: 30vw !important;
 }
 
 ::ng-deep .mdc-text-field {
     padding: 5px;
     border-radius: 10px;
-    background-color: white !important;
+    background-color: var(--background-color) !important;
     border: 2px solid var(--border-color);
     box-shadow: 0 2px 6px var(--shadow-color);
     transition: border-color 0.3s ease;
@@ -23,7 +23,7 @@
 }
 
 ::ng-deep mat-option{
-    background-color: white !important;
+    background-color: var(--background-color) !important;
     padding: 0 !important;
 }
 
@@ -38,7 +38,7 @@
 
 ::ng-deep .mat-mdc-optgroup-label{
     background-color: var(--border-color);
-    color: white;
+    color: var(--background-color);
     font-size: x-large !important;
 }
 
@@ -55,7 +55,7 @@
 ::ng-deep .mat-mdc-autocomplete-panel::-webkit-scrollbar {
     border-top-right-radius: 10px;
     border-bottom-right-radius: 10px;
-    background-color: white;
+    background-color: var(--background-color);
 }
 
 ::ng-deep .mat-mdc-autocomplete-panel::-webkit-scrollbar-thumb {

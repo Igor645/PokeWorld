@@ -1,0 +1,18 @@
+<div class="settings-wrapper">
+    <div class="settings-cog-container">
+        <mat-icon class="settings-cog" (click)="toggleSettings()">settings</mat-icon>
+    </div>
+
+    <div class="settings-container" *ngIf="showSettings">
+        <mat-card class="settings-card">
+            <div class="settings-header">
+                <h2>Settings</h2>
+                <mat-icon class="close-icon" (click)="toggleSettings()">close</mat-icon>
+            </div>
+            <app-language-selector></app-language-selector>
+            <button mat-button (click)="toggleDarkMode()">
+                {{ isDarkMode ? "Light Mode" : "Dark Mode" }}
+            </button>
+        </mat-card>
+    </div>
+</div>

@@ -3,7 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { PokemonService } from '../../services/pokemon.service';
 import { PokemonSpecies } from '../../models/pokemon-species.model';
 import { CommonModule } from '@angular/common';
-import { getPokemonOfficialImage, getPokemonSpeciesNameByLanguage, getPokemonSpeciesDexEntryByLanguageAndVersion } from '../../utils/pokemon-utils';
+import { PokemonUtilsService } from '../../utils/pokemon-utils';
 
 @Component({
   selector: 'app-pokemon-details',
@@ -19,7 +19,8 @@ export class PokemonDetailsComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private pokemonService: PokemonService
+    private pokemonService: PokemonService,
+    private pokemonUtils: PokemonUtilsService
   ) {}
 
   ngOnInit() {
@@ -46,7 +47,7 @@ export class PokemonDetailsComponent implements OnInit {
     this.pokemonService.getPokemonDetails(id, undefined).subscribe({
       next: (response) => {
         this.pokemonSpeciesDetails = response.pokemon_v2_pokemonspecies[0];
-        this.selectedPokemonImage = getPokemonOfficialImage(this.pokemonSpeciesDetails?.pokemon_v2_pokemons?.[0]);
+        this.selectedPokemonImage = this.pokemonUtils.getPokemonOfficialImage(this.pokemonSpeciesDetails?.pokemon_v2_pokemons?.[0]);
       },
       error: () => this.router.navigate(['/'])
     });
@@ -56,17 +57,17 @@ export class PokemonDetailsComponent implements OnInit {
     this.pokemonService.getPokemonDetails(undefined, name).subscribe({
       next: (response) => {
         this.pokemonSpeciesDetails = response.pokemon_v2_pokemonspecies[0];
-        this.selectedPokemonImage = getPokemonOfficialImage(this.pokemonSpeciesDetails?.pokemon_v2_pokemons?.[0]);
+        this.selectedPokemonImage = this.pokemonUtils.getPokemonOfficialImage(this.pokemonSpeciesDetails?.pokemon_v2_pokemons?.[0]);
       },
       error: () => this.router.navigate(['/'])
     });
   }
 
   getPokemonSpeciesName(): string {
-    return getPokemonSpeciesNameByLanguage(this.pokemonSpeciesDetails, 'en');
+    return this.pokemonUtils.getPokemonSpeciesNameByLanguage(this.pokemonSpeciesDetails);
   }
 
   getPokemonDexEntry(): string {
-    return getPokemonSpeciesDexEntryByLanguageAndVersion(this.pokemonSpeciesDetails, 'en', null);
+    return this.pokemonUtils.getPokemonSpeciesDexEntryByVersion(this.pokemonSpeciesDetails, null);
   }
 }
