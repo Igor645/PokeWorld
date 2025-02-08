@@ -2,11 +2,7 @@
     <ng-container>
         <div class="item__img__container">
             <img *ngIf="imageSrc" [src]="imageSrc" [alt]="getName()" class="item__image" />
-            <img 
-              class="item__bg" 
-              src="images/pokeball-for-card.svg" 
-              alt="Pokeball Background" 
-            />
+            <app-pokemon-bg-svg class="item__bg"></app-pokemon-bg-svg>
           </div>
         <span class="dropdown-item-name">{{ getName() }}</span>
     </ng-container>

@@ -28,7 +28,7 @@
 }
 
 ::ng-deep .mat-mdc-option-active, ::ng-deep mat-option:hover{
-    background-color: #f0f0f0 !important;
+    background-color: var(--option-active) !important;
 }
 
 ::ng-deep mat-option span{
@@ -59,7 +59,7 @@
 }
 
 ::ng-deep .mat-mdc-autocomplete-panel::-webkit-scrollbar-thumb {
-    background-color: rgba(0, 0, 0, 0.1);
+    background-color: var(--scrollbar-thumb-color);
     border-radius: 10px;
     border: 3px solid transparent;
     background-clip: content-box;

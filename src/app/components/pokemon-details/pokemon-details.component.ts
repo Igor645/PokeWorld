@@ -4,11 +4,12 @@ import { PokemonService } from '../../services/pokemon.service';
 import { PokemonSpecies } from '../../models/pokemon-species.model';
 import { CommonModule } from '@angular/common';
 import { PokemonUtilsService } from '../../utils/pokemon-utils';
+import { PokemonBgSvgComponent } from '../pokemon-bg-svg/pokemon-bg-svg.component';
 
 @Component({
   selector: 'app-pokemon-details',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, PokemonBgSvgComponent],
   templateUrl: './pokemon-details.component.html',
   styleUrls: ['./pokemon-details.component.css']
 })

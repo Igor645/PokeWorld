@@ -5,12 +5,13 @@ import { CommonModule } from '@angular/common';
 import { PokemonUtilsService } from '../../utils/pokemon-utils';
 import { SettingsService } from '../../services/settings.service';
 import { Subscription } from 'rxjs';
+import { PokemonBgSvgComponent } from '../pokemon-bg-svg/pokemon-bg-svg.component';
 
 @Component({
   selector: 'app-pokemon-card',
   templateUrl: './pokemon-card.component.html',
   styleUrls: ['./pokemon-card.component.css'],
-  imports: [CommonModule],
+  imports: [CommonModule, PokemonBgSvgComponent],
   host: { 
     '(click)': 'navigateToPokemonDetails()'
   }

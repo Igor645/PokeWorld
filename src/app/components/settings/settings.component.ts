@@ -1,4 +1,4 @@
-import { Component, HostListener } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
@@ -13,11 +13,20 @@ import { SettingsService } from '../../services/settings.service';
   templateUrl: './settings.component.html',
   styleUrls: ['./settings.component.css']
 })
-export class SettingsComponent {
+export class SettingsComponent implements OnInit {
   showSettings = false;
   isDarkMode = false;
 
   constructor(private settingsService: SettingsService) {}
+
+  ngOnInit() {
+    const savedDarkMode = this.settingsService.getSetting<boolean>('darkMode');
+    this.isDarkMode = savedDarkMode ?? false;
+
+    if (this.isDarkMode) {
+      document.documentElement.classList.add('dark-theme');
+    }
+  }
 
   toggleSettings() {
     this.showSettings = !this.showSettings;
@@ -34,5 +43,11 @@ export class SettingsComponent {
   toggleDarkMode() {
     this.isDarkMode = !this.isDarkMode;
     this.settingsService.setSetting('darkMode', this.isDarkMode);
+
+    if (this.isDarkMode) {
+      document.documentElement.classList.add('dark-theme');
+    } else {
+      document.documentElement.classList.remove('dark-theme');
+    }
   }
 }
