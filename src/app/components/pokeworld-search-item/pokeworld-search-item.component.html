@@ -1,8 +1,5 @@
-<div class="dropdown-item" 
-    [class.selectable]="isSelectable" 
-    (click)="onSelect()">
-
-    <ng-container *ngIf="isSelectable; else categoryTitle">
+<div class="dropdown-item">
+    <ng-container>
         <div class="item__img__container">
             <img *ngIf="imageSrc" [src]="imageSrc" [alt]="getName()" class="item__image" />
             <img 
@@ -13,9 +10,5 @@
           </div>
         <span class="dropdown-item-name">{{ getName() }}</span>
     </ng-container>
-
-    <ng-template #categoryTitle>
-        <span class="dropdown-item-category">{{ getName() }}</span>
-    </ng-template>
 </div>
 

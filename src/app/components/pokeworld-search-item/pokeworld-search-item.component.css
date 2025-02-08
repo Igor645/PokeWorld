@@ -6,11 +6,6 @@
     gap: 2%;
 }
 
-.dropdown-item:not(:has(.dropdown-item-category)):hover {
-    cursor: pointer;
-    background-color: #f0f0f0;
-}
-
 .item__image {
     width: 90%;
     object-fit: contain;

@@ -7,9 +7,11 @@
     [matAutocomplete]="auto"
   />
 
-  <mat-autocomplete #auto="matAutocomplete">
+  <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onOptionSelected($event)">
     <mat-optgroup *ngIf="filteredPokemonSpecies.length" label="Pokémon">
-      <mat-option *ngFor="let species of filteredPokemonSpecies; trackBy: trackByPokemon" [value]="species">
+      <mat-option 
+        *ngFor="let species of filteredPokemonSpecies; trackBy: trackByPokemon" 
+        [value]="species">
         <app-pokemon-search-item
           [names]="species.pokemon_v2_pokemonspeciesnames"
           endpoint="pokemon"

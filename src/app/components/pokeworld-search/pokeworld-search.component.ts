@@ -10,6 +10,8 @@ import { PokemonSpecies } from '../../models/pokemon-species.model';
 import { getPokemonOfficialImage } from '../../utils/pokemon-utils';
 import { PokeworldSearchItemComponent } from '../pokeworld-search-item/pokeworld-search-item.component';
 import { Name } from '../../models/species-name.model';
+import { Router } from '@angular/router';
+import { getNameByLanguage } from '../../utils/pokemon-utils';
 
 @Component({
   selector: 'app-pokeworld-search',
@@ -31,7 +33,8 @@ export class PokeworldSearchComponent implements AfterViewInit, OnDestroy {
 
   constructor(
     private pokemonService: PokemonService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private router: Router
   ) {}
 
   ngAfterViewInit() {
@@ -59,6 +62,24 @@ export class PokeworldSearchComponent implements AfterViewInit, OnDestroy {
 
   ngOnDestroy() {}
 
+  onOptionSelected(event: any) {
+    const selectedItem = event.option.value;
+  
+    if (!selectedItem) return;
+  
+    console.log("Selected Item:", selectedItem);
+  
+    if ('pokemon_v2_pokemonspeciesnames' in selectedItem) {
+      this.router.navigate(['/pokemon', this.getPokemonName(selectedItem)]);
+    } else {
+      console.warn("Unknown selection type:", selectedItem);
+    }
+  }
+  
+  getPokemonName(species: PokemonSpecies): string {
+    return getNameByLanguage(species.pokemon_v2_pokemonspeciesnames, "en")
+  }  
+  
   GetPokemonOfficialImage(pokemon: any) {
     return getPokemonOfficialImage(pokemon);
   }
