@@ -50,6 +50,6 @@ li:hover {
 
 li.selected {
     background: var(--border-focus-color);
-    color: var(--background-color);
+    color: var(--selected-color);
     font-weight: bold;
 }

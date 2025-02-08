@@ -10,9 +10,9 @@
                 <mat-icon class="close-icon" (click)="toggleSettings()">close</mat-icon>
             </div>
             <app-language-selector></app-language-selector>
-            <button mat-button (click)="toggleDarkMode()">
-                {{ isDarkMode ? "Light Mode" : "Dark Mode" }}
-            </button>
+            <mat-slide-toggle [(ngModel)]="isDarkMode" (change)="toggleDarkMode()">
+                Dark Mode
+            </mat-slide-toggle>              
         </mat-card>
     </div>
 </div>

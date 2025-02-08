@@ -9,8 +9,16 @@ html, body {
 * {
     font-family: "Exo 2", serif;
     color: var(--accent-text-color);
-    transition: color 0.3s ease, background-color 0.3s ease, background 0.3s ease, border-color 0.3s ease;
-}
+    transition: 
+        color 0.3s ease,
+        background-color 0.3s ease,
+        background 0.3s ease,
+        border-color 0.3s ease,
+        box-shadow 0.3s ease, 
+        filter 0.3s ease, 
+        fill 0.3s ease, 
+        stroke 0.3s ease;
+    }
 
 body {
     display: grid;

@@ -19,6 +19,8 @@
     --option-active: #f0f0f0;
     --scrollbar-thumb-color: rgba(0, 0, 0, 0.1);
     --primary-background-color: rgb(206, 216, 247);
+
+    --selected-color: white;
 }
 
 .dark-theme {
@@ -36,4 +38,6 @@
     --option-active: #242323;
     --scrollbar-thumb-color: rgba(255, 255, 255, 0.1);
     --primary-background-color: #272727;
+
+    --selected-color: white;
 }
