@@ -1,78 +1,52 @@
-import { 
-  Component, Inject, PLATFORM_ID, ElementRef, ViewChild, ChangeDetectorRef, AfterViewInit, OnDestroy 
-} from '@angular/core';
-import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { Component, ChangeDetectorRef, AfterViewInit, OnDestroy } from '@angular/core';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { CommonModule } from '@angular/common';
+import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
 import { PokemonService } from '../../services/pokemon.service';
 import { PokemonSpecies } from '../../models/pokemon-species.model';
-import { Name } from '../../models/species-name.model';
-import { Subject } from 'rxjs';
-import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
-import {getPokemonOfficialImage, getPokemonSpeciesNameByLanguage} from '../../utils/pokemon-utils';
-import { Pokemon } from '../../models/pokemon.model';
+import { getPokemonOfficialImage } from '../../utils/pokemon-utils';
 import { PokeworldSearchItemComponent } from '../pokeworld-search-item/pokeworld-search-item.component';
-import { trigger, state, style, transition, animate } from '@angular/animations';
-import { HostListener } from '@angular/core';
+import { Name } from '../../models/species-name.model';
+import { Router } from '@angular/router';
+import { getNameByLanguage } from '../../utils/pokemon-utils';
 
 @Component({
   selector: 'app-pokeworld-search',
   standalone: true,
-  imports: [CommonModule, PokeworldSearchItemComponent],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    MatAutocompleteModule,
+    MatFormFieldModule,
+    MatInputModule,
+    PokeworldSearchItemComponent
+  ],
   templateUrl: './pokeworld-search.component.html',
-  styleUrls: ['./pokeworld-search.component.css'],
-  animations: [
-    trigger('slideDropdown', [
-      state('void', style({ transform: 'translateY(-10%)', opacity: 0 })),
-      state('*', style({ transform: 'translateY(0)', opacity: 1 })),
-      transition(':enter', [animate('0.3s ease-out')]),
-      transition(':leave', [animate('0.2s ease-in', style({ transform: 'translateY(-10%)', opacity: 0 }))])
-    ])
-  ]
+  styleUrls: ['./pokeworld-search.component.css']
 })
-
 export class PokeworldSearchComponent implements AfterViewInit, OnDestroy {
+  searchControl = new FormControl('');
   filteredPokemonSpecies: PokemonSpecies[] = [];
-  showDropdown = false;
-  searchQuery = '';
-  private isMouseDownInside = false;
-  private searchSubject = new Subject<string>();
-
-  @ViewChild('searchContainer') searchContainerRef!: ElementRef;
 
   constructor(
     private pokemonService: PokemonService,
     private cdr: ChangeDetectorRef,
-    @Inject(PLATFORM_ID) private platformId: object
+    private router: Router
   ) {}
 
   ngAfterViewInit() {
-    this.loadInitialPokemon();
-    this.setupSearchListener();
-  }
-
-  ngOnDestroy() {
-    this.searchSubject.complete();
-  }
-
-  GetPokemonOfficialImage(pokemon: Pokemon){
-    return getPokemonOfficialImage(pokemon);
-  }
-
-  GetPokemonSpeciesName(PokemonSpecies: PokemonSpecies, language: string){
-    return getPokemonSpeciesNameByLanguage(PokemonSpecies, language);
-  }
-
-  private loadInitialPokemon() {
     this.pokemonService.getPokemonSpeciesByPrefix("").subscribe({
       next: (response) => {
         this.filteredPokemonSpecies = response.pokemon_v2_pokemonspecies || [];
-        this.cdr.detectChanges();
+        this.cdr.markForCheck();
       },
       error: (error) => console.error('Error fetching initial Pokémon:', error),
     });
-  }
-
-  private setupSearchListener() {
-    this.searchSubject.pipe(
+  
+    this.searchControl.valueChanges.pipe(
       debounceTime(100),
       distinctUntilChanged(),
       switchMap(searchQuery => this.pokemonService.getPokemonSpeciesByPrefix(searchQuery || ""))
@@ -86,38 +60,32 @@ export class PokeworldSearchComponent implements AfterViewInit, OnDestroy {
   }
   
 
-  handleSearchChange(event: Event) {
-    const input = event.target as HTMLInputElement;
-    this.searchQuery = input.value.trim();
-  
-    this.searchSubject.next(this.searchQuery);
-    this.showDropdown = true;
-    this.cdr.markForCheck();
-  }
-  
+  ngOnDestroy() {}
 
-  showSearchDropdown() {
-    this.showDropdown = true;
-    this.cdr.detectChanges();
-  }
-
-  @HostListener('document:mousedown', ['$event'])
-  handleMouseDownOutside(event: Event) {
-    if (
-      this.searchContainerRef &&
-      this.searchContainerRef.nativeElement.contains(event.target)
-    ) {
-      return;
+  onOptionSelected(event: any) {
+    const selectedItem = event.option.value;
+  
+    if (!selectedItem) return;
+  
+    console.log("Selected Item:", selectedItem);
+  
+    if ('pokemon_v2_pokemonspeciesnames' in selectedItem) {
+      this.router.navigate(['/pokemon', this.getPokemonName(selectedItem)]);
+    } else {
+      console.warn("Unknown selection type:", selectedItem);
     }
-    
-    this.showDropdown = false;
-    this.cdr.detectChanges();
+  }
+  
+  getPokemonName(species: PokemonSpecies): string {
+    return getNameByLanguage(species.pokemon_v2_pokemonspeciesnames, "en")
+  }  
+  
+  GetPokemonOfficialImage(pokemon: any) {
+    return getPokemonOfficialImage(pokemon);
   }
 
-  @HostListener('window:blur')
-  handleWindowBlur() {
-    this.showDropdown = false;
-    this.cdr.detectChanges();
+  trackByPokemon(index: number, item: PokemonSpecies): number {
+    return item.id;
   }
 
   getCategoryNames(name: string, language: string): Name[] {
@@ -129,8 +97,4 @@ export class PokeworldSearchComponent implements AfterViewInit, OnDestroy {
       }
     }];
   }  
-
-  trackByPokemon(index: number, item: PokemonSpecies): number {
-    return item.id;
-  }
 }

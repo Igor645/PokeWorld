@@ -1,52 +1,49 @@
+::ng-deep mat-form-field{
+    background-color: white !important;
+    width: 30vw !important;
+}
 
-.dex-searchbar {
-    width: 25vw;
-    height: 3rem;
-    padding: 10px;
-    position: relative;
-    font-size: 1.2rem;
-    z-index: 100;
+::ng-deep .mdc-text-field {
+    background-color: white !important;
     border: 2px solid var(--border-color);
-    border-radius: 10px;
     box-shadow: 0 2px 6px var(--shadow-color);
-    transition: box-shadow 0.3s ease, border-color 0.3s ease, transform 0.3s ease;
+    transition: border-color 0.3s ease;
 }
 
-.dex-searchbar:focus {
+::ng-deep .mat-mdc-form-field.mat-focused .mdc-text-field {
     border-color: var(--border-focus-color);
-    box-shadow: 0 4px 12px var(--shadow-hover-color);
-    outline: none;
-    transform: scale(1.05);
+    border-width: 2px;
 }
 
-.dex-searchbar:hover {
-    box-shadow: 0 4px 12px var(--shadow-hover-color);
+::ng-deep .mdc-line-ripple::before,
+::ng-deep .mdc-line-ripple::after {
+    display: none;
 }
 
-.dropdown-container {
-    position: relative;
+::ng-deep mat-option{
+    background-color: white !important;
+    padding: 0 !important;
 }
 
-.dex-search-dropdown {
-    position: absolute;
-    top: calc(98%);
-    left: 0;
+::ng-deep .mat-mdc-option-active, ::ng-deep mat-option:hover{
+    background-color: #f0f0f0 !important;
+}
+
+::ng-deep mat-option span{
+    margin: 0 !important;
     width: 100%;
-    font-size: 1.2rem;
-    border: 2px solid var(--border-color);
-    border-bottom-right-radius: 15px;
-    border-bottom-left-radius: 15px;
-    background-color: white;
-    max-height: 26.5rem;
-    overflow-y: hidden; /* Hide the overflow at the main level */
-    z-index: 90;
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-    opacity: 0;
 }
 
-.dex-search-dropdown-content {
-    height: fit-content;
-    max-height: 26.5rem;
-    overflow-y: auto;
-    border-radius: inherit;
+::ng-deep .mat-mdc-optgroup-label{
+    background-color: var(--border-color);
+    color: white;
+    font-size: x-large !important;
+}
+
+::ng-deep .mat-mdc-autocomplete-panel{
+    padding: 0 !important;
+    max-height: 60vh !important;
+    border: var(--border-color) 2px solid;
+    border-top: none;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 6px 12px rgba(0, 0, 0, 0.1) !important;
 }

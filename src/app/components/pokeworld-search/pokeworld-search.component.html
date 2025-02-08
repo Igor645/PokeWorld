@@ -1,28 +1,23 @@
-<div class="dropdown-container" #searchContainer>
-    <input 
-      class="dex-searchbar"
-      placeholder="Search for a Pokémon..."
-      (focus)="showSearchDropdown()"
-      (input)="handleSearchChange($event)"
-    />
-  
-    <div *ngIf="showDropdown" @slideDropdown class="dex-search-dropdown">
-      <div class="dex-search-dropdown-content">
-        
-        <div *ngIf="filteredPokemonSpecies.length; else noResults">
-          <app-pokemon-search-item 
-          [isSelectable]="false"
-          [names]="getCategoryNames('Pokémon', 'en')"/>
-          <app-pokemon-search-item 
-          *ngFor="let species of filteredPokemonSpecies; trackBy: trackByPokemon"
+<mat-form-field class="search-container">
+  <input
+    matInput
+    type="text"
+    placeholder="Search through PokeWorld..."
+    [formControl]="searchControl"
+    [matAutocomplete]="auto"
+  />
+
+  <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onOptionSelected($event)">
+    <mat-optgroup *ngIf="filteredPokemonSpecies.length" label="Pokémon">
+      <mat-option 
+        *ngFor="let species of filteredPokemonSpecies; trackBy: trackByPokemon" 
+        [value]="species">
+        <app-pokemon-search-item
           [names]="species.pokemon_v2_pokemonspeciesnames"
           endpoint="pokemon"
-          [imageSrc]="GetPokemonOfficialImage(species.pokemon_v2_pokemons[0])"/>
-        </div>
-      </div>
-      <ng-template #noResults>
-        <div class="dropdown-item">No Pokémon found</div>
-      </ng-template>
-    </div>
-  </div>
-  
+          [imageSrc]="GetPokemonOfficialImage(species.pokemon_v2_pokemons[0])">
+        </app-pokemon-search-item>
+      </mat-option>
+    </mat-optgroup>
+  </mat-autocomplete>
+</mat-form-field>

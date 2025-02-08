@@ -6,22 +6,6 @@
     gap: 2%;
 }
 
-.dropdown-item:not(:has(.dropdown-item-category)):hover {
-    cursor: pointer;
-    background-color: #f0f0f0;
-}
-
-.dropdown-item-category {
-    background-color: var(--title-color);
-    width: calc(100% + 16px);
-    margin: -8px;
-    padding: 3%;
-    display: flex;
-    align-items: center;
-    font-size: 1.6rem;
-    color: white;
-}
-
 .item__image {
     width: 90%;
     object-fit: contain;
@@ -35,7 +19,7 @@
 
 .item__img__container {
     height: 10rem;
-    width: 10rem;
+    width: 15rem;
     position: relative;
     display: flex;
     justify-content: center;
