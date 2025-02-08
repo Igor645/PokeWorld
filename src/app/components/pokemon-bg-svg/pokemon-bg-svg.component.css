@@ -1,0 +1,7 @@
+svg {
+    transform: translateZ(0);
+    fill: var(--svg-color);
+    stroke: var(--svg-color);
+    transition: fill 0.1s ease, stroke 0.1s ease;
+    will-change: fill, stroke;
+}
