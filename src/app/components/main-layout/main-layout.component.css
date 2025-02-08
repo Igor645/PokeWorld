@@ -14,7 +14,7 @@ a:hover{
     align-items: center;
     position: relative;
     z-index: 1;
-    background: white; /* Gradient background */
+    background: var(--background-color); /* Gradient background */
     color: black;
     height: 7vh;
     text-align: center;
@@ -59,6 +59,7 @@ a:hover{
 }
 
 .main-content {
+    position: relative;
     grid-area: content;
     display: flex;
     justify-content: center;

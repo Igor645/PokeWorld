@@ -1,69 +1,88 @@
+import { Injectable } from '@angular/core';
+import { SettingsService } from '../services/settings.service';
 import { PokemonSpecies } from '../models/pokemon-species.model';
-import {Pokemon} from '../models/pokemon.model'
+import { Pokemon } from '../models/pokemon.model';
 import { Name } from '../models/species-name.model';
+import { BehaviorSubject } from 'rxjs';
 
-/**
- * Get the official Pokémon image.
- * @param pokemon The Pokémon DTO object.
- * @returns The URL of the Pokémon's official artwork.
- */
-export function getPokemonOfficialImage(pokemon: Pokemon | undefined): string {
-  return (
-    pokemon?.pokemon_v2_pokemonsprites?.[0]?.sprites.other?.["official-artwork"]?.front_default ||
-    '/invalid/image.png'
-  );
-}
+@Injectable({
+  providedIn: 'root'
+})
+export class PokemonUtilsService {
+  private selectedLanguageId$ = new BehaviorSubject<number>(9); // Default: English (ID 9)
 
-/**
- * Get the Pokémon species name by language.
- * @param pokemonSpecies The Pokémon species DTO object.
- * @param language The language code (e.g., 'en').
- * @returns The Pokémon species name in the specified language.
- */
-export function getPokemonSpeciesNameByLanguage(
-  pokemonSpecies: PokemonSpecies | undefined,
-  language: string
-): string {
-  return (
-    pokemonSpecies?.pokemon_v2_pokemonspeciesnames?.find((x) => x.pokemon_v2_language.name === language)
-      ?.name || 'Unknown'
-  );
-}
+  constructor(private settingsService: SettingsService) {
+    // ✅ Listen for language changes reactively
+    this.settingsService.watchSetting<number>('selectedLanguageId')
+      .subscribe(id => {
+        this.selectedLanguageId$.next(id);
+      });
+  }
 
-/**
- * Get the Pokémon species name by language.
- * @param pokemonSpecies The Pokémon species DTO object.
- * @param language The language code (e.g., 'en').
- * @returns The Pokémon species name in the specified language.
- */
-export function getNameByLanguage(
-  names: Name[] | undefined,
-  language: string
-): string {
-  return (
-    names?.find((x) => x.pokemon_v2_language.name === language)
-      ?.name || 'Unknown'
-  );
-}
+  /**
+   * Get the selected language ID reactively.
+   * @returns The selected language ID.
+   */
+  private getSelectedLanguageId(): number {
+    return this.selectedLanguageId$.getValue();
+  }
 
-/**
- * Get the Pokémon species Pokédex entry (flavor text) by language and version.
- * @param pokemonSpecies The Pokémon species DTO object.
- * @param language The language code (e.g., 'en').
- * @param version The Pokémon game version (optional).
- * @returns The formatted Pokédex entry.
- */
-export function getPokemonSpeciesDexEntryByLanguageAndVersion(
-  pokemonSpecies: PokemonSpecies | undefined,
-  language: string,
-  version: string | null
-): string {
-  const isNoVersionCheck = !version;
-  const flavortext = pokemonSpecies?.pokemon_v2_pokemonspeciesflavortexts?.find(
-    (x) =>
-      x.pokemon_v2_language.name === language &&
-      (isNoVersionCheck || x.pokemon_v2_version.name === version)
-  )?.flavor_text;
+  /**
+   * Get the official Pokémon image.
+   * @param pokemon The Pokémon DTO object.
+   * @returns The URL of the Pokémon's official artwork.
+   */
+  getPokemonOfficialImage(pokemon: Pokemon | undefined): string {
+    return (
+      pokemon?.pokemon_v2_pokemonsprites?.[0]?.sprites.other?.["official-artwork"]?.front_default ||
+      '/invalid/image.png'
+    );
+  }
 
-  return flavortext ? flavortext.replace(/\f/g, ' ') : 'No entry available.';
+  /**
+   * Get the Pokémon species name by the selected language ID.
+   * @param pokemonSpecies The Pokémon species DTO object.
+   * @returns The Pokémon species name in the selected language.
+   */
+  getPokemonSpeciesNameByLanguage(pokemonSpecies: PokemonSpecies | undefined): string {
+    const languageId = this.getSelectedLanguageId();
+    return (
+      pokemonSpecies?.pokemon_v2_pokemonspeciesnames?.find((x) => x.pokemon_v2_language.id === languageId)
+        ?.name || 'Unknown'
+    );
+  }
+
+  /**
+   * Get the Pokémon name from a list of translations based on the selected language ID.
+   * @param names The list of names.
+   * @returns The name in the selected language.
+   */
+  getNameByLanguage(names: Name[] | undefined): string {
+    const languageId = this.getSelectedLanguageId();
+    return (
+      names?.find((x) => x.pokemon_v2_language.id === languageId)
+        ?.name || 'Unknown'
+    );
+  }
+
+  /**
+   * Get the Pokémon species Pokédex entry (flavor text) by the selected language ID and version.
+   * @param pokemonSpecies The Pokémon species DTO object.
+   * @param version The Pokémon game version (optional).
+   * @returns The formatted Pokédex entry.
+   */
+  getPokemonSpeciesDexEntryByVersion(
+    pokemonSpecies: PokemonSpecies | undefined,
+    version: string | null
+  ): string {
+    const languageId = this.getSelectedLanguageId();
+    const isNoVersionCheck = !version;
+    const flavortext = pokemonSpecies?.pokemon_v2_pokemonspeciesflavortexts?.find(
+      (x) =>
+        x.pokemon_v2_language.id === languageId &&
+        (isNoVersionCheck || x.pokemon_v2_version.name === version)
+    )?.flavor_text;
+
+    return flavortext ? flavortext.replace(/\f/g, ' ') : 'No entry available.';
+  }
 }

@@ -65,7 +65,7 @@
 .dexTitle {
     font-size: 8rem;
     font-family: 'Montserrat', sans-serif;
-    color: white;
+    color: var(--background-color);
     -webkit-text-stroke: 0.3rem var(--title-color);
     text-align: center;
     text-shadow: 4px 4px 8px var(--title-shadow-color);

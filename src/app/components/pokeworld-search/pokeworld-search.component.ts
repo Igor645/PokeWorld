@@ -7,11 +7,10 @@ import { CommonModule } from '@angular/common';
 import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
 import { PokemonService } from '../../services/pokemon.service';
 import { PokemonSpecies } from '../../models/pokemon-species.model';
-import { getPokemonOfficialImage } from '../../utils/pokemon-utils';
+import { PokemonUtilsService } from '../../utils/pokemon-utils';
 import { PokeworldSearchItemComponent } from '../pokeworld-search-item/pokeworld-search-item.component';
 import { Name } from '../../models/species-name.model';
 import { Router } from '@angular/router';
-import { getNameByLanguage } from '../../utils/pokemon-utils';
 
 @Component({
   selector: 'app-pokeworld-search',
@@ -34,7 +33,8 @@ export class PokeworldSearchComponent implements AfterViewInit, OnDestroy {
   constructor(
     private pokemonService: PokemonService,
     private cdr: ChangeDetectorRef,
-    private router: Router
+    private router: Router,
+    private pokemonUtils: PokemonUtilsService
   ) {}
 
   ngAfterViewInit() {
@@ -77,11 +77,11 @@ export class PokeworldSearchComponent implements AfterViewInit, OnDestroy {
   }
   
   getPokemonName(species: PokemonSpecies): string {
-    return getNameByLanguage(species.pokemon_v2_pokemonspeciesnames, "en")
+    return this.pokemonUtils.getNameByLanguage(species.pokemon_v2_pokemonspeciesnames)
   }  
   
   GetPokemonOfficialImage(pokemon: any) {
-    return getPokemonOfficialImage(pokemon);
+    return this.pokemonUtils.getPokemonOfficialImage(pokemon);
   }
 
   trackByPokemon(index: number, item: PokemonSpecies): number {

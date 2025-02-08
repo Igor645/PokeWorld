@@ -3,12 +3,13 @@ import { GraphQLService } from './graphql.service';
 import { GraphQLQueries } from '../graphql/graphql-queries';
 import { Observable } from 'rxjs';
 import { PokemonSpeciesResponse } from '../models/pokemon-species.model';
+import { SettingsService } from './settings.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class PokemonService {
-  constructor(private graphQLService: GraphQLService) {}
+  constructor(private graphQLService: GraphQLService, private settingsService: SettingsService) {}
 
   /**
    * Fetches Pokémon details by ID or name.
@@ -59,11 +60,12 @@ export class PokemonService {
     const query = isPrefixEmpty
       ? GraphQLQueries.GetPokemonSpeciesWithoutPrefix
       : GraphQLQueries.GetPokemonSpeciesByPrefix;
-    
-    const variables = isPrefixEmpty ? null : { search: `${prefix}%` };
-
+  
+    const languageId = this.settingsService.getSetting<number>('selectedLanguageId') || 9; // Default to English (9)
+    const variables = isPrefixEmpty ? null : { search: `${prefix}%`, languageId };
+  
     return this.graphQLService.executeQuery<PokemonSpeciesResponse>(query, variables);
-  }
+  }  
 
   /**
    * Fetches **all** Pokémon species at once (no pagination).

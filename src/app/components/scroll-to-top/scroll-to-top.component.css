@@ -6,7 +6,7 @@
     width: 3vw;
     height: 3vw;
     border-radius: 50%;
-    background-color: white;
+    background-color: var(--background-color);
     color: var(--text-color);
     border: none;
     box-shadow: 0 4px 8px var(--shadow-color), 0 6px 20px var(--shadow-color);

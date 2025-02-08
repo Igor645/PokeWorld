@@ -1,8 +1,8 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { Name } from '../../models/species-name.model';
 import { Router } from '@angular/router';
-import { getNameByLanguage } from '../../utils/pokemon-utils';
 import { CommonModule } from '@angular/common';
+import { PokemonUtilsService } from '../../utils/pokemon-utils';
 
 @Component({
   selector: 'app-pokemon-search-item',
@@ -17,9 +17,9 @@ export class PokeworldSearchItemComponent {
   @Input() isSelectable: boolean = true;
   @Output() itemSelected = new EventEmitter<void>();
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private pokemonUtils: PokemonUtilsService) {}
 
   getName(): string {
-    return getNameByLanguage(this.names, "en");
+    return this.pokemonUtils.getNameByLanguage(this.names);
   }
 }

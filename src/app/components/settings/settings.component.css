@@ -1,0 +1,68 @@
+.settings-wrapper {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+}
+
+.settings-cog-container {
+    background-color: var(--background-color);
+    padding: 3px;
+    border-radius: 10px;
+    display: inline-block;
+    height: fit-content;
+    width: fit-content;
+    display: flex;
+    align-content: center;
+    justify-content: center;
+}
+
+.settings-cog {
+    cursor: pointer;
+    transition: transform 0.2s ease-in-out;
+    font-size: 40px;
+    height: fit-content;
+    width: fit-content;
+    padding: 0;
+}
+
+.settings-cog:hover {
+    transform: rotate(20deg);
+}
+
+
+.settings-container {
+    position: absolute;
+    top: 50px;
+    right: 0;
+    z-index: 1000;
+    height: fit-content;
+}
+
+.settings-card {
+    padding: 15px;
+    width: 20vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 4px;
+    background-color: var(--background-color);
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.settings-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.close-icon {
+    cursor: pointer;
+    font-size: 24px;
+    color: #777;
+    transition: color 0.2s ease-in-out;
+}
+
+.close-icon:hover {
+    color: black;
+}

@@ -24,3 +24,24 @@
     --glass-color: rgba(38, 143, 255, 0.3);
     --general-width: 85%;
 }
+
+.dark-theme {
+    --primary-color: #0d47a1;
+    --primary-hover-color: #0b3b82;
+    --secondary-color: #002f6c;
+    --secondary-hover-color: #001b40;
+    --border-color: rgba(255, 255, 255, 0.5);
+    --border-focus-color: rgba(255, 255, 255, 0.8);
+    --background-color: #121212;
+    --background-hover-color: #1e1e1e;
+    --text-color: #e0e0e0;
+    --accent-text-color: white;
+    --error-color: #cf6679;
+    --valid-color: #03dac6;
+    --title-color: royalblue;
+    --input-border-color: #333;
+    --input-focus-border-color: #bb86fc;
+    --body-background-color: #1e1e1e;
+    --seperator-color: rgba(255, 255, 255, 0.5);
+    --glass-color: rgba(255, 255, 255, 0.1);
+}
