@@ -3,7 +3,8 @@ import { SettingsService } from '../services/settings.service';
 import { PokemonSpecies } from '../models/pokemon-species.model';
 import { Pokemon } from '../models/pokemon.model';
 import { Name } from '../models/species-name.model';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { Version } from '../models/version.model';
 
 @Injectable({
   providedIn: 'root'
@@ -22,8 +23,16 @@ export class PokemonUtilsService {
    * Get the selected language ID reactively.
    * @returns The selected language ID.
    */
-  private getSelectedLanguageId(): number {
+  public getSelectedLanguageId(): number {
     return this.selectedLanguageId$.getValue();
+  }
+
+  /**
+   * Watch for language changes.
+   * @returns An Observable that emits when the language changes.
+   */
+  watchLanguageChanges(): Observable<number> {
+    return this.selectedLanguageId$.asObservable();
   }
 
   /**
@@ -65,21 +74,22 @@ export class PokemonUtilsService {
   }
 
   /**
-   * Get the Pokémon species Pokédex entry (flavor text) by the selected language ID and version.
+   * Get the Pokémon species Pokédex entry (flavor text) by the selected language ID and version ID.
    * @param pokemonSpecies The Pokémon species DTO object.
-   * @param version The Pokémon game version (optional).
+   * @param versionId The Pokémon game version ID (optional).
    * @returns The formatted Pokédex entry.
    */
   getPokemonSpeciesDexEntryByVersion(
     pokemonSpecies: PokemonSpecies | undefined,
-    version: string | null
+    versionId: number | null
   ): string {
     const languageId = this.getSelectedLanguageId();
-    const isNoVersionCheck = !version;
+    const isNoVersionCheck = versionId === null;
+
     const flavortext = pokemonSpecies?.pokemon_v2_pokemonspeciesflavortexts?.find(
-      (x) =>
-        x.pokemon_v2_language.id === languageId &&
-        (isNoVersionCheck || x.pokemon_v2_version.name === version)
+      (entry) =>
+        entry.pokemon_v2_language.id === languageId &&
+        (isNoVersionCheck || entry.pokemon_v2_version.id === versionId)
     )?.flavor_text;
 
     return flavortext ? flavortext.replace(/\f/g, ' ') : 'No entry available.';
@@ -100,5 +110,22 @@ export class PokemonUtilsService {
     const localizedGeneration = generationNames.find(name => name.pokemon_v2_language.id === languageId)?.name;
 
     return localizedGeneration || 'Unknown Generation';
+  }
+
+  /**
+   * Filters an array of versions to include only those that match the selected language ID.
+   * @param versionNames The array of versionnames.
+   * @returns Filtered array of versions in the selected language.
+   */
+  getVersionNameByLanguage(versionNames: Name[] | undefined): string {
+    if (!versionNames) {
+        return 'Unknown Version';
+    }
+
+    const languageId = this.getSelectedLanguageId();
+
+    const localizedVersion = versionNames.find(name => name.pokemon_v2_language.id === languageId)?.name;
+
+    return localizedVersion || 'Unknown Version';
   }
 }

@@ -39,6 +39,13 @@ export const GraphQLQueries = {
             pokemon_v2_version {
               name
               id
+              pokemon_v2_versionnames {
+                name
+                pokemon_v2_language {
+                  id
+                  name
+                }
+              }
             }
           }
         }
@@ -63,6 +70,7 @@ export const GraphQLQueries = {
             }
           }
           pokemon_v2_generation {
+            id
             name
           }
         }
@@ -92,6 +100,7 @@ export const GraphQLQueries = {
           }
         }
         pokemon_v2_generation {
+          id
           name
           pokemon_v2_generationnames {
             name
@@ -169,6 +178,20 @@ export const GraphQLQueries = {
           id
         }
       }
-    `
+    `,
+
+    GetVersions: `query Versions {
+      pokemon_v2_version {
+        id
+        pokemon_v2_versionnames {
+          name
+          pokemon_v2_language {
+            id
+            name
+          }
+        }
+      }
+    }
+    `,
   };
   
