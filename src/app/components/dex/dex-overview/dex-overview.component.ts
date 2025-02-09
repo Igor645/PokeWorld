@@ -9,14 +9,19 @@ import { SpeciesRow } from '../../../models/species-row.model';
 import { PokemonSpecies } from '../../../models/pokemon-species.model';
 import { PokeworldSearchComponent } from "../../search/pokeworld-search/pokeworld-search.component";
 import { LanguageSelectorComponent } from '../../localization/language-selector/language-selector.component';
-import { ScrollToTopComponent } from "../../core/scroll-to-top/scroll-to-top.component";
 import { LoadingSpinnerComponent } from '../../shared/loading-spinner/loading-spinner.component';
 
 @Component({
   selector: 'app-dex-overview',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, PokemonCardComponent, ScrollingModule, PokeworldSearchComponent, ScrollToTopComponent, LoadingSpinnerComponent],
+  imports: [
+    CommonModule, 
+    PokemonCardComponent, 
+    ScrollingModule, 
+    PokeworldSearchComponent, 
+    LoadingSpinnerComponent,
+  ],
   templateUrl: './dex-overview.component.html',
   styleUrls: ['./dex-overview.component.css'],
 })

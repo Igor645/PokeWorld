@@ -1,13 +1,13 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, NavigationEnd, RouterModule } from '@angular/router';
-import { DexOverviewComponent } from '../../dex/dex-overview/dex-overview.component';
 import { SettingsComponent } from '../settings/settings.component';
+import { ScrollToTopComponent } from '../scroll-to-top/scroll-to-top.component';
 
 @Component({
   selector: 'app-main-layout',
   standalone: true,
-  imports: [CommonModule, RouterModule, DexOverviewComponent, SettingsComponent],
+  imports: [CommonModule, RouterModule, ScrollToTopComponent, SettingsComponent],
   templateUrl: './main-layout.component.html',
   styleUrls: ['./main-layout.component.css'],
 })
