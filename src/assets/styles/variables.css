@@ -20,6 +20,7 @@
     --scrollbar-thumb-color: rgba(0, 0, 0, 0.1);
     --primary-background-color: rgb(206, 216, 247);
 
+    --dropdown-border-color: var(--border-color);
     --selected-color: white;
 }
 
@@ -39,5 +40,7 @@
     --scrollbar-thumb-color: rgba(255, 255, 255, 0.1);
     --primary-background-color: #272727;
 
+    --dropdown-border-color: rgb(36, 35, 35);
     --selected-color: white;
+
 }

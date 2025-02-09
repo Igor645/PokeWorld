@@ -37,15 +37,16 @@
 }
 
 ::ng-deep .mat-mdc-optgroup-label{
-    background-color: var(--border-color);
-    color: var(--background-color);
+    background-color: var(--dropdown-border-color);
+    color: white;
     font-size: x-large !important;
 }
 
 ::ng-deep .mat-mdc-autocomplete-panel {
     padding: 0 !important;
     max-height: 60vh !important;
-    border: var(--border-color) 2px solid;
+    border: var(--dropdown-border-color) 2px solid;
+    background-color: var(--background-color) !important;
     border-top: none;
     border-radius: 10px !important;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 6px 12px rgba(0, 0, 0, 0.1) !important;
