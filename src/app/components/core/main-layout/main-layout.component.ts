@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, NavigationEnd, RouterModule } from '@angular/router';
-import { DexOverviewComponent } from '../dex-overview/dex-overview.component';
+import { DexOverviewComponent } from '../../dex/dex-overview/dex-overview.component';
 import { SettingsComponent } from '../settings/settings.component';
 
 @Component({

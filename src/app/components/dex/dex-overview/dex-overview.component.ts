@@ -1,16 +1,16 @@
 import { Component, OnInit, Inject, PLATFORM_ID, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { PokemonService } from '../../services/pokemon.service';
+import { PokemonService } from '../../../services/pokemon.service';
 import { PokemonCardComponent } from '../pokemon-card/pokemon-card.component';
 import { ScrollingModule, CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
 import { BehaviorSubject, Observable, combineLatest } from 'rxjs';
 import { map, tap, startWith } from 'rxjs/operators';
-import { SpeciesRow } from '../../models/species-row.model';
-import { PokemonSpecies } from '../../models/pokemon-species.model';
-import { PokeworldSearchComponent } from "../pokeworld-search/pokeworld-search.component";
-import { LanguageSelectorComponent } from '../language-selector/language-selector.component';
-import { ScrollToTopComponent } from "../scroll-to-top/scroll-to-top.component";
-import { LoadingSpinnerComponent } from '../loading-spinner/loading-spinner.component';
+import { SpeciesRow } from '../../../models/species-row.model';
+import { PokemonSpecies } from '../../../models/pokemon-species.model';
+import { PokeworldSearchComponent } from "../../search/pokeworld-search/pokeworld-search.component";
+import { LanguageSelectorComponent } from '../../localization/language-selector/language-selector.component';
+import { ScrollToTopComponent } from "../../core/scroll-to-top/scroll-to-top.component";
+import { LoadingSpinnerComponent } from '../../shared/loading-spinner/loading-spinner.component';
 
 @Component({
   selector: 'app-dex-overview',

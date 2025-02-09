@@ -1,9 +1,9 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
-import { Name } from '../../models/species-name.model';
+import { Name } from '../../../models/species-name.model';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { PokemonUtilsService } from '../../utils/pokemon-utils';
-import { PokemonBgSvgComponent } from '../pokemon-bg-svg/pokemon-bg-svg.component';
+import { PokemonUtilsService } from '../../../utils/pokemon-utils';
+import { PokemonBgSvgComponent } from '../../shared/pokemon-bg-svg/pokemon-bg-svg.component';
 
 @Component({
   selector: 'app-pokemon-search-item',

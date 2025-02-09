@@ -4,8 +4,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
-import { LanguageSelectorComponent } from '../language-selector/language-selector.component';
-import { SettingsService } from '../../services/settings.service';
+import { LanguageSelectorComponent } from '../../localization/language-selector/language-selector.component';
+import { SettingsService } from '../../../services/settings.service';
 import { FormsModule } from '@angular/forms';
 
 @Component({

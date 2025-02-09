@@ -1,7 +1,7 @@
 import { Component, OnInit, ChangeDetectorRef, OnDestroy } from '@angular/core';
-import { LanguageService } from '../../services/language.service';
-import { SettingsService } from '../../services/settings.service';
-import { Language } from '../../models/language.model';
+import { LanguageService } from '../../../services/language.service';
+import { SettingsService } from '../../../services/settings.service';
+import { Language } from '../../../models/language.model';
 import { CommonModule } from '@angular/common';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatIconModule } from '@angular/material/icon';

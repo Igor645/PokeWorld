@@ -5,11 +5,11 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { CommonModule } from '@angular/common';
 import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
-import { PokemonService } from '../../services/pokemon.service';
-import { PokemonSpecies } from '../../models/pokemon-species.model';
-import { PokemonUtilsService } from '../../utils/pokemon-utils';
+import { PokemonService } from '../../../services/pokemon.service';
+import { PokemonSpecies } from '../../../models/pokemon-species.model';
+import { PokemonUtilsService } from '../../../utils/pokemon-utils';
 import { PokeworldSearchItemComponent } from '../pokeworld-search-item/pokeworld-search-item.component';
-import { Name } from '../../models/species-name.model';
+import { Name } from '../../../models/species-name.model';
 import { Router } from '@angular/router';
 
 @Component({
