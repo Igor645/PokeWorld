@@ -7,6 +7,11 @@
     Select your Pokémon ({{ count }})
 </div>
 
+<app-loading-spinner 
+    *ngIf="(isLoading$ | async) ?? false; else pokemonList" 
+    message="Loading Pokémon..." />
+
+<ng-template #pokemonList>
     <cdk-virtual-scroll-viewport 
         scrollWindow="true"
         itemSize="370"
@@ -17,12 +22,12 @@
             *ngFor="let species of row.pokemon_species"
             [pokemonSpecies]="species"
             ></app-pokemon-card>
-    
+
             <div 
             *ngFor="let i of [].constructor(6 - row.pokemon_species.length)"
             class="pokemon-placeholder"
             ></div>
         </div>
     </cdk-virtual-scroll-viewport>
-    
-    <app-scroll-to-top></app-scroll-to-top>
+</ng-template>
+<app-scroll-to-top></app-scroll-to-top>
