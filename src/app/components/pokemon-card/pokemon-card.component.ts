@@ -21,6 +21,7 @@ export class PokemonCardComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('imgContainer', { static: true }) imgContainerRef!: ElementRef;
 
   pokemonName: string = '';
+  generationName: string = '';
   private languageSubscription!: Subscription;
 
   constructor(
@@ -36,6 +37,7 @@ export class PokemonCardComponent implements OnInit, AfterViewInit, OnDestroy {
       .watchSetting<number>('selectedLanguageId')
       .subscribe(() => {
         this.updatePokemonName();
+        this.updateGenerationName();
         this.cdr.detectChanges();
       });
   }
@@ -57,10 +59,8 @@ export class PokemonCardComponent implements OnInit, AfterViewInit, OnDestroy {
       || '/invalid/image.png';
   }
 
-  parseGenerationName(generation: string | undefined): string {
-    if (!generation) return 'Unknown Generation';
-    const parts = generation.split('-');
-    return parts.length === 2 ? `Generation ${parts[1].toUpperCase()}` : generation;
+  updateGenerationName(): void {
+    this.generationName = this.pokemonUtils.parseGenerationName(this.pokemonSpecies?.pokemon_v2_generation?.pokemon_v2_generationnames);
   }
 
   navigateToPokemonDetails(): void {

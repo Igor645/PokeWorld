@@ -84,4 +84,21 @@ export class PokemonUtilsService {
 
     return flavortext ? flavortext.replace(/\f/g, ' ') : 'No entry available.';
   }
+
+  /**
+   * Parses the generation name and returns it in the selected language.
+   * @param generation The raw generation string (e.g., "generation-iii").
+   * @param generationNames The list of translated generation names.
+   * @returns The formatted generation name based on language preference.
+   */
+  parseGenerationName(generationNames: Name[] | undefined): string {
+    if (!generationNames || generationNames.length === 0) {
+        return 'Unknown Generation';
+    }
+
+    const languageId = this.getSelectedLanguageId();
+    const localizedGeneration = generationNames.find(name => name.pokemon_v2_language.id === languageId)?.name;
+
+    return localizedGeneration || 'Unknown Generation';
+  }
 }

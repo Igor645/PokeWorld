@@ -93,6 +93,13 @@ export const GraphQLQueries = {
         }
         pokemon_v2_generation {
           name
+          pokemon_v2_generationnames {
+            name
+            pokemon_v2_language {
+              id
+              name
+            }
+          }
         }
       }
       pokemon_v2_pokemonspecies_aggregate {
