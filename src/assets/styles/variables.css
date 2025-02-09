@@ -1,46 +1,71 @@
 :root {
+    /* ====== GENERAL LAYOUT ====== */
     --general-width: 85%;
     
+    /* ====== PRIMARY COLORS ====== */
+    --primary-color: #1b6ec2;
+    --primary-hover-color: #155a9c;
+    --secondary-color: #006bb7;
+    --secondary-hover-color: #004a8f;
+    --accent-text-color: #004a8f;
+    --text-color: #333;
+    --background-color: #ffffff;
+    --background-hover-color: #f5f5f5;
+    --primary-background-color: rgb(206, 216, 247);
+    
+    /* ====== BORDERS & OUTLINES ====== */
     --border-color: rgba(38, 143, 255, 0.5);
     --border-focus-color: rgba(38, 143, 255, 0.8);
-    --background-color: rgba(255, 255, 255, 1);
-    --background-hover-color: rgba(255, 255, 255, 0.9);
-    --text-color: #333;
-    --accent-text-color: #004a8f;
+    --dropdown-border-color: var(--border-color);
+
+    /* ====== STATUS COLORS ====== */
     --error-color: #e50000;
     --valid-color: #26b050;
+    
+    /* ====== SHADOWS ====== */
     --shadow-color: rgba(0, 0, 0, 0.2);
-    --pokemon-img-shadow-color: rgba(0, 0, 0, 0.6);
     --shadow-hover-color: rgba(0, 0, 0, 0.3);
-    --title-color: rgba(38, 143, 255, 0.8);
+    --pokemon-img-shadow-color: rgba(0, 0, 0, 0.6);
     --title-shadow-color: rgba(0, 0, 0, 0.4);
+
+    /* ====== SCROLLBARS ====== */
+    --scrollbar-thumb-color: rgba(0, 0, 0, 0.2);
+
+    /* ====== COMPONENT-SPECIFIC ====== */
     --glass-color: rgba(38, 143, 255, 0.3);
     --svg-color: rgba(38, 143, 255, 0.2);
     --option-active: #f0f0f0;
-    --scrollbar-thumb-color: rgba(0, 0, 0, 0.2);
-    --primary-background-color: rgb(206, 216, 247);
-
-    --dropdown-border-color: var(--border-color);
     --selected-color: white;
+    --title-color: rgba(38, 143, 255, 0.8);
 }
 
+/* ====== DARK THEME ====== */
 .dark-theme {
-    --border-color: rgba(63, 63, 63, 0.5);
-    --border-focus-color: rgba(122, 122, 122, 0.5);
+    /* General */
+    --text-color: #e0e0e0;
     --background-color: #121212;
     --background-hover-color: #1e1e1e;
-    --text-color: #e0e0e0;
+    --primary-background-color: #272727;
+    
+    /* Colors */
     --accent-text-color: rgba(255, 255, 255, 0.8);
+    --title-color: rgba(255, 255, 255, 0.8);
     --error-color: #cf6679;
     --valid-color: #03dac6;
-    --title-color: rgba(255, 255, 255, 0.8);
+
+    /* Borders & Shadows */
+    --border-color: rgba(63, 63, 63, 0.5);
+    --border-focus-color: rgba(122, 122, 122, 0.5);
+    --dropdown-border-color: rgb(36, 35, 35);
+    --shadow-color: rgba(255, 255, 255, 0.1);
+    --shadow-hover-color: rgba(255, 255, 255, 0.2);
+    
+    /* Scrollbars */
+    --scrollbar-thumb-color: rgba(255, 255, 255, 0.1);
+    
+    /* Component-specific */
     --glass-color: rgba(255, 255, 255, 0.1);
     --svg-color: rgba(255, 255, 255, 0.1);
     --option-active: #242323;
-    --scrollbar-thumb-color: rgba(255, 255, 255, 0.1);
-    --primary-background-color: #272727;
-
-    --dropdown-border-color: rgb(36, 35, 35);
     --selected-color: rgba(255, 255, 255, 0.8);
-
 }
