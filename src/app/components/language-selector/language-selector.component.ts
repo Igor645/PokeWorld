@@ -47,7 +47,7 @@ export class LanguageSelectorComponent implements OnInit, OnDestroy {
         this.languages = response.pokemon_v2_language.map((lang: any) => ({
           id: lang.id,
           name: this.languageMap[lang.name] || lang.name
-        }));
+        })).sort((a: any, b: any) => a.name.localeCompare(b.name));
       },
       error: (error) => console.error('Error fetching languages:', error)
     });

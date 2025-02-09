@@ -18,7 +18,7 @@ ul {
     list-style: none;
     overflow-y: auto;
     overflow-x: hidden;
-    max-height: 21vh;
+    max-height: 245px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -26,6 +26,8 @@ ul {
     margin: 2px 0;
     box-sizing: border-box;
     box-shadow: inset 0 4px 8px rgba(0, 0, 0, 0.1);
+    scroll-snap-type: y mandatory;
+    scroll-padding-bottom: 5px;
 }
 
 .language-icon {
@@ -42,6 +44,7 @@ li {
     padding: 5px;
     text-align: center;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    scroll-snap-align: end;
 }
 
 li:hover {
