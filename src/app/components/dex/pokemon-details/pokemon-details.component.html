@@ -4,11 +4,12 @@
   <div class="pokemon-main-view-container">
     <div class="pokemon-main-view">
       <div class="pokemon-main-view-left">
-        <h1>{{ getPokemonSpeciesName() }}</h1>
-        <div class="pokemon-dex-entry">{{ getPokemonDexEntry() }}</div>
+        <h1>{{ pokemonUtils.getPokemonSpeciesNameByLanguage(pokemonSpeciesDetails) }}</h1>
+        <app-dex-entry [pokemonSpeciesDetails]="pokemonSpeciesDetails"></app-dex-entry>
       </div>
+
       <div class="pokemon-main-view-right">
-        <img class="pokemon-detail-img" [src]="selectedPokemonImage" [alt]="getPokemonSpeciesName()" />
+        <img class="pokemon-detail-img" [src]="selectedPokemonImage" [alt]="pokemonUtils.getPokemonSpeciesNameByLanguage(pokemonSpeciesDetails)" />
         <app-pokemon-bg-svg class="pokemonCard__bg detail"></app-pokemon-bg-svg>    
       </div>
     </div>

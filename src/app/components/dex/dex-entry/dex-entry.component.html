@@ -1,0 +1,19 @@
+<div class="dex-entry-container">
+    <div class="pokemon-dex-entry">
+      {{ getPokemonDexEntry() }}
+    </div>
+
+    <div class="version-selector-wrapper">
+        <button class="scroll-button left" (click)="previousVersion()">
+          &#10094;
+        </button>
+
+        <div class="selected-version">
+          {{ selectedVersion ? pokemonUtils.getVersionNameByLanguage(selectedVersion.pokemon_v2_versionnames) : 'No Version Available' }}
+        </div>
+
+        <button class="scroll-button right" (click)="nextVersion()">
+          &#10095;
+        </button>
+    </div>
+</div>
