@@ -3,20 +3,20 @@ import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { PokemonService } from '../../services/pokemon.service';
 import { PokemonCardComponent } from '../pokemon-card/pokemon-card.component';
 import { ScrollingModule, CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
-import { ScrollingModule as ExperimentalScrollingModule } from '@angular/cdk-experimental/scrolling';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { map, tap, filter } from 'rxjs/operators';
+import { BehaviorSubject, Observable, combineLatest } from 'rxjs';
+import { map, tap, startWith } from 'rxjs/operators';
 import { SpeciesRow } from '../../models/species-row.model';
 import { PokemonSpecies } from '../../models/pokemon-species.model';
 import { PokeworldSearchComponent } from "../pokeworld-search/pokeworld-search.component";
 import { LanguageSelectorComponent } from '../language-selector/language-selector.component';
 import { ScrollToTopComponent } from "../scroll-to-top/scroll-to-top.component";
+import { LoadingSpinnerComponent } from '../loading-spinner/loading-spinner.component';
 
 @Component({
   selector: 'app-dex-overview',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, PokemonCardComponent, ScrollingModule, ExperimentalScrollingModule, PokeworldSearchComponent, ScrollToTopComponent, LanguageSelectorComponent],
+  imports: [CommonModule, PokemonCardComponent, ScrollingModule, PokeworldSearchComponent, ScrollToTopComponent, LoadingSpinnerComponent],
   templateUrl: './dex-overview.component.html',
   styleUrls: ['./dex-overview.component.css'],
 })
@@ -24,18 +24,14 @@ export class DexOverviewComponent implements OnInit {
   @ViewChild(CdkVirtualScrollViewport) viewport!: CdkVirtualScrollViewport;
 
   private pageSize = 6;
-  private currentPage = 0;
-  private isLoading = false;
 
   count = 0;
 
   private speciesRowsSubject = new BehaviorSubject<SpeciesRow[]>([]);
   speciesRows$: Observable<SpeciesRow[]> = this.speciesRowsSubject.asObservable();
 
-  filteredPokemonSpecies: PokemonSpecies[] = [];
-  showDropdown = false;
-  searchQuery = '';
-  showScrollToTopButton = false;
+  private isLoadingSubject = new BehaviorSubject<boolean>(true);
+  isLoading$ = this.isLoadingSubject.asObservable();
 
   constructor(
     private pokemonService: PokemonService,
@@ -47,9 +43,14 @@ export class DexOverviewComponent implements OnInit {
   }
 
   private fetchAllPokemon() {
+    this.isLoadingSubject.next(true);
+
     this.pokemonService.getAllPokemonSpecies().subscribe({
       next: response => {
-        if (!response.pokemon_v2_pokemonspecies.length) return;
+        if (!response.pokemon_v2_pokemonspecies.length) {
+          this.isLoadingSubject.next(false);
+          return;
+        }
 
         const rows: SpeciesRow[] = [];
         for (let i = 0; i < response.pokemon_v2_pokemonspecies.length; i += this.pageSize) {
@@ -61,9 +62,9 @@ export class DexOverviewComponent implements OnInit {
 
         this.speciesRowsSubject.next(rows);
         this.count = response.pokemon_v2_pokemonspecies_aggregate.aggregate.count;
-        this.isLoading = false;
+        this.isLoadingSubject.next(false);
       },
-      error: () => (this.isLoading = false),
+      error: () => this.isLoadingSubject.next(false),
     });
   }
 }

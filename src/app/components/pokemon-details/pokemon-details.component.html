@@ -1,19 +1,16 @@
-<div *ngIf="!pokemonSpeciesDetails; else pokemonContent">
-    <p>Loading Pokémon details...</p>
-  </div>
-  
-  <ng-template #pokemonContent>
-    <div class="pokemon-main-view-container">
-      <div class="pokemon-main-view">
-        <div class="pokemon-main-view-left">
-          <h1>{{ getPokemonSpeciesName() }}</h1>
-          <div class="pokemon-dex-entry">{{ getPokemonDexEntry() }}</div>
-        </div>
-        <div class="pokemon-main-view-right">
-          <img class="pokemon-detail-img" [src]="selectedPokemonImage" [alt]="getPokemonSpeciesName()" />
-          <app-pokemon-bg-svg class="pokemonCard__bg detail"></app-pokemon-bg-svg>    
-        </div>
+<app-loading-spinner message="Loading Pokémon details..." *ngIf="!pokemonSpeciesDetails; else pokemonContent"></app-loading-spinner>
+
+<ng-template #pokemonContent>
+  <div class="pokemon-main-view-container">
+    <div class="pokemon-main-view">
+      <div class="pokemon-main-view-left">
+        <h1>{{ getPokemonSpeciesName() }}</h1>
+        <div class="pokemon-dex-entry">{{ getPokemonDexEntry() }}</div>
+      </div>
+      <div class="pokemon-main-view-right">
+        <img class="pokemon-detail-img" [src]="selectedPokemonImage" [alt]="getPokemonSpeciesName()" />
+        <app-pokemon-bg-svg class="pokemonCard__bg detail"></app-pokemon-bg-svg>    
       </div>
     </div>
-  </ng-template>
-  
+  </div>
+</ng-template>
