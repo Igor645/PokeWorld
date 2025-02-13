@@ -65,3 +65,7 @@
     border: 3px solid transparent;
     background-clip: content-box;
 }
+
+::ng-deep .mat-mdc-input-element{
+    color: var(--text-color) !important;
+}
