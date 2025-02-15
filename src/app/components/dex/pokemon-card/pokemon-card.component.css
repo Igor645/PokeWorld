@@ -171,13 +171,13 @@
         transform: rotate(0deg);
     }
     25% {
-        transform: rotate(-30deg);
+        transform: rotate(-25deg);
     }
     50% {
-        transform: rotate(30deg);
+        transform: rotate(25deg);
     }
     75% {
-        transform: rotate(-30deg);
+        transform: rotate(-25deg);
     }
     100% {
         transform: rotate(0deg);
@@ -187,7 +187,8 @@
 .shaking_egg {
     animation: shake 0.5s infinite;
     animation-timing-function: ease-in-out;
-    width: 30%;
+    width: 35%;
+    z-index: 100;
 }
 
 .hidden {
