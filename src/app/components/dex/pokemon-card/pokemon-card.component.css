@@ -23,7 +23,7 @@
     position: relative;
     will-change: transform;
     image-rendering: crisp-edges;
-    image-rendering: -webkit-optimize-contrast; /* Chrome-specific */
+    image-rendering: -webkit-optimize-contrast;
 }
 
 .pokemonCard__img__container {
@@ -62,12 +62,10 @@
         transform: scale(0.5);
         opacity: 0;
     }
-
     50% {
         transform: scale(1.2);
         opacity: 1;
     }
-
     100% {
         transform: scale(1);
         opacity: 1;
@@ -90,10 +88,10 @@
     font-weight: 700;
 }
 
-    .pokemonCard__text.pokemonCard__generation {
-        font-size: 1.2rem;
-        font-weight: unset;
-    }
+.pokemonCard__text.pokemonCard__generation {
+    font-size: 1.2rem;
+    font-weight: unset;
+}
 
 .pokemonCard__id {
     font-size: 1.2rem;
@@ -132,18 +130,15 @@
     animation: popUp 0.6s ease-out forwards;
 }
 
-
 @keyframes popUp {
     0% {
         transform: translateY(50px) scale(0.8);
         opacity: 0;
     }
-
     60% {
         transform: translateY(-10px) scale(1.1);
         opacity: 1;
     }
-
     100% {
         transform: translateY(0) scale(1);
         opacity: 1;
@@ -151,7 +146,7 @@
 }
 
 :host:hover .pokemonCard__image:not(.shaking_egg):not(.initial-load) {
-    transform: translateY(5px) scale(1.1) ;
+    transform: translateY(5px) scale(1.1);
     transition: transform 0.5s ease;
     animation: floatUpDown 3s ease-in-out infinite;
     animation-delay: 0.5s;
@@ -161,12 +156,10 @@
     0%, 100% {
         transform: translateY(5px) scale(1.1);
     }
-
     50% {
         transform: translateY(-5px) scale(1.1);
     }
 }
-
 
 :host:hover::before {
     transform: rotate(45deg);
@@ -177,19 +170,15 @@
     0% {
         transform: rotate(0deg);
     }
-
     25% {
-        transform: rotate(-10deg);
+        transform: rotate(-20deg);
     }
-
     50% {
-        transform: rotate(10deg);
+        transform: rotate(20deg);
     }
-
     75% {
-        transform: rotate(-10deg);
+        transform: rotate(-20deg);
     }
-
     100% {
         transform: rotate(0deg);
     }
@@ -198,5 +187,24 @@
 .shaking_egg {
     animation: shake 0.5s infinite;
     animation-timing-function: ease-in-out;
-    width: 40%;
+    width: 35%;
+}
+
+.hidden {
+    display: none;
+}
+
+.shrink-away {
+    animation: shrink-away 0.1s forwards;
+}
+
+@keyframes shrink-away {
+    0% {
+      transform: scale(1);
+      opacity: 1;
+    }
+    100% {
+      transform: scale(0.5);
+      opacity: 0;
+    }
 }

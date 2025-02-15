@@ -1,24 +1,34 @@
-    <div class="pokemonCard__id">
-      Nr. {{ pokemonSpecies?.id || '-' }}
-    </div>
-  
-    <div #imgContainer class="pokemonCard__img__container">
-      <img 
-        class="pokemonCard__image initial-load"
-        [src]="getPokemonImage()"
-        (error)="handleImageError($event)"
-      />
+<div class="pokemonCard__id">
+  Nr. {{ pokemonSpecies?.id || '-' }}
+</div>
 
-      <app-pokemon-bg-svg class="pokemonCard__bg"></app-pokemon-bg-svg>    
-    </div>
-  
-    <div class="pokemonCard__text__container">
-      <div class="pokemonCard__text">
-        {{ pokemonName || 'Loading...' }}
-      </div>
-  
-      <div class="pokemonCard__text pokemonCard__generation">
-        {{ generationName }}
-      </div>
-    </div>
-  
+<div class="pokemonCard__img__container">
+  <img 
+    [src]="getPokemonImage()"
+    (load)="onImageLoad()"
+    (error)="handleImageError($event)"
+    class="pokemonCard__image initial-load"
+    [class.visible]="eggGone"
+    [class.hidden]="!eggGone"
+  />
+
+  <img 
+    src="/images/egg.png"
+    class="pokemonCard__placeholder shaking_egg"
+    [class.shrink-away]="eggSwooping"
+    [class.hidden]="eggGone"
+    (animationend)="onEggAnimationEnd()"
+  />
+
+  <app-pokemon-bg-svg class="pokemonCard__bg"></app-pokemon-bg-svg>    
+</div>
+
+<div class="pokemonCard__text__container">
+  <div class="pokemonCard__text">
+    {{ pokemonName || 'Loading...' }}
+  </div>
+
+  <div class="pokemonCard__text pokemonCard__generation">
+    {{ generationName }}
+  </div>
+</div>

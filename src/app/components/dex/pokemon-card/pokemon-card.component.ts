@@ -1,4 +1,4 @@
-import { Component, Input, AfterViewInit, ElementRef, ViewChild, ChangeDetectorRef, OnInit, OnDestroy } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { PokemonSpecies } from '../../../models/pokemon-species.model';
 import { CommonModule } from '@angular/common';
@@ -16,12 +16,13 @@ import { PokemonBgSvgComponent } from '../../shared/pokemon-bg-svg/pokemon-bg-sv
     '(click)': 'navigateToPokemonDetails()'
   }
 })
-export class PokemonCardComponent implements OnInit, AfterViewInit, OnDestroy {
+export class PokemonCardComponent implements OnInit, OnDestroy {
   @Input() pokemonSpecies!: PokemonSpecies;
-  @ViewChild('imgContainer', { static: true }) imgContainerRef!: ElementRef;
-
   pokemonName: string = '';
   generationName: string = '';
+  imageLoaded: boolean = false;
+  eggGone: boolean = false;
+  eggSwooping: boolean = false;
   private languageSubscription!: Subscription;
 
   constructor(
@@ -42,10 +43,6 @@ export class PokemonCardComponent implements OnInit, AfterViewInit, OnDestroy {
       });
   }
 
-  ngAfterViewInit(): void {
-    this.removeInitialLoad();
-  }
-
   ngOnDestroy(): void {
     this.languageSubscription.unsubscribe();
   }
@@ -55,12 +52,15 @@ export class PokemonCardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   getPokemonImage(): string {
-    return this.pokemonUtils.getPokemonOfficialImage(this.pokemonSpecies?.pokemon_v2_pokemons?.[0]) 
-      || '/invalid/image.png';
+    return this.pokemonUtils.getPokemonOfficialImage(
+      this.pokemonSpecies?.pokemon_v2_pokemons?.[0]
+    ) || '/invalid/image.png';
   }
 
   updateGenerationName(): void {
-    this.generationName = this.pokemonUtils.parseGenerationName(this.pokemonSpecies?.pokemon_v2_generation?.pokemon_v2_generationnames);
+    this.generationName = this.pokemonUtils.parseGenerationName(
+      this.pokemonSpecies?.pokemon_v2_generation?.pokemon_v2_generationnames
+    );
   }
 
   navigateToPokemonDetails(): void {
@@ -75,18 +75,23 @@ export class PokemonCardComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }  
 
+  onImageLoad(): void {
+    console.log('Image has loaded.');
+    this.imageLoaded = true;
+    this.eggSwooping = true;
+    this.cdr.detectChanges();
+  }
+
+  onEggAnimationEnd(): void {
+    console.log('Egg animation ended.');
+    this.eggGone = true;
+    this.eggSwooping = false;
+    this.cdr.detectChanges();
+  }
+
   handleImageError(event: Event): void {
     const img = event.target as HTMLImageElement;
-    img.src = 'images/egg.png';
+    img.src = 'assets/images/egg.png';
     img.classList.add('shaking_egg');
-  }  
-
-  private removeInitialLoad(): void {
-    setTimeout(() => {
-      if (this.imgContainerRef) {
-        const images = this.imgContainerRef.nativeElement.querySelectorAll('.pokemonCard__image.initial-load');
-        images.forEach((img: HTMLElement) => img.classList.remove('initial-load'));
-      }
-    }, 600);
   }
 }

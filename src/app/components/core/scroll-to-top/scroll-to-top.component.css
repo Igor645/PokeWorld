@@ -2,7 +2,7 @@
 .scroll-to-top {
     position: fixed;
     bottom: -10vh;
-    right: 1vw;
+    right: 10px;
     width: 3vw;
     height: 3vw;
     border-radius: 50%;
@@ -30,7 +30,7 @@
 .scroll-to-top.show {
     opacity: 1;
     transform: translateY(0);
-    bottom: 20px;
+    bottom: 10px;
 }
 
 .scroll-to-top.hide {
