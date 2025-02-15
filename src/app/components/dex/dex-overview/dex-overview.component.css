@@ -87,7 +87,7 @@
     color: var(--accent-text-color);
     font-size: 1.8rem;
     background-color: var(--background-color);
-    margin-left: calc((100vw - var(--general-width) - 2rem) / 2);
+    margin-left: calc((100% - var(--general-width) - 2rem) / 2);
     width: fit-content;
     padding: 1rem;
     border-radius: 8px;
