@@ -16,16 +16,6 @@
     animation: fadeIn 1s ease-in-out;
 }
 
-.placeholder-card {
-    background-color: #f0f0f0;
-    height: 150px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    flex: 1 1 calc(100% / 6);
-    margin: 5px;
-}
-
-
 .row {
     display: flex;
     flex-wrap: nowrap;
