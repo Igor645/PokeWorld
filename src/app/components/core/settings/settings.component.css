@@ -64,5 +64,5 @@
 }
 
 .close-icon:hover {
-    color: black;
+    color: var(--text-color);
 }

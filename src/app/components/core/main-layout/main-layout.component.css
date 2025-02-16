@@ -27,6 +27,8 @@ a:hover{
 
 .main-footer{
     grid-area: footer;
+    color: var(--text-color);
+    padding: 0 1%;
 }
 
 .main-header h1 {
