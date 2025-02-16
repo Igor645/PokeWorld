@@ -17,6 +17,7 @@
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 6px 12px rgba(0, 0, 0, 0.1);
     animation: fadeIn 1s ease-in-out;
+    min-height: fit-content;
 }
 
 .pokemon-main-view{

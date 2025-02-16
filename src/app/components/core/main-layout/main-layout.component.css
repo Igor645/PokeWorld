@@ -67,3 +67,20 @@ a:hover{
     justify-content: center;
     align-items: center;
 }
+
+.pokeapi-reference{
+    display: flex;
+    align-items: center;
+    height: 100%;
+    gap: 3px;
+    font-weight: 700;
+}
+
+.pokeapi-logo {
+    width: 80px;
+    z-index: 1;
+}
+
+.pokeapi-logo:hover{
+    scale: 1.1;
+}
