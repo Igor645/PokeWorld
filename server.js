@@ -2,12 +2,10 @@ const express = require('express');
 const path = require('path');
 const app = express();
 
-// Serve static files from the dist folder
-app.use(express.static(path.join(__dirname, 'dist', 'poke-world-angular')));
+app.use(express.static(path.join(__dirname, 'dist', 'poke-world-angular', 'browser')));
 
-// For all GET requests, send back index.html so that PathLocationStrategy can be used
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'dist', 'poke-world-angular', 'index.html'));
+  res.sendFile(path.join(__dirname, 'dist', 'poke-world-angular', 'browser', 'index.html'));
 });
 
 const port = process.env.PORT || 8080;
