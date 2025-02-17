@@ -65,17 +65,9 @@
 .arrow {
     font-size: 7rem;
     color: var(--text-accent-color);
-    margin: auto 0;
+    margin: auto -2rem;
     width: fit-content;
     height: fit-content;
-}
-
-.arrow.left{
-    margin-left: -2rem;    
-}
-
-.arrow.right{
-    margin-right: -2rem;    
 }
 
   .pokemon-navigator {
