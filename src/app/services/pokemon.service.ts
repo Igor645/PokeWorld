@@ -74,4 +74,17 @@ export class PokemonService {
   getAllPokemonSpecies(): Observable<PokemonSpeciesResponse> {
     return this.graphQLService.executeQuery<PokemonSpeciesResponse>(GraphQLQueries.GetPokemonSpeciesAll, {});
   }
+
+  /**
+   * Fetches Pokémon species by its ID.
+   * @param id Pokémon species ID.
+   * @returns Observable containing the Pokémon species details.
+   */
+  getPokemonSpeciesById(id: number): Observable<PokemonSpeciesResponse> {
+  const variables = { id };
+  return this.graphQLService.executeQuery<PokemonSpeciesResponse>(
+    GraphQLQueries.GetPokemonSpeciesById,
+    variables
+  );
+  }
 }
