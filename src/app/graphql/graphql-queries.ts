@@ -193,5 +193,26 @@ export const GraphQLQueries = {
       }
     }
     `,
+
+    GetPokemonSpeciesById: `
+      query GetPokemonSpeciesById($id: Int!) {
+        pokemon_v2_pokemonspecies(order_by: { id: asc }, where: { id: { _eq: $id } }) {
+          pokemon_v2_pokemons(where: { is_default: { _eq: true } }) {
+            id
+            pokemon_v2_pokemonsprites {
+              sprites
+            }
+          }
+          id
+          pokemon_v2_pokemonspeciesnames {
+            name
+            pokemon_v2_language {
+              name
+              id
+            }
+          }
+        }
+      }
+    `,
   };
   

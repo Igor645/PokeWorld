@@ -1,6 +1,16 @@
-<app-loading-spinner message="Loading Pokémon details..." *ngIf="!pokemonSpeciesDetails; else pokemonContent"></app-loading-spinner>
+<app-loading-spinner message="Loading Pokémon details..." *ngIf="isLoading; else pokemonContent"></app-loading-spinner>
 
 <ng-template #pokemonContent>
+
+<div class="pokemon-nav-buttons" *ngIf="previousPokemonSpecies || nextPokemonSpecies">
+  <div *ngIf="previousPokemonSpecies" class="nav-button">
+    <app-pokemon-navigator [pokemon]="previousPokemonSpecies" facing="left"></app-pokemon-navigator>
+  </div>
+  <div *ngIf="nextPokemonSpecies" class="nav-button">
+    <app-pokemon-navigator [pokemon]="nextPokemonSpecies" facing="right"></app-pokemon-navigator>
+  </div>
+</div>
+
   <div class="pokemon-main-view-container">
     <div class="pokemon-main-view">
       <div class="pokemon-main-view-left">
@@ -9,9 +19,13 @@
       </div>
 
       <div class="pokemon-main-view-right">
-        <img class="pokemon-detail-img" [src]="selectedPokemonImage" [alt]="pokemonUtils.getPokemonSpeciesNameByLanguage(pokemonSpeciesDetails)" />
+        <img
+          class="pokemon-detail-img"
+          [src]="selectedPokemonImage"
+          [alt]="pokemonUtils.getPokemonSpeciesNameByLanguage(pokemonSpeciesDetails)" />
         <app-pokemon-bg-svg class="pokemonCard__bg detail"></app-pokemon-bg-svg>    
       </div>
     </div>
   </div>
+
 </ng-template>
