@@ -22,8 +22,13 @@ export class PokemonService {
         throw new Error("Either 'id' or 'name' must be provided.");
     }
 
-    const formattedName = name ? name.charAt(0).toUpperCase() + name.slice(1).toLowerCase() : null;
-    let query = GraphQLQueries.GetPokemonDetails;
+    const formattedName = name
+    ? name
+        .split(' ')
+        .map(part => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase())
+        .join(' ')
+    : null;
+   let query = GraphQLQueries.GetPokemonDetails;
     let variables: any = {};
 
     if (id) {
