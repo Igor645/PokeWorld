@@ -96,3 +96,7 @@
     margin: 2rem auto;
     animation: fadeIn 1s ease-in-out;
 }
+
+.nav-button.left{
+    margin-left: auto;
+}
