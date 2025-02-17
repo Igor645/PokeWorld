@@ -32,6 +32,7 @@
     position: relative;
     will-change: transform;
     image-rendering: crisp-edges;
+    margin: 0 auto;
     image-rendering: -webkit-optimize-contrast;
 }
 

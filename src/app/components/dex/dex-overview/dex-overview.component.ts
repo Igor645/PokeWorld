@@ -3,12 +3,11 @@ import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { PokemonService } from '../../../services/pokemon.service';
 import { PokemonCardComponent } from '../pokemon-card/pokemon-card.component';
 import { ScrollingModule, CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
-import { BehaviorSubject, Observable, combineLatest } from 'rxjs';
-import { map, tap, startWith } from 'rxjs/operators';
+import { BehaviorSubject, Observable, of } from 'rxjs';
+import { finalize, catchError } from 'rxjs/operators';
 import { SpeciesRow } from '../../../models/species-row.model';
 import { PokemonSpecies } from '../../../models/pokemon-species.model';
 import { PokeworldSearchComponent } from "../../search/pokeworld-search/pokeworld-search.component";
-import { LanguageSelectorComponent } from '../../localization/language-selector/language-selector.component';
 import { LoadingSpinnerComponent } from '../../shared/loading-spinner/loading-spinner.component';
 
 @Component({
@@ -28,8 +27,7 @@ import { LoadingSpinnerComponent } from '../../shared/loading-spinner/loading-sp
 export class DexOverviewComponent implements OnInit {
   @ViewChild(CdkVirtualScrollViewport) viewport!: CdkVirtualScrollViewport;
 
-  private pageSize = 6;
-
+  private readonly pageSize = 6;
   count = 0;
 
   private speciesRowsSubject = new BehaviorSubject<SpeciesRow[]>([]);
@@ -43,33 +41,42 @@ export class DexOverviewComponent implements OnInit {
     @Inject(PLATFORM_ID) private platformId: object
   ) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.fetchAllPokemon();
   }
 
-  private fetchAllPokemon() {
+  private fetchAllPokemon(): void {
     this.isLoadingSubject.next(true);
 
-    this.pokemonService.getAllPokemonSpecies().subscribe({
-      next: response => {
-        if (!response.pokemon_v2_pokemonspecies.length) {
-          this.isLoadingSubject.next(false);
-          return;
-        }
+    this.pokemonService.getAllPokemonSpecies().pipe(
+      finalize(() => this.isLoadingSubject.next(false)),
+      catchError(error => {
+        console.error('Error fetching Pokemon species', error);
+        return of({
+          pokemon_v2_pokemonspecies: [],
+          pokemon_v2_pokemonspecies_aggregate: { aggregate: { count: 0 } }
+        });
+      })
+    ).subscribe(response => {
+      const species = response.pokemon_v2_pokemonspecies;
+      if (!species.length) {
+        return;
+      }
 
-        const rows: SpeciesRow[] = [];
-        for (let i = 0; i < response.pokemon_v2_pokemonspecies.length; i += this.pageSize) {
-          rows.push({
-            rowId: i / this.pageSize,
-            pokemon_species: response.pokemon_v2_pokemonspecies.slice(i, i + this.pageSize),
-          });
-        }
-
-        this.speciesRowsSubject.next(rows);
-        this.count = response.pokemon_v2_pokemonspecies_aggregate.aggregate.count;
-        this.isLoadingSubject.next(false);
-      },
-      error: () => this.isLoadingSubject.next(false),
+      const rows = this.transformToRows(species, this.pageSize);
+      this.speciesRowsSubject.next(rows);
+      this.count = response.pokemon_v2_pokemonspecies_aggregate.aggregate.count;
     });
+  }
+
+  private transformToRows(species: PokemonSpecies[], pageSize: number): SpeciesRow[] {
+    const rows: SpeciesRow[] = [];
+    for (let i = 0; i < species.length; i += pageSize) {
+      rows.push({
+        rowId: i / pageSize,
+        pokemon_species: species.slice(i, i + pageSize),
+      });
+    }
+    return rows;
   }
 }

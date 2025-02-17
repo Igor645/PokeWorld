@@ -1,27 +1,24 @@
-<div *ngIf="facing === 'left'; else rightFacing" class="pokemon-navigator" (click)="navigateToDetails()">
-    <!-- Material icon for left arrow -->
-    <mat-icon class="arrow left">arrow_left</mat-icon>
-    <div class="pokemon-name">{{ getPokemonName() }}</div>
-    <div class="pokemonCard__img__container left">
-      <img 
-        class="pokemonCard__image initial-load"
-        [src]="pokemonImage" 
-        [alt]="getPokemonName()"/>
-      <app-pokemon-bg-svg class="pokemonCard__bg"></app-pokemon-bg-svg>    
-    </div>
-  </div> 
+<div class="pokemon-navigator" (click)="navigateToDetails()">
+    <ng-container *ngIf="facing === 'left'; else rightTemplate">
+      <mat-icon class="arrow left">arrow_left</mat-icon>
+      <div class="pokemon-name">{{ getPokemonName() }}</div>
+      <ng-container [ngTemplateOutlet]="imageTemplate"></ng-container>
+    </ng-container>
   
-  <ng-template #rightFacing>
-    <div class="pokemon-navigator" (click)="navigateToDetails()">
-      <div class="pokemonCard__img__container">
+    <ng-template #rightTemplate>
+      <ng-container [ngTemplateOutlet]="imageTemplate"></ng-container>
+      <div class="pokemon-name">{{ getPokemonName() }}</div>
+      <mat-icon class="arrow right">arrow_right</mat-icon>
+    </ng-template>
+  
+    <ng-template #imageTemplate>
+      <div class="pokemonCard__img__container" [ngClass]="{'left': facing === 'left'}">
         <img 
-          class="pokemonCard__image initial-load"
+          class="pokemonCard__image"
           [src]="pokemonImage" 
           [alt]="getPokemonName()"/>
         <app-pokemon-bg-svg class="pokemonCard__bg"></app-pokemon-bg-svg>    
       </div>
-      <div class="pokemon-name">{{ getPokemonName() }}</div>
-      <mat-icon class="arrow right">arrow_right</mat-icon>
-    </div>   
-  </ng-template>
+    </ng-template>
+  </div>
   
