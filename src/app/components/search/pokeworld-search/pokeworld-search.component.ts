@@ -59,7 +59,6 @@ export class PokeworldSearchComponent implements AfterViewInit, OnDestroy {
     });
   }
   
-
   ngOnDestroy() {}
 
   onOptionSelected(event: any) {

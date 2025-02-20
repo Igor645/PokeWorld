@@ -5,9 +5,15 @@
   <title>PokeWorld</title>
   <script>
     (function() {
-      const darkModeSetting = localStorage.getItem('darkMode');
+      let darkModeSetting = localStorage.getItem('darkMode');
       const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      if (darkModeSetting === 'true' || (darkModeSetting === null && systemPrefersDark)) {
+
+      if (darkModeSetting === null) {
+        darkModeSetting = systemPrefersDark ? 'true' : 'false';
+        localStorage.setItem('darkMode', darkModeSetting);
+      }
+
+      if (darkModeSetting === 'true') {
         document.documentElement.classList.add('dark-theme');
       }
     })();
