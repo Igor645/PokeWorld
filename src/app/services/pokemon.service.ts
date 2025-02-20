@@ -22,21 +22,15 @@ export class PokemonService {
         throw new Error("Either 'id' or 'name' must be provided.");
     }
 
-    const formattedName = name
-    ? name
-        .split(' ')
-        .map(part => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase())
-        .join(' ')
-    : null;
-   let query = GraphQLQueries.GetPokemonDetails;
+    let query = GraphQLQueries.GetPokemonDetails;
     let variables: any = {};
 
     if (id) {
         variables = { value: id };
         query = query.replace("{FILTER}", "id: { _eq: $value }").replace("{TYPE}", "Int");
-    } else if (formattedName) {
-        variables = { value: formattedName };
-        query = query.replace("{FILTER}", "pokemon_v2_pokemonspeciesnames: { name: { _eq: $value } }").replace("{TYPE}", "String");
+    } else if (name) {
+        variables = { value: name };
+        query = query.replace("{FILTER}", "pokemon_v2_pokemonspeciesnames: { name: { _ilike: $value } }").replace("{TYPE}", "String");
     }
 
     return this.graphQLService.executeQuery<PokemonSpeciesResponse>(query, variables);
