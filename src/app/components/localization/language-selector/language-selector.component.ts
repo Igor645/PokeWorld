@@ -51,13 +51,19 @@ export class LanguageSelectorComponent implements OnInit, OnDestroy {
       },
       error: (error) => console.error('Error fetching languages:', error)
     });
-
+  
     this.languageSubscription = this.settingsService.watchSetting<number>('selectedLanguageId')
       .subscribe(id => {
-        this.selectedLanguageId = id;
+        if (id === null || id === undefined) {
+          console.log("No language selected, defaulting to English (ID: 9)");
+          this.settingsService.setSetting('selectedLanguageId', 9);
+          this.selectedLanguageId = 9;
+        } else {
+          this.selectedLanguageId = id;
+        }
         this.cdr.detectChanges();
       });
-  }
+  }  
 
   selectLanguage(languageId: number) {
     this.settingsService.setSetting('selectedLanguageId', languageId);
