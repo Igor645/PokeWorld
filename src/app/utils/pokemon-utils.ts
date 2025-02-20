@@ -10,13 +10,17 @@ import { Version } from '../models/version.model';
   providedIn: 'root'
 })
 export class PokemonUtilsService {
-  private selectedLanguageId$ = new BehaviorSubject<number>(9); // Default: English (ID 9)
+  private selectedLanguageId$ = new BehaviorSubject<number>(9);
 
   constructor(private settingsService: SettingsService) {
     this.settingsService.watchSetting<number>('selectedLanguageId')
       .subscribe(id => {
-        this.selectedLanguageId$.next(id);
-      });
+        if (id !== null && id !== undefined) {
+          this.selectedLanguageId$.next(id);
+        } else {
+          this.selectedLanguageId$.next(9);
+        }
+      });  
   }
 
   /**
