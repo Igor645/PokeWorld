@@ -9,10 +9,12 @@
                 <h2>Settings</h2>
                 <mat-icon class="close-icon" (click)="toggleSettings()">close</mat-icon>
             </div>
-            <app-language-selector></app-language-selector>
-            <mat-slide-toggle [(ngModel)]="isDarkMode" (change)="toggleDarkMode()">
-                Dark Mode
-            </mat-slide-toggle>              
+            <div class="settings-values">
+                <app-language-selector></app-language-selector>
+                <mat-slide-toggle [(ngModel)]="isDarkMode" (change)="toggleDarkMode()">
+                    Dark Mode
+                </mat-slide-toggle>              
+            </div>
         </mat-card>
     </div>
 </div>
