@@ -48,11 +48,11 @@ li {
 }
 
 li:hover {
-    background: var(--option-active);
+    background: var(--background-hover-color);
 }
 
 li.selected {
-    background: var(--border-focus-color);
+    background: var(--primary-color);
     color: var(--selected-color);
     font-weight: bold;
 }
