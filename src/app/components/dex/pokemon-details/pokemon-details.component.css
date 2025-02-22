@@ -26,12 +26,13 @@
     display: flex;
     width: 100%;
     justify-content: space-evenly;
+    gap: 1rem;
 }
 
 .pokemon-main-view-left {
     display: flex;
     flex-direction: column;
-    width: 60%;
+    width: calc(60% - 1rem);
     color: var(--accent-text-color);
 }
 
@@ -48,6 +49,12 @@
     flex-direction: column;
     width: 40%;
     margin: 0 auto;
+}
+
+.pokemon-official-sprite-container{
+    display: flex;
+    align-items: center;
+    width: 100%;
     background-color: var(--glass-color);
     border-radius: 30px;
     position: relative;
@@ -55,9 +62,10 @@
     inset 0 -4px 10px rgba(255, 255, 255, 0.2);
 }
 
-
 .pokemon-detail-img {
     width: 100%;
+    max-height: 95%;
+    object-fit: contain;
     filter: drop-shadow(0 4px 6px var(--pokemon-img-shadow-color));
     z-index: 15;
     position: relative;
@@ -100,3 +108,102 @@
 .nav-button.left{
     margin-left: auto;
 }
+
+select {
+    width: 100%;
+    max-width: var(--general-width);
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    border: 1px solid var(--dropdown-border-color);
+    border-radius: 4px;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    box-shadow: 0 2px 4px var(--shadow-color);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20width%3D%2210%22%20height%3D%225%22%20viewBox%3D%220%200%2010%205%22%20fill%3D%22none%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cpath%20d%3D%22M0%200L5%205L10%200H0Z%22%20fill%3D%22%23555%22/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 10px 5px;
+  }
+  
+  select:focus {
+    outline: none;
+    border-color: var(--border-focus-color);
+    box-shadow: 0 0 0 3px var(--glass-color);
+  }
+
+  .sprite-buttons {
+    display: flex;
+    gap: 0.5rem;
+    width: 50%;
+    margin: 0.8rem auto 0 auto;
+    position: relative;
+    z-index: 800;
+  }
+  
+  .sprite-buttons button {
+    flex: 1;
+    padding: 0.5rem;
+    font-size: 1rem;
+    border: 2px solid var(--primary-color);
+    border-radius: 4px;
+    background-color: var(--background-color);
+    color: var(--primary-color);
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+  
+  .sprite-buttons button.active {
+    background-color: var(--primary-color);
+    color: var(--selected-color);
+  }
+  
+  .sprite-buttons button:hover:not(.active) {
+    background-color: var(--background-hover-color);
+  }
+
+  .general-detail-list {
+    list-style: none;
+    width: 60%;
+    margin: 1rem 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: var(--background-color);
+  }
+  
+  .general-detail-list li {
+    display: grid;
+    grid: auto / repeat(2, 1fr);
+    width: 100%;
+    align-items: center;
+    padding: 0.75rem 3px;
+    box-sizing: border-box;
+    border-bottom: 1px solid var(--dropdown-border-color);
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    cursor: pointer;
+  }
+  
+  .general-detail-list li:last-child {
+    border-bottom: none;
+  }  
+
+  .general-detail-label {
+    font-weight: 800;
+  }
+
+  @media (max-width: 768px) {
+    select {
+      font-size: 0.9rem;
+      padding: 0.4rem 0.8rem;
+      background-position: right 0.8rem center;
+    }
+
+    .sprite-buttons button {
+        font-size: 0.9rem;
+        padding: 0.4rem;
+    }
+}
+  

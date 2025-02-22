@@ -30,15 +30,10 @@ export class PokemonNavigatorComponent {
   }
 
   getPokemonName(): string {
-    console.log(this.pokemon);
     return this.pokemonUtils.getPokemonSpeciesNameByLanguage(this.pokemon);
   }
 
-  /**
-   * Navigates to the Pokémon details page using its ID.
-   */
   navigateToDetails(): void {
-    // Adjust the route if needed.
     this.router.navigate(['/pokemon', this.getPokemonName()]);
   }
 }

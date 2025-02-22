@@ -11,6 +11,8 @@ import { PokemonBgSvgComponent } from '../../shared/pokemon-bg-svg/pokemon-bg-sv
 import { LoadingSpinnerComponent } from '../../shared/loading-spinner/loading-spinner.component';
 import { DexEntryComponent } from '../dex-entry/dex-entry.component';
 import { PokemonNavigatorComponent } from '../pokemon-navigator/pokemon-navigator.component';
+import { Pokemon } from '../../../models/pokemon.model';
+import { Sprite } from '../../../models/sprite.model';
 
 @Component({
   selector: 'app-pokemon-details',
@@ -28,15 +30,13 @@ import { PokemonNavigatorComponent } from '../pokemon-navigator/pokemon-navigato
 export class PokemonDetailsComponent implements OnInit {
   pokemonSpeciesDetails?: PokemonSpecies;
   selectedPokemonImage?: string;
-
+  selectedPokemon?: Pokemon;
+  isShiny: boolean = false;
   previousPokemonSpecies?: PokemonSpecies;
   nextPokemonSpecies?: PokemonSpecies;
-
   versions: Version[] = [];
   selectedVersion: Version | null = null;
-
   private selectedLanguageId$ = new BehaviorSubject<number>(9);
-
   isMainLoading = true;
   isAdjacentLoading = true;
 
@@ -62,14 +62,12 @@ export class PokemonDetailsComponent implements OnInit {
       this.nextPokemonSpecies = undefined;
       this.isMainLoading = true;
       this.isAdjacentLoading = true;
-
       const speciesIdOrName = params.get('speciesIdOrName');
       if (!speciesIdOrName) {
         console.error("No speciesIdOrName found in the route!");
         this.router.navigate(['/']);
         return;
       }
-
       const isId = /^\d+$/.test(speciesIdOrName);
       if (isId) {
         this.fetchPokemonDetails(parseInt(speciesIdOrName, 10));
@@ -83,11 +81,10 @@ export class PokemonDetailsComponent implements OnInit {
     this.pokemonService.getPokemonDetails(id, undefined).subscribe({
       next: (response) => {
         this.pokemonSpeciesDetails = response.pokemon_v2_pokemonspecies[0];
-        this.selectedPokemonImage = this.pokemonUtils.getPokemonOfficialImage(
-          this.pokemonSpeciesDetails?.pokemon_v2_pokemons?.[0]
-        );
+        this.isShiny = false;
+        this.selectedPokemon = this.pokemonSpeciesDetails?.pokemon_v2_pokemons?.[0];
+        this.updateSelectedPokemonImage();
         this.isMainLoading = false;
-
         if (this.pokemonSpeciesDetails?.id) {
           this.fetchAdjacentPokemon(this.pokemonSpeciesDetails.id);
         } else {
@@ -102,11 +99,10 @@ export class PokemonDetailsComponent implements OnInit {
     this.pokemonService.getPokemonDetails(undefined, name).subscribe({
       next: (response) => {
         this.pokemonSpeciesDetails = response.pokemon_v2_pokemonspecies[0];
-        this.selectedPokemonImage = this.pokemonUtils.getPokemonOfficialImage(
-          this.pokemonSpeciesDetails?.pokemon_v2_pokemons?.[0]
-        );
+        this.isShiny = false;
+        this.selectedPokemon = this.pokemonSpeciesDetails?.pokemon_v2_pokemons?.[0];
+        this.updateSelectedPokemonImage();
         this.isMainLoading = false;
-
         if (this.pokemonSpeciesDetails?.id) {
           this.fetchAdjacentPokemon(this.pokemonSpeciesDetails.id);
         } else {
@@ -126,18 +122,47 @@ export class PokemonDetailsComponent implements OnInit {
           })
         )
       : of(null);
-
     const next$ = this.pokemonService.getPokemonSpeciesById(currentId + 1).pipe(
-        catchError(err => {
-          console.error("Error fetching next Pokémon:", err);
-          return of(null);
-        })
-      );
-
+      catchError(err => {
+        console.error("Error fetching next Pokémon:", err);
+        return of(null);
+      })
+    );
     forkJoin([previous$, next$]).subscribe(([prevResponse, nextResponse]) => {
       this.previousPokemonSpecies = prevResponse ? prevResponse.pokemon_v2_pokemonspecies[0] : undefined;
       this.nextPokemonSpecies = nextResponse ? nextResponse.pokemon_v2_pokemonspecies[0] : undefined;
       this.isAdjacentLoading = false;
     });
+  }
+
+  onPokemonChange(event: Event): void {
+    const selectElement = event.target as HTMLSelectElement;
+    const selectedPokemonId = selectElement.value;
+    if (!this.pokemonSpeciesDetails?.pokemon_v2_pokemons) return;
+    const selected = this.pokemonSpeciesDetails.pokemon_v2_pokemons.find(
+      p => p.id === +selectedPokemonId
+    );
+    if (selected) {
+      this.selectedPokemon = selected;
+      this.updateSelectedPokemonImage();
+    }
+  }
+
+  updateSelectedPokemonImage(): void {
+    if (!this.selectedPokemon || !this.selectedPokemon.pokemon_v2_pokemonsprites?.length) {
+      this.selectedPokemonImage = undefined;
+      return;
+    }
+    const spritesData = this.selectedPokemon.pokemon_v2_pokemonsprites[0].sprites;
+    const officialArtwork = spritesData.other["official-artwork"];
+    let spriteKey: keyof Sprite = this.isShiny ? 'front_shiny' : 'front_default';
+    this.selectedPokemonImage = officialArtwork[spriteKey] || officialArtwork['front_default'];
+    console.log(this.selectedPokemonImage);
+    console.log(spriteKey);
+  }
+
+  onSpriteTypeChange(isShiny: boolean): void {
+    this.isShiny = isShiny;
+    this.updateSelectedPokemonImage();
   }
 }
