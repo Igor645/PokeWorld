@@ -1,4 +1,7 @@
-<app-loading-spinner message="Loading Pokémon details..." *ngIf="isLoading; else pokemonContent"></app-loading-spinner>
+<app-loading-spinner 
+  message="Loading Pokémon details..." 
+  *ngIf="isLoading; else pokemonContent">
+</app-loading-spinner>
 
 <ng-template #pokemonContent>
   <div class="pokemon-nav-buttons" *ngIf="previousPokemonSpecies || nextPokemonSpecies">
@@ -9,35 +12,43 @@
       <app-pokemon-navigator [pokemon]="nextPokemonSpecies" facing="right"></app-pokemon-navigator>
     </div>
   </div>
-
   <div class="pokemon-main-view-container">
     <div class="pokemon-main-view">
       <div class="pokemon-main-view-left">
         <h1>{{ pokemonUtils.getPokemonSpeciesNameByLanguage(pokemonSpeciesDetails) }}</h1>
         <app-dex-entry [pokemonSpeciesDetails]="pokemonSpeciesDetails"></app-dex-entry>
-        
         <ul class="general-detail-list">
           <li>
             <label class="general-detail-label">Pokédex №</label>
-            <div>#{{pokemonSpeciesDetails?.id}}</div>
+            <div>#{{ pokemonSpeciesDetails?.id }}</div>
           </li>
           <li>
             <label class="general-detail-label">Forms</label>
             <select id="variant-select" (change)="onPokemonChange($event)">
               <option *ngFor="let pokemon of pokemonSpeciesDetails?.pokemon_v2_pokemons || []" [value]="pokemon.id">
-                {{ pokemon.name }}
+                {{
+                  pokemon.pokemon_v2_pokemonforms && pokemon.pokemon_v2_pokemonforms.length
+                    ? (pokemonUtils.getNameByLanguage(pokemon.pokemon_v2_pokemonforms[0].pokemon_v2_pokemonformnames) === 'Unknown'
+                        ? pokemonUtils.getPokemonSpeciesNameByLanguage(pokemonSpeciesDetails)
+                        : pokemonUtils.getNameByLanguage(pokemon.pokemon_v2_pokemonforms[0].pokemon_v2_pokemonformnames))
+                    : pokemon.name
+                }}
               </option>
             </select>
           </li>
         </ul>
-      </div>      
-      
+      </div>
       <div class="pokemon-main-view-right">
         <div class="pokemon-official-sprite-container">
-          <img class="pokemon-detail-img" [src]="selectedPokemonImage" [alt]="pokemonUtils.getPokemonSpeciesNameByLanguage(pokemonSpeciesDetails)" />
+          <div class="float-container">
+            <img #pokemonImage 
+            class="pokemon-detail-img" 
+            [src]="selectedPokemonImage" 
+            [alt]="pokemonUtils.getPokemonSpeciesNameByLanguage(pokemonSpeciesDetails)" 
+            (load)="onImageLoad()" />
+          </div>
           <app-pokemon-bg-svg class="pokemonCard__bg detail"></app-pokemon-bg-svg>
-        </div>
-        
+        </div>        
         <div class="sprite-buttons">
           <button [class.active]="!isShiny" (click)="onSpriteTypeChange(false)">Normal</button>
           <button [class.active]="isShiny" (click)="onSpriteTypeChange(true)">Shiny</button>

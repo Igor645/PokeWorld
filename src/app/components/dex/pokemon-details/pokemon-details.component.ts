@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { forkJoin, of, BehaviorSubject } from 'rxjs';
 import { catchError } from 'rxjs/operators';
@@ -28,6 +28,7 @@ import { Sprite } from '../../../models/sprite.model';
   styleUrls: ['./pokemon-details.component.css']
 })
 export class PokemonDetailsComponent implements OnInit {
+  @ViewChild('pokemonImage') pokemonImageElement!: ElementRef;
   pokemonSpeciesDetails?: PokemonSpecies;
   selectedPokemonImage?: string;
   selectedPokemon?: Pokemon;
@@ -39,11 +40,10 @@ export class PokemonDetailsComponent implements OnInit {
   private selectedLanguageId$ = new BehaviorSubject<number>(9);
   isMainLoading = true;
   isAdjacentLoading = true;
-
   get isLoading(): boolean {
     return this.isMainLoading || this.isAdjacentLoading;
   }
-
+  
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -157,9 +157,17 @@ export class PokemonDetailsComponent implements OnInit {
     const officialArtwork = spritesData.other["official-artwork"];
     let spriteKey: keyof Sprite = this.isShiny ? 'front_shiny' : 'front_default';
     this.selectedPokemonImage = officialArtwork[spriteKey] || officialArtwork['front_default'];
-    console.log(this.selectedPokemonImage);
-    console.log(spriteKey);
-  }
+  }  
+  
+  onImageLoad(): void {
+    if (this.pokemonImageElement) {
+      const el = this.pokemonImageElement.nativeElement;
+      el.classList.add('pop');
+      setTimeout(() => {
+        el.classList.remove('pop');
+      }, 300);
+    }
+  }  
 
   onSpriteTypeChange(isShiny: boolean): void {
     this.isShiny = isShiny;

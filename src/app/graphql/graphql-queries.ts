@@ -21,6 +21,16 @@ export const GraphQLQueries = {
                 name
               }
             }
+            pokemon_v2_pokemonforms {
+              pokemon_v2_pokemonformnames {
+                language_id
+                name
+                pokemon_v2_language {
+                  id
+                  name
+                }
+              }
+            }
           }
           pokemon_v2_pokemonspeciesnames {
             name
