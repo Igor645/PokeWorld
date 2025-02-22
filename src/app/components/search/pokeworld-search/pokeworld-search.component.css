@@ -28,7 +28,7 @@
 }
 
 ::ng-deep .mat-mdc-option-active, ::ng-deep mat-option:hover{
-    background-color: var(--option-active) !important;
+    background-color: var(--background-hover-color) !important;
 }
 
 ::ng-deep mat-option span{
