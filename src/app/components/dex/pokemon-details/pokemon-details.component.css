@@ -335,9 +335,25 @@ select:focus {
   gap: 5px;
 }
 
-.cry-button:hover {
+.cry-button.legacy {
+  background-color: var(--background-color);
+  color: var(--accent-text-color);
+}
+
+/* Latest Cry Button */
+.cry-button.latest {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.cry-button.legacy:hover {
   transform: scale(1.05);
   background-color: var(--background-hover-color);
+}
+
+.cry-button.latest:hover {
+  transform: scale(1.05);
+  background-color: var(--primary-hover-color);
 }
 
 /* ──────────────────── Mobile Responsiveness ──────────────────── */
