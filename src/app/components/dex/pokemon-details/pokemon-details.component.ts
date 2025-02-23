@@ -13,6 +13,7 @@ import { DexEntryComponent } from '../dex-entry/dex-entry.component';
 import { PokemonNavigatorComponent } from '../pokemon-navigator/pokemon-navigator.component';
 import { Pokemon } from '../../../models/pokemon.model';
 import { Sprite } from '../../../models/sprite.model';
+import { PokemonTypeComponent } from '../pokemon-type/pokemon-type.component';
 
 @Component({
   selector: 'app-pokemon-details',
@@ -22,7 +23,8 @@ import { Sprite } from '../../../models/sprite.model';
     PokemonBgSvgComponent,
     PokemonNavigatorComponent,
     LoadingSpinnerComponent,
-    DexEntryComponent
+    DexEntryComponent,
+    PokemonTypeComponent
   ],
   templateUrl: './pokemon-details.component.html',
   styleUrls: ['./pokemon-details.component.css']

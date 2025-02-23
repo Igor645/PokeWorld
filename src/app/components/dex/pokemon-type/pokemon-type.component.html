@@ -1,0 +1,4 @@
+<div class="pokemon-type" [ngStyle]="{'background-color': getTypeColor()}">
+    <img class="type-icon" [src]="getTypeIcon()" [alt]="localizedTypeName" />
+    <span class="type-name">{{ localizedTypeName }}</span>
+</div>
