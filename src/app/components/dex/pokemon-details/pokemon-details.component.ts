@@ -176,4 +176,33 @@ export class PokemonDetailsComponent implements OnInit {
     this.isShiny = isShiny;
     this.updateSelectedPokemonImage();
   }
+
+  getPokemonSpeciesName(): string {
+    return this.pokemonUtils.getPokemonSpeciesNameByLanguage(this.pokemonSpeciesDetails);
+  }
+
+  getPokemonVariantName(pokemon: any): string {
+    if (!pokemon?.pokemon_v2_pokemonforms?.length) {
+      return pokemon.name;
+    }
+  
+    const formName = this.pokemonUtils.getNameByLanguage(pokemon.pokemon_v2_pokemonforms[0].pokemon_v2_pokemonformnames);
+    
+    return formName === 'Unknown'
+      ? this.getPokemonSpeciesName()
+      : formName;
+  }
+  
+  hasMultipleVariants(): boolean {
+    return (this.pokemonSpeciesDetails?.pokemon_v2_pokemons?.length || 0) > 1;
+  }  
+
+  getAbilityText(ability: any, index: number): string {
+    const abilityName = this.pokemonUtils.getNameByLanguage(ability.pokemon_v2_ability.pokemon_v2_abilitynames);
+    return `${index + 1}. ${abilityName}${ability.is_hidden ? ' (Hidden)' : ''}`;
+  }
+  
+  getAbilityFlavorText(ability: any): string {
+    return this.pokemonUtils.getAbilityFlavorTextByLanguage(ability);
+  }  
 }

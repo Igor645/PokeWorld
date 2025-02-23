@@ -4,6 +4,7 @@
 </app-loading-spinner>
 
 <ng-template #pokemonContent>
+  <!-- Navigation Buttons -->
   <div class="pokemon-nav-buttons" *ngIf="previousPokemonSpecies || nextPokemonSpecies">
     <div *ngIf="previousPokemonSpecies" class="nav-button">
       <app-pokemon-navigator [pokemon]="previousPokemonSpecies" facing="left"></app-pokemon-navigator>
@@ -12,70 +13,90 @@
       <app-pokemon-navigator [pokemon]="nextPokemonSpecies" facing="right"></app-pokemon-navigator>
     </div>
   </div>
+
+  <!-- Main Content -->
   <div class="pokemon-main-view-container">
     <div class="pokemon-main-view">
+      <!-- Left Side (Details) -->
       <div class="pokemon-main-view-left">
-        <h1>{{ pokemonUtils.getPokemonSpeciesNameByLanguage(pokemonSpeciesDetails) }}</h1>
+        <h1>{{ getPokemonSpeciesName() }}</h1>
+        
+        <!-- Pokémon Types -->
         <div class="types-container">
-          <app-pokemon-type *ngFor="let type of selectedPokemon?.pokemon_v2_pokemontypes"
-                            [pokemonType]="type.pokemon_v2_type"/>
+          <app-pokemon-type 
+            *ngFor="let type of selectedPokemon?.pokemon_v2_pokemontypes"
+            [pokemonType]="type.pokemon_v2_type">
+          </app-pokemon-type>
         </div>
+
         <app-dex-entry [pokemonSpeciesDetails]="pokemonSpeciesDetails"></app-dex-entry>
+
         <ul class="general-detail-list">
           <li>
             <label class="general-detail-label">Pokédex №</label>
             <div>#{{ pokemonSpeciesDetails?.id }}</div>
           </li>
+
+          <!-- Forms Dropdown -->
           <li>
             <label class="general-detail-label">Forms</label>
-            <select
+            <select 
               id="variant-select"
               (change)="onPokemonChange($event)"
-              [disabled]="(pokemonSpeciesDetails?.pokemon_v2_pokemons?.length || 0) <= 1"
-            >
-              <option
+              [disabled]="!hasMultipleVariants()">
+              <option 
                 *ngFor="let pokemon of pokemonSpeciesDetails?.pokemon_v2_pokemons || []"
-                [value]="pokemon.id"
-              >
-                {{
-                  pokemon.pokemon_v2_pokemonforms && pokemon.pokemon_v2_pokemonforms.length
-                    ? (pokemonUtils.getNameByLanguage(pokemon.pokemon_v2_pokemonforms[0].pokemon_v2_pokemonformnames) === 'Unknown'
-                        ? pokemonUtils.getPokemonSpeciesNameByLanguage(pokemonSpeciesDetails)
-                        : pokemonUtils.getNameByLanguage(pokemon.pokemon_v2_pokemonforms[0].pokemon_v2_pokemonformnames))
-                    : pokemon.name
-                }}
+                [value]="pokemon.id">
+                {{ getPokemonVariantName(pokemon) }}
               </option>
             </select>
           </li>
+
+          <!-- Abilities -->
           <li>
             <label class="general-detail-label">Abilities</label>
             <div class="ability-list">
-              <div class="ability-container" *ngFor="let ability of selectedPokemon?.pokemon_v2_pokemonabilities; let i = index">
+              <div 
+                class="ability-container" 
+                *ngFor="let ability of selectedPokemon?.pokemon_v2_pokemonabilities; let i = index">
                 <div class="ability-name">
-                  {{(i + 1) + ". " + pokemonUtils.getNameByLanguage(ability.pokemon_v2_ability.pokemon_v2_abilitynames) + (ability.is_hidden ? ' (Hidden)' : '')}}
+                  {{ getAbilityText(ability, i) }}
                 </div>  
                 <div class="ability-description">
-                  {{pokemonUtils.getAbilityFlavorTextByLanguage(ability.pokemon_v2_ability)}}
+                  {{ getAbilityFlavorText(ability.pokemon_v2_ability) }}
                 </div>
               </div>
             </div>
           </li>
         </ul>
       </div>
+
+      <!-- Right Side (Sprite & Images) -->
       <div class="pokemon-main-view-right">
         <div class="pokemon-official-sprite-container">
           <div class="float-container">
-            <img #pokemonImage 
-            class="pokemon-detail-img" 
-            [src]="selectedPokemonImage" 
-            [alt]="pokemonUtils.getPokemonSpeciesNameByLanguage(pokemonSpeciesDetails)" 
-            (load)="onImageLoad()" />
+            <img 
+              #pokemonImage 
+              class="pokemon-detail-img" 
+              [src]="selectedPokemonImage" 
+              [alt]="getPokemonSpeciesName()"
+              (load)="onImageLoad()" />
           </div>
           <app-pokemon-bg-svg class="pokemonCard__bg detail"></app-pokemon-bg-svg>
         </div>        
+
+        <!-- Sprite Toggle Buttons -->
         <div class="sprite-buttons">
-          <button [class.active]="!isShiny" (click)="onSpriteTypeChange(false)">Normal</button>
-          <button [class.active]="isShiny" (click)="onSpriteTypeChange(true)">Shiny</button>
+          <button 
+            [class.active]="!isShiny" 
+            (click)="onSpriteTypeChange(false)">
+            Normal
+          </button>
+          <button 
+            [class.active]="isShiny" 
+            (click)="onSpriteTypeChange(true)">
+            Shiny
+          </button>
         </div>
       </div>
     </div>
