@@ -12,6 +12,7 @@
     --background-color: #ffffff;
     --background-hover-color: #e4e1e1;
     --primary-background-color: rgb(206, 216, 247);
+    --pokemon-card-text-background-color: #ffffff;
     
     /* ====== BORDERS & OUTLINES ====== */
     --border-color: rgba(38, 143, 255, 0.5);
@@ -45,6 +46,7 @@
     --background-color: #121212;
     --background-hover-color: #1e1e1e;
     --primary-background-color: #272727;
+    --pokemon-card-text-background-color: #1e1e1e;
     
     /* Colors */
     --accent-text-color: rgba(255, 255, 255, 0.8);
