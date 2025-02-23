@@ -101,7 +101,22 @@
           <li>
             <label class="general-detail-label">Color</label>
             <div>{{ getPokemonColorName(pokemonSpeciesDetails?.pokemon_v2_pokemoncolor?.pokemon_v2_pokemoncolornames) }}</div>
-          </li>          
+          </li> 
+          
+          <li>
+            <label class="general-detail-label">Pokémon Cries</label>
+            <div class="cry-buttons">
+              <button *ngIf="getLatestCryUrl()" (click)="playCry('latest')" class="cry-button latest">
+                <mat-icon>volume_up</mat-icon>
+                Latest Cry
+              </button>
+            
+              <button *ngIf="getLegacyCryUrl()" (click)="playCry('legacy')" class="cry-button legacy">
+                <mat-icon>volume_down</mat-icon>
+                Legacy Cry
+              </button>
+            </div>            
+          </li>
         </ul>
       </div>
 

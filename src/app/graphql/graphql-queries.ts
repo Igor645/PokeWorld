@@ -18,6 +18,9 @@ export const GraphQLQueries = {
             pokemon_v2_pokemonsprites {
               sprites
             }
+            pokemon_v2_pokemoncries {
+              cries
+            }
             pokemon_v2_pokemonstats {
               base_stat
               effort

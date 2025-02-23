@@ -15,6 +15,7 @@ import { Pokemon } from '../../../models/pokemon.model';
 import { Sprite } from '../../../models/sprite.model';
 import { PokemonTypeComponent } from '../pokemon-type/pokemon-type.component';
 import { Name } from '../../../models/species-name.model';
+import { MatIcon } from '@angular/material/icon';
 
 @Component({
   selector: 'app-pokemon-details',
@@ -25,7 +26,8 @@ import { Name } from '../../../models/species-name.model';
     PokemonNavigatorComponent,
     LoadingSpinnerComponent,
     DexEntryComponent,
-    PokemonTypeComponent
+    PokemonTypeComponent,
+    MatIcon
   ],
   templateUrl: './pokemon-details.component.html',
   styleUrls: ['./pokemon-details.component.css']
@@ -247,11 +249,30 @@ export class PokemonDetailsComponent implements OnInit {
     );
   }
 
-  /** Returns the correct Pokémon status: Legendary, Mythical, or Baby */
   getPokemonStatus(pokemonSpecies: any): string {
     if (pokemonSpecies?.is_mythical) return "Mythical";
     if (pokemonSpecies?.is_legendary) return "Legendary";
     if (pokemonSpecies?.is_baby) return "Baby";
     return "";
+  }
+
+  getLegacyCryUrl(): string | null {
+    return this.selectedPokemon?.pokemon_v2_pokemoncries?.[0]?.cries?.legacy || null;
+  }
+
+  getLatestCryUrl(): string | null {
+    return this.selectedPokemon?.pokemon_v2_pokemoncries?.[0]?.cries?.latest || null;
+  }
+
+  playCry(version: 'legacy' | 'latest') {
+    const cryUrl = version === 'legacy' ? this.getLegacyCryUrl() : this.getLatestCryUrl();
+    
+    if (cryUrl) {
+      const audio = new Audio(cryUrl);
+      audio.volume = 0.05;
+      audio.play();
+    } else {
+      console.error(`No ${version} cry found for this Pokémon.`);
+    }
   }
 }
