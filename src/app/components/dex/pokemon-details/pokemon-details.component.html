@@ -24,8 +24,15 @@
           </li>
           <li>
             <label class="general-detail-label">Forms</label>
-            <select id="variant-select" (change)="onPokemonChange($event)">
-              <option *ngFor="let pokemon of pokemonSpeciesDetails?.pokemon_v2_pokemons || []" [value]="pokemon.id">
+            <select
+              id="variant-select"
+              (change)="onPokemonChange($event)"
+              [disabled]="(pokemonSpeciesDetails?.pokemon_v2_pokemons?.length || 0) <= 1"
+            >
+              <option
+                *ngFor="let pokemon of pokemonSpeciesDetails?.pokemon_v2_pokemons || []"
+                [value]="pokemon.id"
+              >
                 {{
                   pokemon.pokemon_v2_pokemonforms && pokemon.pokemon_v2_pokemonforms.length
                     ? (pokemonUtils.getNameByLanguage(pokemon.pokemon_v2_pokemonforms[0].pokemon_v2_pokemonformnames) === 'Unknown'
