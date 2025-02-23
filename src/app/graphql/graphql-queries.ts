@@ -9,6 +9,8 @@ export const GraphQLQueries = {
           pokemon_v2_pokemons {
             id
             name
+            height
+            weight
             is_default
             pokemon_v2_pokemonsprites {
               sprites
@@ -90,6 +92,41 @@ export const GraphQLQueries = {
                   id
                   name
                 }
+              }
+            }
+          }
+          pokemon_v2_generation {
+            name
+            pokemon_v2_generationnames {
+              language_id
+              name
+              pokemon_v2_language {
+                name
+                id
+              }
+            }
+          }
+          pokemon_v2_pokemoncolor {
+            id
+            name
+            pokemon_v2_pokemoncolornames {
+              name
+              language_id
+              pokemon_v2_language {
+                id
+                name
+              }
+            }
+          }
+          pokemon_v2_pokemonshape {
+            name
+            id
+            pokemon_v2_pokemonshapenames {
+              language_id
+              name
+              pokemon_v2_language {
+                name
+                id
               }
             }
           }

@@ -218,6 +218,17 @@ select:focus {
   font-weight: 800;
 }
 
+.shape-container {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.shape-icon {
+  width: 24px;
+  height: 24px;
+}
+
 /* ──────────────────── Types & Abilities ──────────────────── */
 .types-container {
   display: flex;

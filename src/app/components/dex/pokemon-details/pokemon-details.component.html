@@ -37,6 +37,21 @@
             <div>#{{ pokemonSpeciesDetails?.id }}</div>
           </li>
 
+          <li>
+            <label class="general-detail-label">Introduced</label>
+            <div>{{ getGenerationName(pokemonSpeciesDetails?.pokemon_v2_generation?.pokemon_v2_generationnames) }}</div>
+          </li>          
+
+          <li>
+            <label class="general-detail-label">Height</label>
+            <div>{{ getFormattedHeight(selectedPokemon?.height) }}</div>
+          </li>
+          
+          <li>
+            <label class="general-detail-label">Weight</label>
+            <div>{{ getFormattedWeight(selectedPokemon?.weight) }}</div>
+          </li>
+
           <!-- Forms Dropdown -->
           <li>
             <label class="general-detail-label">Forms</label>
@@ -68,6 +83,16 @@
               </div>
             </div>
           </li>
+
+          <li>
+            <label class="general-detail-label">Shape</label>
+            <div>{{ getPokemonShapeName(pokemonSpeciesDetails?.pokemon_v2_pokemonshape?.pokemon_v2_pokemonshapenames) }}</div>
+          </li>
+          
+          <li>
+            <label class="general-detail-label">Color</label>
+            <div>{{ getPokemonColorName(pokemonSpeciesDetails?.pokemon_v2_pokemoncolor?.pokemon_v2_pokemoncolornames) }}</div>
+          </li>          
         </ul>
       </div>
 

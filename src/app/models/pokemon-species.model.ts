@@ -4,6 +4,8 @@ import { Name } from './species-name.model';
 import { Generation } from './generation.model';
 import { PokemonSprites } from './sprite.model';
 import { FlavorText } from './flavor-text.model';
+import { PokemonColor } from './pokemon-color.model';
+import { PokemonShape } from './pokemon-shape.model';
 
 export interface PokemonSpecies {
   id: number;
@@ -13,6 +15,8 @@ export interface PokemonSpecies {
   pokemon_v2_generation: Generation;
   pokemon_v2_pokemonsprites?: PokemonSprites;
   pokemon_v2_pokemonspeciesflavortexts: FlavorText[];
+  pokemon_v2_pokemoncolor: PokemonColor;
+  pokemon_v2_pokemonshape: PokemonShape;
 }
 
 export interface PokemonSpeciesResponse {

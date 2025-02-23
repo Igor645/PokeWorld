@@ -14,6 +14,7 @@ import { PokemonNavigatorComponent } from '../pokemon-navigator/pokemon-navigato
 import { Pokemon } from '../../../models/pokemon.model';
 import { Sprite } from '../../../models/sprite.model';
 import { PokemonTypeComponent } from '../pokemon-type/pokemon-type.component';
+import { Name } from '../../../models/species-name.model';
 
 @Component({
   selector: 'app-pokemon-details',
@@ -192,7 +193,7 @@ export class PokemonDetailsComponent implements OnInit {
       ? this.getPokemonSpeciesName()
       : formName;
   }
-  
+
   hasMultipleVariants(): boolean {
     return (this.pokemonSpeciesDetails?.pokemon_v2_pokemons?.length || 0) > 1;
   }  
@@ -204,5 +205,37 @@ export class PokemonDetailsComponent implements OnInit {
   
   getAbilityFlavorText(ability: any): string {
     return this.pokemonUtils.getAbilityFlavorTextByLanguage(ability);
+  }  
+
+  getGenerationName(generationNames: Name[] | undefined): string {
+    return this.pokemonUtils.parseGenerationName(generationNames);
+  }  
+
+  getPokemonShapeName(shapeNames: Name[] | undefined): string {
+    return this.pokemonUtils.getNameByLanguage(shapeNames);
+  }
+  
+  getPokemonColorName(colorNames: Name[] | undefined): string {
+    return this.pokemonUtils.getNameByLanguage(colorNames);
+  }  
+
+  getFormattedHeight(heightDm: number | undefined): string {
+    if (!heightDm) return "Unknown";
+    
+    const meters = heightDm / 10;
+    const totalInches = meters * 39.37;
+    const feet = Math.floor(totalInches / 12);
+    const inches = Math.round(totalInches % 12);
+  
+    return `${meters.toFixed(1)}m (${feet}'${inches}")`;
+  }
+
+  getFormattedWeight(weightHg: number | undefined): string {
+    if (!weightHg) return "Unknown";
+  
+    const kg = weightHg / 10;
+    const lbs = kg * 2.20462;
+  
+    return `${kg.toFixed(1)}kg (${lbs.toFixed(1)}lbs)`;
   }  
 }

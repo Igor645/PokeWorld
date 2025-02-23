@@ -1,5 +1,7 @@
 import { PokemonAbilityWrapper } from './pokemon-ability.model';
+import { PokemonColor } from './pokemon-color.model';
 import { PokemonForms } from './pokemon-forms.model';
+import { PokemonShape } from './pokemon-shape.model';
 import { PokemonType, PokemonTypeWrapper } from './pokemon-type.model';
 import { PokemonSpritesWrapper } from './sprite.model';
 import { PokemonStat } from './stat.model';
@@ -7,6 +9,8 @@ import { PokemonStat } from './stat.model';
 export interface Pokemon {
   id: number;
   name: string;
+  height: number;
+  weight: number;
   is_default: boolean;
   pokemon_v2_pokemonsprites: PokemonSpritesWrapper[];
   pokemon_v2_pokemonstats: PokemonStat[];
