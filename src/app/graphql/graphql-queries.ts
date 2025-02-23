@@ -6,6 +6,9 @@ export const GraphQLQueries = {
         ) {
           id
           name
+          is_legendary
+          is_mythical
+          is_baby
           pokemon_v2_pokemons {
             id
             name

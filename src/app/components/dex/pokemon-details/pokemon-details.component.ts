@@ -214,7 +214,7 @@ export class PokemonDetailsComponent implements OnInit {
   getPokemonShapeName(shapeNames: Name[] | undefined): string {
     return this.pokemonUtils.getNameByLanguage(shapeNames);
   }
-  
+
   getPokemonColorName(colorNames: Name[] | undefined): string {
     return this.pokemonUtils.getNameByLanguage(colorNames);
   }  
@@ -238,4 +238,20 @@ export class PokemonDetailsComponent implements OnInit {
   
     return `${kg.toFixed(1)}kg (${lbs.toFixed(1)}lbs)`;
   }  
+
+  isLegendaryOrMythicalOrBaby(): boolean | undefined {
+    return (
+      this.pokemonSpeciesDetails?.is_legendary || 
+      this.pokemonSpeciesDetails?.is_mythical || 
+      this.pokemonSpeciesDetails?.is_baby
+    );
+  }
+
+  /** Returns the correct Pokémon status: Legendary, Mythical, or Baby */
+  getPokemonStatus(pokemonSpecies: any): string {
+    if (pokemonSpecies?.is_mythical) return "Mythical";
+    if (pokemonSpecies?.is_legendary) return "Legendary";
+    if (pokemonSpecies?.is_baby) return "Baby";
+    return "";
+  }
 }

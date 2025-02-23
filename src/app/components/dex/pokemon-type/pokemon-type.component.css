@@ -8,13 +8,13 @@
     font-weight: bold;
     text-transform: capitalize;
     font-size: 1rem;
-    min-width: 100px;
+    min-width: 80px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
   }
   
   .type-icon {
-    width: 24px;
-    height: 24px;
+    width: 18px;
+    height: 18px;
   }
 
   .type-name{

@@ -19,8 +19,17 @@
     <div class="pokemon-main-view">
       <!-- Left Side (Details) -->
       <div class="pokemon-main-view-left">
-        <h1>{{ getPokemonSpeciesName() }}</h1>
-        
+        <h1>
+          {{ getPokemonSpeciesName() }}
+          <div 
+            *ngIf="isLegendaryOrMythicalOrBaby()" 
+            class="pokemon-status-badge"
+            [attr.data-status]="getPokemonStatus(pokemonSpeciesDetails)"
+          >
+            {{ getPokemonStatus(pokemonSpeciesDetails) }}
+          </div>
+        </h1>               
+                
         <!-- Pokémon Types -->
         <div class="types-container">
           <app-pokemon-type 

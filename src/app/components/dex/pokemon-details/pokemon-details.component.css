@@ -38,8 +38,12 @@
 
 .pokemon-main-view-left h1 {
   font-weight: 600;
-  font-size: 2.7rem;
+  font-size: 3rem;
   margin: 0 0 0.5%;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  height: fit-content;
 }
 
 .pokemon-main-view-right {
@@ -49,6 +53,61 @@
   margin: 0 auto;
 }
 
+.pokemon-status-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px 10px;
+  margin-left: auto;
+  font-size: 0.8rem;
+  height: fit-content;
+  font-weight: bold;
+  text-transform: uppercase;
+  border-radius: 8px;
+  background-color: var(--primary-color);
+  color: var(--selected-color);
+  box-shadow: 0px 2px 4px var(--shadow-color);
+  user-select: none;
+}
+
+.pokemon-status-badge:hover{
+  scale: 1.1;
+  cursor: pointer;
+}
+
+.pokemon-status-badge[data-status="Legendary"] {
+  background-color: gold;
+  color: black;
+}
+
+.pokemon-status-badge[data-status="Mythical"] {
+  background-color: purple;
+  color: white;
+}
+
+.pokemon-status-badge[data-status="Baby"] {
+  background-color: pink;
+  color: black;
+}
+
+.dark-theme .pokemon-status-badge {
+  box-shadow: 0px 2px 4px var(--shadow-hover-color);
+}
+
+.pokemon-status-badge[data-status="Legendary"] {
+  background-color: var(--legendary-color);
+  color: var(--legendary-text-color);
+}
+
+.pokemon-status-badge[data-status="Mythical"] {
+  background-color: var(--mythical-color);
+  color: var(--mythical-text-color);
+}
+
+.pokemon-status-badge[data-status="Baby"] {
+  background-color: var(--baby-color);
+  color: var(--baby-text-color);
+}
 /* ──────────────────── Sprite Container ──────────────────── */
 .pokemon-official-sprite-container {
   display: flex;

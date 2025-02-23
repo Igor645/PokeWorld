@@ -40,6 +40,15 @@
     --title-color: rgba(38, 143, 255, 0.8);
 }
 
+:root {
+    --legendary-color: gold;
+    --mythical-color: purple;
+    --baby-color: pink;
+    --legendary-text-color: black;
+    --mythical-text-color: white;
+    --baby-text-color: black;
+}
+
 /* ====== DARK THEME ====== */
 .dark-theme {
     /* General */
@@ -71,3 +80,13 @@
     --svg-color: rgba(255, 255, 255, 0.1);
     --selected-color: rgba(255, 255, 255, 0.8);
 }
+
+.dark-theme {
+    --legendary-color: #d4af37;
+    --mythical-color: #6a0dad;
+    --baby-color: #ff69b4;
+    --legendary-text-color: black;
+    --mythical-text-color: white;
+    --baby-text-color: black;
+}
+
