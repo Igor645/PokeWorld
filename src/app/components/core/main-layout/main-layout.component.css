@@ -7,13 +7,6 @@ a:hover{
     color: unset;
 }
 
-app-pokeworld-search{
-    width: 420px;
-    height: 70%;
-    margin: 5px;
-    margin-left: auto;
-}
-
 .main-footer,
 .main-header {
     display: flex;
@@ -90,4 +83,11 @@ app-pokeworld-search{
 
 .pokeapi-logo:hover{
     scale: 1.1;
+}
+
+app-pokeworld-search{
+    width: 350px;
+    height: 70%;
+    margin: 5px 15px;
+    margin-left: auto;
 }

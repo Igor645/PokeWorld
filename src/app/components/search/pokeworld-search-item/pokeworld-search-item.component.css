@@ -18,7 +18,7 @@
 }
 
 .item__img__container {
-    height: 10rem;
+    height: fit-content;
     width: 15rem;
     position: relative;
     display: flex;
