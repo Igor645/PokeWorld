@@ -74,7 +74,7 @@
 }
 
 .pokemonCard__id, .pokemonCard__text__container {
-    background-color: var(--background-hover-color);
+    background-color: var(--background-color);
     width: 100%;
     position: relative;
     z-index: 10;
