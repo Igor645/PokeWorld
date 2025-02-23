@@ -126,7 +126,7 @@
     max-width: var(--general-width);
     padding: 0.5rem 1rem;
     font-size: 1rem;
-    border: 1px solid var(--dropdown-border-color);
+    border: 1px solid var(--primary-color);
     border-radius: 4px;
     background-color: var(--background-color);
     color: var(--text-color);
@@ -224,6 +224,25 @@ select:disabled {
     flex-wrap: wrap;
     width: 100%;
     margin-bottom: 1%;
+  }
+
+  .ability-container {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    width: 100%;
+    margin-bottom: 1%;
+  }
+
+  .ability-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    width: 100%;
+  }
+  
+  .ability-name {
+    font-weight: 800;
   }
   
   @media (max-width: 768px) {

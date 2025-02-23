@@ -45,6 +45,27 @@ export const GraphQLQueries = {
                 }
               }
             }
+            pokemon_v2_pokemonabilities {
+              pokemon_v2_ability {
+                pokemon_v2_abilitynames {
+                  language_id
+                  name
+                  pokemon_v2_language {
+                    name
+                    id
+                  }
+                }
+                pokemon_v2_abilityflavortexts {
+                  flavor_text
+                  language_id
+                  pokemon_v2_language {
+                    name
+                    id
+                  }
+                }
+              }
+              is_hidden
+            }
           }
           pokemon_v2_pokemonspeciesnames {
             name

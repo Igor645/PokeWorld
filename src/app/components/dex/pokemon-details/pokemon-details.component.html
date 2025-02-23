@@ -47,6 +47,19 @@
               </option>
             </select>
           </li>
+          <li>
+            <label class="general-detail-label">Abilities</label>
+            <div class="ability-list">
+              <div class="ability-container" *ngFor="let ability of selectedPokemon?.pokemon_v2_pokemonabilities; let i = index">
+                <div class="ability-name">
+                  {{(i + 1) + ". " + pokemonUtils.getNameByLanguage(ability.pokemon_v2_ability.pokemon_v2_abilitynames) + (ability.is_hidden ? ' (Hidden)' : '')}}
+                </div>  
+                <div class="ability-description">
+                  {{pokemonUtils.getAbilityFlavorTextByLanguage(ability.pokemon_v2_ability)}}
+                </div>
+              </div>
+            </div>
+          </li>
         </ul>
       </div>
       <div class="pokemon-main-view-right">

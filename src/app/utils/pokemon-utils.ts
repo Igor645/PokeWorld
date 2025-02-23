@@ -5,6 +5,7 @@ import { Pokemon } from '../models/pokemon.model';
 import { Name } from '../models/species-name.model';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { Version } from '../models/version.model';
+import { PokemonAbility } from '../models/pokemon-ability.model';
 
 @Injectable({
   providedIn: 'root'
@@ -97,6 +98,21 @@ export class PokemonUtilsService {
     )?.flavor_text;
 
     return flavortext ? flavortext.replace(/\f/g, ' ') : 'No entry available.';
+  }
+
+  /**
+  * Get the Pokémon ability flavor text by the selected language ID.
+  * @param ability The Pokémon ability DTO object.
+  * @returns The formatted ability flavor text.
+  */
+  getAbilityFlavorTextByLanguage(ability: PokemonAbility): string {
+    const languageId = this.getSelectedLanguageId();
+
+    const flavorText = ability?.pokemon_v2_abilityflavortexts?.find(
+      (entry) => entry.pokemon_v2_language.id === languageId
+    )?.flavor_text;
+
+    return flavorText ? flavorText.replace(/\f/g, ' ') : 'No ability description available.';
   }
 
   /**
