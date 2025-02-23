@@ -5,6 +5,10 @@
     min-height: 100%;
 }
 
+app-pokeworld-search{
+    width: 40%;
+}
+
 .pokedexOverview {
     width: var(--general-width);
     gap: 2rem;

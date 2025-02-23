@@ -1,4 +1,4 @@
-import { Component, ChangeDetectorRef, AfterViewInit, OnDestroy } from '@angular/core';
+import { Component, ChangeDetectorRef, AfterViewInit, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -10,7 +10,8 @@ import { PokemonSpecies } from '../../../models/pokemon-species.model';
 import { PokemonUtilsService } from '../../../utils/pokemon-utils';
 import { PokeworldSearchItemComponent } from '../pokeworld-search-item/pokeworld-search-item.component';
 import { Name } from '../../../models/species-name.model';
-import { Router } from '@angular/router';
+import { Router, NavigationEnd } from '@angular/router';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-pokeworld-search',
@@ -26,9 +27,10 @@ import { Router } from '@angular/router';
   templateUrl: './pokeworld-search.component.html',
   styleUrls: ['./pokeworld-search.component.css']
 })
-export class PokeworldSearchComponent implements AfterViewInit, OnDestroy {
+export class PokeworldSearchComponent implements OnInit, AfterViewInit, OnDestroy {
   searchControl = new FormControl('');
   filteredPokemonSpecies: PokemonSpecies[] = [];
+  private routeSubscription!: Subscription;
 
   constructor(
     private pokemonService: PokemonService,
@@ -36,6 +38,14 @@ export class PokeworldSearchComponent implements AfterViewInit, OnDestroy {
     private router: Router,
     private pokemonUtils: PokemonUtilsService
   ) {}
+
+  ngOnInit() {
+    this.routeSubscription = this.router.events.subscribe((event) => {
+      if (event instanceof NavigationEnd) {
+        this.clearSearch(); 
+      }
+    });
+  }
 
   ngAfterViewInit() {
     this.pokemonService.getPokemonSpeciesByPrefix("").subscribe({
@@ -59,7 +69,16 @@ export class PokeworldSearchComponent implements AfterViewInit, OnDestroy {
     });
   }
   
-  ngOnDestroy() {}
+  ngOnDestroy() {
+    if (this.routeSubscription) {
+      this.routeSubscription.unsubscribe();
+    }
+  }
+
+  clearSearch() {
+    this.searchControl.setValue('');
+    this.filteredPokemonSpecies = [];
+  }
 
   onOptionSelected(event: any) {
     const selectedItem = event.option.value;
@@ -78,7 +97,7 @@ export class PokeworldSearchComponent implements AfterViewInit, OnDestroy {
   getPokemonName(species: PokemonSpecies): string {
     return this.pokemonUtils.getNameByLanguage(species.pokemon_v2_pokemonspeciesnames)
   }  
-  
+ 
   GetPokemonOfficialImage(pokemon: any) {
     return this.pokemonUtils.getPokemonOfficialImage(pokemon);
   }

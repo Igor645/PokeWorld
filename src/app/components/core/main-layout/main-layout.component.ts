@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { Router, NavigationEnd, RouterModule } from '@angular/router';
 import { SettingsComponent } from '../settings/settings.component';
 import { ScrollToTopComponent } from '../scroll-to-top/scroll-to-top.component';
+import { PokeworldSearchComponent } from '../../search/pokeworld-search/pokeworld-search.component';
 
 @Component({
   selector: 'app-main-layout',
   standalone: true,
-  imports: [CommonModule, RouterModule, ScrollToTopComponent, SettingsComponent],
+  imports: [CommonModule, RouterModule, ScrollToTopComponent, SettingsComponent, PokeworldSearchComponent],
   templateUrl: './main-layout.component.html',
   styleUrls: ['./main-layout.component.css'],
 })
