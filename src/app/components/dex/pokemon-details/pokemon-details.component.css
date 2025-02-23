@@ -39,7 +39,7 @@
     font-weight: 600;
     margin: 0;
     font-size: 2.7rem;
-    margin-bottom: 2%;
+    margin-bottom: 0.5%;
   }
   
   .pokemon-main-view-right {
@@ -216,6 +216,14 @@ select:disabled {
   
   .general-detail-label {
     font-weight: 800;
+  }
+
+  .types-container{
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    width: 100%;
+    margin-bottom: 1%;
   }
   
   @media (max-width: 768px) {

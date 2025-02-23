@@ -76,9 +76,8 @@ export class PokeworldSearchComponent implements OnInit, AfterViewInit, OnDestro
   }
 
   clearSearch() {
-    this.searchControl.setValue('');
-    this.filteredPokemonSpecies = [];
-  }
+    this.searchControl.setValue('', { emitEvent: true });
+  }  
 
   onOptionSelected(event: any) {
     const selectedItem = event.option.value;

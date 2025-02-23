@@ -1,0 +1,28 @@
+.pokemon-type {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 6px 12px;
+    border-radius: 10px;
+    font-weight: bold;
+    text-transform: capitalize;
+    font-size: 1rem;
+    min-width: 100px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+  }
+  
+  .type-icon {
+    width: 24px;
+    height: 24px;
+  }
+
+  .type-name{
+    color: white;
+  }
+
+  .pokemon-type:hover {
+    transform: scale(1.05);
+    cursor: pointer;
+  }
+  
