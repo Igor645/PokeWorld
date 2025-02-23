@@ -70,11 +70,6 @@
   user-select: none;
 }
 
-.pokemon-status-badge:hover{
-  scale: 1.1;
-  cursor: pointer;
-}
-
 .pokemon-status-badge[data-status="Legendary"] {
   background-color: gold;
   color: black;
