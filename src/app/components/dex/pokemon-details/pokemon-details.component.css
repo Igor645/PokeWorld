@@ -1,9 +1,11 @@
+/* ──────────────────── Base Styles ──────────────────── */
 :host {
   display: flex;
   flex-direction: column;
   flex-grow: 1;
   min-height: 100%;
   max-width: 100vw;
+  gap: 1rem;
 }
 
 /* ──────────────────── Main View Container ──────────────────── */
@@ -29,30 +31,33 @@
   width: 100%;
 }
 
-.pokemon-main-view-left {
+.pokemon-main-view-left,
+.pokemon-main-view-right {
   display: flex;
   flex-direction: column;
+}
+
+.pokemon-main-view-left {
   width: calc(55% - 2rem);
   color: var(--accent-text-color);
 }
 
 .pokemon-main-view-left h1 {
-  font-weight: 600;
-  font-size: 4rem;
-  margin: 0 0 0.5%;
   display: flex;
   align-items: flex-start;
   gap: 0.5rem;
   height: fit-content;
+  margin: 0 0 0.5%;
+  font-weight: 600;
+  font-size: 4rem;
 }
 
 .pokemon-main-view-right {
-  display: flex;
-  flex-direction: column;
   width: 45%;
   margin: 0 auto;
 }
 
+/* ──────────────────── Status Badge ──────────────────── */
 .pokemon-status-badge {
   display: flex;
   align-items: center;
@@ -63,21 +68,17 @@
   font-weight: bold;
   text-transform: uppercase;
   border-radius: 8px;
-  background-color: var(--primary-color);
-  color: var(--selected-color);
-  box-shadow: 0px 2px 4px var(--shadow-color);
-  user-select: none;
-}
-
-.pokemon-status-badge {
   background-color: var(--background-hover-color);
   color: var(--accent-text-color);
+  box-shadow: 0px 2px 4px var(--shadow-color);
+  user-select: none;
 }
 
 .dark-theme .pokemon-status-badge {
   box-shadow: 0px 2px 4px var(--shadow-hover-color);
 }
-/* ──────────────────── Sprite Container ──────────────────── */
+
+/* ──────────────────── Sprite Container & Image ──────────────────── */
 .pokemon-official-sprite-container {
   display: flex;
   align-items: center;
@@ -86,9 +87,9 @@
   background-color: var(--glass-color);
   border-radius: 30px;
   position: relative;
+  overflow: hidden;
   box-shadow: inset 0 4px 10px rgba(0, 0, 0, 0.2),
               inset 0 -4px 10px rgba(255, 255, 255, 0.2);
-  overflow: hidden;
 }
 
 .pokemon-detail-img {
@@ -105,8 +106,8 @@
 }
 
 @keyframes popAnimation {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.1); }
+  0%   { transform: scale(1); }
+  50%  { transform: scale(1.1); }
   100% { transform: scale(1); }
 }
 
@@ -126,19 +127,19 @@
   justify-content: center;
   width: 100%;
   height: 100%;
+  position: relative;
+  z-index: 15;
+  transform: translateY(5px);
   animation: floatUpDownNoScaling 3s ease-in-out infinite;
   animation-delay: 0.5s;
-  position: relative;
-  transform: translateY(5px);
-  z-index: 15;
 }
 
 @keyframes floatUpDownNoScaling {
   0%, 100% { transform: translateY(5px); }
-  50% { transform: translateY(-5px); }
+  50%      { transform: translateY(-5px); }
 }
 
-/* ──────────────────── Navigation Buttons ──────────────────── */
+/* ──────────────────── Navigation & Misc. ──────────────────── */
 .pokemon-nav-buttons {
   display: flex;
   justify-content: space-between;
@@ -149,6 +150,12 @@
 
 .nav-button.left {
   margin-left: auto;
+}
+
+app-pokemon-navigator {
+  display: flex;
+  width: 350px;
+  height: 120px;
 }
 
 /* ──────────────────── Select Box ──────────────────── */
@@ -218,6 +225,12 @@ select:focus {
 }
 
 /* ──────────────────── Details List ──────────────────── */
+.pokemon-dex-entry {
+  font-size: 1.5rem;
+  border-radius: 10px;
+  width: 100%;
+}
+
 .general-detail-list {
   list-style: none;
   width: 100%;
@@ -263,9 +276,11 @@ select:focus {
   gap: 0.5rem;
   width: 100%;
   margin-bottom: 1%;
+  justify-content: flex-start;
 }
 
-.ability-list {
+.ability-list,
+.ability-container {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
@@ -273,9 +288,6 @@ select:focus {
 }
 
 .ability-container {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
   margin-bottom: 1%;
 }
 
@@ -294,23 +306,19 @@ select:focus {
   box-shadow: 0 2px 4px var(--shadow-color);
   padding: 4px 10px;
   font-weight: bold;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
   border: 2px solid var(--primary-color);
   border-radius: 4px;
   background-color: var(--background-color);
   display: flex;
   align-items: center;
   gap: 5px;
+  cursor: pointer;
 }
 
 .cry-button.legacy {
-  background-color: var(--background-color);
   color: var(--accent-text-color);
 }
 
-/* Latest Cry Button */
 .cry-button.latest {
   background-color: var(--primary-color);
   color: white;
@@ -327,15 +335,110 @@ select:focus {
 }
 
 /* ──────────────────── Mobile Responsiveness ──────────────────── */
-@media (max-width: 768px) {
+/* Extra Small Devices (up to 480px) */
+@media (max-width: 480px) {
+  :host {
+    padding: 0.5rem;
+  }
+  .pokemon-main-view {
+    flex-direction: column;
+    flex-flow: column-reverse;
+    justify-content: center;
+    gap: 1rem;
+  }
+  .pokemon-main-view-left,
+  .pokemon-main-view-right {
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+  }
+  .pokemon-main-view-left h1 {
+    font-size: 3rem;
+  }
   select {
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     padding: 0.4rem 0.8rem;
     background-position: right 0.8rem center;
   }
+  .sprite-buttons button {
+    font-size: 0.85rem;
+    padding: 0.4rem;
+  }
+  app-pokemon-navigator {
+    width: 150px;
+    height: 50px;
+  }
+  .cry-buttons {
+    flex-direction: column;
+  }
+  .types-container{
+    justify-content: center;
+  }
+}
 
+/* Small Devices (481px to 768px) */
+@media (min-width: 481px) and (max-width: 768px) {
+  :host {
+    padding: 1rem;
+  }
+  .pokemon-main-view {
+    flex-direction: column;
+    flex-flow: column-reverse;
+    gap: 1.5rem;
+  }
+  .pokemon-main-view-left,
+  .pokemon-main-view-right {
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+  }
+  .pokemon-main-view-left h1 {
+    font-size: 3rem;
+  }
+  select {
+    font-size: 0.9rem;
+    padding: 0.4rem 0.8rem;
+  }
   .sprite-buttons button {
     font-size: 0.9rem;
     padding: 0.4rem;
+  }
+  app-pokemon-navigator {
+    width: 250px;
+    height: 90px;
+  }
+  .cry-buttons {
+    flex-direction: column;
+  }
+  .types-container{
+    justify-content: center;
+  }
+}
+
+/* Medium Devices (769px to 1024px) */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .pokemon-main-view {
+    flex-direction: row;
+    gap: 1.5rem;
+  }
+  .pokemon-main-view-left {
+    width: calc(55% - 1rem);
+  }
+  .pokemon-main-view-right {
+    width: calc(45% - 1rem);
+  }
+}
+
+/* Large Devices (1025px and up) */
+@media (min-width: 1025px) {
+  .pokemon-main-view {
+    flex-direction: row;
+    gap: 2rem;
+  }
+  .pokemon-main-view-left {
+    width: calc(55% - 1rem);
+  }
+  .pokemon-main-view-right {
+    width: 45%;
   }
 }

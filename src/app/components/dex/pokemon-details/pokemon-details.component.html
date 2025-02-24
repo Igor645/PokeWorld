@@ -38,7 +38,9 @@
           </app-pokemon-type>
         </div>
 
-        <app-dex-entry [pokemonSpeciesDetails]="pokemonSpeciesDetails"></app-dex-entry>
+        <div class="pokemon-dex-entry">
+          {{ getPokemonDexEntry() }}
+        </div>
 
         <ul class="general-detail-list">
           <li>

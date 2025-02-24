@@ -9,7 +9,6 @@ import { CommonModule } from '@angular/common';
 import { PokemonUtilsService } from '../../../utils/pokemon-utils';
 import { PokemonBgSvgComponent } from '../../shared/pokemon-bg-svg/pokemon-bg-svg.component';
 import { LoadingSpinnerComponent } from '../../shared/loading-spinner/loading-spinner.component';
-import { DexEntryComponent } from '../dex-entry/dex-entry.component';
 import { PokemonNavigatorComponent } from '../pokemon-navigator/pokemon-navigator.component';
 import { Pokemon } from '../../../models/pokemon.model';
 import { Sprite } from '../../../models/sprite.model';
@@ -25,7 +24,6 @@ import { MatIcon } from '@angular/material/icon';
     PokemonBgSvgComponent,
     PokemonNavigatorComponent,
     LoadingSpinnerComponent,
-    DexEntryComponent,
     PokemonTypeComponent,
     MatIcon
   ],
@@ -262,6 +260,13 @@ export class PokemonDetailsComponent implements OnInit {
 
   getLatestCryUrl(): string | null {
     return this.selectedPokemon?.pokemon_v2_pokemoncries?.[0]?.cries?.latest || null;
+  }
+
+  getPokemonDexEntry(): string {
+    return this.pokemonUtils.getPokemonSpeciesDexEntryByVersion(
+      this.pokemonSpeciesDetails,
+      this.selectedVersion?.id || null
+    );
   }
 
   playCry(version: 'legacy' | 'latest') {
