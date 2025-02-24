@@ -159,8 +159,8 @@
 
 app-pokemon-navigator {
   display: flex;
-  width: 350px;
-  height: 120px;
+  width: 400px;
+  height: fit-content;
 }
 
 /* ──────────────────── Select Box ──────────────────── */
@@ -370,8 +370,18 @@ select:focus {
     padding: 0.4rem;
   }
   app-pokemon-navigator {
-    width: 150px;
-    height: 50px;
+    width: 280px;
+  }
+  .pokemon-nav-buttons {
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0 auto;
+    margin-top: 1rem;
+  }
+  .nav-button.left{
+    margin-left: 0;
   }
   .cry-buttons {
     flex-direction: column;
@@ -409,8 +419,18 @@ select:focus {
     padding: 0.4rem;
   }
   app-pokemon-navigator {
-    width: 250px;
-    height: 90px;
+    width: 500px;
+  }
+  .pokemon-nav-buttons {
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    margin: 0 auto;
+    margin-top: 1rem;
+  }
+  .nav-button.left{
+    margin-left: 0;
   }
   .cry-buttons {
     flex-direction: column;
@@ -431,6 +451,9 @@ select:focus {
   }
   .pokemon-main-view-right {
     width: calc(45% - 1rem);
+  }
+  app-pokemon-navigator {
+    width: 320px;
   }
 }
 

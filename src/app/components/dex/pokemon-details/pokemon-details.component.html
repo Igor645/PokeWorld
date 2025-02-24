@@ -131,6 +131,7 @@
               class="pokemon-detail-img" 
               [src]="selectedPokemonImage" 
               [alt]="getPokemonSpeciesName()"
+              (error)="selectedPokemonImage = '/images/placeholder.png'"
               (load)="onImageLoad()" />
           </div>
           <app-pokemon-bg-svg class="pokemonCard__bg detail"></app-pokemon-bg-svg>
