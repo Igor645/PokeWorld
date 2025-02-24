@@ -50,6 +50,8 @@
   margin: 0 0 0.5%;
   font-weight: 600;
   font-size: 4rem;
+  position: relative;
+  width: fit-content;
 }
 
 .pokemon-main-view-right {
@@ -72,6 +74,9 @@
   color: var(--accent-text-color);
   box-shadow: 0px 2px 4px var(--shadow-color);
   user-select: none;
+  position: absolute;
+  right: -60px;
+  top: -7%;
 }
 
 .dark-theme .pokemon-status-badge {
