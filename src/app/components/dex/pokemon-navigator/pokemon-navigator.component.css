@@ -1,68 +1,71 @@
+/* ──────────── Pokemon Navigator Container ──────────── */
 .pokemon-navigator {
-    cursor: pointer;
-    display: flex;
-    transition: transform 0.2s;
-    background-color: var(--background-color);
-    justify-content: space-between;
-    align-items: center;
-    border-radius: 10px;
-    padding: 10px;
-    width: 100%;
-    height: 100%;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 6px 12px rgba(0, 0, 0, 0.1);
-    gap: 5%;
-  }
-
-  .pokemon-navigator:hover {
-    transform: scale(1.05);
-  }
-  .flip {
-    transform: scaleX(-1);
-  }
-  .pokemon-name {
-    font-weight: bold;
-    text-transform: capitalize;
-    font-size: 1.3rem;
-    align-self: center;
-  }
-
-  .pokemonCard__image {
-    width: 90%;
-    filter: drop-shadow(0 4px 6px var(--pokemon-img-shadow-color));
-    z-index: 15;
-    position: relative;
-    will-change: transform;
-    image-rendering: crisp-edges;
-    margin: 0 auto;
-    image-rendering: -webkit-optimize-contrast;
+  cursor: pointer;
+  display: flex;
+  transition: transform 0.2s;
+  background-color: var(--background-color);
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 10px;
+  padding: 10px;
+  width: 100%;
+  height: 100%;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 6px 12px rgba(0, 0, 0, 0.1);
+  gap: 5%;
 }
 
+.pokemon-navigator:hover {
+  transform: scale(1.05);
+}
+
+/* ──────────── Utility Classes ──────────── */
+.flip {
+  transform: scaleX(-1);
+}
+
+/* ──────────── Pokemon Name Styling ──────────── */
+.pokemon-name {
+  font-weight: bold;
+  text-transform: capitalize;
+  font-size: 1.3rem;
+  align-self: center;
+}
+
+/* ──────────── Pokemon Card Image & Containers ──────────── */
+.pokemonCard__image {
+  width: 90%;
+  filter: drop-shadow(0 4px 6px var(--pokemon-img-shadow-color));
+  z-index: 15;
+  position: relative;
+  will-change: transform;
+  margin: 0 auto;
+  image-rendering: crisp-edges;
+  image-rendering: -webkit-optimize-contrast;
+}
 
 .pokemonCard__img__container {
-    position: relative;
-    display: flex;
-    justify-content: center;
-    background-color: var(--glass-color);
-    display: flex;
-    flex-direction: column;
-    width: 40%;
-    background-color: var(--glass-color);
-    border-radius: 10px;
-    position: relative;
-    box-shadow: inset 0 4px 10px rgba(0, 0, 0, 0.2),
-    inset 0 -4px 10px rgba(255, 255, 255, 0.2);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 40%;
+  background-color: var(--glass-color);
+  border-radius: 10px;
+  box-shadow: inset 0 4px 10px rgba(0, 0, 0, 0.2),
+              inset 0 -4px 10px rgba(255, 255, 255, 0.2);
 }
 
 .pokemonCard__bg {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 1;
-    width: 110%;
-    height: auto;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1;
+  width: 110%;
+  height: auto;
 }
 
+/* ──────────── Arrow Styling ──────────── */
 .arrow {
   font-size: 7rem;
   line-height: 1;
@@ -75,28 +78,23 @@
   height: fit-content;
 }
 
-  .pokemon-navigator {
-    display: flex;
-    align-items: center;
-    cursor: pointer;
+/* ──────────── Responsive Styles ──────────── */
+@media (max-width: 480px) {
+  .pokemon-name {
+    font-size: 0.7rem;
   }
-  
-  @media (max-width: 480px) {
-    .pokemon-name{
-      font-size: 0.7rem;
-    }
-    .arrow {
-      font-size: 2rem;
-      margin: auto -1rem;
-    }
+  .arrow {
+    font-size: 2rem;
+    margin: auto -1rem;
   }
-  
-  @media (min-width: 481px) and (max-width: 768px) {
-    .pokemon-name{
-      font-size: 0.8rem;
-    }
-    .arrow {
-      font-size: 3rem;
-      margin: auto -1.2rem;
-    }
+}
+
+@media (min-width: 481px) and (max-width: 768px) {
+  .pokemon-name {
+    font-size: 0.8rem;
   }
+  .arrow {
+    font-size: 3rem;
+    margin: auto -1.2rem;
+  }
+}
