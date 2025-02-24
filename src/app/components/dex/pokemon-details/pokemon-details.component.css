@@ -151,6 +151,8 @@
   width: var(--general-width);
   margin: 2rem auto;
   animation: fadeIn 1s ease-in-out;
+  margin: 0 auto;
+  margin-top: 1rem;
 }
 
 .nav-button.left {
@@ -377,8 +379,6 @@ select:focus {
     justify-content: center;
     align-items: center;
     gap: 0.5rem;
-    margin: 0 auto;
-    margin-top: 1rem;
   }
   .nav-button.left{
     margin-left: 0;
@@ -426,8 +426,6 @@ select:focus {
     justify-content: center;
     align-items: center;
     gap: 1rem;
-    margin: 0 auto;
-    margin-top: 1rem;
   }
   .nav-button.left{
     margin-left: 0;
