@@ -353,6 +353,9 @@ select:focus {
     justify-content: center;
     gap: 1rem;
   }
+  .pokemon-main-view-container{
+    padding: 1rem;
+  }
   .pokemon-main-view-left,
   .pokemon-main-view-right {
     width: 100%;
@@ -400,6 +403,9 @@ select:focus {
     flex-direction: column;
     flex-flow: column-reverse;
     gap: 1.5rem;
+  }
+  .pokemon-main-view-container{
+    padding: 1.5rem;
   }
   .pokemon-main-view-left,
   .pokemon-main-view-right {
