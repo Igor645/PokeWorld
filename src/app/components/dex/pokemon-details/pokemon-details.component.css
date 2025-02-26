@@ -364,6 +364,11 @@ select:focus {
   }
   .pokemon-main-view-left h1 {
     font-size: 3rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
   }
   select {
     font-size: 0.85rem;
@@ -392,6 +397,17 @@ select:focus {
   .types-container{
     justify-content: center;
   }
+  .pokemon-status-badge {
+    position: relative;
+    right: unset;
+    top: unset;
+    margin-bottom: 0.5rem;
+  }
+  .pokemon-dex-entry {
+    text-align: center;
+    font-size: 1.3rem;
+    margin-top: 1rem;
+  }
 }
 
 /* Small Devices (481px to 768px) */
@@ -415,6 +431,11 @@ select:focus {
   }
   .pokemon-main-view-left h1 {
     font-size: 3rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
   }
   select {
     font-size: 0.9rem;
@@ -441,6 +462,16 @@ select:focus {
   }
   .types-container{
     justify-content: center;
+  }
+  .pokemon-status-badge {
+    position: relative;
+    right: unset;
+    top: unset;
+    margin-bottom: 0.5rem;
+  }
+  .pokemon-dex-entry {
+    text-align: center;
+    margin-top: 1rem;
   }
 }
 
