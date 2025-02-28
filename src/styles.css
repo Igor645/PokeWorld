@@ -21,10 +21,8 @@ html, body {
     }
 
 body {
-    display: grid;
-    grid-template-rows: auto 1fr auto;
     width: 100%;
-    max-height: 100vh;
+    height: 100vh;
     overflow-x: hidden;
     position: relative;
     background-image: url('../public/images/background-wave.svg');
