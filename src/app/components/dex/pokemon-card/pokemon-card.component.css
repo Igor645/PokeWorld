@@ -1,9 +1,9 @@
-:host, .pokemon-placeholder {
-    width: 15.5%;
+:host {
     display: grid;
     grid-template-rows: auto;
     align-items: center;
     height: 100%;
+    width: 100%;
     background-color: var(--glass-color);
     border: 2px solid var(--border-color);
     backdrop-filter: blur(1px);
@@ -210,3 +210,33 @@
       opacity: 0;
     }
 }
+
+@media (max-width: 480px) {
+    .pokemonCard__id, .pokemonCard__text__container {
+        font-size: 1rem;
+    }
+    .pokemonCard__text {
+        font-size: 1rem;
+    }
+    .pokemonCard__text.pokemonCard__generation {
+        font-size: 0.8rem;
+    }
+    .pokemonCard__id {
+        font-size: 0.8rem;
+    }
+  }
+  
+  /* Small Devices (481px to 768px) */
+  @media (min-width: 481px) and (max-width: 768px) {
+    
+  }
+  
+  /* Medium Devices (769px to 1024px) */
+  @media (min-width: 769px) and (max-width: 1024px) {
+    
+  }
+  
+  /* Large Devices (1025px and up) */
+  @media (min-width: 1025px) {
+    
+  }

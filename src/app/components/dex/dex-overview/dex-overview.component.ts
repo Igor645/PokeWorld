@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject, PLATFORM_ID, ViewChild, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, Inject, PLATFORM_ID, ViewChild, AfterViewInit, ElementRef, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { PokemonService } from '../../../services/pokemon.service';
 import { PokemonCardComponent } from '../pokemon-card/pokemon-card.component';
@@ -24,11 +24,16 @@ import { LoadingSpinnerComponent } from '../../shared/loading-spinner/loading-sp
   templateUrl: './dex-overview.component.html',
   styleUrls: ['./dex-overview.component.css'],
 })
-export class DexOverviewComponent implements OnInit {
+export class DexOverviewComponent implements OnInit, AfterViewInit {
   @ViewChild(CdkVirtualScrollViewport) viewport!: CdkVirtualScrollViewport;
+  @ViewChild('firstPokemonCard', { static: false }) firstPokemonCard!: ElementRef;
 
-  private readonly pageSize = 6;
+  pageSize = 6;
   count = 0;
+  itemSize = 370; // Height of one row (to be updated dynamically)
+  rowsPerView = 5; // Number of rows that fit in the viewport (dynamic)
+  private allSpecies: PokemonSpecies[] = [];
+  private lastDevicePixelRatio = window.devicePixelRatio;
 
   private speciesRowsSubject = new BehaviorSubject<SpeciesRow[]>([]);
   speciesRows$: Observable<SpeciesRow[]> = this.speciesRowsSubject.asObservable();
@@ -42,7 +47,60 @@ export class DexOverviewComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.setPageSize();
     this.fetchAllPokemon();
+
+    if (isPlatformBrowser(this.platformId)) {
+      window.addEventListener('resize', this.handleResize);
+    }
+  }
+
+  ngAfterViewInit(): void {
+    setTimeout(() => {
+      this.updateItemSize();
+      this.updateRowsPerView();
+    }, 0);
+  }
+
+  private updateItemSize(): void {
+    if (this.firstPokemonCard && this.firstPokemonCard.nativeElement) {
+      this.itemSize = this.firstPokemonCard.nativeElement.offsetHeight;
+      this.updateRowsPerView();
+    }
+  }
+
+  private updateRowsPerView(): void {
+    const availableHeight = window.innerHeight; // Get screen height
+    this.rowsPerView = Math.floor(availableHeight / this.itemSize);
+    this.viewport.checkViewportSize(); // Refresh viewport
+  }
+
+  private handleResize = (): void => {
+    const newPageSize = this.calculatePageSize();
+    const newDevicePixelRatio = window.devicePixelRatio;
+
+    // Detect zoom change based on devicePixelRatio
+    if (newPageSize !== this.pageSize || newDevicePixelRatio !== this.lastDevicePixelRatio) {
+      this.pageSize = newPageSize;
+      this.lastDevicePixelRatio = newDevicePixelRatio;
+      this.updateRows();
+    }
+
+    this.updateItemSize();
+    this.updateRowsPerView();
+  };
+
+  private calculatePageSize(): number {
+    const width = window.innerWidth;
+    if (width <= 480) return 2;
+    if (width <= 768) return 3;
+    if (width <= 1024) return 4;
+    if(width <= 1280) return 5;
+    return 6;
+  }
+
+  private setPageSize(): void {
+    this.pageSize = this.calculatePageSize();
   }
 
   private fetchAllPokemon(): void {
@@ -58,15 +116,19 @@ export class DexOverviewComponent implements OnInit {
         });
       })
     ).subscribe(response => {
-      const species = response.pokemon_v2_pokemonspecies;
-      if (!species.length) {
-        return;
-      }
-
-      const rows = this.transformToRows(species, this.pageSize);
-      this.speciesRowsSubject.next(rows);
+      this.allSpecies = response.pokemon_v2_pokemonspecies;
       this.count = response.pokemon_v2_pokemonspecies_aggregate.aggregate.count;
+      this.updateRows();
+      setTimeout(() => {
+        this.updateItemSize();
+        this.updateRowsPerView();
+      }, 0);
     });
+  }
+
+  private updateRows(): void {
+    const rows = this.transformToRows(this.allSpecies, this.pageSize);
+    this.speciesRowsSubject.next(rows);
   }
 
   private transformToRows(species: PokemonSpecies[], pageSize: number): SpeciesRow[] {
@@ -78,5 +140,11 @@ export class DexOverviewComponent implements OnInit {
       });
     }
     return rows;
+  }
+
+  ngOnDestroy(): void {
+    if (isPlatformBrowser(this.platformId)) {
+      window.removeEventListener('resize', this.handleResize);
+    }
   }
 }

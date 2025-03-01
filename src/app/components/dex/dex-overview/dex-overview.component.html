@@ -13,8 +13,10 @@
 
 <ng-template #pokemonList>
     <cdk-virtual-scroll-viewport 
-        scrollWindow="true"
-        itemSize="370"
+        scrollWindow="false"
+        [itemSize]="itemSize"
+        [minBufferPx]="itemSize * rowsPerView"
+        [maxBufferPx]="itemSize * (rowsPerView + 2)"
         class="pokedexOverview"
     >
         <div class="row" *cdkVirtualFor="let row of speciesRows$">
@@ -24,9 +26,10 @@
             ></app-pokemon-card>
 
             <div 
-            *ngFor="let i of [].constructor(6 - row.pokemon_species.length)"
+            *ngFor="let i of [].constructor(pageSize - row.pokemon_species.length)"
             class="pokemon-placeholder"
             ></div>
         </div>
     </cdk-virtual-scroll-viewport>
 </ng-template>
+    
