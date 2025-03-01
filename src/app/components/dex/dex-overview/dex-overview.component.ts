@@ -63,10 +63,12 @@ export class DexOverviewComponent implements OnInit, AfterViewInit {
   }
 
   private updateItemSize(): void {
-    if (this.firstPokemonCard && this.firstPokemonCard.nativeElement) {
-      this.itemSize = this.firstPokemonCard.nativeElement.offsetHeight;
-      this.updateRowsPerView();
-    }
+    setTimeout(() => {
+        if (this.firstPokemonCard && this.firstPokemonCard.nativeElement) {
+            this.itemSize = this.firstPokemonCard.nativeElement.offsetHeight || 370; 
+            this.updateRowsPerView();
+        }
+    }, 300);
   }
 
   private updateRowsPerView(): void {
