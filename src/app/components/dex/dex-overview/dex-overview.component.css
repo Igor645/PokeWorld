@@ -95,13 +95,13 @@ app-pokeworld-search{
 @media (max-width: 480px) {
     .row {
         gap: 1rem;
-        height: 250px;
+        height: 200px;
         padding: 0 1rem;
     }
 
     .row > app-pokemon-card, .row > .pokemon-placeholder {
-        flex: 1 1 calc(100% / 2);
-        max-width: calc(100% / 2);
+        flex: 1 1 calc(100% / 3);
+        max-width: calc(100% / 3);
     }
 
     .dexTitle {

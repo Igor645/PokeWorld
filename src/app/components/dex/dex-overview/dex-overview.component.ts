@@ -92,7 +92,7 @@ export class DexOverviewComponent implements OnInit, AfterViewInit {
 
   private calculatePageSize(): number {
     const width = window.innerWidth;
-    if (width <= 480) return 2;
+    if (width <= 480) return 3;
     if (width <= 768) return 3;
     if (width <= 1024) return 4;
     if(width <= 1280) return 5;
