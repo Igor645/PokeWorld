@@ -15,8 +15,6 @@
     <cdk-virtual-scroll-viewport 
         scrollWindow="false"
         [itemSize]="itemSize"
-        [minBufferPx]="itemSize * rowsPerView"
-        [maxBufferPx]="itemSize * (rowsPerView + 2)"
         class="pokedexOverview"
     >
         <div class="row" *cdkVirtualFor="let row of speciesRows$">

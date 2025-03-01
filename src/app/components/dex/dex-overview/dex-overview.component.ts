@@ -30,9 +30,8 @@ export class DexOverviewComponent implements OnInit, AfterViewInit {
 
   pageSize = 6;
   count = 0;
-  itemSize = 370; // Height of one row (to be updated dynamically)
-  rowsPerView = 5; // Number of rows that fit in the viewport (dynamic)
-  private allSpecies: PokemonSpecies[] = [];
+  itemSize = 370; 
+   private allSpecies: PokemonSpecies[] = [];
   private lastDevicePixelRatio = window.devicePixelRatio;
 
   private speciesRowsSubject = new BehaviorSubject<SpeciesRow[]>([]);
@@ -58,21 +57,13 @@ export class DexOverviewComponent implements OnInit, AfterViewInit {
   ngAfterViewInit(): void {
     setTimeout(() => {
       this.updateItemSize();
-      this.updateRowsPerView();
     }, 0);
   }
 
   private updateItemSize(): void {
     if (this.firstPokemonCard && this.firstPokemonCard.nativeElement) {
         this.itemSize = this.firstPokemonCard.nativeElement.offsetHeight || 370; 
-        this.updateRowsPerView();
     }
-  }
-
-  private updateRowsPerView(): void {
-    const availableHeight = window.innerHeight; // Get screen height
-    this.rowsPerView = Math.floor(availableHeight / this.itemSize);
-    this.viewport.checkViewportSize(); // Refresh viewport
   }
 
   private handleResize = (): void => {
@@ -87,7 +78,6 @@ export class DexOverviewComponent implements OnInit, AfterViewInit {
     }
 
     this.updateItemSize();
-    this.updateRowsPerView();
   };
 
   private calculatePageSize(): number {
@@ -99,8 +89,18 @@ export class DexOverviewComponent implements OnInit, AfterViewInit {
     return 6;
   }
 
+  private calculateItemSize(): number {
+    const width = window.innerWidth;
+    if (width <= 480) return 200;
+    if (width <= 768) return 300;
+    if (width <= 1024) return 300;
+    if(width <= 1280) return 320;
+    return 370;
+  }
+
   private setPageSize(): void {
     this.pageSize = this.calculatePageSize();
+    this.itemSize = this.calculateItemSize();
   }
 
   private fetchAllPokemon(): void {
@@ -121,7 +121,6 @@ export class DexOverviewComponent implements OnInit, AfterViewInit {
       this.updateRows();
       setTimeout(() => {
         this.updateItemSize();
-        this.updateRowsPerView();
       }, 0);
     });
   }
