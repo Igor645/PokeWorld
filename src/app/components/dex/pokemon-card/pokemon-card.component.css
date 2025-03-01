@@ -213,16 +213,17 @@
 
 @media (max-width: 480px) {
     .pokemonCard__id, .pokemonCard__text__container {
-        font-size: 0.8rem;
+        font-size: 0.6rem;
+        padding: 0.3rem 0;
     }
     .pokemonCard__text {
-        font-size: 0.8rem;
+        font-size: 0.7rem;
     }
     .pokemonCard__text.pokemonCard__generation {
-        font-size: 0.6rem;
+        font-size: 0.55rem;
     }
     .pokemonCard__id {
-        font-size: 0.8rem;
+        font-size: 0.7rem;
     }
   }
   
