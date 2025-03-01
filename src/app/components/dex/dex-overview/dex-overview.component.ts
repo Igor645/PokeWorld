@@ -91,7 +91,7 @@ export class DexOverviewComponent implements OnInit, AfterViewInit {
 
   private calculateItemSize(): number {
     const width = window.innerWidth;
-    if (width <= 480) return 160;
+    if (width <= 480) return 150;
     if (width <= 768) return 300;
     if (width <= 1024) return 300;
     if(width <= 1280) return 320;
