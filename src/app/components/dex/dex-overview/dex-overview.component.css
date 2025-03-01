@@ -95,7 +95,7 @@ app-pokeworld-search{
 @media (max-width: 480px) {
     .row {
         gap: 1rem;
-        height: 200px;
+        height: 180px;
         padding: 0 1rem;
     }
 
