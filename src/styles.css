@@ -4,6 +4,7 @@ html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
     margin: 0;
     padding: 0;
+    height: 100%;
 }
 
 * {
@@ -18,7 +19,7 @@ html, body {
         filter 0.3s ease, 
         fill 0.3s ease, 
         stroke 0.3s ease;
-    }
+}
 
 body {
     display: grid;
@@ -27,18 +28,27 @@ body {
     max-height: 100vh;
     overflow-x: hidden;
     position: relative;
+}
+
+.background-image {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: -1;
     background-image: url('../public/images/background-wave.svg');
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center;
-    background-attachment: fixed;
 }
 
-.dark-theme body{
+.dark-theme .background-image {
     background-image: url('../public/images/background-wave-dark.svg');
 }
 
 app-root {
+    position: relative;
     min-height: 100vh;
     width: 100%;
 }
@@ -53,8 +63,6 @@ app-root {
         transform: translateY(0);
     }
 }
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
 ::-webkit-scrollbar {
     width: 15px;
@@ -75,4 +83,3 @@ img {
     -o-user-drag: none;
     user-drag: none;
 }
-  
