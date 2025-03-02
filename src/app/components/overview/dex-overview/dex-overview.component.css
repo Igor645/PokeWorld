@@ -62,14 +62,11 @@ app-pokeworld-search{
     font-size: 8rem;
     font-family: 'Montserrat', sans-serif;
     color: var(--background-color);
-    -webkit-text-stroke: 0.3em var(--title-color);
+    -webkit-text-stroke: 0.05em var(--title-color);
     text-align: center;
     text-shadow: 4px 4px 8px var(--title-shadow-color);
     margin-bottom: 1rem;
     font-weight: 900;
-    transform: translateZ(0);
-    -webkit-font-smoothing: antialiased;
-    -webkit-backface-visibility: hidden;
 }
 
 .pokeball {
@@ -110,7 +107,6 @@ app-pokeworld-search{
 
     .dexTitle {
         font-size: 3rem;
-        -webkit-text-stroke: 0.1em var(--title-color);
     }
 
     .pokemonCount {
@@ -137,7 +133,6 @@ app-pokeworld-search{
 
     .dexTitle {
         font-size: 5rem;
-        -webkit-text-stroke: 0.2em var(--title-color);
     }
 
     .pokemonCount {
@@ -164,7 +159,6 @@ app-pokeworld-search{
 
     .dexTitle {
         font-size: 6rem;
-        -webkit-text-stroke: 0.3em var(--title-color);
     }
 
     .pokemonCount {
@@ -190,7 +184,6 @@ app-pokeworld-search{
 
     .dexTitle {
         font-size: 6rem;
-        -webkit-text-stroke: 0.3em var(--title-color);
     }
 
     .pokemonCount {
