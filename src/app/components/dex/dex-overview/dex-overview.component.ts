@@ -24,7 +24,7 @@ import { LoadingSpinnerComponent } from '../../shared/loading-spinner/loading-sp
   templateUrl: './dex-overview.component.html',
   styleUrls: ['./dex-overview.component.css'],
 })
-export class DexOverviewComponent implements OnInit, AfterViewInit {
+export class DexOverviewComponent implements OnInit {
   @ViewChild(CdkVirtualScrollViewport) viewport!: CdkVirtualScrollViewport;
   @ViewChild('firstPokemonCard', { static: false }) firstPokemonCard!: ElementRef;
 
@@ -47,22 +47,12 @@ export class DexOverviewComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     this.setPageSize();
+    console.log(this.pageSize);
+    console.log(this.itemSize);
     this.fetchAllPokemon();
 
     if (isPlatformBrowser(this.platformId)) {
       window.addEventListener('resize', this.handleResize);
-    }
-  }
-
-  ngAfterViewInit(): void {
-    setTimeout(() => {
-      this.updateItemSize();
-    }, 0);
-  }
-
-  private updateItemSize(): void {
-    if (this.firstPokemonCard && this.firstPokemonCard.nativeElement) {
-        this.itemSize = this.firstPokemonCard.nativeElement.offsetHeight || 370; 
     }
   }
 
@@ -77,7 +67,7 @@ export class DexOverviewComponent implements OnInit, AfterViewInit {
       this.updateRows();
     }
 
-    this.updateItemSize();
+    this.itemSize = this.calculateItemSize();
   };
 
   private calculatePageSize(): number {
@@ -119,9 +109,7 @@ export class DexOverviewComponent implements OnInit, AfterViewInit {
       this.allSpecies = response.pokemon_v2_pokemonspecies;
       this.count = response.pokemon_v2_pokemonspecies_aggregate.aggregate.count;
       this.updateRows();
-      setTimeout(() => {
-        this.updateItemSize();
-      }, 0);
+      this.itemSize = this.calculateItemSize();
     });
   }
 

@@ -225,6 +225,17 @@
     .pokemonCard__id {
         font-size: 0.7rem;
     }
+    .pokemonCard__id {
+        border-radius: 0 0 5px 5px;
+    }
+    
+    .pokemonCard__text__container {
+        border-radius: 5px 5px 0 0;
+    }
+
+    :host{
+        border-radius: 6px;
+    }
   }
   
   /* Small Devices (481px to 768px) */
