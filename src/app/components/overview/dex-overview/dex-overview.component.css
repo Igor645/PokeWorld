@@ -60,7 +60,8 @@ app-pokeworld-search{
 
 .dexTitle {
     font-size: 8rem;
-    font-family: 'Inter', sans-serif;
+    font-family: "Exo 2", serif;
+    paint-order: stroke fill;
     color: var(--background-color);
     -webkit-text-stroke: 0.05em var(--title-color);
     text-align: center;
