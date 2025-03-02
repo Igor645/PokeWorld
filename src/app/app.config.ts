@@ -9,7 +9,7 @@ import { HttpLink } from 'apollo-angular/http';
 import { InMemoryCache } from '@apollo/client/core';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 
-import { environment } from '../environments/environment';
+import { environment } from './environments/environment';
 
 export const appConfig: ApplicationConfig = {
   providers: [
