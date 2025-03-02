@@ -2,18 +2,18 @@ import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { forkJoin, of, BehaviorSubject } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import { PokemonService } from '../../../services/pokemon.service';
-import { PokemonSpecies } from '../../../models/pokemon-species.model';
-import { Version } from '../../../models/version.model';
+import { PokemonService } from '../../../../services/pokemon.service';
+import { PokemonSpecies } from '../../../../models/pokemon-species.model';
+import { Version } from '../../../../models/version.model';
 import { CommonModule } from '@angular/common';
-import { PokemonUtilsService } from '../../../utils/pokemon-utils';
-import { PokemonBgSvgComponent } from '../../shared/pokemon-bg-svg/pokemon-bg-svg.component';
-import { LoadingSpinnerComponent } from '../../shared/loading-spinner/loading-spinner.component';
+import { PokemonUtilsService } from '../../../../utils/pokemon-utils';
+import { PokemonBgSvgComponent } from '../../../shared/pokemon-bg-svg/pokemon-bg-svg.component';
+import { LoadingSpinnerComponent } from '../../../shared/loading-spinner/loading-spinner.component';
 import { PokemonNavigatorComponent } from '../pokemon-navigator/pokemon-navigator.component';
-import { Pokemon } from '../../../models/pokemon.model';
-import { Sprite } from '../../../models/sprite.model';
-import { PokemonTypeComponent } from '../pokemon-type/pokemon-type.component';
-import { Name } from '../../../models/species-name.model';
+import { Pokemon } from '../../../../models/pokemon.model';
+import { Sprite } from '../../../../models/sprite.model';
+import { PokemonTypeComponent } from '../../../shared/pokemon-type/pokemon-type.component';
+import { Name } from '../../../../models/species-name.model';
 import { MatIcon } from '@angular/material/icon';
 
 @Component({

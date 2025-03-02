@@ -1,7 +1,7 @@
 import { Component, OnInit, Inject, PLATFORM_ID, ViewChild, AfterViewInit, ElementRef, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { PokemonService } from '../../../services/pokemon.service';
-import { PokemonCardComponent } from '../pokemon-card/pokemon-card.component';
+import { PokemonCardComponent } from '../../shared/pokemon-card/pokemon-card.component';
 import { ScrollingModule, CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { finalize, catchError } from 'rxjs/operators';

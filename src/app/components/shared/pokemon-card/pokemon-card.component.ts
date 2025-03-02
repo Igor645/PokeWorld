@@ -5,7 +5,7 @@ import { CommonModule } from '@angular/common';
 import { PokemonUtilsService } from '../../../utils/pokemon-utils';
 import { SettingsService } from '../../../services/settings.service';
 import { Subscription } from 'rxjs';
-import { PokemonBgSvgComponent } from '../../shared/pokemon-bg-svg/pokemon-bg-svg.component';
+import { PokemonBgSvgComponent } from '../pokemon-bg-svg/pokemon-bg-svg.component';
 
 @Component({
   selector: 'app-pokemon-card',
