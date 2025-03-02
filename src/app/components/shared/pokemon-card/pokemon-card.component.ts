@@ -83,7 +83,9 @@ export class PokemonCardComponent implements OnInit, OnDestroy, AfterViewInit {
     this.imageLoaded = true;
 
     if (this.pokemonImage) {
-      this.pokemonImage.nativeElement.classList.remove('initial-load');
+      setTimeout(() => {
+        this.pokemonImage.nativeElement.classList.remove('initial-load');
+      }, 700);
     }
 
     this.eggSwooping = true;
