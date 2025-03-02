@@ -29,9 +29,6 @@ coverage/
 .npmrc
 .npmignore
 
-# Ignore environment files (for security)
-src/environments/environment*.ts
-
 # Angular cache files
 .angular/cache/
 .angular/server/
