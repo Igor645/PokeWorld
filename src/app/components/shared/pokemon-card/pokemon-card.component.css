@@ -17,6 +17,38 @@
     box-sizing: border-box;
 }
 
+:host::before {
+    content: "";
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(45deg, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.1));
+    transform: rotate(25deg) translateX(-100%);
+    opacity: 0.5;
+    pointer-events: none;
+    transition: transform 0.5s ease;
+    z-index: 1;
+}
+
+:host:hover::before {
+    transform: rotate(45deg);
+    opacity: 0.8;
+}
+
+:host:hover {
+    transform: perspective(1000px) scale(1.05) rotateX(8deg);
+    cursor: pointer;
+    transition: transform 0.5s ease;
+    box-shadow: 0 8px 16px var(--shadow-hover-color), 0 12px 24px var(--shadow-hover-color);
+}
+
+:host:active {
+    transform: perspective(1000px) scale(0.95) rotateX(-2deg);
+    transition: transform 0.1s ease;
+}
+
 .pokemonCard__image {
     width: 90%;
     filter: drop-shadow(0 4px 6px var(--pokemon-img-shadow-color));
@@ -105,33 +137,6 @@
     border-radius: 10px 10px 0 0;
 }
 
-:host::before {
-    content: "";
-    position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: linear-gradient(45deg, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.1));
-    transform: rotate(25deg) translateX(-100%);
-    opacity: 0.5;
-    pointer-events: none;
-    transition: transform 0.5s ease;
-    z-index: 1;
-}
-
-:host:hover {
-    transform: perspective(1000px) scale(1.05) rotateX(8deg);
-    cursor: pointer;
-    transition: transform 0.5s ease;
-    box-shadow: 0 8px 16px var(--shadow-hover-color), 0 12px 24px var(--shadow-hover-color);
-
-}
-:host:active {
-    transform: perspective(1000px) scale(0.95) rotateX(-2deg);
-    transition: transform 0.1s ease;
-}
-
 .pokemonCard__image.initial-load:not(.shaking_egg) {
     animation: popUp 0.6s ease-out forwards;
 }
@@ -165,11 +170,6 @@
     50% {
         transform: translateY(-5px) scale(1.1);
     }
-}
-
-:host:hover::before {
-    transform: rotate(45deg);
-    opacity: 0.8;
 }
 
 @keyframes shake {

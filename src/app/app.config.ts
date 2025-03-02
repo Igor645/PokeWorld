@@ -9,6 +9,8 @@ import { HttpLink } from 'apollo-angular/http';
 import { InMemoryCache } from '@apollo/client/core';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 
+import { environment } from './environments/environment';
+
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }),
@@ -21,10 +23,11 @@ export const appConfig: ApplicationConfig = {
 
       return {
         link: httpLink.create({
-          uri: 'https://beta.pokeapi.co/graphql/v1beta',
+          uri: environment.apiUrl,
         }),
         cache: new InMemoryCache(),
       };
-    }), provideAnimationsAsync(),
+    }), 
+    provideAnimationsAsync(),
   ]
 };

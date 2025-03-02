@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy, ChangeDetectorRef, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { PokemonSpecies } from '../../../models/pokemon-species.model';
 import { CommonModule } from '@angular/common';
@@ -16,8 +16,9 @@ import { PokemonBgSvgComponent } from '../pokemon-bg-svg/pokemon-bg-svg.componen
     '(click)': 'navigateToPokemonDetails()'
   }
 })
-export class PokemonCardComponent implements OnInit, OnDestroy {
+export class PokemonCardComponent implements OnInit, OnDestroy, AfterViewInit {
   @Input() pokemonSpecies!: PokemonSpecies;
+  @ViewChild('pokemonImage', { static: false }) pokemonImage!: ElementRef<HTMLImageElement>;
   pokemonName: string = '';
   generationName: string = '';
   imageLoaded: boolean = false;
@@ -42,6 +43,8 @@ export class PokemonCardComponent implements OnInit, OnDestroy {
         this.cdr.detectChanges();
       });
   }
+
+  ngAfterViewInit(): void {}
 
   ngOnDestroy(): void {
     this.languageSubscription.unsubscribe();
@@ -78,9 +81,14 @@ export class PokemonCardComponent implements OnInit, OnDestroy {
   onImageLoad(): void {
     console.log('Image has loaded.');
     this.imageLoaded = true;
+
+    if (this.pokemonImage) {
+      this.pokemonImage.nativeElement.classList.remove('initial-load');
+    }
+
     this.eggSwooping = true;
     this.cdr.detectChanges();
-  }
+  }  
 
   onEggAnimationEnd(): void {
     console.log('Egg animation ended.');

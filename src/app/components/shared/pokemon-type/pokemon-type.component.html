@@ -1,4 +1,10 @@
-<div class="pokemon-type" [ngStyle]="{'background-color': getTypeColor()}">
+<!-- Simple Circle View -->
+<div class="pokemon-type simple" *ngIf="simpleView" [ngStyle]="{'background-color': getTypeColor()}">
+    <img class="type-icon" [src]="getTypeIcon()" [alt]="localizedTypeName" />
+</div>
+
+<!-- Full Type Display -->
+<div class="pokemon-type full" *ngIf="!simpleView" [ngStyle]="{'background-color': getTypeColor()}">
     <img class="type-icon" [src]="getTypeIcon()" [alt]="localizedTypeName" />
     <span class="type-name">{{ localizedTypeName }}</span>
 </div>

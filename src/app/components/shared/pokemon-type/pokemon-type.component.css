@@ -1,28 +1,47 @@
 .pokemon-type {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    padding: 6px 12px;
-    border-radius: 10px;
-    font-weight: bold;
-    text-transform: capitalize;
-    font-size: 1rem;
-    min-width: 90px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
-  }
-  
-  .type-icon {
-    width: 18px;
-    height: 18px;
-  }
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border-radius: 10px;
+  font-weight: bold;
+  text-transform: capitalize;
+  font-size: 1rem;
+  min-width: 90px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+  transition: transform 0.2s ease-in-out;
+}
 
-  .type-name{
-    color: white;
-  }
+.type-icon {
+  width: 18px;
+  height: 18px;
+}
 
-  .pokemon-type:hover {
-    transform: scale(1.05);
-    cursor: pointer;
-  }
-  
+.type-name {
+  color: white;
+}
+
+.pokemon-type:hover {
+  transform: scale(1.05);
+  cursor: pointer;
+}
+
+.pokemon-type.simple {
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
+  min-height: 40px;
+  border-radius: 50%;
+  padding: 0;
+  gap: 0;
+}
+
+.pokemon-type.simple .type-name {
+  display: none;
+}
+
+.pokemon-type.simple .type-icon {
+  width: 24px;
+  height: 24px;
+}

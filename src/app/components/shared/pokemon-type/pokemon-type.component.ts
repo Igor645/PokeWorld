@@ -13,6 +13,8 @@ import { Subscription } from 'rxjs';
 })
 export class PokemonTypeComponent implements OnInit, OnDestroy {
   @Input() pokemonType: any;
+  @Input() simpleView: boolean = false; 
+  
   isDarkMode: boolean = false;
   localizedTypeName: string = 'Unknown';
   private darkModeSubscription!: Subscription;
