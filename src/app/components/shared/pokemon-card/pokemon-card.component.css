@@ -125,6 +125,11 @@
     cursor: pointer;
     transition: transform 0.5s ease;
     box-shadow: 0 8px 16px var(--shadow-hover-color), 0 12px 24px var(--shadow-hover-color);
+
+}
+:host:active {
+    transform: perspective(1000px) scale(0.95) rotateX(-2deg);
+    transition: transform 0.1s ease;
 }
 
 .pokemonCard__image.initial-load:not(.shaking_egg) {
