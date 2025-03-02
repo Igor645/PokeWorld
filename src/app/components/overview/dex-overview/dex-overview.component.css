@@ -60,13 +60,14 @@ app-pokeworld-search{
 
 .dexTitle {
     font-size: 8rem;
-    font-family: 'Montserrat', sans-serif;
+    font-family: 'Inter', sans-serif;
     color: var(--background-color);
     -webkit-text-stroke: 0.05em var(--title-color);
     text-align: center;
     text-shadow: 4px 4px 8px var(--title-shadow-color);
     margin-bottom: 1rem;
     font-weight: 900;
+    -webkit-font-smoothing: antialiased;
 }
 
 .pokeball {
@@ -111,6 +112,7 @@ app-pokeworld-search{
 
     .pokemonCount {
         font-size: 1rem;
+        padding: 0.5rem;
     }
 
     app-pokeworld-search{
