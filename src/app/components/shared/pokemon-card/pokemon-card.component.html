@@ -5,7 +5,7 @@
 <div class="pokemonCard__img__container">
   <img 
     #pokemonImage
-    [src]="getPokemonImage()"
+    [src]="pokemonViewModel.image"
     (load)="onImageLoad()"
     (error)="handleImageError($event)"
     class="pokemonCard__image initial-load"
@@ -26,10 +26,10 @@
 
 <div class="pokemonCard__text__container">
   <div class="pokemonCard__text">
-    {{ pokemonName || 'Loading...' }}
+    {{ pokemonViewModel.name || 'Loading...' }}
   </div>
 
   <div class="pokemonCard__text pokemonCard__generation">
-    {{ generationName }}
+    {{ pokemonViewModel.generation || 'Loading...' }}
   </div>
 </div>

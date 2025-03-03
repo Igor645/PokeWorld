@@ -1,11 +1,12 @@
 import { Component, Input, OnInit, OnDestroy, ChangeDetectorRef, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { PokemonSpecies } from '../../../models/pokemon-species.model';
 import { CommonModule } from '@angular/common';
-import { PokemonUtilsService } from '../../../utils/pokemon-utils';
-import { SettingsService } from '../../../services/settings.service';
 import { Subscription } from 'rxjs';
 import { PokemonBgSvgComponent } from '../pokemon-bg-svg/pokemon-bg-svg.component';
+import { PokemonUtilsService } from '../../../utils/pokemon-utils';
+import { SettingsService } from '../../../services/settings.service';
+import { Pokemon } from '../../../models/pokemon.model';
+import { PokemonSpecies } from '../../../models/pokemon-species.model';
 
 @Component({
   selector: 'app-pokemon-card',
@@ -17,10 +18,12 @@ import { PokemonBgSvgComponent } from '../pokemon-bg-svg/pokemon-bg-svg.componen
   }
 })
 export class PokemonCardComponent implements OnInit, OnDestroy, AfterViewInit {
+  @Input() pokemon!: Pokemon;
   @Input() pokemonSpecies!: PokemonSpecies;
   @ViewChild('pokemonImage', { static: false }) pokemonImage!: ElementRef<HTMLImageElement>;
-  pokemonName: string = '';
-  generationName: string = '';
+  
+  pokemonViewModel: { id: number; name: string; image: string; generation: string } = { id: 0, name: '', image: '', generation: '' };
+
   imageLoaded: boolean = false;
   eggGone: boolean = false;
   eggSwooping: boolean = false;
@@ -34,12 +37,11 @@ export class PokemonCardComponent implements OnInit, OnDestroy, AfterViewInit {
   ) {}
 
   ngOnInit(): void {
-    this.updatePokemonName();
+    this.updateViewModel();
     this.languageSubscription = this.settingsService
       .watchSetting<number>('selectedLanguageId')
       .subscribe(() => {
-        this.updatePokemonName();
-        this.updateGenerationName();
+        this.updateViewModel();
         this.cdr.detectChanges();
       });
   }
@@ -50,50 +52,35 @@ export class PokemonCardComponent implements OnInit, OnDestroy, AfterViewInit {
     this.languageSubscription.unsubscribe();
   }
 
-  updatePokemonName(): void {
-    this.pokemonName = this.pokemonUtils.getPokemonSpeciesNameByLanguage(this.pokemonSpecies);
-  }
-
-  getPokemonImage(): string {
-    return this.pokemonUtils.getPokemonOfficialImage(
-      this.pokemonSpecies?.pokemon_v2_pokemons?.[0]
-    ) || '/invalid/image.png';
-  }
-
-  updateGenerationName(): void {
-    this.generationName = this.pokemonUtils.parseGenerationName(
-      this.pokemonSpecies?.pokemon_v2_generation?.pokemon_v2_generationnames
-    );
+  private updateViewModel(): void {
+    this.pokemonViewModel = {
+      id: this.pokemon?.id || this.pokemonSpecies?.id || 0,
+      name: this.pokemonUtils.getPokemonSpeciesNameByLanguage(this.pokemonSpecies),
+      image: this.pokemonUtils.getPokemonOfficialImage(this.pokemon),
+      generation: this.pokemonUtils.parseGenerationName(this.pokemonSpecies?.pokemon_v2_generation?.pokemon_v2_generationnames),
+    };
   }
 
   navigateToPokemonDetails(): void {
-    const species = this.pokemonSpecies;
-    const name = this.pokemonName;
-    if (name) {
-      this.router.navigate(['/pokemon', name]);
-    } else if (species?.id) {
-      this.router.navigate(['/pokemon', species.id]);
+    if (this.pokemonViewModel.name) {
+      this.router.navigate(['/pokemon', this.pokemonViewModel.name]);
+    } else if (this.pokemonViewModel.id) {
+      this.router.navigate(['/pokemon', this.pokemonViewModel.id]);
     } else {
       console.error('No valid Pokémon ID or name found.');
     }
-  }  
+  }
 
   onImageLoad(): void {
-    console.log('Image has loaded.');
     this.imageLoaded = true;
-
-    if (this.pokemonImage) {
-      setTimeout(() => {
-        this.pokemonImage.nativeElement.classList.remove('initial-load');
-      }, 700);
-    }
-
+    setTimeout(() => {
+      this.pokemonImage.nativeElement.classList.remove('initial-load');
+    }, 700);
     this.eggSwooping = true;
     this.cdr.detectChanges();
   }  
 
   onEggAnimationEnd(): void {
-    console.log('Egg animation ended.');
     this.eggGone = true;
     this.eggSwooping = false;
     this.cdr.detectChanges();
