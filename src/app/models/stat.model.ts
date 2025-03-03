@@ -1,3 +1,5 @@
+import { Name } from "./species-name.model";
+
 export interface PokemonStat {
   base_stat: number;
   effort: number;
@@ -7,4 +9,5 @@ export interface PokemonStat {
 export interface Stat {
   id: number;
   name: string;
+  pokemon_v2_statnames: Name[];
 }

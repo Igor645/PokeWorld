@@ -15,6 +15,7 @@ import { Sprite } from '../../../../models/sprite.model';
 import { PokemonTypeComponent } from '../../../shared/pokemon-type/pokemon-type.component';
 import { Name } from '../../../../models/species-name.model';
 import { MatIcon } from '@angular/material/icon';
+import { PokemonStatsComponent } from '../pokemon-stats/pokemon-stats.component';
 
 @Component({
   selector: 'app-pokemon-details',
@@ -25,7 +26,8 @@ import { MatIcon } from '@angular/material/icon';
     PokemonNavigatorComponent,
     LoadingSpinnerComponent,
     PokemonTypeComponent,
-    MatIcon
+    MatIcon,
+    PokemonStatsComponent
   ],
   templateUrl: './pokemon-details.component.html',
   styleUrls: ['./pokemon-details.component.css']

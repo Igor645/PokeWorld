@@ -1,0 +1,19 @@
+<div class="stat-title">Base Stats</div>
+
+<div *ngFor="let stat of getStats()" class="stat-row">
+    <div class="stat-name">{{ stat.name }}</div>
+    <div class="stat-value">{{ stat.value }}</div>
+    <div class="progress-bar">
+        <div class="progress" [style.width.%]="(stat.value / stat.max) * 100"></div>
+    </div>
+    <div class="stat-value">{{ stat.min }}</div>
+    <div class="stat-value">{{ stat.max }}</div>
+</div>
+
+<div class="stat-row">
+    <div class="stat-name">Total</div>
+    <div class="stat-value">{{ getStatTotal() }}</div>
+    <div></div>
+    <div class="stat-value">Min</div>
+    <div class="stat-value">Max</div>
+</div>
