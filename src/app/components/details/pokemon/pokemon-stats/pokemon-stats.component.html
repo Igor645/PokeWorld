@@ -1,6 +1,6 @@
 <div class="stat-title">Base Stats</div>
 
-<div *ngFor="let stat of getStats()" class="stat-row">
+<div *ngFor="let stat of stats; trackBy: trackStat" class="stat-row">
     <div class="stat-name">{{ stat.name }}</div>
     <div class="stat-value">{{ stat.value }}</div>
     <div class="progress-bar">
@@ -12,7 +12,7 @@
 
 <div class="stat-row">
     <div class="stat-name">Total</div>
-    <div class="stat-value">{{ getStatTotal() }}</div>
+    <div class="stat-value">{{ statTotal }}</div>
     <div></div>
     <div class="stat-value">Min</div>
     <div class="stat-value">Max</div>

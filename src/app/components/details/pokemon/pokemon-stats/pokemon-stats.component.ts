@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { AfterViewChecked, ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { Pokemon } from '../../../../models/pokemon.model';
 import { PokemonUtilsService } from '../../../../utils/pokemon-utils';
 import { CommonModule } from '@angular/common';
@@ -10,18 +10,31 @@ import { CommonModule } from '@angular/common';
   imports: [CommonModule]
 })
 export class PokemonStatsComponent {
-  @Input() pokemon!: Pokemon | undefined;
-  private readonly MAX_EV = 63; // Maximum EV contribution
-  private readonly MAX_IV = 31; // Maximum IV contribution
-  private readonly NEGATIVE_NATURE = 0.9; // -10%
-  private readonly POSITIVE_NATURE = 1.1; // +10%
+  private _pokemon: Pokemon | undefined;
+  stats: any[] = [];
+  statTotal: number = 0;
+  private readonly MAX_EV = 63;
+  private readonly MAX_IV = 31;
+  private readonly NEGATIVE_NATURE = 0.9;
+  private readonly POSITIVE_NATURE = 1.1;
 
   constructor(private pokemonUtils: PokemonUtilsService) {}
 
-  getStats() {
-    if (!this.pokemon?.pokemon_v2_pokemonstats) return [];
+  @Input() set pokemon(value: Pokemon | undefined) {
+    if (value !== this._pokemon) {
+      this._pokemon = value;
+      this.computeStats();
+    }
+  }
+
+  private computeStats() {
+    if (!this._pokemon?.pokemon_v2_pokemonstats) {
+      this.stats = [];
+      this.statTotal = 0;
+      return;
+    }
     
-    return this.pokemon.pokemon_v2_pokemonstats.map(stat => {
+    this.stats = this._pokemon.pokemon_v2_pokemonstats.map(stat => {
       const base = stat.base_stat;
       const isHp = stat.pokemon_v2_stat.name.toLowerCase() === 'hp';
 
@@ -32,11 +45,8 @@ export class PokemonStatsComponent {
         max: this.calculateMaxStat(base, isHp)
       };
     });
-  }
 
-  getStatTotal() {
-    if (!this.pokemon?.pokemon_v2_pokemonstats) return 0;
-    return this.pokemon.pokemon_v2_pokemonstats.reduce((sum, stat) => sum + stat.base_stat, 0);
+    this.statTotal = this._pokemon.pokemon_v2_pokemonstats.reduce((sum, stat) => sum + stat.base_stat, 0);
   }
 
   private calculateMinStat(baseStat: number, isHp: boolean): number {
@@ -54,4 +64,8 @@ export class PokemonStatsComponent {
       return Math.floor((2 * baseStat + 5 + this.MAX_EV + this.MAX_IV) * this.POSITIVE_NATURE);
     }
   }
+
+  trackStat(index: number, stat: any) {
+    return stat.name;
+  }  
 }
