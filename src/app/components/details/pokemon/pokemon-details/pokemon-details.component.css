@@ -346,7 +346,8 @@ select:focus {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 1rem;
-  margin: 0 auto 2rem;
+  margin: 0 auto 1rem;
+  animation: fadeIn 1s ease-in-out;
 }
 
 .pokemon-stats{
