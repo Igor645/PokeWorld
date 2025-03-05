@@ -32,7 +32,7 @@ export class DexOverviewComponent implements OnInit {
   count = 0;
   itemSize = 370; 
    private allSpecies: PokemonSpecies[] = [];
-  private lastDevicePixelRatio = window.devicePixelRatio;
+  private lastDevicePixelRatio = this.getDevicePixelRatio();
 
   private speciesRowsSubject = new BehaviorSubject<SpeciesRow[]>([]);
   speciesRows$: Observable<SpeciesRow[]> = this.speciesRowsSubject.asObservable();
@@ -56,6 +56,10 @@ export class DexOverviewComponent implements OnInit {
     }
   }
 
+  private getDevicePixelRatio(): number {
+    return isPlatformBrowser(this.platformId) ? window.devicePixelRatio : 1;
+  }  
+
   private handleResize = (): void => {
     const newPageSize = this.calculatePageSize();
     const newDevicePixelRatio = window.devicePixelRatio;
@@ -71,6 +75,8 @@ export class DexOverviewComponent implements OnInit {
   };
 
   private calculatePageSize(): number {
+    if (!isPlatformBrowser(this.platformId)) return 6;
+    
     const width = window.innerWidth;
     if (width <= 480) return 3;
     if (width <= 768) return 3;
@@ -80,6 +86,8 @@ export class DexOverviewComponent implements OnInit {
   }
 
   private calculateItemSize(): number {
+    if (!isPlatformBrowser(this.platformId)) return 370;
+
     const width = window.innerWidth;
     if (width <= 480) return 160;
     if (width <= 768) return 300;
