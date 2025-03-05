@@ -26,7 +26,6 @@ export class SettingsComponent implements OnInit {
   }
 
   toggleDarkMode() {
-    console.log('toggleDarkMode');
     this.settingsService.setSetting('darkMode', this.isDarkMode);
 
     if (this.isDarkMode) {

@@ -47,8 +47,6 @@ export class DexOverviewComponent implements OnInit {
 
   ngOnInit(): void {
     this.setPageSize();
-    console.log(this.pageSize);
-    console.log(this.itemSize);
     this.fetchAllPokemon();
 
     if (isPlatformBrowser(this.platformId)) {
@@ -76,7 +74,7 @@ export class DexOverviewComponent implements OnInit {
 
   private calculatePageSize(): number {
     if (!isPlatformBrowser(this.platformId)) return 6;
-    
+
     const width = window.innerWidth;
     if (width <= 480) return 3;
     if (width <= 768) return 3;

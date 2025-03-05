@@ -104,7 +104,6 @@ export class PokemonDetailsComponent implements OnInit {
     this.pokemonService.getPokemonDetails(undefined, name).subscribe({
       next: (response) => {
         this.pokemonSpeciesDetails = response.pokemon_v2_pokemonspecies[0];
-        console.log(this.pokemonSpeciesDetails);
         this.isShiny = false;
         this.selectedPokemon = this.pokemonSpeciesDetails?.pokemon_v2_pokemons?.[0];
         this.updateSelectedPokemonImage();

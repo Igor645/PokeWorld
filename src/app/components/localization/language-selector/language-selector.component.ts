@@ -55,7 +55,6 @@ export class LanguageSelectorComponent implements OnInit, OnDestroy {
     this.languageSubscription = this.settingsService.watchSetting<number>('selectedLanguageId')
       .subscribe(id => {
         if (id === null || id === undefined) {
-          console.log("No language selected, defaulting to English (ID: 9)");
           this.settingsService.setSetting('selectedLanguageId', 9);
           this.selectedLanguageId = 9;
         } else {
@@ -67,7 +66,6 @@ export class LanguageSelectorComponent implements OnInit, OnDestroy {
 
   selectLanguage(languageId: number) {
     this.settingsService.setSetting('selectedLanguageId', languageId);
-    console.log(`Language set to ID: ${languageId}`);
   }
 
   ngOnDestroy() {

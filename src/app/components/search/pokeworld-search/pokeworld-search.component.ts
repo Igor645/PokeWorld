@@ -83,9 +83,7 @@ export class PokeworldSearchComponent implements OnInit, AfterViewInit, OnDestro
     const selectedItem = event.option.value;
   
     if (!selectedItem) return;
-  
-    console.log("Selected Item:", selectedItem);
-  
+    
     if ('pokemon_v2_pokemonspeciesnames' in selectedItem) {
       this.router.navigate(['/pokemon', this.getPokemonName(selectedItem)]);
     } else {
