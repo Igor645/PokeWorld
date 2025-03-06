@@ -80,7 +80,8 @@ export class DexOverviewComponent implements OnInit {
     if (width <= 768) return 3;
     if (width <= 1024) return 4;
     if(width <= 1280) return 5;
-    return 6;
+    if (width <= 1920) return 6;
+    return 7;
   }
 
   private calculateItemSize(): number {
@@ -90,7 +91,8 @@ export class DexOverviewComponent implements OnInit {
     if (width <= 480) return 160;
     if (width <= 768) return 300;
     if (width <= 1024) return 300;
-    if(width <= 1280) return 320;
+    if (width <= 1280) return 320;
+    if (width <= 1920) return 370;
     return 370;
   }
 
