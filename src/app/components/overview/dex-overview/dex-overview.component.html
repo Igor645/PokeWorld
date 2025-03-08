@@ -14,7 +14,7 @@
 <ng-template #pokemonList>
     <cdk-virtual-scroll-viewport 
         scrollWindow="false"
-        [itemSize]="itemSize"
+        [itemSize]="(itemSize+20)"
         class="pokedexOverview"
     >
         <div class="row" *cdkVirtualFor="let row of speciesRows$">
