@@ -1,6 +1,6 @@
 import { 
-  Component, OnInit, Inject, PLATFORM_ID, ViewChild, ElementRef, 
-  ChangeDetectionStrategy, Renderer2, HostListener, OnDestroy 
+  Component, OnInit, Inject, PLATFORM_ID, ViewChild, ChangeDetectionStrategy, 
+  Renderer2, HostListener, OnDestroy 
 } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { PokemonService } from '../../../services/pokemon.service';
@@ -29,10 +29,9 @@ import { LoadingSpinnerComponent } from '../../shared/loading-spinner/loading-sp
 })
 export class DexOverviewComponent implements OnInit, OnDestroy {
   @ViewChild(CdkVirtualScrollViewport) viewport!: CdkVirtualScrollViewport;
-  @ViewChild('firstPokemonCard', { static: false }) firstPokemonCard!: ElementRef;
 
   pageSize = 6;
-  itemSize = 370;
+  itemSize = 350;
   count = 0;
   private allSpecies: PokemonSpecies[] = [];
   private lastDevicePixelRatio = this.getDevicePixelRatio();
@@ -50,29 +49,31 @@ export class DexOverviewComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.handleResize();
-    this.updateDynamicStyles();
+    this.initializeView();
     this.fetchAllPokemon();
   }
 
-  @HostListener('window:resize', [])
+  @HostListener('window:resize')
   onResize() {
-    this.handleResize();
+    this.updateViewSettings();
   }
 
   ngOnDestroy(): void {
-    // No need for manual event listener since @HostListener handles it
+    // @HostListener handles cleanup, no need for manual event listener removal
+  }
+
+  private initializeView(): void {
+    this.updateViewSettings();
   }
 
   private getDevicePixelRatio(): number {
     return isPlatformBrowser(this.platformId) ? window.devicePixelRatio : 1;
   }
 
-  private handleResize(): void {
+  private updateViewSettings(): void {
     if (!isPlatformBrowser(this.platformId)) return;
 
     const newPageSize = this.calculatePageSize();
-    const newItemSize = this.calculateItemSize();
     const newDevicePixelRatio = window.devicePixelRatio;
 
     if (newPageSize !== this.pageSize || newDevicePixelRatio !== this.lastDevicePixelRatio) {
@@ -81,28 +82,19 @@ export class DexOverviewComponent implements OnInit, OnDestroy {
       this.updateRows();
     }
 
-    if (newItemSize !== this.itemSize) {
-      this.itemSize = newItemSize;
-    }
-
-    console.log(this.pageSize, this.itemSize)
     this.updateDynamicStyles();
   }
-  
+
   private calculatePageSize(): number {
     if (!isPlatformBrowser(this.platformId)) return 6;
+
     return Math.max(1, Math.round((window.innerWidth / window.screen.availWidth) * 6));
-  }
-  
-  private calculateItemSize(): number {
-    return 370;
   }
 
   private updateDynamicStyles(): void {
     if (!isPlatformBrowser(this.platformId)) return;
 
     const root = document.documentElement;
-
     root.style.setProperty('--page-size', this.pageSize.toString());
     root.style.setProperty('--item-size', `${this.itemSize}px`);
   }
@@ -113,7 +105,7 @@ export class DexOverviewComponent implements OnInit, OnDestroy {
     this.pokemonService.getAllPokemonSpecies().pipe(
       finalize(() => this.isLoadingSubject.next(false)),
       catchError(error => {
-        console.error('Error fetching Pokemon species', error);
+        console.error('Error fetching Pokémon species:', error);
         return of({
           pokemon_v2_pokemonspecies: [],
           pokemon_v2_pokemonspecies_aggregate: { aggregate: { count: 0 } }
