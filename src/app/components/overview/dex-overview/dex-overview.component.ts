@@ -88,7 +88,7 @@ export class DexOverviewComponent implements OnInit, OnDestroy {
   private calculatePageSize(): number {
     if (!isPlatformBrowser(this.platformId)) return 6;
 
-    return Math.max(1, Math.round((window.innerWidth / 1920) * 6));
+    return Math.max(2, Math.round((window.innerWidth / 1920) * 6));
   }
 
   private updateDynamicStyles(): void {
