@@ -1,0 +1,9 @@
+<h2>{{ generationName }}</h2>
+<div class="pokemon-icons">
+    <app-guessing-pokemon-icon  
+    class="pokemon-icon"
+    *ngFor="let pokemon of pokemonList" 
+    [pokemonSpecies]="pokemon">
+    </app-guessing-pokemon-icon>
+</div>
+  

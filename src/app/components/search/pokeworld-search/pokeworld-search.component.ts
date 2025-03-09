@@ -105,6 +105,7 @@ export class PokeworldSearchComponent implements OnInit, AfterViewInit, OnDestro
 
   getCategoryNames(name: string, language: string): Name[] {
     return [{
+      id: 0,
       name: name,
       language_id: 0,
       pokemon_v2_language: {

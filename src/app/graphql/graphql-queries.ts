@@ -310,5 +310,52 @@ export const GraphQLQueries = {
         }
       }
     `,
-  };
+
+    GetPokemonSpeciesByGenerationId: `
+      query getPokemonSpeciesByGenerationId($generationId: Int!) {
+        pokemon_v2_pokemonspecies(
+          order_by: {id: asc}
+          where: {pokemon_v2_generation: {id: {_eq: $generationId}}}
+        ) {
+          name
+          id
+          pokemon_v2_pokemons {
+            is_default
+            pokemon_v2_pokemonsprites {
+              sprites
+            }
+          }
+        }
+      }
+    `,
+
+    GetGenerations: `
+      query GetGenerations {
+        pokemon_v2_generation {
+          id
+          name
+          pokemon_v2_generationnames {
+            name
+            pokemon_v2_language {
+              id
+              name
+            }
+          }
+          pokemon_v2_region {
+            id
+            name
+            pokemon_v2_regionnames {
+              id
+              language_id
+              name
+              pokemon_v2_language {
+                id
+                name
+              }
+            }
+          }
+        }
+      }
+    `
+};
   

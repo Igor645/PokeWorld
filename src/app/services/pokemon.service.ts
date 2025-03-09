@@ -12,11 +12,11 @@ export class PokemonService {
   constructor(private graphQLService: GraphQLService, private settingsService: SettingsService) {}
 
   /**
-   * Fetches Pokémon details by ID or name.
-   * @param id Pokémon ID (optional)
-   * @param name Pokémon name (optional)
-   * @returns Observable containing Pokémon details
-   */
+  * Fetches Pokémon details by ID or name.
+  * @param id Pokémon ID (optional)
+  * @param name Pokémon name (optional)
+  * @returns Observable containing Pokémon details
+  */
   getPokemonDetails(id?: number, name?: string): Observable<PokemonSpeciesResponse> {    
     if (!id && !name) {
         throw new Error("Either 'id' or 'name' must be provided.");
@@ -38,22 +38,22 @@ export class PokemonService {
 
 
   /**
-   * Fetches a paginated list of Pokémon species.
-   * @param limit Number of species to fetch
-   * @param offset Offset for pagination
-   * @returns Observable containing paginated Pokémon species
-   */
+  * Fetches a paginated list of Pokémon species.
+  * @param limit Number of species to fetch
+  * @param offset Offset for pagination
+  * @returns Observable containing paginated Pokémon species
+  */
   getPokemonSpeciesPaginated(limit: number, offset: number): Observable<PokemonSpeciesResponse> {
     const variables = { limit, offset };
     return this.graphQLService.executeQuery<PokemonSpeciesResponse>(GraphQLQueries.GetPokemonSpeciesPaginated, variables);
   }
 
   /**
-   * Fetches Pokémon species that match a given prefix.
-   * If the prefix is empty, fetches the first 15 species.
-   * @param prefix Search string (optional)
-   * @returns Observable containing matching Pokémon species
-   */
+  * Fetches Pokémon species that match a given prefix.
+  * If the prefix is empty, fetches the first 15 species.
+  * @param prefix Search string (optional)
+  * @returns Observable containing matching Pokémon species
+  */
   getPokemonSpeciesByPrefix(prefix: string): Observable<PokemonSpeciesResponse> {
     const isPrefixEmpty = !prefix || prefix.trim() === "";
     const query = isPrefixEmpty
@@ -67,23 +67,36 @@ export class PokemonService {
   }  
 
   /**
-   * Fetches **all** Pokémon species at once (no pagination).
-   * @returns Observable containing all Pokémon species
-   */
+  * Fetches **all** Pokémon species at once (no pagination).
+  * @returns Observable containing all Pokémon species
+  */
   getAllPokemonSpecies(): Observable<PokemonSpeciesResponse> {
     return this.graphQLService.executeQuery<PokemonSpeciesResponse>(GraphQLQueries.GetPokemonSpeciesAll, {});
   }
 
   /**
-   * Fetches Pokémon species by its ID.
-   * @param id Pokémon species ID.
-   * @returns Observable containing the Pokémon species details.
-   */
+  * Fetches Pokémon species by its ID.
+  * @param id Pokémon species ID.
+  * @returns Observable containing the Pokémon species details.
+  */
   getPokemonSpeciesById(id: number): Observable<PokemonSpeciesResponse> {
-  const variables = { id };
-  return this.graphQLService.executeQuery<PokemonSpeciesResponse>(
-    GraphQLQueries.GetPokemonSpeciesById,
-    variables
-  );
+    const variables = { id };
+    return this.graphQLService.executeQuery<PokemonSpeciesResponse>(
+      GraphQLQueries.GetPokemonSpeciesById,
+      variables
+    );
+  }
+
+  /**
+  * Fetches Pokémon species by **generation ID**.
+  * @param generationId The ID of the Pokémon generation.
+  * @returns Observable containing Pokémon species from the specified generation.
+  */
+  getPokemonSpeciesByGenerationId(generationId: number): Observable<PokemonSpeciesResponse> {
+    const variables = { generationId };
+    return this.graphQLService.executeQuery<PokemonSpeciesResponse>(
+      GraphQLQueries.GetPokemonSpeciesByGenerationId,
+      variables
+    );
   }
 }

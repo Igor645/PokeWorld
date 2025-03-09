@@ -52,6 +52,22 @@ export class PokemonUtilsService {
     );
   }
 
+    /**
+    * Get the default Pokémon image.
+    * @param pokemon The Pokémon DTO object.
+    * @returns The URL of the Pokémon's official artwork.
+    */
+    getPokemonDefaultImage(pokemon: Pokemon | undefined): string {
+      return (
+        pokemon?.pokemon_v2_pokemonsprites?.[0]?.sprites.front_default ||
+        '/invalid/image.png'
+      );
+    }
+
+    getDefaultPokemon(pokemonSpecies: PokemonSpecies | undefined): Pokemon | undefined {
+      return pokemonSpecies?.pokemon_v2_pokemons.find(pokemon => pokemon.is_default);
+    }
+
   /**
    * Get the Pokémon species name by the selected language ID.
    * @param pokemonSpecies The Pokémon species DTO object.

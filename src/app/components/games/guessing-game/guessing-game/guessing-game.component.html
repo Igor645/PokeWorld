@@ -1,0 +1,17 @@
+<div class="guessing-game-container"> 
+    <div class="generations-wrapper">
+      <app-generation-container 
+        *ngFor="let gen of generations"
+        [generationId]="gen.id"
+        [generationName]="getRegionName(gen.pokemon_v2_region)">
+      </app-generation-container>
+    </div>
+
+    <div class="guessing-game__controls">
+        <button 
+            class="guessing-game__controls__button"
+            (click)="toggleSilhouette()">
+            Silhouette
+        </button>
+    </div>
+</div>

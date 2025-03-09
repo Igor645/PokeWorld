@@ -1,0 +1,30 @@
+:host{
+    padding: 1rem;
+    gap: 0.5rem;
+    background-color: var(--background-color);
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 6px 12px rgba(0, 0, 0, 0.1);
+    animation: fadeIn 1s ease-in-out;
+    box-sizing: border-box;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+    align-items: center;
+    height: fit-content;
+}
+
+h2 {
+    margin: 0;
+    margin-right: auto;
+    font-size: 2rem;
+}
+
+.pokemon-icon{
+    width: 40px;
+    height: 40px;
+}
+
+.pokemon-icons{
+    display: flex;
+    flex-wrap: wrap;
+}
