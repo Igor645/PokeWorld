@@ -74,6 +74,7 @@ export class DexOverviewComponent implements OnInit, OnDestroy {
     if (!isPlatformBrowser(this.platformId)) return;
 
     const newPageSize = this.calculatePageSize();
+    const newItemSize = this.calculateItemSize();
     const newDevicePixelRatio = window.devicePixelRatio;
 
     if (newPageSize !== this.pageSize || newDevicePixelRatio !== this.lastDevicePixelRatio) {
@@ -82,13 +83,30 @@ export class DexOverviewComponent implements OnInit, OnDestroy {
       this.updateRows();
     }
 
+    if (newItemSize !== this.itemSize) {
+      this.itemSize = newItemSize;
+    }
+
     this.updateDynamicStyles();
   }
 
   private calculatePageSize(): number {
     if (!isPlatformBrowser(this.platformId)) return 6;
 
-    return Math.max(2, Math.round((window.innerWidth / 1920) * 6));
+    const width = window.innerWidth;
+    return width <= 768 
+      ? Math.max(2, Math.round((width / 768) * 3))
+      : Math.max(2, Math.round((width / 1920) * 6));
+  }
+
+  private calculateItemSize(): number {
+    if (!isPlatformBrowser(this.platformId)) return 350;
+
+    const width = window.innerWidth;
+
+    if (width <= 480) return 180; // Phone
+    if (width <= 1024) return 280; // Tablet
+    return 350; // Desktop
   }
 
   private updateDynamicStyles(): void {
