@@ -215,3 +215,30 @@
       opacity: 0;
     }
 }
+
+@media (max-width: 480px) {
+    .pokemonCard__id, .pokemonCard__text__container {
+        font-size: 0.6rem;
+        padding: 0.3rem 0;
+    }
+    .pokemonCard__text {
+        font-size: 0.7rem;
+    }
+    .pokemonCard__text.pokemonCard__generation {
+        font-size: 0.55rem;
+    }
+    .pokemonCard__id {
+        font-size: 0.7rem;
+    }
+    .pokemonCard__id {
+        border-radius: 0 0 5px 5px;
+    }
+    
+    .pokemonCard__text__container {
+        border-radius: 5px 5px 0 0;
+    }
+
+    :host{
+        border-radius: 6px;
+    }
+  }
