@@ -8,7 +8,6 @@
     margin: 0 auto;
 }
 
-/* ✅ True Masonry Effect Using CSS Grid */
 .generations-wrapper {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); 
@@ -18,7 +17,6 @@
     align-items: start;
 }
 
-/* 🎯 Ensures Each Generation Stays Whole */
 .generation-container {
     background-color: var(--background-color);
     border-radius: 8px;
@@ -28,7 +26,6 @@
     page-break-inside: avoid;
 }
 
-/* 🎮 Controls Styling */
 .guessing-game__controls {
     margin-top: 1rem;
     display: flex;
@@ -51,7 +48,6 @@
     transform: scale(1.05);
 }
 
-/* 📱 Responsive Adjustments */
 @media (max-width: 1200px) {
     .generations-wrapper {
         grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
