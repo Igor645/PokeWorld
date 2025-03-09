@@ -15,7 +15,7 @@
 
 .silhouette {
     transition: none;
-    filter: contrast(0) sepia(100%) hue-rotate(190deg) saturate(30%) brightness(100%);
+    filter: contrast(0) sepia(0%) hue-rotate(190deg) saturate(100%) brightness(100%);
     opacity: 1;
 }
 
