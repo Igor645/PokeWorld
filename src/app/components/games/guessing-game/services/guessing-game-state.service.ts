@@ -56,18 +56,38 @@ export class GuessingGameStateService {
   /**
    * Handles guessing Pokémon by name (for input guesses)
    */
-  guessPokemonByName(name: string): void {
-    let found = false;
-    this.allPokemonSpecies.forEach((pokemon, id) => {
-      if (pokemon.names.find(x => x.name.toLowerCase() === name.toLowerCase())) {
-        this.guessPokemon(id);
-        found = true;
-      }
-    });
+  guessPokemonByName(name: string): boolean {
+    const sanitize = (str: string) => str.replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
+    const trimmedGuess = sanitize(name.trim());
+    if (!trimmedGuess) return false;
 
-    if (!found) {
-      console.log("Pokémon not found:", name);
+    const guessedSet = this.guessedPokemonIds.value;
+
+    const exactMatches = Array.from(this.allPokemonSpecies.entries()).filter(
+      ([id, pokemon]) => pokemon.names.some(n => sanitize(n.name) === trimmedGuess)
+    );
+
+    const newExactGuesses = exactMatches.filter(([id]) => !guessedSet.has(id));
+
+    if (newExactGuesses.length > 0) {
+      newExactGuesses.forEach(([id]) => this.guessPokemon(id));
+      return true;
     }
+
+    const matchingPokemon = Array.from(this.allPokemonSpecies.entries()).filter(
+      ([id, pokemon]) => 
+        pokemon.names.some(n => sanitize(n.name).startsWith(trimmedGuess))
+    );
+
+    const unguessedPokemon = matchingPokemon.filter(([id]) => !guessedSet.has(id));
+
+    if (unguessedPokemon.length === 1 &&
+        unguessedPokemon[0][1].names.some(n => sanitize(n.name) === trimmedGuess)) {
+      this.guessPokemon(unguessedPokemon[0][0]);
+      return true;
+    }
+
+    return false;
   }
 
   /**
