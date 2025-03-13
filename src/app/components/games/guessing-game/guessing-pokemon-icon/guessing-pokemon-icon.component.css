@@ -19,5 +19,8 @@
     opacity: 1;
 }
 
+::ng-deep .dark-theme .silhouette {
+    filter: contrast(0) sepia(0%) hue-rotate(190deg) saturate(100%) brightness(60%);
+}
 
 
