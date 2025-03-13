@@ -27,17 +27,17 @@ export class GuessingPokemonIconComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.guessingGameStateService.isSilhouette$
+    this.guessingGameStateService.state$
       .pipe(takeUntil(this.isDestroyed$))
       .subscribe(state => {
-        this.isSilhouette = state;
+        this.isSilhouette = state.isSilhouette;
       });
     
-    this.guessingGameStateService.guessedPokemonIds$
+    this.guessingGameStateService.state$
     .pipe(takeUntil(this.isDestroyed$))
-    .subscribe(guessedSet => {
+    .subscribe(state => {
       if (this.pokemonSpecies) {
-        this.isGuessed = guessedSet.has(this.pokemonSpecies.id);
+        this.isGuessed = state.guessedPokemonIds.has(this.pokemonSpecies.id);
       }
     });
 

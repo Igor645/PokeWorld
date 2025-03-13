@@ -13,6 +13,10 @@
     height: 100%;
 }
 
+:host(.completed) {
+    border: 3px solid var(--primary-color);
+}
+
 h2 {
     margin: 0;
     margin-right: auto;

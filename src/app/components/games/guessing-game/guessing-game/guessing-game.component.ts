@@ -17,6 +17,8 @@ export class GuessingGameComponent implements OnInit {
   generations: any[] = [];
   completedGenerations = new Set<number>();
   currentGuess: string = '';
+  toastMessage: string = '';
+  showToast: boolean = false;
 
   constructor(
     private generationService: GenerationService,
@@ -27,20 +29,28 @@ export class GuessingGameComponent implements OnInit {
 
   ngOnInit(): void {
     this.fetchGenerations();
-
-    this.guessingGameStateService.completedGenerations$.subscribe(completed => {
-      this.completedGenerations = completed;
+    this.guessingGameStateService.state$.subscribe(state => {
+      this.completedGenerations = state.completedGenerations;
     });
   }
 
   onGuessInput(): void {
-    const wasGuessed = this.guessingGameStateService.guessPokemonByName(this.currentGuess);
+    const result = this.guessingGameStateService.guessPokemonByName(this.currentGuess);
     
-    if (wasGuessed) {
+    if (result.message) {
+      this.showToastMessage(result.message);
+    }
+
+    if(result.message || result.guessed) {
       this.currentGuess = '';
     }
+  }  
+
+  showToastMessage(message: string): void {
+    this.toastMessage = message;
+    this.showToast = true;
+    setTimeout(() => this.showToast = false, 2000);
   }
-  
 
   private fetchGenerations(): void {
     this.generationService.getGenerations().subscribe(response => {

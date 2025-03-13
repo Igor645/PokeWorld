@@ -1,5 +1,6 @@
 <div class="guessing-game-container">
-  <!-- 🎯 Input Field -->
+  <div class="toast" *ngIf="showToast">{{ toastMessage }}</div>
+
   <div class="guessing-game__controls">
     <input 
       type="text" 
@@ -11,7 +12,7 @@
   </div>
 
   <div class="guessing-game__stats">
-      <p>Found: {{ guessingGameStateService.foundPokemonCount$ | async }} Pokémon</p>
+      <p>Found: {{ (guessingGameStateService.state$ | async)?.foundPokemonCount }} Pokémon</p>
   </div>
 
   <div class="generations-wrapper">

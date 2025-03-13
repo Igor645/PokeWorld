@@ -1,4 +1,3 @@
-/* 🌟 General Layout */
 .guessing-game-container {
     display: flex;
     flex-direction: column;
@@ -10,7 +9,6 @@
     padding: 1rem;
 }
 
-/* 🎯 Guess Input Field */
 .guessing-game__controls {
     display: flex;
     justify-content: center;
@@ -22,42 +20,39 @@
     max-width: 400px;
     padding: 10px 15px;
     font-size: 1rem;
-    border: 2px solid var(--border-color, #ccc);
+    border: 2px solid var(--border-color);
+    background-color: var(--background-color);
     border-radius: 8px;
     outline: none;
     transition: border-color 0.3s, box-shadow 0.3s;
 }
 
 .guessing-game__input:focus {
-    border-color: var(--button-bg, #007bff);
-    box-shadow: 0 0 10px rgba(0, 123, 255, 0.3);
+    border-color: var(--border-focus-color);
 }
 
-/* 📊 Game Stats */
 .guessing-game__stats {
     font-size: 1.2rem;
     font-weight: bold;
-    color: var(--text-color, #333);
+    color: var(--text-color);
 }
 
-/* 🎮 Controls Styling */
 .guessing-game__controls__button {
     padding: 10px 15px;
     font-size: 1rem;
     border: none;
     cursor: pointer;
     border-radius: 8px;
-    background-color: var(--button-bg, #007bff);
-    color: white;
+    background-color: var(--background-color);
+    color: var(--text-color);
     transition: background 0.2s, transform 0.1s;
 }
 
 .guessing-game__controls__button:hover {
-    background-color: var(--button-hover-bg, #0056b3);
+    background-color: var(--primary-color);
     transform: scale(1.05);
 }
 
-/* 🏆 Masonry Grid */
 .generations-wrapper {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); 
@@ -68,9 +63,8 @@
     box-sizing: border-box;
 }
 
-/* 🏆 Generation Cards */
 .generation-container {
-    background-color: var(--background-color, #fff);
+    background-color: var(--background-color);
     border-radius: 8px;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
     padding: 1rem;
@@ -79,18 +73,29 @@
     page-break-inside: avoid;
 }
 
-.generation-container.completed {
-    border: 3px solid var(--success-color, #28a745);
-    box-shadow: 0 0 15px rgba(40, 167, 69, 0.5);
-    transform: scale(1.02);
+.toast {
+    position: fixed;
+    bottom: 10%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--background-color);
+    color: var(--text-color);
+    border: solid 2px var(--border-color);
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 1rem;
+    opacity: 0.9;
+    transition: opacity 0.5s ease-in-out;
 }
 
-/* 🎯 Adaptive Column Width */
+.toast.ng-hide {
+    opacity: 0;
+}
+
 app-generation-container {
     width: 100%;
 }
 
-/* 🛠️ Responsive Adjustments */
 @media (max-width: 1200px) {
     .generations-wrapper {
         grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
