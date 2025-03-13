@@ -32,6 +32,14 @@ export class GuessingPokemonIconComponent implements OnInit, OnDestroy {
       .subscribe(state => {
         this.isSilhouette = state;
       });
+    
+    this.guessingGameStateService.guessedPokemonIds$
+    .pipe(takeUntil(this.isDestroyed$))
+    .subscribe(guessedSet => {
+      if (this.pokemonSpecies) {
+        this.isGuessed = guessedSet.has(this.pokemonSpecies.id);
+      }
+    });
 
     this.currentPokemon = this.pokemonUtils.getDefaultPokemon(this.pokemonSpecies);
   }

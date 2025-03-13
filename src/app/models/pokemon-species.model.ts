@@ -13,6 +13,7 @@ export interface PokemonSpecies {
   is_baby: boolean;
   is_legendary: boolean;
   is_mythical: boolean;
+  isFound: boolean;
   pokemon_v2_pokemons: Pokemon[];
   pokemon_v2_pokemonspeciesnames: Name[];
   pokemon_v2_generation: Generation;

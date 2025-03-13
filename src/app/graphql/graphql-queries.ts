@@ -325,6 +325,13 @@ export const GraphQLQueries = {
               sprites
             }
           }
+          pokemon_v2_pokemonspeciesnames {
+            name
+            pokemon_v2_language {
+              name
+              id
+            }
+          }
         }
       }
     `,

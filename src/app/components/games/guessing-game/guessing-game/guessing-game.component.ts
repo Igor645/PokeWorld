@@ -4,26 +4,48 @@ import { GenerationService } from '../../../../services/generation.service';
 import { PokemonUtilsService } from '../../../../utils/pokemon-utils';
 import { GenerationContainerComponent } from '../generation-container/generation-container.component';
 import { GuessingGameStateService } from '../services/guessing-game-state.service';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-guessing-game',
   standalone: true,
-  imports: [CommonModule, GenerationContainerComponent],
+  imports: [CommonModule, FormsModule, GenerationContainerComponent],
   templateUrl: './guessing-game.component.html',
   styleUrl: './guessing-game.component.css'
 })
 export class GuessingGameComponent implements OnInit {
   generations: any[] = [];
+  completedGenerations = new Set<number>();
+  currentGuess: string = '';
 
   constructor(
     private generationService: GenerationService,
     private pokemonUtils: PokemonUtilsService,
-    private guessingGameStateService: GuessingGameStateService,
+    public guessingGameStateService: GuessingGameStateService,
     @Inject(PLATFORM_ID) private platformId: object
   ) {}
 
   ngOnInit(): void {
     this.fetchGenerations();
+
+    this.guessingGameStateService.completedGenerations$.subscribe(completed => {
+      this.completedGenerations = completed;
+    });
+  }
+
+  onGuessInput(): void {
+    const trimmedGuess = this.currentGuess.trim().toLowerCase();
+    if (!trimmedGuess) return;
+
+    // Check if this Pokémon exists in the dataset before guessing
+    const matchedPokemon = Array.from(this.guessingGameStateService.allPokemonSpecies.values()).find(
+      pokemon => pokemon.names?.find(x => x.name.trim().toLocaleLowerCase() === trimmedGuess)
+    );
+
+    if (matchedPokemon) {
+        this.guessingGameStateService.guessPokemonByName(trimmedGuess);
+        this.currentGuess = ''; // Reset input after a correct guess
+    }
   }
 
   private fetchGenerations(): void {

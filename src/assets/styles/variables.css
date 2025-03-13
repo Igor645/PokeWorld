@@ -1,3 +1,7 @@
+:root{
+    --icon-sizing: 50px;
+}
+
 :root {
     /* ====== GENERAL LAYOUT ====== */
     --general-width: 85%;

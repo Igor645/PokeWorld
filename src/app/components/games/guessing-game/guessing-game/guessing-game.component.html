@@ -1,17 +1,31 @@
-<div class="guessing-game-container"> 
-    <div class="generations-wrapper">
-      <app-generation-container 
-        *ngFor="let gen of generations"
-        [generationId]="gen.id"
-        [generationName]="getRegionName(gen.pokemon_v2_region)">
-      </app-generation-container>
-    </div>
+<div class="guessing-game-container">
+  <!-- 🎯 Input Field -->
+  <div class="guessing-game__controls">
+    <input 
+      type="text" 
+      class="guessing-game__input"
+      placeholder="Guess a Pokémon..."
+      [(ngModel)]="currentGuess"
+      (input)="onGuessInput()"
+    />
+  </div>
 
-    <div class="guessing-game__controls">
-        <button 
-            class="guessing-game__controls__button"
-            (click)="toggleSilhouette()">
-            Silhouette
-        </button>
-    </div>
+  <div class="guessing-game__stats">
+      <p>Found: {{ guessingGameStateService.foundPokemonCount$ | async }} Pokémon</p>
+  </div>
+
+  <div class="generations-wrapper">
+    <app-generation-container 
+      *ngFor="let gen of generations"
+      [generationId]="gen.id"
+      [generationName]="getRegionName(gen.pokemon_v2_region)"
+      [class.completed]="completedGenerations.has(gen.id)">
+    </app-generation-container>
+  </div>
+
+  <div class="guessing-game__controls">
+      <button class="guessing-game__controls__button" (click)="toggleSilhouette()">
+          Silhouette
+      </button>
+  </div>
 </div>

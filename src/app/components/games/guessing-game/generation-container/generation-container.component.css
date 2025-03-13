@@ -1,4 +1,4 @@
-:host{
+:host {
     padding: 1rem;
     gap: 0.5rem;
     background-color: var(--background-color);
@@ -19,12 +19,16 @@ h2 {
     font-size: 2rem;
 }
 
-.pokemon-icon{
-    width: 40px;
-    height: 40px;
+.pokemon-icon {
+    width: var(--icon-sizing) !important;
+    height: var(--icon-sizing) !important;
 }
 
-.pokemon-icons{
-    display: flex;
-    flex-wrap: wrap;
+.pokemon-icons {
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, calc(var(--icon-sizing) - 15px)); /* Ensures strict 45px columns */
+    justify-content: center;
+    width: 100%;
+    max-width: 100%;
 }
