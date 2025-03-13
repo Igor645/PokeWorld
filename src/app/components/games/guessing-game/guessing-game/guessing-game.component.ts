@@ -34,19 +34,37 @@ export class GuessingGameComponent implements OnInit {
   }
 
   onGuessInput(): void {
-    const trimmedGuess = this.currentGuess.trim().toLowerCase();
+    const sanitize = (str: string) => str.replace(/[^a-zA-Z0-9]/g, '').toLowerCase(); // Removes special chars
+  
+    const trimmedGuess = sanitize(this.currentGuess.trim());
     if (!trimmedGuess) return;
-
-    // Check if this Pokémon exists in the dataset before guessing
-    const matchedPokemon = Array.from(this.guessingGameStateService.allPokemonSpecies.values()).find(
-      pokemon => pokemon.names?.find(x => x.name.trim().toLocaleLowerCase() === trimmedGuess)
+  
+    const guessedSet = this.guessingGameStateService.guessedPokemonIds.value;
+  
+    const exactMatch = Array.from(this.guessingGameStateService.allPokemonSpecies.entries()).find(
+      ([id, pokemon]) => 
+        pokemon.names.some(name => sanitize(name.name) === trimmedGuess)
     );
-
-    if (matchedPokemon) {
-        this.guessingGameStateService.guessPokemonByName(trimmedGuess);
-        this.currentGuess = ''; // Reset input after a correct guess
+  
+    if (exactMatch && !guessedSet.has(exactMatch[0])) {
+      this.guessingGameStateService.guessPokemon(exactMatch[0]);
+      this.currentGuess = '';
+      return;
     }
-  }
+  
+    const matchingPokemon = Array.from(this.guessingGameStateService.allPokemonSpecies.entries()).filter(
+      ([id, pokemon]) => 
+        pokemon.names.some(name => sanitize(name.name).startsWith(trimmedGuess))
+    );
+  
+    const unguessedPokemon = matchingPokemon.filter(([id]) => !guessedSet.has(id));
+  
+    if (unguessedPokemon.length === 1 && 
+        unguessedPokemon[0][1].names.some(name => sanitize(name.name) === trimmedGuess)) {
+      this.guessingGameStateService.guessPokemon(unguessedPokemon[0][0]);
+      this.currentGuess = '';
+    }
+  }  
 
   private fetchGenerations(): void {
     this.generationService.getGenerations().subscribe(response => {
