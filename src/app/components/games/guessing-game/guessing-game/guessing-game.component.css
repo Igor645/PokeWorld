@@ -7,12 +7,27 @@
     width: 90vw;
     margin: 0 auto;
     padding: 1rem;
+    height: 100%;
 }
 
 .guessing-game__controls {
     display: flex;
-    justify-content: center;
+    gap: 1rem;
     width: 100%;
+    background-color: var(--background-color);
+    border: 1px solid var(--primary-color);
+    padding: 1rem;
+    border-radius: 5px;
+    box-sizing: border-box;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+    width: fit-content;
+    margin-right: auto;
+}
+
+.guessing-game__controls.head{
+    position: sticky;
+    top: 1rem;
+    z-index: 100;
 }
 
 .guessing-game__input {
@@ -35,17 +50,37 @@
     font-size: 1.2rem;
     font-weight: bold;
     color: var(--text-color);
+    white-space: nowrap; 
 }
 
 .guessing-game__controls__button {
-    padding: 10px 15px;
+    display: flex;
+    gap: 0.5rem;
+    width: 50%;
+    position: relative;
+    z-index: 800;
+  }
+  
+  .guessing-game__controls__button {
+    flex: 1;
+    padding: 0.5rem;
     font-size: 1rem;
-    border: none;
-    cursor: pointer;
-    border-radius: 8px;
+    border: 2px solid var(--primary-color);
+    border-radius: 4px;
     background-color: var(--background-color);
-    color: var(--text-color);
-    transition: background 0.2s, transform 0.1s;
+    color: var(--primary-color);
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
+    box-shadow: 0 2px 4px var(--shadow-color);
+  }
+  
+  .guessing-game__controls__button.active {
+    background-color: var(--primary-color);
+    color: var(--selected-color);
+}
+  
+.guessing-game__controls__button:hover:not(.active) {
+    background-color: var(--background-hover-color);
 }
 
 .guessing-game__controls__button:hover {

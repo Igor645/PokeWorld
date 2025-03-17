@@ -1,7 +1,7 @@
 <div class="guessing-game-container">
   <div class="toast" *ngIf="showToast">{{ toastMessage }}</div>
 
-  <div class="guessing-game__controls">
+  <div class="guessing-game__controls head">
     <input 
       type="text" 
       class="guessing-game__input"
@@ -9,10 +9,9 @@
       [(ngModel)]="currentGuess"
       (input)="onGuessInput()"
     />
-  </div>
-
-  <div class="guessing-game__stats">
-      <p>Found: {{ (guessingGameStateService.state$ | async)?.foundPokemonCount }} Pokémon</p>
+    <div class="guessing-game__stats">
+        <p>Found: {{ (guessingGameStateService.state$ | async)?.foundPokemonCount }} Pokémon</p>
+    </div>
   </div>
 
   <div class="generations-wrapper">
@@ -25,8 +24,11 @@
   </div>
 
   <div class="guessing-game__controls">
-      <button class="guessing-game__controls__button" (click)="toggleSilhouette()">
-          Silhouette
-      </button>
+    <button 
+      class="guessing-game__controls__button" 
+      [class.active]="(guessingGameStateService.state$ | async)?.isSilhouette"
+      (click)="toggleSilhouette()">
+      Silhouette
+    </button>
   </div>
 </div>

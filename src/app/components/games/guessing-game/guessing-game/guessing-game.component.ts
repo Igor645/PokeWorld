@@ -5,11 +5,12 @@ import { PokemonUtilsService } from '../../../../utils/pokemon-utils';
 import { GenerationContainerComponent } from '../generation-container/generation-container.component';
 import { GuessingGameStateService } from '../services/guessing-game-state.service';
 import { FormsModule } from '@angular/forms';
+import { GuessingPokemonIconComponent } from '../guessing-pokemon-icon/guessing-pokemon-icon.component';
 
 @Component({
   selector: 'app-guessing-game',
   standalone: true,
-  imports: [CommonModule, FormsModule, GenerationContainerComponent],
+  imports: [CommonModule, FormsModule, GenerationContainerComponent, GuessingPokemonIconComponent],
   templateUrl: './guessing-game.component.html',
   styleUrl: './guessing-game.component.css'
 })
