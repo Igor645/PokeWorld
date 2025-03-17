@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, OnDestroy, ElementRef, Renderer2 } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy, OnChanges, SimpleChanges, ElementRef, Renderer2 } from '@angular/core';
 import { PokemonSpecies } from '../../../../models/pokemon-species.model';
 import { PokemonUtilsService } from '../../../../utils/pokemon-utils';
 import { Pokemon } from '../../../../models/pokemon.model';
@@ -9,19 +9,23 @@ import { takeUntil } from 'rxjs/operators';
 @Component({
   selector: 'app-guessing-pokemon-icon',
   standalone: true,
-  imports: [],
   templateUrl: './guessing-pokemon-icon.component.html',
   styleUrl: './guessing-pokemon-icon.component.css'
 })
-export class GuessingPokemonIconComponent implements OnInit, OnDestroy {
+export class GuessingPokemonIconComponent implements OnInit, OnDestroy, OnChanges {
   @Input() pokemonSpecies: PokemonSpecies | undefined;
-  currentPokemon: Pokemon | undefined;
-  isSilhouette: boolean = false;
-  isGuessed: boolean = false;
-  isSoundPlaying: boolean = false;
-  imageLoaded: boolean = false;
+  @Input() disableSound: boolean = false;
 
+  currentPokemon: Pokemon | undefined;
+  
   private isDestroyed$ = new Subject<void>();
+
+  state = {
+    isSilhouette: false,
+    isGuessed: false,
+    imageLoaded: false,
+    isSoundPlaying: false,
+  };
 
   constructor(
     private pokemonUtils: PokemonUtilsService,
@@ -31,43 +35,53 @@ export class GuessingPokemonIconComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    this.subscribeToState();
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['pokemonSpecies']?.currentValue) {
+      this.currentPokemon = this.pokemonUtils.getDefaultPokemon(this.pokemonSpecies);
+      this.state.imageLoaded = false;
+      this.updateStateOnChange();
+    }
+  }
+
+  private subscribeToState(): void {
     this.guessingGameStateService.state$
       .pipe(takeUntil(this.isDestroyed$))
-      .subscribe(state => {
-        this.isSilhouette = state.isSilhouette;
+      .subscribe(() => this.updateStateOnChange());
+  }
 
-        if (this.pokemonSpecies) {
-          const wasAlreadyGuessed = this.isGuessed;
-          this.isGuessed = state.guessedPokemonIds.has(this.pokemonSpecies.id);
+  private updateStateOnChange(): void {
+    if (!this.pokemonSpecies) return;
 
-          if (!wasAlreadyGuessed && this.isGuessed && this.imageLoaded) {
-            this.applyPopInAnimation();
-          }
-        }
-      });
+    const { isSilhouette, guessedPokemonIds } = this.guessingGameStateService.currentState;
 
-    this.currentPokemon = this.pokemonUtils.getDefaultPokemon(this.pokemonSpecies);
+    const wasAlreadyGuessed = this.state.isGuessed;
+    this.state.isSilhouette = isSilhouette;
+    this.state.isGuessed = guessedPokemonIds.has(this.pokemonSpecies.id);
+
+    if (!wasAlreadyGuessed && this.state.isGuessed && this.state.imageLoaded) {
+      this.applyPopInAnimation();
+    }
   }
 
   getPokemonDefaultImage(): string {
-    return this.isGuessed || this.isSilhouette
+    return this.state.isGuessed || this.state.isSilhouette
       ? this.pokemonUtils.getPokemonDefaultImage(this.currentPokemon)
       : '/images/not-guessed.svg';
   }
 
   onImageLoad(): void {
-    this.imageLoaded = true;
-
-    if (this.isGuessed && !this.isSilhouette) {
+    this.state.imageLoaded = true;
+    if (this.state.isGuessed && !this.state.isSilhouette) {
       this.applyPopInAnimation();
     }
   }
 
   applyPopInAnimation(): void {
     const element = this.el.nativeElement.querySelector('.pokemon-icon');
-    
     this.playClickSound();
-
     this.renderer.addClass(element, 'pop-in');
 
     setTimeout(() => {
@@ -76,22 +90,16 @@ export class GuessingPokemonIconComponent implements OnInit, OnDestroy {
   }
 
   playClickSound(): void {
-    if (this.isSoundPlaying) return;
+    if (this.state.isSoundPlaying || this.disableSound) return;
 
-    this.isSoundPlaying = true; 
-
+    this.state.isSoundPlaying = true;
     const audio = new Audio('/sounds/click.mp3');
     audio.volume = 0.3;
-    
+
     audio.play()
-      .then(() => {
-        setTimeout(() => {
-          this.isSoundPlaying = false;
-        }, 250);
-      })
+      .then(() => setTimeout(() => (this.state.isSoundPlaying = false), 250))
       .catch(err => console.error("Error playing sound:", err));
   }
-
 
   ngOnDestroy(): void {
     this.isDestroyed$.next();

@@ -20,6 +20,7 @@ export class GuessingGameComponent implements OnInit {
   currentGuess: string = '';
   toastMessage: string = '';
   showToast: boolean = false;
+  lastGuessedPokemonId: number | null = null;
 
   constructor(
     private generationService: GenerationService,
@@ -32,6 +33,7 @@ export class GuessingGameComponent implements OnInit {
     this.fetchGenerations();
     this.guessingGameStateService.state$.subscribe(state => {
       this.completedGenerations = state.completedGenerations;
+      this.lastGuessedPokemonId = state.lastGuessedPokemonId;
     });
   }
 

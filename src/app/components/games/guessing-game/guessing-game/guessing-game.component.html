@@ -9,6 +9,12 @@
       [(ngModel)]="currentGuess"
       (input)="onGuessInput()"
     />
+    <app-guessing-pokemon-icon  
+      class="pokemon-icon last-guessed"
+      *ngIf="lastGuessedPokemonId !== null"
+      [pokemonSpecies]="guessingGameStateService.getPokemonById(lastGuessedPokemonId)"
+      [disableSound]="true">
+    </app-guessing-pokemon-icon>
     <div class="guessing-game__stats">
         <p>Found: {{ (guessingGameStateService.state$ | async)?.foundPokemonCount }} Pokémon</p>
     </div>

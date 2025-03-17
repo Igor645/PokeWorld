@@ -2,5 +2,5 @@
   [src]="getPokemonDefaultImage()" 
   alt="Pokemon Icon" 
   class="pokemon-icon" 
-  [class.silhouette]="isSilhouette && !isGuessed"
+  [class.silhouette]="state.isSilhouette && !state.isGuessed"
   (load)="onImageLoad()" />

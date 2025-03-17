@@ -332,6 +332,9 @@ export const GraphQLQueries = {
               id
             }
           }
+          pokemon_v2_generation {
+            id
+          }
         }
       }
     `,

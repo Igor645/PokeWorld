@@ -38,12 +38,7 @@ export class GenerationContainerComponent implements OnInit, OnDestroy {
       this.pokemonList = response.pokemon_v2_pokemonspecies;
 
       this.pokemonList.forEach(pokemon => {
-        this.guessingGameStateService.registerPokemon(
-          pokemon.id, 
-          pokemon.name, 
-          this.generationId, 
-          pokemon.pokemon_v2_pokemonspeciesnames
-        );
+        this.guessingGameStateService.registerPokemon(pokemon);
       });
     });
   }

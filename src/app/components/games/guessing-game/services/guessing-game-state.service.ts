@@ -1,12 +1,13 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { Name } from '../../../../models/species-name.model';
+import { PokemonSpecies } from '../../../../models/pokemon-species.model';
 
 interface GuessingGameState {
   isSilhouette: boolean;
   guessedPokemonIds: Set<number>;
   foundPokemonCount: number;
   completedGenerations: Set<number>;
+  lastGuessedPokemonId: number | null;
 }
 
 @Injectable({
@@ -17,7 +18,8 @@ export class GuessingGameStateService {
     isSilhouette: false,
     guessedPokemonIds: new Set(),
     foundPokemonCount: 0,
-    completedGenerations: new Set()
+    completedGenerations: new Set(),
+    lastGuessedPokemonId: null
   });
 
   get state$(): Observable<GuessingGameState> {
@@ -28,115 +30,99 @@ export class GuessingGameStateService {
     return this.state.value;
   }
 
-  public allPokemonSpecies = new Map<number, { name: string; genId: number; names: Name[] }>();
+  private allPokemonSpecies = new Map<number, PokemonSpecies>();
 
-  /**
-   * Updates the state while preserving immutability
-   */
+  /** Updates the state while preserving immutability */
   private updateState(partialState: Partial<GuessingGameState>): void {
     this.state.next({ ...this.state.value, ...partialState });
   }
 
-  /**
-   * Registers all Pokémon species when fetched
-   */
-  registerPokemon(speciesId: number, name: string, generationId: number, speciesNames: Name[]): void {
-    this.allPokemonSpecies.set(speciesId, { name: name.toLowerCase(), genId: generationId, names: speciesNames });
+  /** Registers a Pokémon species */
+  registerPokemon(pokemonSpecies: PokemonSpecies): void {
+    this.allPokemonSpecies.set(pokemonSpecies.id, pokemonSpecies);
   }
 
-  /**
-   * Handles guessing Pokémon by species ID
-   */
+  /** Guesses a Pokémon by ID */
   guessPokemon(speciesId: number): void {
-    if (!this.allPokemonSpecies.has(speciesId)) return; // Ignore invalid IDs
+    if (!this.allPokemonSpecies.has(speciesId) || this.currentState.guessedPokemonIds.has(speciesId)) return;
 
-    const { guessedPokemonIds, foundPokemonCount } = this.currentState;
-
-    if (guessedPokemonIds.has(speciesId)) return; // Already guessed
-
-    const updatedGuessedSet = new Set(guessedPokemonIds);
-    updatedGuessedSet.add(speciesId);
+    const updatedGuessedSet = new Set(this.currentState.guessedPokemonIds).add(speciesId);
 
     this.updateState({
       guessedPokemonIds: updatedGuessedSet,
-      foundPokemonCount: foundPokemonCount + 1
+      foundPokemonCount: updatedGuessedSet.size,
+      lastGuessedPokemonId: speciesId
     });
 
-    const pokemon = this.allPokemonSpecies.get(speciesId);
-    if (pokemon) this.checkCompletedGeneration(pokemon.genId);
+    this.checkCompletedGeneration(this.allPokemonSpecies.get(speciesId)?.pokemon_v2_generation.id);
   }
 
-  /**
-   * Handles guessing Pokémon by name (for input guesses)
-   */
+  /** Cleans and normalizes input names */
+  private sanitizeName(name: string): string {
+    return name
+      .normalize("NFD")
+      .replace(/[^a-zA-Z0-9ß]/g, '')
+      .replace(/ß/g, 'ss')
+      .toLowerCase();
+  }
+
+  /** Guesses a Pokémon by name */
   guessPokemonByName(name: string): { guessed: boolean; message?: string } {
-    const sanitize = (str: string) => 
-      str
-          .normalize("NFD")
-          .replace(/[^a-zA-Z0-9ß]/g, '')
-          .replace(/ß/g, 'ss')
-          .toLowerCase();
-          
-    const trimmedGuess = sanitize(name.trim());
+    const trimmedGuess = this.sanitizeName(name.trim());
     if (!trimmedGuess) return { guessed: false };
 
     const guessedSet = this.currentState.guessedPokemonIds;
 
-    // Find exact matches
-    const exactMatches = Array.from(this.allPokemonSpecies.entries()).filter(
-      ([id, pokemon]) => pokemon.names.some(n => sanitize(n.name) === trimmedGuess)
+    const allMatches = Array.from(this.allPokemonSpecies.entries()).filter(([id, pokemon]) =>
+      pokemon.pokemon_v2_pokemonspeciesnames.some(n => this.sanitizeName(n.name) === trimmedGuess)
     );
 
-    const newExactGuesses = exactMatches.filter(([id]) => !guessedSet.has(id));
+    const unguessedMatches = allMatches.filter(([id]) => !guessedSet.has(id));
 
-    if (newExactGuesses.length > 0) {
-      newExactGuesses.forEach(([id]) => this.guessPokemon(id));
+    if (unguessedMatches.length > 0) {
+      unguessedMatches.forEach(([id]) => this.guessPokemon(id));
       return { guessed: true };
     }
 
-    // Find all Pokémon that start with this input
-    const matchingPokemon = Array.from(this.allPokemonSpecies.entries()).filter(
-      ([id, pokemon]) => 
-        pokemon.names.some(n => sanitize(n.name).startsWith(trimmedGuess))
+    const partialMatches = Array.from(this.allPokemonSpecies.entries()).filter(([id, pokemon]) =>
+      pokemon.pokemon_v2_pokemonspeciesnames.some(n => this.sanitizeName(n.name).startsWith(trimmedGuess))
     );
 
-    // Filter only unguessed Pokémon
-    const unguessedPokemon = matchingPokemon.filter(([id]) => !guessedSet.has(id));
+    const unguessedPartialMatches = partialMatches.filter(([id]) => !guessedSet.has(id));
 
-    // If there's **only one** unguessed Pokémon left with this prefix, submit it
-    if (unguessedPokemon.length === 1 &&
-        unguessedPokemon[0][1].names.some(n => sanitize(n.name) === trimmedGuess)) {
-      this.guessPokemon(unguessedPokemon[0][0]);
+    if (unguessedPartialMatches.length === 1 &&
+        unguessedPartialMatches[0][1].pokemon_v2_pokemonspeciesnames.some(n => this.sanitizeName(n.name) === trimmedGuess)) {
+      this.guessPokemon(unguessedPartialMatches[0][0]);
       return { guessed: true };
     }
 
-    // If an exact match exists but has already been guessed AND no other unguessed Pokémon share the prefix
-    if (exactMatches.length > 0 && unguessedPokemon.length === 0) {
+    if (allMatches.length > 0 && unguessedPartialMatches.length === 0) {
       return { guessed: false, message: `${trimmedGuess} has already been guessed!` };
     }
 
     return { guessed: false };
   }
 
-  /**
-   * Checks if an entire generation has been guessed
-   */
-  private checkCompletedGeneration(generationId: number): void {
-    const { guessedPokemonIds, completedGenerations } = this.currentState;
-    const totalInGen = Array.from(this.allPokemonSpecies.values()).filter(p => p.genId === generationId).length;
-    const guessedInGen = Array.from(guessedPokemonIds).filter(id => this.allPokemonSpecies.get(id)?.genId === generationId).length;
+  /** Checks if an entire generation has been guessed */
+  private checkCompletedGeneration(generationId?: number): void {
+    if (!generationId) return;
+
+    const totalInGen = Array.from(this.allPokemonSpecies.values()).filter(p => p.pokemon_v2_generation.id === generationId).length;
+    const guessedInGen = Array.from(this.currentState.guessedPokemonIds).filter(id => this.allPokemonSpecies.get(id)?.pokemon_v2_generation.id === generationId).length;
 
     if (guessedInGen === totalInGen) {
-      const updatedCompletedSet = new Set(completedGenerations);
-      updatedCompletedSet.add(generationId);
+      const updatedCompletedSet = new Set(this.currentState.completedGenerations).add(generationId);
       this.updateState({ completedGenerations: updatedCompletedSet });
     }
   }
 
-  /**
-   * Toggles the silhouette mode for all Pokémon
-   */
+  /** Toggles the silhouette mode */
   toggleSilhouette(): void {
     this.updateState({ isSilhouette: !this.currentState.isSilhouette });
+  }
+
+  /** Retrieves a Pokémon by species ID */
+  getPokemonById(speciesId: number): PokemonSpecies | undefined {
+    return this.allPokemonSpecies.get(speciesId);
   }
 }
