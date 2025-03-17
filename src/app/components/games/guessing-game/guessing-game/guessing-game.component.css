@@ -129,8 +129,8 @@
 }
 
 .pokemon-icon {
-    width: var(--icon-sizing);
-    height: var(--icon-sizing);
+    width: 70px;
+    height: 70px;
     flex-shrink: 0;
     object-fit: contain;
     transition: filter 0.05s linear;

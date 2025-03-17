@@ -6,6 +6,7 @@ interface GuessingGameState {
   isSilhouette: boolean;
   guessedPokemonIds: Set<number>;
   foundPokemonCount: number;
+  totalPokemonCount: number;
   completedGenerations: Set<number>;
   lastGuessedPokemonId: number | null;
 }
@@ -18,6 +19,7 @@ export class GuessingGameStateService {
     isSilhouette: false,
     guessedPokemonIds: new Set(),
     foundPokemonCount: 0,
+    totalPokemonCount: 0,
     completedGenerations: new Set(),
     lastGuessedPokemonId: null
   });
@@ -40,6 +42,7 @@ export class GuessingGameStateService {
   /** Registers a Pokémon species */
   registerPokemon(pokemonSpecies: PokemonSpecies): void {
     this.allPokemonSpecies.set(pokemonSpecies.id, pokemonSpecies);
+    this.updateState({ totalPokemonCount: this.allPokemonSpecies.size });
   }
 
   /** Guesses a Pokémon by ID */

@@ -313,6 +313,13 @@ export const GraphQLQueries = {
 
     GetPokemonSpeciesByGenerationId: `
       query getPokemonSpeciesByGenerationId($generationId: Int!) {
+        pokemon_v2_pokemonspecies_aggregate(
+          where: {pokemon_v2_generation: {id: {_eq: $generationId}}}
+        ) {
+          aggregate {
+            count
+          }
+        }
         pokemon_v2_pokemonspecies(
           order_by: {id: asc}
           where: {pokemon_v2_generation: {id: {_eq: $generationId}}}

@@ -16,7 +16,10 @@
       [disableSound]="true">
     </app-guessing-pokemon-icon>
     <div class="guessing-game__stats">
-        <p>Found: {{ (guessingGameStateService.state$ | async)?.foundPokemonCount }} Pokémon</p>
+      <p>
+        {{ (guessingGameStateService.state$ | async)?.foundPokemonCount }} / 
+        {{ (guessingGameStateService.state$ | async)?.totalPokemonCount }}
+      </p>
     </div>
   </div>
 
