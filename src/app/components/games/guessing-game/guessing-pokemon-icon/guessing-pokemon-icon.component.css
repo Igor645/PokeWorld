@@ -16,12 +16,12 @@
 
 .silhouette {
     transition: none;
-    filter: contrast(0) sepia(0%) hue-rotate(190deg) saturate(100%) brightness(100%);
+    filter: contrast(0) sepia(0%) hue-rotate(190deg) saturate(100%) brightness(70%);
     opacity: 1;
 }
 
 ::ng-deep .dark-theme .silhouette {
-    filter: contrast(0) sepia(0%) hue-rotate(190deg) saturate(100%) brightness(60%);
+    filter: contrast(0) sepia(0%) hue-rotate(190deg) saturate(100%) brightness(80%);
 }
 
 @keyframes popIn {

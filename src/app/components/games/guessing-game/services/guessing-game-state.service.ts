@@ -17,12 +17,15 @@ interface GuessingGameState {
 export class GuessingGameStateService {
   private state = new BehaviorSubject<GuessingGameState>({
     isSilhouette: false,
-    guessedPokemonIds: new Set(),
+    guessedPokemonIds: new Set<number>(),
     foundPokemonCount: 0,
     totalPokemonCount: 0,
-    completedGenerations: new Set(),
+    completedGenerations: new Set<number>(),
     lastGuessedPokemonId: null
   });
+
+  private pokemonByGeneration = new Map<number, Set<number>>();
+  private allPokemonSpecies = new Map<number, PokemonSpecies>();
 
   get state$(): Observable<GuessingGameState> {
     return this.state.asObservable();
@@ -32,20 +35,24 @@ export class GuessingGameStateService {
     return this.state.value;
   }
 
-  private allPokemonSpecies = new Map<number, PokemonSpecies>();
-
-  /** Updates the state while preserving immutability */
   private updateState(partialState: Partial<GuessingGameState>): void {
     this.state.next({ ...this.state.value, ...partialState });
   }
 
-  /** Registers a Pokémon species */
   registerPokemon(pokemonSpecies: PokemonSpecies): void {
-    this.allPokemonSpecies.set(pokemonSpecies.id, pokemonSpecies);
+    const speciesId = pokemonSpecies.id;
+    const generationId = pokemonSpecies.pokemon_v2_generation.id;
+    
+    this.allPokemonSpecies.set(speciesId, pokemonSpecies);
+    
+    if (!this.pokemonByGeneration.has(generationId)) {
+      this.pokemonByGeneration.set(generationId, new Set<number>());
+    }
+    this.pokemonByGeneration.get(generationId)!.add(speciesId);
+    
     this.updateState({ totalPokemonCount: this.allPokemonSpecies.size });
   }
 
-  /** Guesses a Pokémon by ID */
   guessPokemon(speciesId: number): void {
     if (!this.allPokemonSpecies.has(speciesId) || this.currentState.guessedPokemonIds.has(speciesId)) return;
 
@@ -60,7 +67,6 @@ export class GuessingGameStateService {
     this.checkCompletedGeneration(this.allPokemonSpecies.get(speciesId)?.pokemon_v2_generation.id);
   }
 
-  /** Cleans and normalizes input names */
   private sanitizeName(name: string): string {
     return name
       .normalize("NFD")
@@ -69,7 +75,6 @@ export class GuessingGameStateService {
       .toLowerCase();
   }
 
-  /** Guesses a Pokémon by name */
   guessPokemonByName(name: string): { guessed: boolean; message?: string } {
     const trimmedGuess = this.sanitizeName(name.trim());
     if (!trimmedGuess) return { guessed: false };
@@ -106,12 +111,16 @@ export class GuessingGameStateService {
     return { guessed: false };
   }
 
-  /** Checks if an entire generation has been guessed */
   private checkCompletedGeneration(generationId?: number): void {
     if (!generationId) return;
-
-    const totalInGen = Array.from(this.allPokemonSpecies.values()).filter(p => p.pokemon_v2_generation.id === generationId).length;
-    const guessedInGen = Array.from(this.currentState.guessedPokemonIds).filter(id => this.allPokemonSpecies.get(id)?.pokemon_v2_generation.id === generationId).length;
+    
+    const generationPokemon = this.pokemonByGeneration.get(generationId);
+    if (!generationPokemon) return;
+    
+    const totalInGen = generationPokemon.size;
+    const guessedInGen = Array.from(generationPokemon)
+      .filter(id => this.currentState.guessedPokemonIds.has(id))
+      .length;
 
     if (guessedInGen === totalInGen) {
       const updatedCompletedSet = new Set(this.currentState.completedGenerations).add(generationId);
@@ -119,12 +128,10 @@ export class GuessingGameStateService {
     }
   }
 
-  /** Toggles the silhouette mode */
   toggleSilhouette(): void {
     this.updateState({ isSilhouette: !this.currentState.isSilhouette });
   }
 
-  /** Retrieves a Pokémon by species ID */
   getPokemonById(speciesId: number): PokemonSpecies | undefined {
     return this.allPokemonSpecies.get(speciesId);
   }
