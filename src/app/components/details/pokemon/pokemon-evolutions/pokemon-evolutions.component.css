@@ -51,8 +51,7 @@ app-pokemon-card {
 .evolution-trigger {
     margin-top: 0.5rem;
     font-size: 0.85rem;
-    color: #666;
-    font-style: italic;
+    color: var(--accent-text-color);
 }
 
 .empty-placeholder {
