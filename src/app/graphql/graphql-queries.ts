@@ -460,6 +460,7 @@ export const GraphQLQueries = {
             id
             pokemon_v2_movenames {
               id
+              name
               language_id
               pokemon_v2_language {
                 name
