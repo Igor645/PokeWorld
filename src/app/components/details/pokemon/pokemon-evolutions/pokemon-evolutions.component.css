@@ -54,6 +54,7 @@ app-pokemon-card {
     gap: 2rem;
     margin: 1rem 0;
     justify-content: space-evenly;
+    overflow: hidden;
 }
 
 .evolution-row {
@@ -99,7 +100,7 @@ app-pokemon-card {
     font-size: 6rem;
     color: var(--accent-text-color);
     user-select: none;
-    margin-top: 5.5rem;
+    margin-top: 6.5rem;
 }
 
 .bent-arrow {

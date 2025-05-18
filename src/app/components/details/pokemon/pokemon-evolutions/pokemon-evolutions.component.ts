@@ -7,6 +7,7 @@ import { PokemonUtilsService } from '../../../../utils/pokemon-utils';
 import { EvolutionTrigger } from '../../../../models/evolution-trigger.model';
 import { PokemonSpecies } from '../../../../models/pokemon-species.model';
 import { get } from 'node:http';
+import { animate, state, style, transition, trigger } from '@angular/animations';
 
 @Component({
   selector: 'app-pokemon-evolutions',
@@ -15,7 +16,30 @@ import { get } from 'node:http';
     PokemonCardComponent
   ],
   templateUrl: './pokemon-evolutions.component.html',
-  styleUrl: './pokemon-evolutions.component.css'
+  styleUrl: './pokemon-evolutions.component.css',
+  animations: [
+    trigger('expandCollapse', [
+      state('expanded', style({
+        height: '*',
+        opacity: 1,
+        paddingTop: '*',
+        paddingBottom: '*',
+        marginTop: '*',
+        marginBottom: '*',
+        overflow: 'hidden'
+      })),
+      state('collapsed', style({
+        height: '0px',
+        opacity: 0,
+        paddingTop: '0',
+        paddingBottom: '0',
+        marginTop: '0',
+        marginBottom: '0',
+        overflow: 'hidden'
+      })),
+      transition('expanded <=> collapsed', animate('300ms ease-in-out')),
+    ])
+  ]
 })
 export class PokemonEvolutionsComponent implements OnChanges {
   @Input() evolutionChain: EvolutionChain | undefined = undefined;
@@ -79,7 +103,6 @@ export class PokemonEvolutionsComponent implements OnChanges {
   }
 
   getPokemonEvolution(id: number): PokemonEvolution[] | undefined {
-    console.log(this.pokemonEvolutions);
     return this.pokemonEvolutions.filter(
       evolution => evolution?.evolved_species_id === id
     );
@@ -189,6 +212,14 @@ export class PokemonEvolutionsComponent implements OnChanges {
       }
     }
 
+    if (conditions.length === 0) {
+      conditions.push('No evolutions');
+    }
+
     return conditions;
+  }
+
+  isMultiStage(path: (PokemonSpecies | null)[]): boolean {
+    return path.filter(p => p !== null).length > 1;
   }
 }

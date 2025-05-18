@@ -104,7 +104,6 @@ export class PokemonDetailsComponent implements OnInit {
           this.isAdjacentLoading = false;
         }
         this.pokemonSpeciesDetails.pokemon_v2_evolutionchain.pokemon_v2_pokemonspecies.forEach((evolution) => {
-          console.log(evolution)
           this.fetchPokemonEvolution(evolution.id);
         });
       },
@@ -156,6 +155,7 @@ export class PokemonDetailsComponent implements OnInit {
   }
 
   fetchPokemonEvolution(id: number) {
+    this.pokemonEvolutions = [];
     this.evolutionService.getPokemonEvolution(id).subscribe({
       next: (response) => {
         this.pokemonEvolutions.push(...response.pokemon_v2_pokemonevolution);

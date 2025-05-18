@@ -5,7 +5,7 @@
   </button>
 </div>
 
-<div class="evolution-chain" *ngIf="isExpanded">
+<div class="evolution-chain" [@expandCollapse]="isExpanded ? 'expanded' : 'collapsed'">
   <div *ngFor="let path of evolutionPaths" class="evolution-row">
     <ng-container *ngFor="let species of path; let i = index">
       <!-- Evolution Cell -->
@@ -21,12 +21,17 @@
                 let i = index;
                 let last = last
               ">
+
               <div *ngFor="let condition of getEvolutionConditions(evo)">
                 {{ condition }}
               </div>
 
               <hr *ngIf="!last" class="evolution-separator" />
             </ng-container>
+
+            <div *ngIf="!isMultiStage(path)" class="no-evolution-message">
+              No evolutions
+            </div>
           </div>
         </ng-container>
 
