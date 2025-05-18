@@ -1,0 +1,40 @@
+<div class="evolution-title">Evolutions</div>
+
+<div class="evolution-chain">
+  <div *ngFor="let path of evolutionPaths" class="evolution-row">
+    <ng-container *ngFor="let species of path; let i = index">
+      
+      <!-- Evolution Cell -->
+      <div class="evolution-cell">
+        <!-- If species is defined -->
+        <ng-container *ngIf="species; else placeholder">
+          <app-pokemon-card
+            [pokemon]="species.pokemon_v2_pokemons[0]"
+            [pokemonSpecies]="species">
+          </app-pokemon-card>
+
+          <div class="evolution-trigger">
+            <ng-container *ngIf="getPokemonEvolution(species.id) as evo; ">
+              {{ getEvolutionTriggerName(evo.pokemon_v2_evolutiontrigger) }}
+            </ng-container>
+          </div>
+        </ng-container>
+
+        <!-- Placeholder when species is null -->
+        <ng-template #placeholder>
+          <div class="empty-placeholder">
+            <span *ngIf="path[i + 1]" class="bent-arrow">⤷</span>
+          </div>
+        </ng-template>
+      </div>
+
+      <!-- Arrow between cards -->
+      <ng-container *ngIf="i < path.length - 1">
+        <div class="evolution-arrow">
+          <span *ngIf="species && path[i + 1]">⟶</span>
+        </div>
+      </ng-container>
+
+    </ng-container>
+  </div>
+</div>

@@ -6,6 +6,7 @@ import { PokemonSprites } from './sprite.model';
 import { FlavorText } from './flavor-text.model';
 import { PokemonColor } from './pokemon-color.model';
 import { PokemonShape } from './pokemon-shape.model';
+import { EvolutionChain } from './evolution-chain.model';
 
 export interface PokemonSpecies {
   id: number;
@@ -13,6 +14,8 @@ export interface PokemonSpecies {
   is_baby: boolean;
   is_legendary: boolean;
   is_mythical: boolean;
+  evolution_chain_id: number;
+  evolves_from_species_id: number | null;
   pokemon_v2_pokemons: Pokemon[];
   pokemon_v2_pokemonspeciesnames: Name[];
   pokemon_v2_generation: Generation;
@@ -20,6 +23,7 @@ export interface PokemonSpecies {
   pokemon_v2_pokemonspeciesflavortexts: FlavorText[];
   pokemon_v2_pokemoncolor: PokemonColor;
   pokemon_v2_pokemonshape: PokemonShape;
+  pokemon_v2_evolutionchain: EvolutionChain;
 }
 
 export interface PokemonSpeciesResponse {

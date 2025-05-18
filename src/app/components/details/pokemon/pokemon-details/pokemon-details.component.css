@@ -354,6 +354,10 @@ select:focus {
   grid-column: span 2;
 }
 
+.pokemon-evolutions{
+  grid-column: span 3;
+}
+
 /* ──────────────────── Mobile Responsiveness ──────────────────── */
 /* Extra Small Devices (up to 480px) */
 @media (max-width: 480px) {

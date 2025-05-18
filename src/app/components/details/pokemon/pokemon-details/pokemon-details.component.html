@@ -3,6 +3,7 @@
   *ngIf="isLoading; else pokemonContent">
 </app-loading-spinner>
 
+
 <ng-template #pokemonContent>
   <!-- Navigation Buttons -->
   <div class="pokemon-nav-buttons" *ngIf="previousPokemonSpecies || nextPokemonSpecies">
@@ -156,6 +157,9 @@
   </div>
 
   <div class="pokemon-other-details">
-    <app-pokemon-stats class="pokemon-stats" [pokemon]="selectedPokemon"></app-pokemon-stats>
+    <app-pokemon-stats class="pokemon-stats" [pokemon]="selectedPokemon"/>
+    <app-pokemon-evolutions class="pokemon-evolutions" 
+      [evolutionChain]="pokemonSpeciesDetails?.pokemon_v2_evolutionchain"
+      [pokemonEvolutions]="pokemonEvolutions"/>
   </div>
 </ng-template>

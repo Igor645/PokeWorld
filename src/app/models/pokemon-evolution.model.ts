@@ -1,3 +1,6 @@
+import { Aggregate } from "./aggregate.model";
+import { EvolutionTrigger } from "./evolution-trigger.model";
+import { Gender } from "./gender.model";
 import { Item } from "./item.model";
 import { Name } from "./species-name.model";
 
@@ -23,12 +26,13 @@ export interface PokemonEvolution {
     evolution_trigger_id: number;
     evolution_item_id: number;
     pokemonV2ItemByHeldItemId: Item;
+    pokemon_v2_item: Item[];
     pokemon_v2_evolutiontrigger: EvolutionTrigger;
+    pokemon_v2_gender: Gender;
   }
 
-  export interface EvolutionTrigger {
-    name: string;
-    id: number;
-    pokemon_v2_evolutiontriggernames: Name[];
+  export interface PokemonEvolutionResponse {
+    pokemon_v2_pokemonevolution: PokemonEvolution[];
+    pokemon_v2_pokemonevolution_aggregate: { aggregate: Aggregate };
   }
   

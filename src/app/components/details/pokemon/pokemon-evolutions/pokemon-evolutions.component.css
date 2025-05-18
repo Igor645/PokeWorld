@@ -1,0 +1,80 @@
+:host {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+    background-color: var(--background-color);
+    padding: 1rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 6px 12px rgba(0, 0, 0, 0.1);
+    box-sizing: border-box;
+}
+
+.evolution-title {
+    font-size: 2rem;
+    font-weight: bold;
+    color: var(--accent-text-color);
+}
+
+app-pokemon-card {
+    width: 15rem;
+}
+
+.evolution-chain {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    margin: 1rem 0;
+    justify-content: space-evenly;
+}
+
+.evolution-row {
+    display: flex;
+    flex-direction: row;
+    gap: 2rem;
+    border: 2px solid var(--border-focus-color);
+    border-radius: 15px;
+    padding: 2rem;
+    box-shadow:
+        0 1px 3px rgba(0, 0, 0, 0.1),
+        0 4px 6px rgba(0, 0, 0, 0.1),
+        0 10px 15px rgba(0, 0, 0, 0.05);
+    transition: box-shadow 0.3s ease;
+}
+
+.evolution-cell {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+}
+
+.evolution-trigger {
+    margin-top: 0.5rem;
+    font-size: 0.85rem;
+    color: #666;
+    font-style: italic;
+}
+
+.empty-placeholder {
+    width: 15rem;
+    height: 100%;
+    background-color: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.evolution-arrow {
+    width: 7rem;
+    text-align: center;
+    font-size: 6rem;
+    color: var(--accent-text-color);
+    user-select: none;
+    margin: auto 0;
+}
+
+.bent-arrow {
+    font-size: 7rem;
+    color: var(--accent-text-color);
+    user-select: none;
+}

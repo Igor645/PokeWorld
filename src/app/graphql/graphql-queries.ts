@@ -9,6 +9,39 @@ export const GraphQLQueries = {
           is_legendary
           is_mythical
           is_baby
+          evolution_chain_id
+          evolves_from_species_id
+          pokemon_v2_evolutionchain {
+            pokemon_v2_pokemonspecies {
+              id
+              name
+              evolves_from_species_id
+              pokemon_v2_pokemons(where: {is_default: {_eq: true}}) {
+                id
+                pokemon_v2_pokemonsprites {
+                  sprites
+                }
+              }
+              pokemon_v2_pokemonspeciesnames {
+                name
+                pokemon_v2_language {
+                  name
+                  id
+                }
+              }
+              pokemon_v2_generation {
+                id
+                name
+                pokemon_v2_generationnames {
+                  name
+                  pokemon_v2_language {
+                    id
+                    name
+                  }
+                }
+              }
+            }
+          }
           pokemon_v2_pokemons {
             id
             name
@@ -306,6 +339,84 @@ export const GraphQLQueries = {
               name
               id
             }
+          }
+        }
+      }
+    `,
+
+    GetPokemonEvolutions: `
+      query GetPokemonEvolutions($id: Int!) {
+        pokemon_v2_pokemonevolution(where: {evolved_species_id: {_eq: $id}}) {
+          evolution_item_id
+          evolution_trigger_id
+          evolved_species_id
+          gender_id
+          held_item_id
+          id
+          known_move_id
+          known_move_type_id
+          location_id
+          min_affection
+          min_beauty
+          min_happiness
+          min_level
+          needs_overworld_rain
+          party_species_id
+          party_type_id
+          relative_physical_stats
+          time_of_day
+          trade_species_id
+          turn_upside_down
+          pokemon_v2_evolutiontrigger {
+            name
+            pokemon_v2_evolutiontriggernames {
+              name
+              pokemon_v2_language {
+                name
+                id
+              }
+            }
+          }
+          pokemonV2ItemByHeldItemId {
+            name
+            pokemon_v2_itemnames {
+              name
+              language_id
+              pokemon_v2_language {
+                name
+                id
+              }
+            }
+            pokemon_v2_itemsprites {
+              sprites
+            }
+          }
+          pokemon_v2_gender {
+            name
+            id
+          }
+          pokemon_v2_item {
+            name
+            pokemon_v2_itemnames {
+              name
+              language_id
+              pokemon_v2_language {
+                name
+                id
+              }
+            }
+          }
+          pokemon_v2_location {
+            id
+            name
+            pokemon_v2_locationnames {
+              name
+              pokemon_v2_language {
+                id
+                name
+              }
+            }
+            region_id
           }
         }
       }

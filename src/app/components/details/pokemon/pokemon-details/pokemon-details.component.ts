@@ -16,6 +16,9 @@ import { PokemonTypeComponent } from '../../../shared/pokemon-type/pokemon-type.
 import { Name } from '../../../../models/species-name.model';
 import { MatIcon } from '@angular/material/icon';
 import { PokemonStatsComponent } from '../pokemon-stats/pokemon-stats.component';
+import { EvolutionService } from '../../../../services/evolution.service';
+import { PokemonEvolution } from '../../../../models/pokemon-evolution.model';
+import { PokemonEvolutionsComponent } from "../pokemon-evolutions/pokemon-evolutions.component";
 
 @Component({
   selector: 'app-pokemon-details',
@@ -27,14 +30,17 @@ import { PokemonStatsComponent } from '../pokemon-stats/pokemon-stats.component'
     LoadingSpinnerComponent,
     PokemonTypeComponent,
     MatIcon,
-    PokemonStatsComponent
-  ],
+    PokemonStatsComponent,
+    PokemonEvolutionsComponent,
+    PokemonEvolutionsComponent
+],
   templateUrl: './pokemon-details.component.html',
   styleUrls: ['./pokemon-details.component.css']
 })
 export class PokemonDetailsComponent implements OnInit {
   @ViewChild('pokemonImage') pokemonImageElement!: ElementRef;
   pokemonSpeciesDetails?: PokemonSpecies;
+  pokemonEvolutions: PokemonEvolution[] = [];
   selectedPokemonImage?: string;
   selectedPokemon?: Pokemon;
   isShiny: boolean = false;
@@ -45,14 +51,16 @@ export class PokemonDetailsComponent implements OnInit {
   private selectedLanguageId$ = new BehaviorSubject<number>(9);
   isMainLoading = true;
   isAdjacentLoading = true;
+  isEvolutionsLoading = true;
   get isLoading(): boolean {
-    return this.isMainLoading || this.isAdjacentLoading;
+    return this.isMainLoading || this.isAdjacentLoading || this.isEvolutionsLoading;
   }
   
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private pokemonService: PokemonService,
+    private evolutionService: EvolutionService,
     public pokemonUtils: PokemonUtilsService
   ) {}
 
@@ -95,6 +103,10 @@ export class PokemonDetailsComponent implements OnInit {
         } else {
           this.isAdjacentLoading = false;
         }
+        this.pokemonSpeciesDetails.pokemon_v2_evolutionchain.pokemon_v2_pokemonspecies.forEach((evolution) => {
+          console.log(evolution)
+          this.fetchPokemonEvolution(evolution.id);
+        });
       },
       error: () => this.router.navigate(['/'])
     });
@@ -113,6 +125,9 @@ export class PokemonDetailsComponent implements OnInit {
         } else {
           this.isAdjacentLoading = false;
         }
+        this.pokemonSpeciesDetails.pokemon_v2_evolutionchain.pokemon_v2_pokemonspecies.forEach((evolution) => {
+          this.fetchPokemonEvolution(evolution.id);
+        });
       },
       error: () => this.router.navigate(['/'])
     });
@@ -137,6 +152,16 @@ export class PokemonDetailsComponent implements OnInit {
       this.previousPokemonSpecies = prevResponse ? prevResponse.pokemon_v2_pokemonspecies[0] : undefined;
       this.nextPokemonSpecies = nextResponse ? nextResponse.pokemon_v2_pokemonspecies[0] : undefined;
       this.isAdjacentLoading = false;
+    });
+  }
+
+  fetchPokemonEvolution(id: number) {
+    this.evolutionService.getPokemonEvolution(id).subscribe({
+      next: (response) => {
+        this.pokemonEvolutions.push(response.pokemon_v2_pokemonevolution[0]);
+        this.isEvolutionsLoading = false;
+      },
+      error: () => this.router.navigate(['/'])
     });
   }
 
