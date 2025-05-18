@@ -1,6 +1,6 @@
 import { Name } from "./species-name.model";
 
-export interface Loaction {
+export interface Location {
     id: number;
     name: string;
     region_id: number;

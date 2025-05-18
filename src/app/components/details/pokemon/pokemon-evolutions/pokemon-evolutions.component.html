@@ -1,21 +1,31 @@
-<div class="evolution-title">Evolutions</div>
+<div class="evolution-title-row">
+  <div class="evolution-title">Evolutions</div>
+  <button class="toggle-button" (click)="toggleExpanded()" aria-label="Toggle Evolutions">
+    <span [class.expanded]="isExpanded" class="chevron-icon">▼</span>
+  </button>
+</div>
 
-<div class="evolution-chain">
+<div class="evolution-chain" *ngIf="isExpanded">
   <div *ngFor="let path of evolutionPaths" class="evolution-row">
     <ng-container *ngFor="let species of path; let i = index">
-      
       <!-- Evolution Cell -->
       <div class="evolution-cell">
         <!-- If species is defined -->
         <ng-container *ngIf="species; else placeholder">
-          <app-pokemon-card
-            [pokemon]="species.pokemon_v2_pokemons[0]"
-            [pokemonSpecies]="species">
+          <app-pokemon-card [pokemon]="species.pokemon_v2_pokemons[0]" [pokemonSpecies]="species">
           </app-pokemon-card>
 
           <div class="evolution-trigger">
-            <ng-container *ngIf="getPokemonEvolution(species.id) as evo; ">
-              {{ getEvolutionTriggerName(evo.pokemon_v2_evolutiontrigger) }}
+            <ng-container *ngFor="
+                let evo of getPokemonEvolution(species.id);
+                let i = index;
+                let last = last
+              ">
+              <div *ngFor="let condition of getEvolutionConditions(evo)">
+                {{ condition }}
+              </div>
+
+              <hr *ngIf="!last" class="evolution-separator" />
             </ng-container>
           </div>
         </ng-container>
@@ -34,7 +44,6 @@
           <span *ngIf="species && path[i + 1]">⟶</span>
         </div>
       </ng-container>
-
     </ng-container>
   </div>
 </div>

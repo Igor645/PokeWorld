@@ -406,17 +406,78 @@ export const GraphQLQueries = {
               }
             }
           }
-          pokemon_v2_location {
-            id
+          pokemonV2PokemonspecyByPartySpeciesId {
             name
+            id
+            pokemon_v2_pokemonspeciesnames {
+              name
+              language_id
+              pokemon_v2_language {
+                name
+                id
+              }
+            }
+          }
+          pokemonV2PokemonspecyByTradeSpeciesId {
+            name
+            id
+            pokemon_v2_pokemonspeciesnames {
+              name
+              language_id
+              pokemon_v2_language {
+                name
+                id
+              }
+            }
+          }
+          pokemonV2TypeByPartyTypeId {
+            name
+            pokemon_v2_typenames {
+              name
+              language_id
+              pokemon_v2_language {
+                id
+                name
+              }
+            }
+          }
+          pokemon_v2_location {
+            name
+            id
+            region_id
             pokemon_v2_locationnames {
+              language_id
+              name
+              id  
+              pokemon_v2_language {
+                id
+                name
+              }
+            }
+          }
+          pokemon_v2_move {
+            name
+            id
+            pokemon_v2_movenames {
+              id
+              language_id
+              pokemon_v2_language {
+                name
+                id
+              }
+            }
+          }
+          pokemon_v2_type {
+            name
+            id
+            pokemon_v2_typenames {
+              id
               name
               pokemon_v2_language {
                 id
                 name
               }
             }
-            region_id
           }
         }
       }

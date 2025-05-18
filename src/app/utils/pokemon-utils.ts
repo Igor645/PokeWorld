@@ -116,21 +116,6 @@ export class PokemonUtilsService {
     return flavorText ? flavorText.replace(/\f/g, ' ') : 'No ability description available.';
   }
 
-    /**
-  * Get the evolution trigger name by the selected language ID.
-  * @param evolutionTrigger The Evolution Trigger DTO object.
-  * @returns The formatted ability flavor text.
-  */
-    getEvolutionTriggerByLanguage(evolutionTrigger: EvolutionTrigger): string {
-      const languageId = this.getSelectedLanguageId();
-  
-      const evolutionTriggerName = evolutionTrigger?.pokemon_v2_evolutiontriggernames?.find(
-        (entry) => entry.pokemon_v2_language.id === languageId
-      )?.name;
-  
-      return evolutionTriggerName ? evolutionTriggerName.replace(/\f/g, ' ') : 'No evolution trigger description available.';
-    }
-
   /**
    * Parses the generation name and returns it in the selected language.
    * @param generation The raw generation string (e.g., "generation-iii").

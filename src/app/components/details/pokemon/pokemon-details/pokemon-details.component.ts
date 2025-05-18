@@ -158,7 +158,7 @@ export class PokemonDetailsComponent implements OnInit {
   fetchPokemonEvolution(id: number) {
     this.evolutionService.getPokemonEvolution(id).subscribe({
       next: (response) => {
-        this.pokemonEvolutions.push(response.pokemon_v2_pokemonevolution[0]);
+        this.pokemonEvolutions.push(...response.pokemon_v2_pokemonevolution);
         this.isEvolutionsLoading = false;
       },
       error: () => this.router.navigate(['/'])

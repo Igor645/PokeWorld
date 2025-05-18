@@ -16,8 +16,36 @@
     color: var(--accent-text-color);
 }
 
+.evolution-title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.toggle-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.2rem;
+  display: flex;
+  align-items: center;
+  font-size: 1.5rem;
+}
+
+.chevron-icon {
+  display: inline-block;
+  transition: transform 0.3s ease;
+  font-size: 2rem;
+  color: var(--accent-text-color);
+}
+
+.chevron-icon.expanded {
+  transform: rotate(180deg);
+}
+
 app-pokemon-card {
     width: 15rem;
+    height: 22rem;
 }
 
 .evolution-chain {
@@ -40,12 +68,14 @@ app-pokemon-card {
         0 4px 6px rgba(0, 0, 0, 0.1),
         0 10px 15px rgba(0, 0, 0, 0.05);
     transition: box-shadow 0.3s ease;
+    align-items: flex-start;
 }
 
 .evolution-cell {
     display: flex;
     flex-direction: column;
     text-align: center;
+    height: fit-content;
 }
 
 .evolution-trigger {
@@ -69,7 +99,7 @@ app-pokemon-card {
     font-size: 6rem;
     color: var(--accent-text-color);
     user-select: none;
-    margin: auto 0;
+    margin-top: 5.5rem;
 }
 
 .bent-arrow {
