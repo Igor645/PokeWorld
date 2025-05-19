@@ -94,13 +94,13 @@ app-pokemon-card {
     justify-content: center;
 }
 
-.evolution-arrow {
-    width: 7rem;
-    text-align: center;
-    font-size: 6rem;
-    color: var(--accent-text-color);
-    user-select: none;
-    margin-top: 6.5rem;
+.arrow-icon {
+    width: 4rem;
+    height: 4rem;
+    fill: var(--accent-text-color);
+    transition: transform 0.3s ease;
+    margin: 9rem 0;
+    rotate: 270deg;
 }
 
 @media (max-width: 768px) {
@@ -110,11 +110,11 @@ app-pokemon-card {
         gap: 1rem;
     }
 
-    .evolution-arrow {
-        width: auto;
-        margin: 0 0;
-        font-size: 3rem;
-        transform: rotate(90deg);
+    .arrow-icon {
+        width: 3rem;
+        height: 3rem;
+        margin: 0 auto;
+        rotate: 0deg;
     }
 
     app-pokemon-card {

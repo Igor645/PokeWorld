@@ -45,9 +45,9 @@
 
       <!-- Arrow between cards -->
       <ng-container *ngIf="i < path.length - 1">
-        <div class="evolution-arrow">
-          <span *ngIf="species && path[i + 1]">⟶</span>
-        </div>
+        <svg class="arrow-icon" viewBox="0 0 24 24">
+          <path d="m20 12-1.41-1.41L13 16.17V4h-2v12.17l-5.58-5.59L4 12l8 8z"></path>
+        </svg>
       </ng-container>
     </ng-container>
   </div>

@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges } from '@angular/core';
+import { Component, HostListener, Input, OnChanges } from '@angular/core';
 import { EvolutionChain } from '../../../../models/evolution-chain.model';
 import { PokemonEvolution } from '../../../../models/pokemon-evolution.model';
 import { PokemonCardComponent } from '../../../shared/pokemon-card/pokemon-card.component';
@@ -47,6 +47,7 @@ export class PokemonEvolutionsComponent implements OnChanges {
 
   evolutionPaths: (PokemonSpecies | null)[][] = [];
   isExpanded = true;
+  isMobile = false;
 
   constructor(public pokemonUtils: PokemonUtilsService) { }
 
@@ -54,6 +55,16 @@ export class PokemonEvolutionsComponent implements OnChanges {
     if (this.evolutionChain) {
       this.evolutionPaths = this.buildFullEvolutionPaths();
     }
+  }
+
+
+  @HostListener('window:resize')
+  onResize() {
+    this.isMobile = window.innerWidth <= 768;
+  }
+
+  ngOnInit() {
+    this.onResize();
   }
 
   toggleExpanded(): void {
