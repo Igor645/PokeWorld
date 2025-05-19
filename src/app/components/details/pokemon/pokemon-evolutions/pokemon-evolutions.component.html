@@ -24,8 +24,10 @@
               <div *ngFor="let condition of getEvolutionConditions(evo)" class="condition-row">
                 <span class="condition-content">
                   <span *ngIf="condition.text">{{ condition.text }}</span>
-                  <img *ngIf="condition.spriteUrl" [src]="condition.spriteUrl" class="condition-icon"
-                    alt="item sprite" />
+                  <ng-container *ngIf="condition.spriteUrl; else spaceSpacer">
+                    <img [src]="condition.spriteUrl" class="condition-icon" alt="item sprite" />
+                  </ng-container>
+                  <ng-template #spaceSpacer>&nbsp;</ng-template>
                   <span *ngIf="condition.suffix">{{ condition.suffix }}</span>
                 </span>
               </div>
