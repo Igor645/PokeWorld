@@ -1,12 +1,13 @@
-import { Injectable } from '@angular/core';
-import { SettingsService } from '../services/settings.service';
-import { PokemonSpecies } from '../models/pokemon-species.model';
-import { Pokemon } from '../models/pokemon.model';
-import { Name } from '../models/species-name.model';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { Version } from '../models/version.model';
-import { PokemonAbility } from '../models/pokemon-ability.model';
+
 import { EvolutionTrigger } from '../models/evolution-trigger.model';
+import { Injectable } from '@angular/core';
+import { Name } from '../models/species-name.model';
+import { Pokemon } from '../models/pokemon.model';
+import { PokemonAbility } from '../models/pokemon-ability.model';
+import { PokemonSpecies } from '../models/pokemon-species.model';
+import { SettingsService } from '../services/settings.service';
+import { Version } from '../models/version.model';
 
 @Injectable({
   providedIn: 'root'
@@ -22,7 +23,7 @@ export class PokemonUtilsService {
         } else {
           this.selectedLanguageId$.next(9);
         }
-      });  
+      });
   }
 
   /**
@@ -124,7 +125,7 @@ export class PokemonUtilsService {
    */
   parseGenerationName(generationNames: Name[] | undefined): string {
     if (!generationNames || generationNames.length === 0) {
-        return 'Unknown Generation';
+      return 'Unknown Generation';
     }
 
     const languageId = this.getSelectedLanguageId();
@@ -140,7 +141,7 @@ export class PokemonUtilsService {
    */
   getVersionNameByLanguage(versionNames: Name[] | undefined): string {
     if (!versionNames) {
-        return 'Unknown Version';
+      return 'Unknown Version';
     }
 
     const languageId = this.getSelectedLanguageId();
