@@ -5,7 +5,7 @@ export interface Item {
   id: number;
   name: string;
   pokemon_v2_itemnames: Name[];
-  pokemon_v2_itemsprites: SpriteWrapper<ItemSprite>;
+  pokemon_v2_itemsprites: SpriteWrapper<ItemSprite>[];
 }
 
 export interface ItemResponse {

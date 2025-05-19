@@ -72,6 +72,25 @@ app-pokemon-card {
     align-items: flex-start;
 }
 
+.condition-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 2px 0;
+}
+
+.condition-content {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.condition-icon {
+    width: 1.5rem;
+    height: 1.5rem;
+    object-fit: contain;
+}
+
 .evolution-cell {
     display: flex;
     flex-direction: column;
