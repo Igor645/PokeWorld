@@ -17,30 +17,30 @@
 }
 
 .evolution-title-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .toggle-button {
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0.2rem;
-  display: flex;
-  align-items: center;
-  font-size: 1.5rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.2rem;
+    display: flex;
+    align-items: center;
+    font-size: 1.5rem;
 }
 
 .chevron-icon {
-  display: inline-block;
-  transition: transform 0.3s ease;
-  font-size: 2rem;
-  color: var(--accent-text-color);
+    display: inline-block;
+    transition: transform 0.3s ease;
+    font-size: 2rem;
+    color: var(--accent-text-color);
 }
 
 .chevron-icon.expanded {
-  transform: rotate(180deg);
+    transform: rotate(180deg);
 }
 
 app-pokemon-card {
@@ -103,8 +103,22 @@ app-pokemon-card {
     margin-top: 6.5rem;
 }
 
-.bent-arrow {
-    font-size: 7rem;
-    color: var(--accent-text-color);
-    user-select: none;
+@media (max-width: 768px) {
+    .evolution-row {
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .evolution-arrow {
+        width: auto;
+        margin: 0 0;
+        font-size: 3rem;
+        transform: rotate(90deg);
+    }
+
+    app-pokemon-card {
+        width: 10rem;
+        height: 14rem;
+    }
 }
