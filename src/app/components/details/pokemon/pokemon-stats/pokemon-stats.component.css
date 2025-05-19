@@ -53,7 +53,7 @@
 /* ──────────────────── Progress Bar ──────────────────── */
 .progress-bar {
     width: 100%;
-    min-width: 50px;
+    min-width: 10px;
     height: 12px;
     background-color: var(--background-hover-color);
     border-radius: 6px;
