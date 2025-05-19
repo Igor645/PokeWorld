@@ -71,7 +71,7 @@ export class PokemonEvolutionsComponent implements OnChanges {
     this.isExpanded = !this.isExpanded;
   }
 
-  buildFullEvolutionPaths(): (PokemonSpecies | null)[][] {
+  buildFullEvolutionPaths(): PokemonSpecies[][] {
     const speciesMap = new Map<number, PokemonSpecies>();
     if (!this.evolutionChain) return [];
 
@@ -100,17 +100,7 @@ export class PokemonEvolutionsComponent implements OnChanges {
       paths.push(path);
     }
 
-    const maxLength = Math.max(...paths.map(path => path.length));
-
-    const paddedPaths = paths.map(path => {
-      const padded: (PokemonSpecies | null)[] = [...path];
-      while (padded.length < maxLength) {
-        padded.push(null);
-      }
-      return padded;
-    });
-
-    return paddedPaths;
+    return paths;
   }
 
   getPokemonEvolution(id: number): PokemonEvolution[] | undefined {

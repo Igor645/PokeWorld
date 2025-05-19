@@ -1,27 +1,38 @@
 <div class="evolution-title-row">
   <div class="evolution-title">Evolutions</div>
-  <button class="toggle-button" (click)="toggleExpanded()" aria-label="Toggle Evolutions">
+  <button
+    class="toggle-button"
+    (click)="toggleExpanded()"
+    aria-label="Toggle Evolutions"
+  >
     <span [class.expanded]="isExpanded" class="chevron-icon">▼</span>
   </button>
 </div>
 
-<div class="evolution-chain" [@expandCollapse]="isExpanded ? 'expanded' : 'collapsed'">
+<div
+  class="evolution-chain"
+  [@expandCollapse]="isExpanded ? 'expanded' : 'collapsed'"
+>
   <div *ngFor="let path of evolutionPaths" class="evolution-row">
     <ng-container *ngFor="let species of path; let i = index">
       <!-- Evolution Cell -->
       <div class="evolution-cell">
         <!-- If species is defined -->
-        <ng-container *ngIf="species; else placeholder">
-          <app-pokemon-card [pokemon]="species.pokemon_v2_pokemons[0]" [pokemonSpecies]="species">
+        <ng-container *ngIf="species">
+          <app-pokemon-card
+            [pokemon]="species.pokemon_v2_pokemons[0]"
+            [pokemonSpecies]="species"
+          >
           </app-pokemon-card>
 
           <div class="evolution-trigger">
-            <ng-container *ngFor="
+            <ng-container
+              *ngFor="
                 let evo of getPokemonEvolution(species.id);
                 let i = index;
                 let last = last
-              ">
-
+              "
+            >
               <div *ngFor="let condition of getEvolutionConditions(evo)">
                 {{ condition }}
               </div>
@@ -34,19 +45,14 @@
             </div>
           </div>
         </ng-container>
-
-        <!-- Placeholder when species is null -->
-        <ng-template #placeholder>
-          <div class="empty-placeholder">
-            <span *ngIf="path[i + 1]" class="bent-arrow">⤷</span>
-          </div>
-        </ng-template>
       </div>
 
       <!-- Arrow between cards -->
       <ng-container *ngIf="i < path.length - 1">
         <svg class="arrow-icon" viewBox="0 0 24 24">
-          <path d="m20 12-1.41-1.41L13 16.17V4h-2v12.17l-5.58-5.59L4 12l8 8z"></path>
+          <path
+            d="m20 12-1.41-1.41L13 16.17V4h-2v12.17l-5.58-5.59L4 12l8 8z"
+          ></path>
         </svg>
       </ng-container>
     </ng-container>
