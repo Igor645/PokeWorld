@@ -8,8 +8,8 @@ export interface PokemonAbilityWrapper {
 }
 
 export interface PokemonAbility {
-    id: number;
-    name: string;
-    pokemon_v2_abilityflavortexts: FlavorText[];
-    pokemon_v2_abilitynames: Name[];  
+  id: number;
+  name: string;
+  pokemon_v2_abilityflavortexts: FlavorText[];
+  pokemon_v2_abilitynames: Name[];
 }

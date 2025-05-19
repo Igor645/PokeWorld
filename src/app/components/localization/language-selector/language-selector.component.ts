@@ -1,10 +1,11 @@
-import { Component, OnInit, ChangeDetectorRef, OnDestroy } from '@angular/core';
-import { LanguageService } from '../../../services/language.service';
-import { SettingsService } from '../../../services/settings.service';
-import { Language } from '../../../models/language.model';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+
 import { CommonModule } from '@angular/common';
+import { Language } from '../../../models/language.model';
+import { LanguageService } from '../../../services/language.service';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatIconModule } from '@angular/material/icon';
+import { SettingsService } from '../../../services/settings.service';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -38,8 +39,8 @@ export class LanguageSelectorComponent implements OnInit, OnDestroy {
   constructor(
     private languageService: LanguageService,
     private settingsService: SettingsService,
-    private cdr: ChangeDetectorRef 
-  ) {}
+    private cdr: ChangeDetectorRef
+  ) { }
 
   ngOnInit() {
     this.languageService.getLanguages().subscribe({
@@ -51,7 +52,7 @@ export class LanguageSelectorComponent implements OnInit, OnDestroy {
       },
       error: (error) => console.error('Error fetching languages:', error)
     });
-  
+
     this.languageSubscription = this.settingsService.watchSetting<number>('selectedLanguageId')
       .subscribe(id => {
         if (id === null || id === undefined) {
@@ -62,7 +63,7 @@ export class LanguageSelectorComponent implements OnInit, OnDestroy {
         }
         this.cdr.detectChanges();
       });
-  }  
+  }
 
   selectLanguage(languageId: number) {
     this.settingsService.setSetting('selectedLanguageId', languageId);

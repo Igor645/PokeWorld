@@ -1,7 +1,7 @@
 :root {
     /* ====== GENERAL LAYOUT ====== */
     --general-width: 85%;
-    
+
     /* ====== PRIMARY COLORS ====== */
     --primary-color: #1b6ec2;
     --primary-hover-color: #155a9c;
@@ -13,7 +13,7 @@
     --background-hover-color: #e4e1e1;
     --primary-background-color: rgb(206, 216, 247);
     --pokemon-card-text-background-color: #ffffff;
-    
+
     /* ====== BORDERS & OUTLINES ====== */
     --border-color: rgba(38, 143, 255, 0.5);
     --border-focus-color: rgba(38, 143, 255, 0.8);
@@ -23,7 +23,7 @@
     /* ====== STATUS COLORS ====== */
     --error-color: #e50000;
     --valid-color: #26b050;
-    
+
     /* ====== SHADOWS ====== */
     --shadow-color: rgba(0, 0, 0, 0.2);
     --shadow-hover-color: rgba(0, 0, 0, 0.3);
@@ -57,7 +57,7 @@
     --background-hover-color: #1e1e1e;
     --primary-background-color: #272727;
     --pokemon-card-text-background-color: #1e1e1e;
-    
+
     /* Colors */
     --accent-text-color: rgba(255, 255, 255, 0.8);
     --title-color: rgba(255, 255, 255, 0.8);
@@ -74,7 +74,7 @@
 
     /* Scrollbars */
     --scrollbar-thumb-color: rgba(255, 255, 255, 0.1);
-    
+
     /* Component-specific */
     --glass-color: rgba(255, 255, 255, 0.1);
     --svg-color: rgba(255, 255, 255, 0.1);

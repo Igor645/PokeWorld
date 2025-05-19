@@ -1,6 +1,6 @@
-import { Injectable } from '@angular/core';
-import { GraphQLService } from './graphql.service';
 import { GraphQLQueries } from '../graphql/graphql-queries';
+import { GraphQLService } from './graphql.service';
+import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { PokemonSpeciesResponse } from '../models/pokemon-species.model';
 import { SettingsService } from './settings.service';
@@ -9,7 +9,7 @@ import { SettingsService } from './settings.service';
   providedIn: 'root'
 })
 export class PokemonService {
-  constructor(private graphQLService: GraphQLService, private settingsService: SettingsService) {}
+  constructor(private graphQLService: GraphQLService, private settingsService: SettingsService) { }
 
   /**
    * Fetches Pokémon details by ID or name.
@@ -17,24 +17,24 @@ export class PokemonService {
    * @param name Pokémon name (optional)
    * @returns Observable containing Pokémon details
    */
-  getPokemonDetails(id?: number, name?: string): Observable<PokemonSpeciesResponse> {    
+  getPokemonDetails(id?: number, name?: string): Observable<PokemonSpeciesResponse> {
     if (!id && !name) {
-        throw new Error("Either 'id' or 'name' must be provided.");
+      throw new Error("Either 'id' or 'name' must be provided.");
     }
 
     let query = GraphQLQueries.GetPokemonDetails;
     let variables: any = {};
 
     if (id) {
-        variables = { value: id };
-        query = query.replace("{FILTER}", "id: { _eq: $value }").replace("{TYPE}", "Int");
+      variables = { value: id };
+      query = query.replace("{FILTER}", "id: { _eq: $value }").replace("{TYPE}", "Int");
     } else if (name) {
-        variables = { value: name };
-        query = query.replace("{FILTER}", "pokemon_v2_pokemonspeciesnames: { name: { _ilike: $value } }").replace("{TYPE}", "String");
+      variables = { value: name };
+      query = query.replace("{FILTER}", "pokemon_v2_pokemonspeciesnames: { name: { _ilike: $value } }").replace("{TYPE}", "String");
     }
 
     return this.graphQLService.executeQuery<PokemonSpeciesResponse>(query, variables);
-}
+  }
 
 
   /**
@@ -59,12 +59,12 @@ export class PokemonService {
     const query = isPrefixEmpty
       ? GraphQLQueries.GetPokemonSpeciesWithoutPrefix
       : GraphQLQueries.GetPokemonSpeciesByPrefix;
-  
+
     const languageId = this.settingsService.getSetting<number>('selectedLanguageId') || 9; // Default to English (9)
     const variables = isPrefixEmpty ? null : { search: `${prefix}%`, languageId };
-  
+
     return this.graphQLService.executeQuery<PokemonSpeciesResponse>(query, variables);
-  }  
+  }
 
   /**
    * Fetches **all** Pokémon species at once (no pagination).
@@ -80,10 +80,10 @@ export class PokemonService {
    * @returns Observable containing the Pokémon species details.
    */
   getPokemonSpeciesById(id: number): Observable<PokemonSpeciesResponse> {
-  const variables = { id };
-  return this.graphQLService.executeQuery<PokemonSpeciesResponse>(
-    GraphQLQueries.GetPokemonSpeciesById,
-    variables
-  );
+    const variables = { id };
+    return this.graphQLService.executeQuery<PokemonSpeciesResponse>(
+      GraphQLQueries.GetPokemonSpeciesById,
+      variables
+    );
   }
 }

@@ -1,4 +1,5 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+
 import { CommonModule } from '@angular/common';
 import { PokemonUtilsService } from '../../../utils/pokemon-utils';
 import { SettingsService } from '../../../services/settings.service';
@@ -13,8 +14,8 @@ import { Subscription } from 'rxjs';
 })
 export class PokemonTypeComponent implements OnInit, OnDestroy {
   @Input() pokemonType: any;
-  @Input() simpleView: boolean = false; 
-  
+  @Input() simpleView: boolean = false;
+
   isDarkMode: boolean = false;
   localizedTypeName: string = 'Unknown';
   private darkModeSubscription!: Subscription;
@@ -23,7 +24,7 @@ export class PokemonTypeComponent implements OnInit, OnDestroy {
   constructor(
     public pokemonUtils: PokemonUtilsService,
     private settingsService: SettingsService
-  ) {}
+  ) { }
 
   typeColorsLight: { [key: string]: string } = {
     normal: '#B9B9AA',
@@ -34,7 +35,7 @@ export class PokemonTypeComponent implements OnInit, OnDestroy {
     ghost: '#735797', dragon: '#6F35FC', dark: '#705746',
     steel: '#B7B7CE', fairy: '#D685AD'
   };
-  
+
   typeColorsDark: { [key: string]: string } = {
     normal: '#8B8B77',
     fire: '#B22222', water: '#1E4D9B', electric: '#C9A917',
@@ -43,7 +44,7 @@ export class PokemonTypeComponent implements OnInit, OnDestroy {
     psychic: '#A13959', bug: '#6D7815', rock: '#786824',
     ghost: '#493963', dragon: '#4C1D95', dark: '#3D2D22',
     steel: '#787887', fairy: '#9B6470'
-  };  
+  };
 
   ngOnInit() {
     this.darkModeSubscription = this.settingsService.watchSetting<boolean>('darkMode')

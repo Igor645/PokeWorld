@@ -1,5 +1,5 @@
 export const GraphQLQueries = {
-    GetPokemonDetails: `
+  GetPokemonDetails: `
       query PokemonDetails($value: {TYPE}) {
         pokemon_v2_pokemonspecies(
           where: { {FILTER} }
@@ -180,8 +180,8 @@ export const GraphQLQueries = {
         }
       }
     `,
-  
-    GetPokemonSpeciesPaginated: `
+
+  GetPokemonSpeciesPaginated: `
       query PokemonSpeciesOverview($limit: Int, $offset: Int) {
         pokemon_v2_pokemonspecies(limit: $limit, offset: $offset, order_by: {id: asc}) {
           pokemon_v2_pokemons(where: {is_default: {_eq: true}}) {
@@ -211,7 +211,7 @@ export const GraphQLQueries = {
       }
     `,
 
-    GetPokemonSpeciesAll: `
+  GetPokemonSpeciesAll: `
     query GetAllPokemonSpecies {
       pokemon_v2_pokemonspecies(order_by: {id: asc}) {
         pokemon_v2_pokemons(where: {is_default: {_eq: true}}) {
@@ -247,15 +247,15 @@ export const GraphQLQueries = {
       }
     }
   `,
-  
-    GetPokemonSpeciesByPrefix: `
+
+  GetPokemonSpeciesByPrefix: `
       query MyQuery($search: String!, $languageId: Int!) {
         pokemon_v2_pokemonspecies(
-          where: { 
-            pokemon_v2_pokemonspeciesnames: { 
-              name: { _ilike: $search }, 
-              pokemon_v2_language: { id: { _eq: $languageId } } 
-            } 
+          where: {
+            pokemon_v2_pokemonspeciesnames: {
+              name: { _ilike: $search },
+              pokemon_v2_language: { id: { _eq: $languageId } }
+            }
           }
           order_by: { id: asc }
         ) {
@@ -278,8 +278,8 @@ export const GraphQLQueries = {
         }
       }
     `,
-  
-    GetPokemonSpeciesWithoutPrefix: `
+
+  GetPokemonSpeciesWithoutPrefix: `
       query MyQuery {
         pokemon_v2_pokemonspecies(order_by: {id: asc}, limit: 15) {
           id
@@ -300,8 +300,8 @@ export const GraphQLQueries = {
       }
     `,
 
-    GetLanguages: `
-      query Languages { 
+  GetLanguages: `
+      query Languages {
         pokemon_v2_language {
           name
           id
@@ -309,7 +309,7 @@ export const GraphQLQueries = {
       }
     `,
 
-    GetVersions: `query Versions {
+  GetVersions: `query Versions {
       pokemon_v2_version {
         id
         pokemon_v2_versionnames {
@@ -323,7 +323,7 @@ export const GraphQLQueries = {
     }
     `,
 
-    GetPokemonSpeciesById: `
+  GetPokemonSpeciesById: `
       query GetPokemonSpeciesById($id: Int!) {
         pokemon_v2_pokemonspecies(order_by: { id: asc }, where: { id: { _eq: $id } }) {
           pokemon_v2_pokemons(where: { is_default: { _eq: true } }) {
@@ -344,7 +344,7 @@ export const GraphQLQueries = {
       }
     `,
 
-    GetPokemonEvolutions: `
+  GetPokemonEvolutions: `
       query GetPokemonEvolutions($id: Int!) {
         pokemon_v2_pokemonevolution(where: {evolved_species_id: {_eq: $id}}) {
           evolution_item_id
@@ -451,7 +451,7 @@ export const GraphQLQueries = {
             pokemon_v2_locationnames {
               language_id
               name
-              id  
+              id
               pokemon_v2_language {
                 id
                 name
@@ -486,5 +486,4 @@ export const GraphQLQueries = {
         }
       }
     `,
-  };
-  
+};

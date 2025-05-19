@@ -9,4 +9,3 @@ export interface Version {
 export interface VersionResponse {
   pokemon_v2_version: Version[];
 }
-  

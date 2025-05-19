@@ -5,7 +5,7 @@
     min-height: 100%;
 }
 
-app-pokeworld-search{
+app-pokeworld-search {
     width: 40%;
 }
 
@@ -32,12 +32,13 @@ app-pokeworld-search{
     gap: 1.5rem;
 }
 
-.row > app-pokemon-card, .row > .pokemon-placeholder {
+.row>app-pokemon-card,
+.row>.pokemon-placeholder {
     flex: 1 1 calc(100% / var(--page-size));
     max-width: calc(100% / var(--page-size));
 }
 
-.pokemon-placeholder{
+.pokemon-placeholder {
     content: "";
 }
 
@@ -76,8 +77,8 @@ app-pokeworld-search{
     border-radius: 50%;
     border: 3px solid rgba(255, 255, 255, 0.6);
     box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.1),
-                0 4px 8px rgba(0, 0, 0, 0.1),
-                0 6px 12px rgba(0, 0, 0, 0.1);
+        0 4px 8px rgba(0, 0, 0, 0.1),
+        0 6px 12px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
@@ -104,13 +105,13 @@ app-pokeworld-search{
         padding: 0.5rem;
     }
 
-    app-pokeworld-search{
+    app-pokeworld-search {
         width: 80%;
         height: 40px;
     }
-  }
-  
-  @media (min-width: 481px) and (max-width: 768px) {
+}
+
+@media (min-width: 481px) and (max-width: 768px) {
     .dexTitle {
         font-size: 5rem;
     }
@@ -119,13 +120,13 @@ app-pokeworld-search{
         font-size: 1rem;
     }
 
-    app-pokeworld-search{
+    app-pokeworld-search {
         width: 50%;
         height: 40px;
     }
-  }
-  
-  @media (min-width: 769px) and (max-width: 1024px) {
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
     .dexTitle {
         font-size: 6rem;
     }
@@ -134,14 +135,14 @@ app-pokeworld-search{
         font-size: 1rem;
     }
 
-    app-pokeworld-search{
+    app-pokeworld-search {
         width: 40%;
         height: 40px;
     }
-  }
-  
-    
-  @media (min-width: 1024px) and (max-width: 1280px) {
+}
+
+
+@media (min-width: 1024px) and (max-width: 1280px) {
     .dexTitle {
         font-size: 6rem;
     }
@@ -150,8 +151,8 @@ app-pokeworld-search{
         font-size: 1rem;
     }
 
-    app-pokeworld-search{
+    app-pokeworld-search {
         width: 40%;
         height: 40px;
     }
-  }
+}

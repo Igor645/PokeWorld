@@ -10,7 +10,7 @@ describe('DexOverviewComponent', () => {
     await TestBed.configureTestingModule({
       imports: [DexOverviewComponent]
     })
-    .compileComponents();
+      .compileComponents();
 
     fixture = TestBed.createComponent(DexOverviewComponent);
     component = fixture.componentInstance;

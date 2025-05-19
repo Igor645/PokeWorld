@@ -32,17 +32,17 @@ export class SettingsService {
     if (!this.settings[key]) {
       this.settings[key] = new BehaviorSubject<T | null>(null);
     }
-  
+
     this.settings[key].next(value);
-  
+
     if (isPlatformBrowser(this.platformId)) {
       localStorage.setItem(key, JSON.stringify(value));
     }
-  
+
     if (key === 'darkMode') {
       document.body.classList.toggle('dark-theme', value as boolean);
     }
-  }  
+  }
 
   /**
    * Returns an observable for a setting to react to changes in real-time.
@@ -60,7 +60,7 @@ export class SettingsService {
    * Loads settings from localStorage into BehaviorSubjects.
    */
   private loadSettingsFromStorage() {
-    if (!isPlatformBrowser(this.platformId)) return; 
+    if (!isPlatformBrowser(this.platformId)) return;
 
     Object.keys(localStorage).forEach(key => {
       const value = this.loadSettingFromStorage(key);

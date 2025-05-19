@@ -7,5 +7,5 @@ export interface PokemonType {
 }
 
 export interface PokemonTypeWrapper {
-    pokemon_v2_type: PokemonType;
+  pokemon_v2_type: PokemonType;
 }

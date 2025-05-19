@@ -1,16 +1,17 @@
-import { Component, ChangeDetectorRef, AfterViewInit, OnDestroy, OnInit } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { NavigationEnd, Router } from '@angular/router';
+import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
+
+import { CommonModule } from '@angular/common';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { CommonModule } from '@angular/common';
-import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
+import { Name } from '../../../models/species-name.model';
 import { PokemonService } from '../../../services/pokemon.service';
 import { PokemonSpecies } from '../../../models/pokemon-species.model';
 import { PokemonUtilsService } from '../../../utils/pokemon-utils';
 import { PokeworldSearchItemComponent } from '../pokeworld-search-item/pokeworld-search-item.component';
-import { Name } from '../../../models/species-name.model';
-import { Router, NavigationEnd } from '@angular/router';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -37,12 +38,12 @@ export class PokeworldSearchComponent implements OnInit, AfterViewInit, OnDestro
     private cdr: ChangeDetectorRef,
     private router: Router,
     private pokemonUtils: PokemonUtilsService
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.routeSubscription = this.router.events.subscribe((event) => {
       if (event instanceof NavigationEnd) {
-        this.clearSearch(); 
+        this.clearSearch();
       }
     });
   }
@@ -55,7 +56,7 @@ export class PokeworldSearchComponent implements OnInit, AfterViewInit, OnDestro
       },
       error: (error) => console.error('Error fetching initial Pokémon:', error),
     });
-  
+
     this.searchControl.valueChanges.pipe(
       debounceTime(100),
       distinctUntilChanged(),
@@ -68,7 +69,7 @@ export class PokeworldSearchComponent implements OnInit, AfterViewInit, OnDestro
       error: (error) => console.error('Error searching Pokémon:', error),
     });
   }
-  
+
   ngOnDestroy() {
     if (this.routeSubscription) {
       this.routeSubscription.unsubscribe();
@@ -77,24 +78,24 @@ export class PokeworldSearchComponent implements OnInit, AfterViewInit, OnDestro
 
   clearSearch() {
     this.searchControl.setValue('', { emitEvent: true });
-  }  
+  }
 
   onOptionSelected(event: any) {
     const selectedItem = event.option.value;
-  
+
     if (!selectedItem) return;
-    
+
     if ('pokemon_v2_pokemonspeciesnames' in selectedItem) {
       this.router.navigate(['/pokemon', this.getPokemonName(selectedItem)]);
     } else {
       console.warn("Unknown selection type:", selectedItem);
     }
   }
-  
+
   getPokemonName(species: PokemonSpecies): string {
     return this.pokemonUtils.getNameByLanguage(species.pokemon_v2_pokemonspeciesnames)
-  }  
- 
+  }
+
   GetPokemonOfficialImage(pokemon: any) {
     return this.pokemonUtils.getPokemonOfficialImage(pokemon);
   }
@@ -112,5 +113,5 @@ export class PokeworldSearchComponent implements OnInit, AfterViewInit, OnDestro
         id: 0,
       }
     }];
-  }  
+  }
 }

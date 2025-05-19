@@ -1,7 +1,8 @@
 import { AfterViewChecked, ChangeDetectionStrategy, Component, Input } from '@angular/core';
+
+import { CommonModule } from '@angular/common';
 import { Pokemon } from '../../../../models/pokemon.model';
 import { PokemonUtilsService } from '../../../../utils/pokemon-utils';
-import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-pokemon-stats',
@@ -18,7 +19,7 @@ export class PokemonStatsComponent {
   private readonly NEGATIVE_NATURE = 0.9;
   private readonly POSITIVE_NATURE = 1.1;
 
-  constructor(private pokemonUtils: PokemonUtilsService) {}
+  constructor(private pokemonUtils: PokemonUtilsService) { }
 
   @Input() set pokemon(value: Pokemon | undefined) {
     if (value !== this._pokemon) {
@@ -33,7 +34,7 @@ export class PokemonStatsComponent {
       this.statTotal = 0;
       return;
     }
-    
+
     this.stats = this._pokemon.pokemon_v2_pokemonstats.map(stat => {
       const base = stat.base_stat;
       const isHp = stat.pokemon_v2_stat.name.toLowerCase() === 'hp';
@@ -67,5 +68,5 @@ export class PokemonStatsComponent {
 
   trackStat(index: number, stat: any) {
     return stat.name;
-  }  
+  }
 }

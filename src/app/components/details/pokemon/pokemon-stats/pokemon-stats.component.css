@@ -19,7 +19,8 @@
 /* ──────────────────── Stat Row ──────────────────── */
 .stat-row {
     display: grid;
-    grid-template-columns: minmax(100px, 25%) 40px 1fr 40px 40px; /* ✅ Ensures even alignment */
+    grid-template-columns: minmax(100px, 25%) 40px 1fr 40px 40px;
+    /* ✅ Ensures even alignment */
     gap: 12px;
     padding: 8px 0;
     align-items: center;
@@ -74,10 +75,13 @@
     .stat-title {
         font-size: 1.5rem;
     }
+
     .stat-row {
         grid-template-columns: minmax(80px, 30%) 35px 1fr 35px 35px;
     }
-    .stat-name, .stat-value {
+
+    .stat-name,
+    .stat-value {
         font-size: 1rem;
     }
 }
@@ -86,10 +90,13 @@
     .stat-title {
         font-size: 1.75rem;
     }
+
     .stat-row {
         grid-template-columns: minmax(90px, 25%) 35px 1fr 35px 35px;
     }
-    .stat-name, .stat-value {
+
+    .stat-name,
+    .stat-value {
         font-size: 1rem;
     }
 }
@@ -98,10 +105,13 @@
     .stat-title {
         font-size: 1.9rem;
     }
+
     .stat-row {
         grid-template-columns: minmax(100px, 22%) 40px 1fr 40px 40px;
     }
-    .stat-name, .stat-value {
+
+    .stat-name,
+    .stat-value {
         font-size: 1.2rem;
     }
 }
@@ -110,10 +120,13 @@
     .stat-title {
         font-size: 2rem;
     }
+
     .stat-row {
         grid-template-columns: minmax(110px, 20%) 40px 1fr 40px 40px;
     }
-    .stat-name, .stat-value {
+
+    .stat-name,
+    .stat-value {
         font-size: 1.1rem;
     }
 }

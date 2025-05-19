@@ -10,7 +10,7 @@ describe('LanguageSelectorComponent', () => {
     await TestBed.configureTestingModule({
       imports: [LanguageSelectorComponent]
     })
-    .compileComponents();
+      .compileComponents();
 
     fixture = TestBed.createComponent(LanguageSelectorComponent);
     component = fixture.componentInstance;

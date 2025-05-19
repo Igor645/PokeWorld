@@ -1,19 +1,20 @@
-import { Component, Input, OnInit, OnDestroy, ChangeDetectorRef, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
+
 import { CommonModule } from '@angular/common';
-import { Subscription } from 'rxjs';
-import { PokemonBgSvgComponent } from '../pokemon-bg-svg/pokemon-bg-svg.component';
-import { PokemonUtilsService } from '../../../utils/pokemon-utils';
-import { SettingsService } from '../../../services/settings.service';
 import { Pokemon } from '../../../models/pokemon.model';
+import { PokemonBgSvgComponent } from '../pokemon-bg-svg/pokemon-bg-svg.component';
 import { PokemonSpecies } from '../../../models/pokemon-species.model';
+import { PokemonUtilsService } from '../../../utils/pokemon-utils';
+import { Router } from '@angular/router';
+import { SettingsService } from '../../../services/settings.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-pokemon-card',
   templateUrl: './pokemon-card.component.html',
   styleUrls: ['./pokemon-card.component.css'],
   imports: [CommonModule, PokemonBgSvgComponent],
-  host: { 
+  host: {
     '(click)': 'navigateToPokemonDetails()'
   }
 })
@@ -21,7 +22,7 @@ export class PokemonCardComponent implements OnInit, OnDestroy, AfterViewInit {
   @Input() pokemon!: Pokemon;
   @Input() pokemonSpecies!: PokemonSpecies;
   @ViewChild('pokemonImage', { static: false }) pokemonImage!: ElementRef<HTMLImageElement>;
-  
+
   pokemonViewModel: { id: number; name: string; image: string; generation: string } = { id: 0, name: '', image: '', generation: '' };
 
   imageLoaded: boolean = false;
@@ -30,11 +31,11 @@ export class PokemonCardComponent implements OnInit, OnDestroy, AfterViewInit {
   private languageSubscription!: Subscription;
 
   constructor(
-    private router: Router, 
+    private router: Router,
     private pokemonUtils: PokemonUtilsService,
     private settingsService: SettingsService,
     private cdr: ChangeDetectorRef
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.updateViewModel();
@@ -46,7 +47,7 @@ export class PokemonCardComponent implements OnInit, OnDestroy, AfterViewInit {
       });
   }
 
-  ngAfterViewInit(): void {}
+  ngAfterViewInit(): void { }
 
   ngOnDestroy(): void {
     this.languageSubscription.unsubscribe();
@@ -78,7 +79,7 @@ export class PokemonCardComponent implements OnInit, OnDestroy, AfterViewInit {
     }, 700);
     this.eggSwooping = true;
     this.cdr.detectChanges();
-  }  
+  }
 
   onEggAnimationEnd(): void {
     this.eggGone = true;

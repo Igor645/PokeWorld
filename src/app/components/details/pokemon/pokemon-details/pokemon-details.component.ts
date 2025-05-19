@@ -1,24 +1,25 @@
-import { Component, OnInit, ElementRef, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { forkJoin, of, BehaviorSubject } from 'rxjs';
-import { catchError } from 'rxjs/operators';
-import { PokemonService } from '../../../../services/pokemon.service';
-import { PokemonSpecies } from '../../../../models/pokemon-species.model';
-import { Version } from '../../../../models/version.model';
+import { BehaviorSubject, forkJoin, of } from 'rxjs';
+import { ChangeDetectionStrategy, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+
 import { CommonModule } from '@angular/common';
-import { PokemonUtilsService } from '../../../../utils/pokemon-utils';
-import { PokemonBgSvgComponent } from '../../../shared/pokemon-bg-svg/pokemon-bg-svg.component';
-import { LoadingSpinnerComponent } from '../../../shared/loading-spinner/loading-spinner.component';
-import { PokemonNavigatorComponent } from '../pokemon-navigator/pokemon-navigator.component';
-import { Pokemon } from '../../../../models/pokemon.model';
-import { Sprite } from '../../../../models/sprite.model';
-import { PokemonTypeComponent } from '../../../shared/pokemon-type/pokemon-type.component';
-import { Name } from '../../../../models/species-name.model';
-import { MatIcon } from '@angular/material/icon';
-import { PokemonStatsComponent } from '../pokemon-stats/pokemon-stats.component';
 import { EvolutionService } from '../../../../services/evolution.service';
+import { LoadingSpinnerComponent } from '../../../shared/loading-spinner/loading-spinner.component';
+import { MatIcon } from '@angular/material/icon';
+import { Name } from '../../../../models/species-name.model';
+import { Pokemon } from '../../../../models/pokemon.model';
+import { PokemonBgSvgComponent } from '../../../shared/pokemon-bg-svg/pokemon-bg-svg.component';
 import { PokemonEvolution } from '../../../../models/pokemon-evolution.model';
 import { PokemonEvolutionsComponent } from "../pokemon-evolutions/pokemon-evolutions.component";
+import { PokemonNavigatorComponent } from '../pokemon-navigator/pokemon-navigator.component';
+import { PokemonService } from '../../../../services/pokemon.service';
+import { PokemonSpecies } from '../../../../models/pokemon-species.model';
+import { PokemonStatsComponent } from '../pokemon-stats/pokemon-stats.component';
+import { PokemonTypeComponent } from '../../../shared/pokemon-type/pokemon-type.component';
+import { PokemonUtilsService } from '../../../../utils/pokemon-utils';
+import { Sprite } from '../../../../models/sprite.model';
+import { Version } from '../../../../models/version.model';
+import { catchError } from 'rxjs/operators';
 
 @Component({
   selector: 'app-pokemon-details',
@@ -33,7 +34,7 @@ import { PokemonEvolutionsComponent } from "../pokemon-evolutions/pokemon-evolut
     PokemonStatsComponent,
     PokemonEvolutionsComponent,
     PokemonEvolutionsComponent
-],
+  ],
   templateUrl: './pokemon-details.component.html',
   styleUrls: ['./pokemon-details.component.css']
 })
@@ -55,14 +56,14 @@ export class PokemonDetailsComponent implements OnInit {
   get isLoading(): boolean {
     return this.isMainLoading || this.isAdjacentLoading || this.isEvolutionsLoading;
   }
-  
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private pokemonService: PokemonService,
     private evolutionService: EvolutionService,
     public pokemonUtils: PokemonUtilsService
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.subscribeToRouteChanges();
@@ -89,7 +90,7 @@ export class PokemonDetailsComponent implements OnInit {
       }
     });
   }
-  
+
   fetchPokemonDetails(id: number) {
     this.pokemonService.getPokemonDetails(id, undefined).subscribe({
       next: (response) => {
@@ -110,7 +111,7 @@ export class PokemonDetailsComponent implements OnInit {
       error: () => this.router.navigate(['/'])
     });
   }
-  
+
   fetchPokemonDetailsByName(name: string) {
     this.pokemonService.getPokemonDetails(undefined, name).subscribe({
       next: (response) => {
@@ -133,13 +134,13 @@ export class PokemonDetailsComponent implements OnInit {
   }
 
   private fetchAdjacentPokemon(currentId: number) {
-    const previous$ = currentId > 1 
+    const previous$ = currentId > 1
       ? this.pokemonService.getPokemonSpeciesById(currentId - 1).pipe(
-          catchError(err => {
-            console.error("Error fetching previous Pokémon:", err);
-            return of(null);
-          })
-        )
+        catchError(err => {
+          console.error("Error fetching previous Pokémon:", err);
+          return of(null);
+        })
+      )
       : of(null);
     const next$ = this.pokemonService.getPokemonSpeciesById(currentId + 1).pipe(
       catchError(err => {
@@ -187,8 +188,8 @@ export class PokemonDetailsComponent implements OnInit {
     const officialArtwork = spritesData.other["official-artwork"];
     let spriteKey: keyof Sprite = this.isShiny ? 'front_shiny' : 'front_default';
     this.selectedPokemonImage = officialArtwork[spriteKey] || officialArtwork['front_default'];
-  }  
-  
+  }
+
   onImageLoad(): void {
     if (this.pokemonImageElement) {
       const el = this.pokemonImageElement.nativeElement;
@@ -197,7 +198,7 @@ export class PokemonDetailsComponent implements OnInit {
         el.classList.remove('pop');
       }, 300);
     }
-  }  
+  }
 
   onSpriteTypeChange(isShiny: boolean): void {
     this.isShiny = isShiny;
@@ -212,9 +213,9 @@ export class PokemonDetailsComponent implements OnInit {
     if (!pokemon?.pokemon_v2_pokemonforms?.length) {
       return pokemon.name;
     }
-  
+
     const formName = this.pokemonUtils.getNameByLanguage(pokemon.pokemon_v2_pokemonforms[0].pokemon_v2_pokemonformnames);
-    
+
     return formName === 'Unknown'
       ? this.getPokemonSpeciesName()
       : formName;
@@ -222,20 +223,20 @@ export class PokemonDetailsComponent implements OnInit {
 
   hasMultipleVariants(): boolean {
     return (this.pokemonSpeciesDetails?.pokemon_v2_pokemons?.length || 0) > 1;
-  }  
+  }
 
   getAbilityText(ability: any, index: number): string {
     const abilityName = this.pokemonUtils.getNameByLanguage(ability.pokemon_v2_ability.pokemon_v2_abilitynames);
     return `${index + 1}. ${abilityName}${ability.is_hidden ? ' (Hidden)' : ''}`;
   }
-  
+
   getAbilityFlavorText(ability: any): string {
     return this.pokemonUtils.getAbilityFlavorTextByLanguage(ability);
-  }  
+  }
 
   getGenerationName(generationNames: Name[] | undefined): string {
     return this.pokemonUtils.parseGenerationName(generationNames);
-  }  
+  }
 
   getPokemonShapeName(shapeNames: Name[] | undefined): string {
     return this.pokemonUtils.getNameByLanguage(shapeNames);
@@ -243,32 +244,32 @@ export class PokemonDetailsComponent implements OnInit {
 
   getPokemonColorName(colorNames: Name[] | undefined): string {
     return this.pokemonUtils.getNameByLanguage(colorNames);
-  }  
+  }
 
   getFormattedHeight(heightDm: number | undefined): string {
     if (!heightDm) return "Unknown";
-    
+
     const meters = heightDm / 10;
     const totalInches = meters * 39.37;
     const feet = Math.floor(totalInches / 12);
     const inches = Math.round(totalInches % 12);
-  
+
     return `${meters.toFixed(1)}m (${feet}'${inches}")`;
   }
 
   getFormattedWeight(weightHg: number | undefined): string {
     if (!weightHg) return "Unknown";
-  
+
     const kg = weightHg / 10;
     const lbs = kg * 2.20462;
-  
+
     return `${kg.toFixed(1)}kg (${lbs.toFixed(1)}lbs)`;
-  }  
+  }
 
   isLegendaryOrMythicalOrBaby(): boolean | undefined {
     return (
-      this.pokemonSpeciesDetails?.is_legendary || 
-      this.pokemonSpeciesDetails?.is_mythical || 
+      this.pokemonSpeciesDetails?.is_legendary ||
+      this.pokemonSpeciesDetails?.is_mythical ||
       this.pokemonSpeciesDetails?.is_baby
     );
   }
@@ -297,7 +298,7 @@ export class PokemonDetailsComponent implements OnInit {
 
   playCry(version: 'legacy' | 'latest') {
     const cryUrl = version === 'legacy' ? this.getLegacyCryUrl() : this.getLatestCryUrl();
-    
+
     if (cryUrl) {
       const audio = new Audio(cryUrl);
       audio.volume = 0.05;

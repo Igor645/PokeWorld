@@ -1,10 +1,11 @@
 import { Component, Input } from '@angular/core';
-import { Router } from '@angular/router';
-import { PokemonSpecies } from '../../../../models/pokemon-species.model';
-import { PokemonUtilsService } from '../../../../utils/pokemon-utils';
-import { PokemonBgSvgComponent } from '../../../shared/pokemon-bg-svg/pokemon-bg-svg.component';
+
 import { CommonModule } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
+import { PokemonBgSvgComponent } from '../../../shared/pokemon-bg-svg/pokemon-bg-svg.component';
+import { PokemonSpecies } from '../../../../models/pokemon-species.model';
+import { PokemonUtilsService } from '../../../../utils/pokemon-utils';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-pokemon-navigator',
@@ -21,7 +22,7 @@ export class PokemonNavigatorComponent {
   constructor(
     private router: Router,
     private pokemonUtils: PokemonUtilsService
-  ) {}
+  ) { }
 
   get pokemonImage(): string {
     return this.pokemonUtils.getPokemonOfficialImage(

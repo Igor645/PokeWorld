@@ -1,7 +1,6 @@
 <p>Language:</p>
 <ul class="language-selector">
-    <li *ngFor="let lang of languages" 
-        [class.selected]="lang.id === selectedLanguageId" 
+    <li *ngFor="let lang of languages" [class.selected]="lang.id === selectedLanguageId"
         (click)="selectLanguage(lang.id)">
         {{ lang.name }}
     </li>

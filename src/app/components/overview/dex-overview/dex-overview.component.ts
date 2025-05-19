@@ -1,6 +1,6 @@
-import { 
-  Component, OnInit, Inject, PLATFORM_ID, ViewChild, ChangeDetectionStrategy, 
-  Renderer2, HostListener, OnDestroy 
+import {
+  Component, OnInit, Inject, PLATFORM_ID, ViewChild, ChangeDetectionStrategy,
+  Renderer2, HostListener, OnDestroy
 } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { PokemonService } from '../../../services/pokemon.service';
@@ -18,10 +18,10 @@ import { LoadingSpinnerComponent } from '../../shared/loading-spinner/loading-sp
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule, 
-    PokemonCardComponent, 
-    ScrollingModule, 
-    PokeworldSearchComponent, 
+    CommonModule,
+    PokemonCardComponent,
+    ScrollingModule,
+    PokeworldSearchComponent,
     LoadingSpinnerComponent,
   ],
   templateUrl: './dex-overview.component.html',
@@ -46,7 +46,7 @@ export class DexOverviewComponent implements OnInit, OnDestroy {
     private pokemonService: PokemonService,
     @Inject(PLATFORM_ID) private platformId: object,
     private renderer: Renderer2
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.initializeView();
@@ -94,7 +94,7 @@ export class DexOverviewComponent implements OnInit, OnDestroy {
     if (!isPlatformBrowser(this.platformId)) return 6;
 
     const width = window.innerWidth;
-    return width <= 768 
+    return width <= 768
       ? Math.max(2, Math.round((width / 768) * 3))
       : Math.max(2, Math.round((width / 1920) * 6));
   }

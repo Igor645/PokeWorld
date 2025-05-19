@@ -1,9 +1,10 @@
+import { PokemonType, PokemonTypeWrapper } from './pokemon-type.model';
+
 import { PokemonAbilityWrapper } from './pokemon-ability.model';
 import { PokemonColor } from './pokemon-color.model';
 import { PokemonCryWrapper } from './pokemon-cry.model';
 import { PokemonForms } from './pokemon-forms.model';
 import { PokemonShape } from './pokemon-shape.model';
-import { PokemonType, PokemonTypeWrapper } from './pokemon-type.model';
 import { PokemonSpritesWrapper } from './sprite.model';
 import { PokemonStat } from './stat.model';
 

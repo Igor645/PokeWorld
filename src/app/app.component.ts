@@ -12,14 +12,14 @@ import { isPlatformBrowser } from '@angular/common';
   imports: [CommonModule, RouterModule, MainLayoutComponent],
   templateUrl: './app.component.html',
 })
-export class AppComponent implements OnInit{
-  constructor(private router: Router, @Inject(PLATFORM_ID) private platformId: any) {}
+export class AppComponent implements OnInit {
+  constructor(private router: Router, @Inject(PLATFORM_ID) private platformId: any) { }
 
   ngOnInit() {
     this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
         if (isPlatformBrowser(this.platformId)) {
-            window.scrollTo({
+          window.scrollTo({
             top: 0,
             behavior: 'smooth'
           });
@@ -27,5 +27,5 @@ export class AppComponent implements OnInit{
       }
     });
   }
-  
+
 }

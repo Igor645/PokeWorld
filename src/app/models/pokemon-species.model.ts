@@ -1,12 +1,12 @@
-import { Pokemon } from './pokemon.model';
 import { Aggregate } from './aggregate.model';
-import { Name } from './species-name.model';
-import { Generation } from './generation.model';
-import { PokemonSprites } from './sprite.model';
+import { EvolutionChain } from './evolution-chain.model';
 import { FlavorText } from './flavor-text.model';
+import { Generation } from './generation.model';
+import { Name } from './species-name.model';
+import { Pokemon } from './pokemon.model';
 import { PokemonColor } from './pokemon-color.model';
 import { PokemonShape } from './pokemon-shape.model';
-import { EvolutionChain } from './evolution-chain.model';
+import { PokemonSprites } from './sprite.model';
 
 export interface PokemonSpecies {
   id: number;

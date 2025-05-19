@@ -1,13 +1,14 @@
-import { Injectable } from '@angular/core';
 import { Apollo, gql } from 'apollo-angular';
-import { ApolloQueryResult } from '@apollo/client/core';
 import { Observable, map } from 'rxjs';
+
+import { ApolloQueryResult } from '@apollo/client/core';
+import { Injectable } from '@angular/core';
 
 @Injectable({
   providedIn: 'root'
 })
 export class GraphQLService {
-  constructor(private apollo: Apollo) {}
+  constructor(private apollo: Apollo) { }
 
   executeQuery<T>(query: string, variables?: any): Observable<T> {
     return this.apollo.query<T>({

@@ -1,20 +1,11 @@
 <mat-form-field class="search-container">
-  <input
-    matInput
-    type="text"
-    placeholder="Search through PokeWorld..."
-    [formControl]="searchControl"
-    [matAutocomplete]="auto"
-  />
+  <input matInput type="text" placeholder="Search through PokeWorld..." [formControl]="searchControl"
+    [matAutocomplete]="auto" />
 
   <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onOptionSelected($event)">
     <mat-optgroup *ngIf="filteredPokemonSpecies.length" label="Pokémon">
-      <mat-option 
-        *ngFor="let species of filteredPokemonSpecies; trackBy: trackByPokemon" 
-        [value]="species">
-        <app-pokemon-search-item
-          [names]="species.pokemon_v2_pokemonspeciesnames"
-          endpoint="pokemon"
+      <mat-option *ngFor="let species of filteredPokemonSpecies; trackBy: trackByPokemon" [value]="species">
+        <app-pokemon-search-item [names]="species.pokemon_v2_pokemonspeciesnames" endpoint="pokemon"
           [imageSrc]="GetPokemonOfficialImage(species.pokemon_v2_pokemons[0])">
         </app-pokemon-search-item>
       </mat-option>

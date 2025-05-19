@@ -10,7 +10,7 @@ describe('PokeworldSearchComponent', () => {
     await TestBed.configureTestingModule({
       imports: [PokeworldSearchComponent]
     })
-    .compileComponents();
+      .compileComponents();
 
     fixture = TestBed.createComponent(PokeworldSearchComponent);
     component = fixture.componentInstance;

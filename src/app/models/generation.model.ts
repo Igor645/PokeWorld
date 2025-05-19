@@ -5,4 +5,3 @@ export interface Generation {
   name: string;
   pokemon_v2_generationnames: Name[];
 }
-  
