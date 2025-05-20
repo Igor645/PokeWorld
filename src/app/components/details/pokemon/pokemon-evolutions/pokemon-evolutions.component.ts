@@ -4,6 +4,7 @@ import { animate, state, style, transition, trigger } from '@angular/animations'
 import { CommonModule } from '@angular/common';
 import { EvolutionChain } from '../../../../models/evolution-chain.model';
 import { EvolutionTrigger } from '../../../../models/evolution-trigger.model';
+import { ExpandableSectionComponent } from '../../../shared/expandable-section/expandable-section.component';
 import { PokemonCardComponent } from '../../../shared/pokemon-card/pokemon-card.component';
 import { PokemonEvolution } from '../../../../models/pokemon-evolution.model';
 import { PokemonSpecies } from '../../../../models/pokemon-species.model';
@@ -20,33 +21,11 @@ interface EvolutionCondition {
   selector: 'app-pokemon-evolutions',
   imports: [
     CommonModule,
-    PokemonCardComponent
+    PokemonCardComponent,
+    ExpandableSectionComponent
   ],
   templateUrl: './pokemon-evolutions.component.html',
-  styleUrl: './pokemon-evolutions.component.css',
-  animations: [
-    trigger('expandCollapse', [
-      state('expanded', style({
-        height: '*',
-        opacity: 1,
-        paddingTop: '*',
-        paddingBottom: '*',
-        marginTop: '*',
-        marginBottom: '*',
-        overflow: 'hidden'
-      })),
-      state('collapsed', style({
-        height: '0px',
-        opacity: 0,
-        paddingTop: '0',
-        paddingBottom: '0',
-        marginTop: '0',
-        marginBottom: '0',
-        overflow: 'hidden'
-      })),
-      transition('expanded <=> collapsed', animate('300ms ease-in-out')),
-    ])
-  ]
+  styleUrl: './pokemon-evolutions.component.css'
 })
 
 export class PokemonEvolutionsComponent implements OnChanges {

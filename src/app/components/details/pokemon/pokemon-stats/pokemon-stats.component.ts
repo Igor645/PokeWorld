@@ -1,6 +1,7 @@
 import { AfterViewChecked, ChangeDetectionStrategy, Component, Input } from '@angular/core';
 
 import { CommonModule } from '@angular/common';
+import { ExpandableSectionComponent } from '../../../shared/expandable-section/expandable-section.component';
 import { Pokemon } from '../../../../models/pokemon.model';
 import { PokemonUtilsService } from '../../../../utils/pokemon-utils';
 
@@ -8,7 +9,7 @@ import { PokemonUtilsService } from '../../../../utils/pokemon-utils';
   selector: 'app-pokemon-stats',
   templateUrl: './pokemon-stats.component.html',
   styleUrls: ['./pokemon-stats.component.css'],
-  imports: [CommonModule]
+  imports: [CommonModule, ExpandableSectionComponent]
 })
 export class PokemonStatsComponent {
   private _pokemon: Pokemon | undefined;

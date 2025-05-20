@@ -1,0 +1,10 @@
+<div class="expandable-header">
+    <div class="expandable-title">{{ title }}</div>
+    <button class="toggle-button" (click)="toggle()" aria-label="Toggle Section">
+        <span [class.expanded]="isExpanded" class="chevron-icon">▼</span>
+    </button>
+</div>
+
+<div class="expandable-body" [@expandCollapse]="isExpanded ? 'expanded' : 'collapsed'">
+    <ng-content></ng-content>
+</div>
