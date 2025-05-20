@@ -15,6 +15,7 @@ import { PokemonNavigatorComponent } from '../pokemon-navigator/pokemon-navigato
 import { PokemonService } from '../../../../services/pokemon.service';
 import { PokemonSpecies } from '../../../../models/pokemon-species.model';
 import { PokemonStatsComponent } from '../pokemon-stats/pokemon-stats.component';
+import { PokemonTrainingComponent } from '../pokemon-training/pokemon-training.component';
 import { PokemonTypeComponent } from '../../../shared/pokemon-type/pokemon-type.component';
 import { PokemonUtilsService } from '../../../../utils/pokemon-utils';
 import { Sprite } from '../../../../models/sprite.model';
@@ -33,7 +34,7 @@ import { catchError } from 'rxjs/operators';
     MatIcon,
     PokemonStatsComponent,
     PokemonEvolutionsComponent,
-    PokemonEvolutionsComponent
+    PokemonTrainingComponent
   ],
   templateUrl: './pokemon-details.component.html',
   styleUrls: ['./pokemon-details.component.css']

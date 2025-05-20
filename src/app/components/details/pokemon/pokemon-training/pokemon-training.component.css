@@ -1,0 +1,119 @@
+:host {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+    background-color: var(--background-color);
+    padding: 1rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 6px 12px rgba(0, 0, 0, 0.1);
+    box-sizing: border-box;
+}
+
+.training-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+}
+
+.training-list li {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.4rem 0;
+    border-bottom: 1px solid var(--seperator-color);
+    flex-wrap: wrap;
+}
+
+.training-list li:last-child {
+    border-bottom: none;
+}
+
+.training-list label {
+    font-weight: 800;
+    color: var(--accent-text-color);
+    font-size: 2rem;
+}
+
+.training-list span {
+    text-align: right;
+    color: var(--accent-text-color);
+    font-size: 1.2rem;
+    max-width: 60%;
+    word-wrap: break-word;
+}
+
+.sub-detail {
+    display: block;
+    font-size: 0.9rem;
+    color: var(--secondary-text-color, #777);
+    margin-top: 2px;
+}
+
+.held-item-row {
+    display: flex;
+    gap: 0.4rem;
+}
+
+.held-item-line {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.4rem;
+    margin: 2px 0;
+}
+
+.info-icon {
+    font-size: 1.3rem;
+    cursor: pointer;
+    color: var(--accent-text-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.tooltipSpan {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+::ng-deep .tooltip-pre {
+    white-space: pre-line;
+}
+
+/* ──────────────── Responsive ──────────────── */
+@media (max-width: 480px) {
+
+    .training-list label,
+    .training-list span {
+        font-size: 1rem;
+    }
+
+    .training-list li {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 2px;
+    }
+
+    .training-list span {
+        text-align: left;
+        max-width: 100%;
+    }
+}
+
+@media (min-width: 481px) and (max-width: 768px) {
+
+    .training-list label,
+    .training-list span {
+        font-size: 1rem;
+    }
+}
+
+@media (min-width: 769px) {
+
+    .training-list label,
+    .training-list span {
+        font-size: 1rem;
+    }
+}

@@ -11,6 +11,8 @@ export const GraphQLQueries = {
           is_baby
           evolution_chain_id
           evolves_from_species_id
+          base_happiness
+          capture_rate
           pokemon_v2_evolutionchain {
             pokemon_v2_pokemonspecies {
               id
@@ -48,6 +50,7 @@ export const GraphQLQueries = {
             height
             weight
             is_default
+            base_experience
             pokemon_v2_pokemonsprites {
               sprites
             }
@@ -90,6 +93,36 @@ export const GraphQLQueries = {
                   pokemon_v2_language {
                     id
                     name
+                  }
+                }
+              }
+            }
+            pokemon_v2_pokemonitems {
+              id
+              rarity
+              pokemon_v2_version {
+                name
+                id
+                pokemon_v2_versionnames {
+                  id
+                  language_id
+                  name
+                  pokemon_v2_language {
+                    id
+                    name
+                  }
+                }
+              }
+              pokemon_v2_item {
+                id
+                name
+                pokemon_v2_itemnames {
+                  id
+                  language_id
+                  name
+                  pokemon_v2_language {
+                    name
+                    id
                   }
                 }
               }

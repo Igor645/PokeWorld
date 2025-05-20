@@ -15,6 +15,8 @@ export interface PokemonSpecies {
   is_legendary: boolean;
   is_mythical: boolean;
   evolution_chain_id: number;
+  base_happiness: number;
+  capture_rate: number;
   evolves_from_species_id: number | null;
   pokemon_v2_pokemons: Pokemon[];
   pokemon_v2_pokemonspeciesnames: Name[];

@@ -364,10 +364,15 @@ select:focus {
   margin: 0 auto 1rem;
   animation: fadeIn 1s ease-in-out;
   max-width: var(--general-width);
+  align-items: stretch;
 }
 
 .pokemon-stats {
   grid-column: span 2;
+}
+
+.pokemon-training {
+  grid-column: span 1;
 }
 
 .pokemon-evolutions {
@@ -460,7 +465,8 @@ select:focus {
   }
 
   .pokemon-stats,
-  .pokemon-evolutions {
+  .pokemon-evolutions,
+  .pokemon-training {
     grid-column: span 3
   }
 }
@@ -547,7 +553,8 @@ select:focus {
   }
 
   .pokemon-stats,
-  .pokemon-evolutions {
+  .pokemon-evolutions,
+  .pokemon-training {
     grid-column: span 3;
   }
 }

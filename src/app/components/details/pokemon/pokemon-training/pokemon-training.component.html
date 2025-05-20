@@ -1,0 +1,35 @@
+<app-expandable-section [title]="'Training'">
+    <ul class="training-list">
+        <li>
+            <label>EV Yield</label>
+            <span>{{ evYield || 'None' }}</span>
+        </li>
+        <li>
+            <label>Catch Rate</label>
+            <span>{{ catchRate }} ({{ catchRatePercent }} with Pokéball, full HP)</span>
+        </li>
+        <li>
+            <label>Base Happiness</label>
+            <span>{{ baseHappiness }} ({{ happinessDescription }})</span>
+        </li>
+        <li>
+            <label>Base XP</label>
+            <span>{{ baseExp }}</span>
+        </li>
+        <li>
+            <label>Held Items</label>
+            <div>
+                <ng-container *ngIf="heldItemsGrouped.length; else noItems">
+                    <div *ngFor="let item of heldItemsGrouped" class="held-item-line">
+                        {{ item.name }} ({{ item.rarity }}%)
+                        <span class="tooltipSpan" [matTooltip]="item.tooltip" matTooltipPosition="left"
+                            matTooltipClass="tooltip-pre">
+                            <mat-icon class="info-icon">info</mat-icon>
+                        </span>
+                    </div>
+                </ng-container>
+                <ng-template #noItems>None</ng-template>
+            </div>
+        </li>
+    </ul>
+</app-expandable-section>

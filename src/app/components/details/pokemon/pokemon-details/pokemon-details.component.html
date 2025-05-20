@@ -138,6 +138,7 @@
 
   <div class="pokemon-other-details">
     <app-pokemon-stats class="pokemon-stats" [pokemon]="selectedPokemon" />
+    <app-pokemon-training class="pokemon-training" [pokemon]="selectedPokemon" [species]="pokemonSpeciesDetails" />
     <app-pokemon-evolutions class="pokemon-evolutions"
       [evolutionChain]="pokemonSpeciesDetails?.pokemon_v2_evolutionchain" [pokemonEvolutions]="pokemonEvolutions" />
   </div>
