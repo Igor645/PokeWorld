@@ -16,24 +16,25 @@
     color: var(--accent-text-color);
 }
 
-/* ──────────────────── Stat Row ──────────────────── */
+/* ──────────────── Stat Row ──────────────── */
 .stat-row {
     display: grid;
     grid-template-columns: minmax(100px, 25%) 40px 1fr 40px 40px;
-    /* ✅ Ensures even alignment */
+    grid-template-areas: "name value bar min max";
     gap: 12px;
     padding: 8px 0;
     align-items: center;
     width: 100%;
     box-sizing: border-box;
+
 }
 
 .stat-row:not(:last-child) {
     border-bottom: 1px solid var(--seperator-color);
 }
 
-/* ──────────────────── Stat Name ──────────────────── */
 .stat-name {
+    grid-area: name;
     font-weight: bold;
     color: var(--accent-text-color);
     white-space: normal;
@@ -43,7 +44,6 @@
     font-size: 1.2rem;
 }
 
-/* ──────────────────── Stat Value ──────────────────── */
 .stat-value {
     text-align: center;
     font-weight: bold;
@@ -51,8 +51,25 @@
     font-size: 1.2rem;
 }
 
-/* ──────────────────── Progress Bar ──────────────────── */
+.stat-val-base {
+    grid-area: value;
+}
+
+.stat-val-min {
+    grid-area: min;
+}
+
+.stat-val-max {
+    grid-area: max;
+}
+
+.grid-spacer {
+    visibility: hidden;
+}
+
+/* ──────────────── Progress Bar ──────────────── */
 .progress-bar {
+    grid-area: bar;
     width: 100%;
     min-width: 10px;
     height: 12px;
@@ -62,7 +79,6 @@
     box-shadow: inset 0 2px 4px var(--shadow-color);
 }
 
-/* ──────────────────── Progress Fill ──────────────────── */
 .progress {
     height: 100%;
     border-radius: 6px;
@@ -70,19 +86,31 @@
     background-color: var(--primary-color);
 }
 
-/* ──────────────────── Responsive Design ──────────────────── */
+/* ──────────────── Responsive ──────────────── */
 @media (max-width: 480px) {
     .stat-title {
         font-size: 1.5rem;
     }
 
     .stat-row {
-        grid-template-columns: minmax(80px, 30%) 35px 1fr 35px 35px;
+        grid-template-columns: minmax(90px, 30%) 35px 1fr 35px 35px;
+        grid-template-areas:
+            "bar bar bar bar bar"
+            "name value value min max";
+        gap: 5px;
+    }
+
+    .stat-val-base {
+        text-align: left;
     }
 
     .stat-name,
     .stat-value {
         font-size: 1rem;
+    }
+
+    .progress-bar {
+        height: 10px;
     }
 }
 
@@ -93,6 +121,7 @@
 
     .stat-row {
         grid-template-columns: minmax(90px, 25%) 35px 1fr 35px 35px;
+        grid-template-areas: "name value bar min max";
     }
 
     .stat-name,
@@ -108,6 +137,7 @@
 
     .stat-row {
         grid-template-columns: minmax(100px, 22%) 40px 1fr 40px 40px;
+        grid-template-areas: "name value bar min max";
     }
 
     .stat-name,
@@ -123,6 +153,7 @@
 
     .stat-row {
         grid-template-columns: minmax(110px, 20%) 40px 1fr 40px 40px;
+        grid-template-areas: "name value bar min max";
     }
 
     .stat-name,
