@@ -34,3 +34,44 @@
 .expandable-body {
     margin-top: 1rem;
 }
+
+/* ───────────── Responsive Font Sizes ───────────── */
+@media (max-width: 480px) {
+    .expandable-title {
+        font-size: 1.5rem;
+    }
+
+    .chevron-icon {
+        font-size: 1.5rem;
+    }
+}
+
+@media (min-width: 481px) and (max-width: 768px) {
+    .expandable-title {
+        font-size: 1.75rem;
+    }
+
+    .chevron-icon {
+        font-size: 1.75rem;
+    }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+    .expandable-title {
+        font-size: 1.9rem;
+    }
+
+    .chevron-icon {
+        font-size: 1.9rem;
+    }
+}
+
+@media (min-width: 1025px) {
+    .expandable-title {
+        font-size: 2rem;
+    }
+
+    .chevron-icon {
+        font-size: 2rem;
+    }
+}
