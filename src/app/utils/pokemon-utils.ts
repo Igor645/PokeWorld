@@ -1,37 +1,25 @@
-import { BehaviorSubject, Observable } from 'rxjs';
-
 import { EvolutionTrigger } from '../models/evolution-trigger.model';
 import { Injectable } from '@angular/core';
+import { LanguageService } from '../services/language.service';
 import { Name } from '../models/species-name.model';
+import { Observable } from 'rxjs';
 import { Pokemon } from '../models/pokemon.model';
 import { PokemonAbility } from '../models/pokemon-ability.model';
 import { PokemonSpecies } from '../models/pokemon-species.model';
-import { SettingsService } from '../services/settings.service';
 import { Version } from '../models/version.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class PokemonUtilsService {
-  private selectedLanguageId$ = new BehaviorSubject<number>(9);
-
-  constructor(private settingsService: SettingsService) {
-    this.settingsService.watchSetting<number>('selectedLanguageId')
-      .subscribe(id => {
-        if (id !== null && id !== undefined) {
-          this.selectedLanguageId$.next(id);
-        } else {
-          this.selectedLanguageId$.next(9);
-        }
-      });
-  }
+  constructor(private languageService: LanguageService) { }
 
   /**
    * Get the selected language ID reactively.
    * @returns The selected language ID.
    */
   public getSelectedLanguageId(): number {
-    return this.selectedLanguageId$.getValue();
+    return this.languageService.getSelectedLanguageId();
   }
 
   /**
@@ -39,7 +27,7 @@ export class PokemonUtilsService {
    * @returns An Observable that emits when the language changes.
    */
   watchLanguageChanges(): Observable<number> {
-    return this.selectedLanguageId$.asObservable();
+    return this.languageService.watchLanguageChanges();
   }
 
   /**
@@ -103,10 +91,10 @@ export class PokemonUtilsService {
   }
 
   /**
-  * Get the Pokémon ability flavor text by the selected language ID.
-  * @param ability The Pokémon ability DTO object.
-  * @returns The formatted ability flavor text.
-  */
+   * Get the Pokémon ability flavor text by the selected language ID.
+   * @param ability The Pokémon ability DTO object.
+   * @returns The formatted ability flavor text.
+   */
   getAbilityFlavorTextByLanguage(ability: PokemonAbility): string {
     const languageId = this.getSelectedLanguageId();
 
@@ -119,7 +107,6 @@ export class PokemonUtilsService {
 
   /**
    * Parses the generation name and returns it in the selected language.
-   * @param generation The raw generation string (e.g., "generation-iii").
    * @param generationNames The list of translated generation names.
    * @returns The formatted generation name based on language preference.
    */

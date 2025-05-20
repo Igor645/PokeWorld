@@ -1,23 +1,56 @@
+import { BehaviorSubject, Observable, of, shareReplay, tap } from 'rxjs';
 import { Language, LanguageResponse } from '../models/language.model';
 
 import { GraphQLQueries } from '../graphql/graphql-queries';
 import { GraphQLService } from './graphql.service';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { SettingsService } from './settings.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class LanguageService {
-  constructor(private graphQLService: GraphQLService) { }
+  private selectedLanguageId$ = new BehaviorSubject<number>(9);
+  private cachedLanguages: Language[] | null = null;
+  private languages$: Observable<LanguageResponse> | null = null;
 
-  /**
-   * Fetches all available Pokémon languages.
-   * @returns Observable containing the list of languages.
-   */
+  constructor(
+    private settingsService: SettingsService,
+    private graphQLService: GraphQLService
+  ) {
+    this.settingsService.watchSetting<number>('selectedLanguageId').subscribe(id => {
+      this.setSelectedLanguageId(id ?? 9);
+    });
+
+    this.getLanguages().subscribe();
+  }
+
   getLanguages(): Observable<LanguageResponse> {
-    let query = GraphQLQueries.GetLanguages;
+    if (this.cachedLanguages) {
+      return of({ pokemon_v2_language: this.cachedLanguages });
+    }
 
-    return this.graphQLService.executeQuery<LanguageResponse>(query);
+    if (!this.languages$) {
+      this.languages$ = this.graphQLService.executeQuery<LanguageResponse>(GraphQLQueries.GetLanguages).pipe(
+        tap(response => {
+          this.cachedLanguages = response.pokemon_v2_language;
+        }),
+        shareReplay(1)
+      );
+    }
+
+    return this.languages$;
+  }
+
+  setSelectedLanguageId(id: number) {
+    this.selectedLanguageId$.next(id);
+  }
+
+  getSelectedLanguageId(): number {
+    return this.selectedLanguageId$.getValue();
+  }
+
+  watchLanguageChanges(): Observable<number> {
+    return this.selectedLanguageId$.asObservable();
   }
 }

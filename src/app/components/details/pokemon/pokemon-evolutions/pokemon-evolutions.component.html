@@ -1,5 +1,5 @@
 <app-expandable-section title="Evolutions">
-  <div class="evolution-chain" [@expandCollapse]="isExpanded ? 'expanded' : 'collapsed'">
+  <div class="evolution-chain">
     <div *ngFor="let path of evolutionPaths" class="evolution-row">
       <ng-container *ngFor="let species of path; let i = index">
         <!-- Evolution Cell -->

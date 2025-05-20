@@ -2,8 +2,10 @@ import { AfterViewChecked, ChangeDetectionStrategy, Component, Input } from '@an
 
 import { CommonModule } from '@angular/common';
 import { ExpandableSectionComponent } from '../../../shared/expandable-section/expandable-section.component';
+import { LanguageService } from '../../../../services/language.service';
 import { Pokemon } from '../../../../models/pokemon.model';
 import { PokemonUtilsService } from '../../../../utils/pokemon-utils';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-pokemon-stats',
@@ -13,6 +15,7 @@ import { PokemonUtilsService } from '../../../../utils/pokemon-utils';
 })
 export class PokemonStatsComponent {
   private _pokemon: Pokemon | undefined;
+  private languageSub: Subscription;
   stats: any[] = [];
   statTotal: number = 0;
   private readonly MAX_EV = 63;
@@ -20,7 +23,14 @@ export class PokemonStatsComponent {
   private readonly NEGATIVE_NATURE = 0.9;
   private readonly POSITIVE_NATURE = 1.1;
 
-  constructor(private pokemonUtils: PokemonUtilsService) { }
+  constructor(
+    private pokemonUtils: PokemonUtilsService,
+    private languageService: LanguageService
+  ) {
+    this.languageSub = this.languageService.watchLanguageChanges().subscribe(() => {
+      this.computeStats();
+    });
+  }
 
   @Input() set pokemon(value: Pokemon | undefined) {
     if (value !== this._pokemon) {
