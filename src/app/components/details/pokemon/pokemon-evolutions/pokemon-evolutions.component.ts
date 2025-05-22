@@ -135,7 +135,15 @@ export class PokemonEvolutionsComponent implements OnChanges {
     }
 
     if (evo.pokemon_v2_gender?.name) {
-      conditions.push({ text: 'must be', suffix: evo.pokemon_v2_gender.name });
+      const isFemale = evo.pokemon_v2_gender.name.toLowerCase() === 'female';
+      const spriteUrl = isFemale
+        ? '/images/female.png'
+        : '/images/male.png';
+
+      conditions.push({
+        text: 'must be',
+        spriteUrl
+      });
     }
 
     if (evo.pokemon_v2_location) {

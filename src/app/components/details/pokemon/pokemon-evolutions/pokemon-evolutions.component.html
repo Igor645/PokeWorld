@@ -19,7 +19,10 @@
                   <span class="condition-content">
                     <span *ngIf="condition.text">{{ condition.text }}</span>
                     <ng-container *ngIf="condition.spriteUrl; else spaceSpacer">
-                      <img [src]="condition.spriteUrl" class="condition-icon" alt="item sprite" />
+                      <img [src]="condition.spriteUrl" [ngClass]="{
+                        'condition-icon': true,
+                        'gender-icon': condition.text === 'must be'
+                      }" alt="condition sprite" />
                     </ng-container>
                     <ng-template #spaceSpacer>&nbsp;</ng-template>
                     <span *ngIf="condition.suffix">{{ condition.suffix }}</span>
