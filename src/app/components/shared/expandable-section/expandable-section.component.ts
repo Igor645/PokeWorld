@@ -15,7 +15,7 @@ import { animate, state, style, transition, trigger } from '@angular/animations'
         paddingBottom: '*',
         marginTop: '*',
         marginBottom: '*',
-        overflow: 'hidden'
+        overflow: 'visible'
       })),
       state('collapsed', style({
         height: '0px',

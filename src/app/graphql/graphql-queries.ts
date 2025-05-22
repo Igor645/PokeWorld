@@ -125,6 +125,9 @@ export const GraphQLQueries = {
                     id
                   }
                 }
+                pokemon_v2_itemsprites {
+                  sprites
+                }
               }
             }
             pokemon_v2_pokemonabilities {

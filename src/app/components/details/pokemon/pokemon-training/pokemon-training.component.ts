@@ -25,6 +25,7 @@ export class PokemonTrainingComponent implements OnInit, OnChanges, OnDestroy {
     rarity: number;
     count: number;
     tooltip: string;
+    defaultIcon?: string;
   }[] = [];
 
   private languageSub!: Subscription;
@@ -47,7 +48,7 @@ export class PokemonTrainingComponent implements OnInit, OnChanges, OnDestroy {
 
   groupHeldItems(): void {
     const languageId = this.utils.getSelectedLanguageId();
-    const grouped = new Map<string, { name: string; rarity: number; count: number; tooltip: string }>();
+    const grouped = new Map<string, { name: string; rarity: number; count: number; tooltip: string; defaultIcon: string }>();
 
     for (const item of this.pokemon?.pokemon_v2_pokemonitems || []) {
       const name = this.utils.getNameByLanguage(item.pokemon_v2_item.pokemon_v2_itemnames);
@@ -61,7 +62,8 @@ export class PokemonTrainingComponent implements OnInit, OnChanges, OnDestroy {
           name,
           rarity: item.rarity,
           count: 1,
-          tooltip: `Held in:\n${versionName}`
+          tooltip: `Held in:\n${versionName}`,
+          defaultIcon: item.pokemon_v2_item?.pokemon_v2_itemsprites[0]?.sprites.default
         });
       } else {
         const existing = grouped.get(key)!;
