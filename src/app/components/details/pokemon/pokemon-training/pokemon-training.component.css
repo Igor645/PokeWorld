@@ -76,19 +76,19 @@
 
 @keyframes shake-rotate {
     0% {
-        transform: scale(1) rotateZ(0deg);
+        transform: scale(1.03) rotateZ(0deg);
     }
 
     25% {
-        transform: scale(1.03) rotateZ(-2deg);
+        transform: scale(1.03) rotateZ(-1deg);
     }
 
     50% {
-        transform: scale(1.03) rotateZ(2deg);
+        transform: scale(1.03) rotateZ(1deg);
     }
 
     75% {
-        transform: scale(1.03) rotateZ(-1deg);
+        transform: scale(1.03) rotateZ(-0.5deg);
     }
 
     100% {
