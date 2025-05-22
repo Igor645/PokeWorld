@@ -21,7 +21,9 @@
                     <ng-container *ngIf="condition.spriteUrl; else spaceSpacer">
                       <img [src]="condition.spriteUrl" [ngClass]="{
                         'condition-icon': true,
-                        'gender-icon': condition.text === 'must be'
+                        'gender-icon': condition.text === 'must be',
+                        'female-icon': condition.spriteUrl.includes('female'),
+                        'male-icon': condition.spriteUrl.includes('male')
                       }" alt="condition sprite" />
                     </ng-container>
                     <ng-template #spaceSpacer>&nbsp;</ng-template>
