@@ -243,6 +243,9 @@ select:focus {
 
 .sprite-buttons button:hover:not(.active) {
   background-color: var(--background-hover-color);
+}
+
+.sprite-buttons button:hover {
   transform: scale(1.05);
   cursor: pointer;
 }
@@ -418,6 +421,10 @@ select:focus {
     font-size: 0.85rem;
     padding: 0.4rem 0.8rem;
     background-position: right 0.8rem center;
+  }
+
+  select:hover {
+    cursor: pointer;
   }
 
   .sprite-buttons button {
