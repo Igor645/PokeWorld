@@ -1,3 +1,7 @@
+:host {
+  border-radius: 10px;
+}
+
 .pokemon-type {
   display: flex;
   align-items: center;
