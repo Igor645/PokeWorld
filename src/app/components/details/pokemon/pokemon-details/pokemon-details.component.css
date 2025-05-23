@@ -198,6 +198,11 @@ select {
   background-size: 10px 5px;
 }
 
+select:hover {
+  cursor: pointer;
+  box-shadow: 0 0 0 3px var(--background-hover-color);
+}
+
 select:disabled {
   color: var(--text-color);
   cursor: not-allowed;
@@ -211,7 +216,7 @@ select:disabled {
 
 select:focus {
   outline: none;
-  box-shadow: 0 0 0 3px var(--glass-color);
+  box-shadow: 0 0 0 3px var(--primary-color-light);
 }
 
 /* ──────────────────── Sprite Buttons ──────────────────── */
@@ -421,10 +426,6 @@ select:focus {
     font-size: 0.85rem;
     padding: 0.4rem 0.8rem;
     background-position: right 0.8rem center;
-  }
-
-  select:hover {
-    cursor: pointer;
   }
 
   .sprite-buttons button {

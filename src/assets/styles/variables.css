@@ -5,6 +5,7 @@
     /* ====== PRIMARY COLORS ====== */
     --primary-color: #1b6ec2;
     --primary-hover-color: #155a9c;
+    --primary-color-light: #88c0f871;
     --secondary-color: #006bb7;
     --secondary-hover-color: #004a8f;
     --accent-text-color: #004a8f;
@@ -51,6 +52,8 @@
 
 /* ====== DARK THEME ====== */
 .dark-theme {
+    --primary-color-light: #399cff38;
+
     /* General */
     --text-color: #e0e0e0;
     --background-color: #121212;
