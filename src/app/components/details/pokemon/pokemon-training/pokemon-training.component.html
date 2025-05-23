@@ -21,19 +21,9 @@
             <div>
                 <ng-container *ngIf="heldItemsGrouped.length; else noItems">
                     <div class="held-item-line">
-                        <div *ngFor="let item of heldItemsGrouped" class="item-details">
-                            <div class="item-left">
-                                <span class="item-name">{{ item.name }}</span>
-                                <div class="item-probability">{{ item.rarity }}%</div>
-                            </div>
-                            <div class="item-right">
-                                <img [src]="item.defaultIcon" alt="{{ item.name }} icon" class="item-icon" />
-                                <span class="tooltipSpan" [matTooltip]="item.tooltip" matTooltipPosition="left"
-                                    matTooltipClass="tooltip-pre">
-                                    <mat-icon class="info-icon">info</mat-icon>
-                                </span>
-                            </div>
-                        </div>
+                        <app-held-item-display *ngFor="let item of heldItemsGrouped" [name]="item.name"
+                            [rarity]="item.rarity" [iconUrl]="item.defaultIcon" [tooltip]="item.tooltip">
+                        </app-held-item-display>
                     </div>
                 </ng-container>
                 <ng-template #noItems>None</ng-template>

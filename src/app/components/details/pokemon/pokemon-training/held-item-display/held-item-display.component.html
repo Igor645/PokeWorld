@@ -1,0 +1,12 @@
+<div class="item-details">
+    <div class="item-left">
+        <span class="item-name">{{ name }}</span>
+        <div class="item-probability">{{ rarity }}%</div>
+    </div>
+    <div class="item-right">
+        <img [src]="iconUrl" [alt]="name + ' icon'" class="item-icon" />
+        <span class="tooltipSpan" [matTooltip]="tooltip" matTooltipPosition="left" matTooltipClass="tooltip-pre">
+            <mat-icon class="info-icon">info</mat-icon>
+        </span>
+    </div>
+</div>

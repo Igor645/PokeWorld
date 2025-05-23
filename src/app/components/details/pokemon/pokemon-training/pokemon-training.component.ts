@@ -2,6 +2,7 @@ import { Component, Input, OnChanges, OnDestroy, OnInit } from '@angular/core';
 
 import { CommonModule } from '@angular/common';
 import { ExpandableSectionComponent } from '../../../shared/expandable-section/expandable-section.component';
+import { HeldItemDisplayComponent } from './held-item-display/held-item-display.component';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { Pokemon } from '../../../../models/pokemon.model';
@@ -12,7 +13,7 @@ import { Subscription } from 'rxjs';
 @Component({
   selector: 'app-pokemon-training',
   standalone: true,
-  imports: [CommonModule, MatIconModule, MatTooltipModule, ExpandableSectionComponent],
+  imports: [CommonModule, MatIconModule, MatTooltipModule, ExpandableSectionComponent, HeldItemDisplayComponent],
   templateUrl: './pokemon-training.component.html',
   styleUrls: ['./pokemon-training.component.css']
 })
