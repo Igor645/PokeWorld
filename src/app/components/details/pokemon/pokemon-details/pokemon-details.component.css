@@ -232,7 +232,6 @@ select:focus {
   border-radius: 4px;
   background-color: var(--background-color);
   color: var(--primary-color);
-  cursor: pointer;
   transition: background-color 0.2s ease, color 0.2s ease;
   box-shadow: 0 2px 4px var(--shadow-color);
 }
@@ -244,6 +243,8 @@ select:focus {
 
 .sprite-buttons button:hover:not(.active) {
   background-color: var(--background-hover-color);
+  transform: scale(1.05);
+  cursor: pointer;
 }
 
 /* ──────────────────── Details List ──────────────────── */
