@@ -9,12 +9,14 @@ import { PokemonCardComponent } from '../../../shared/pokemon-card/pokemon-card.
 import { PokemonEvolution } from '../../../../models/pokemon-evolution.model';
 import { PokemonSpecies } from '../../../../models/pokemon-species.model';
 import { PokemonUtilsService } from '../../../../utils/pokemon-utils';
+import { RouterModule } from '@angular/router';
 import { get } from 'node:http';
 
 interface EvolutionCondition {
   text: string;
   spriteUrl?: string;
   suffix?: string;
+  href?: string;
 }
 
 @Component({
@@ -22,7 +24,8 @@ interface EvolutionCondition {
   imports: [
     CommonModule,
     PokemonCardComponent,
-    ExpandableSectionComponent
+    ExpandableSectionComponent,
+    RouterModule
   ],
   templateUrl: './pokemon-evolutions.component.html',
   styleUrl: './pokemon-evolutions.component.css'
@@ -119,7 +122,8 @@ export class PokemonEvolutionsComponent implements OnChanges {
       conditions.push({
         text: 'use',
         suffix: name,
-        spriteUrl: sprite
+        spriteUrl: sprite,
+        href: "/item/" + name
       });
     }
 
@@ -130,7 +134,8 @@ export class PokemonEvolutionsComponent implements OnChanges {
       conditions.push({
         text: 'hold',
         suffix: name,
-        spriteUrl: sprite
+        spriteUrl: sprite,
+        href: "/item/" + name
       });
     }
 

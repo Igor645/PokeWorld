@@ -27,7 +27,14 @@
                       }" alt="condition sprite" />
                     </ng-container>
                     <ng-template #spaceSpacer>&nbsp;</ng-template>
-                    <span *ngIf="condition.suffix">{{ condition.suffix }}</span>
+                    <span *ngIf="condition.suffix">
+                      <a *ngIf="condition.href" [routerLink]="condition.href" class="evolution-link">
+                        {{ condition.suffix }}
+                      </a>
+                      <span *ngIf="condition.href === undefined">
+                        {{ condition.suffix }}
+                      </span>
+                    </span>
                   </span>
                 </div>
                 <hr *ngIf="!last" class="evolution-separator" />
