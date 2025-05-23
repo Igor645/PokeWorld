@@ -30,9 +30,9 @@ body {
     position: relative;
 }
 
-*:focus {
-    outline-offset: 2px;
-    outline: var(--border-focus-color) solid 2px;
+*:focus-visible {
+    outline-offset: 4px;
+    outline: var(--primary-color) solid 2px;
     border: none
 }
 
