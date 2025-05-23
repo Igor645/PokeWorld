@@ -32,11 +32,13 @@
     z-index: 1;
 }
 
+:host:focus::before,
 :host:hover::before {
     transform: rotate(45deg);
     opacity: 0.8;
 }
 
+:host:focus,
 :host:hover {
     transform: perspective(1000px) scale(1.05) rotateX(8deg);
     cursor: pointer;
