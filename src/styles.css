@@ -30,6 +30,12 @@ body {
     position: relative;
 }
 
+*:focus-visible {
+    outline-offset: 4px;
+    outline: var(--primary-color) solid 2px;
+    border: none
+}
+
 .background-image {
     position: fixed;
     top: 0;

@@ -72,6 +72,16 @@ app-pokemon-card {
     align-items: flex-start;
 }
 
+.evolution-link {
+    text-decoration: underline;
+    cursor: pointer;
+    display: inline-block;
+}
+
+.evolution-link:hover {
+    scale: 1.05;
+}
+
 .condition-row {
     display: flex;
     align-items: center;

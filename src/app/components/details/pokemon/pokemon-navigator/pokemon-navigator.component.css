@@ -1,3 +1,7 @@
+:host {
+  border-radius: 10px;
+}
+
 /* ──────────── Pokemon Navigator Container ──────────── */
 .pokemon-navigator {
   cursor: pointer;
@@ -12,6 +16,7 @@
   height: 100%;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 6px 12px rgba(0, 0, 0, 0.1);
   gap: 5%;
+  overflow: hidden;
 }
 
 .pokemon-navigator:hover {

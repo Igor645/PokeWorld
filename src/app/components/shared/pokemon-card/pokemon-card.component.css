@@ -32,16 +32,23 @@
     z-index: 1;
 }
 
+:host:focus-visible::before,
 :host:hover::before {
     transform: rotate(45deg);
     opacity: 0.8;
 }
 
+:host:focus-visible,
 :host:hover {
     transform: perspective(1000px) scale(1.05) rotateX(8deg);
     cursor: pointer;
     transition: transform 0.5s ease;
     box-shadow: 0 8px 16px var(--shadow-hover-color), 0 12px 24px var(--shadow-hover-color);
+}
+
+:host:focus-visible {
+    border: none;
+    outline-offset: 0;
 }
 
 :host:active {

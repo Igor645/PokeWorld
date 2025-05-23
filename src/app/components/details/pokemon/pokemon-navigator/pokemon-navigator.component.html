@@ -1,4 +1,4 @@
-<div class="pokemon-navigator" (click)="navigateToDetails()">
+<div class="pokemon-navigator">
   <ng-container *ngIf="facing === 'left'; else rightTemplate">
     <mat-icon class="arrow left">arrow_left</mat-icon>
     <div class="pokemon-name">{{ getPokemonName() }}</div>
