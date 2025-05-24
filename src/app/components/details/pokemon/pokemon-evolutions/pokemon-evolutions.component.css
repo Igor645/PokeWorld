@@ -72,51 +72,6 @@ app-pokemon-card {
     align-items: flex-start;
 }
 
-.evolution-link {
-    text-decoration: underline;
-    cursor: pointer;
-    display: inline-block;
-}
-
-.evolution-link:hover {
-    scale: 1.05;
-}
-
-.condition-row {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.condition-content {
-    display: flex;
-    align-items: center;
-}
-
-.condition-content span {
-    line-height: 1;
-}
-
-.condition-icon {
-    width: 1.5rem;
-    height: 1.5rem;
-    object-fit: contain;
-}
-
-.gender-icon {
-    width: 1rem;
-    height: 1rem;
-    object-fit: contain;
-}
-
-.male-icon {
-    padding: 0 0.3rem;
-}
-
-.female-icon {
-    padding: 0 0.1rem;
-}
-
 .evolution-cell {
     display: flex;
     flex-direction: column;
@@ -124,7 +79,7 @@ app-pokemon-card {
     height: fit-content;
 }
 
-.evolution-trigger {
+.evolution-conditions {
     margin-top: 0.5rem;
     font-size: 0.85rem;
     color: var(--accent-text-color);

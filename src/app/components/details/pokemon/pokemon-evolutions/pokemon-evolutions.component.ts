@@ -1,4 +1,5 @@
 import { Component, HostListener, Input, OnChanges } from '@angular/core';
+import { EvolutionCondition, EvolutionConditionDisplayComponent } from './evolution-condition-display/evolution-condition-display.component';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 
 import { CommonModule } from '@angular/common';
@@ -12,19 +13,13 @@ import { PokemonUtilsService } from '../../../../utils/pokemon-utils';
 import { RouterModule } from '@angular/router';
 import { get } from 'node:http';
 
-interface EvolutionCondition {
-  text: string;
-  spriteUrl?: string;
-  suffix?: string;
-  href?: string;
-}
-
 @Component({
   selector: 'app-pokemon-evolutions',
   imports: [
     CommonModule,
     PokemonCardComponent,
     ExpandableSectionComponent,
+    EvolutionConditionDisplayComponent,
     RouterModule
   ],
   templateUrl: './pokemon-evolutions.component.html',
@@ -96,23 +91,23 @@ export class PokemonEvolutionsComponent implements OnChanges {
     const conditions: EvolutionCondition[] = [];
 
     if (typeof evo.min_level === 'number') {
-      conditions.push({ text: 'Level', suffix: `${evo.min_level}` });
+      conditions.push({ prefix: 'Level ', entity: `${evo.min_level}` });
     }
 
     if (evo.time_of_day) {
-      conditions.push({ text: 'during the', suffix: evo.time_of_day });
+      conditions.push({ prefix: 'during the ', entity: evo.time_of_day });
     }
 
     if (evo.min_happiness != null) {
-      conditions.push({ text: 'with high friendship' });
+      conditions.push({ prefix: 'with high friendship' });
     }
 
     if (evo.min_beauty != null) {
-      conditions.push({ text: 'with high beauty' });
+      conditions.push({ prefix: 'with high beauty' });
     }
 
     if (evo.min_affection != null) {
-      conditions.push({ text: 'with high affection' });
+      conditions.push({ prefix: 'with high affection' });
     }
 
     if (evo.pokemon_v2_item) {
@@ -120,10 +115,10 @@ export class PokemonEvolutionsComponent implements OnChanges {
       const name = this.pokemonUtils.getNameByLanguage(item.pokemon_v2_itemnames);
       const sprite = item.pokemon_v2_itemsprites?.[0]?.sprites?.default;
       conditions.push({
-        text: 'use',
-        suffix: name,
-        spriteUrl: sprite,
-        href: "/item/" + name
+        prefix: 'use',
+        entity: name,
+        href: `/item/${name}`,
+        spriteUrl: sprite
       });
     }
 
@@ -132,61 +127,90 @@ export class PokemonEvolutionsComponent implements OnChanges {
       const name = this.pokemonUtils.getNameByLanguage(item.pokemon_v2_itemnames);
       const sprite = item.pokemon_v2_itemsprites?.[0]?.sprites?.default;
       conditions.push({
-        text: 'hold',
-        suffix: name,
-        spriteUrl: sprite,
-        href: "/item/" + name
+        prefix: 'hold',
+        entity: name,
+        href: `/item/${name}`,
+        spriteUrl: sprite
       });
     }
 
     if (evo.pokemon_v2_gender?.name) {
       const isFemale = evo.pokemon_v2_gender.name.toLowerCase() === 'female';
-      const spriteUrl = isFemale
-        ? '/images/female.png'
-        : '/images/male.png';
+      const spriteUrl = isFemale ? '/images/female.png' : '/images/male.png';
 
       conditions.push({
-        text: 'must be',
+        prefix: 'must be',
         spriteUrl
       });
     }
 
     if (evo.pokemon_v2_location) {
       const name = this.pokemonUtils.getNameByLanguage(evo.pokemon_v2_location.pokemon_v2_locationnames);
-      conditions.push({ text: 'at', suffix: name });
+      conditions.push({
+        prefix: 'at ',
+        entity: name,
+        href: `/location/${name}`
+      });
     }
 
     if (evo.pokemon_v2_move) {
       const name = this.pokemonUtils.getNameByLanguage(evo.pokemon_v2_move.pokemon_v2_movenames);
-      conditions.push({ text: 'knowing the move', suffix: name });
+      conditions.push({
+        prefix: 'knowing the move ',
+        entity: name,
+        href: `/move/${name}`
+      });
     }
 
     if (evo.pokemon_v2_type) {
       const name = this.pokemonUtils.getNameByLanguage(evo.pokemon_v2_type.pokemon_v2_typenames);
-      conditions.push({ text: 'knowing a', suffix: `${name}-type move` });
+      conditions.push({
+        prefix: 'knowing a ',
+        entity: name,
+        suffix: '-type move',
+        href: `/type/${name}`
+      });
     }
 
     if (evo.needs_overworld_rain) {
-      conditions.push({ text: 'while raining' });
+      conditions.push({ prefix: 'while raining' });
     }
 
     if (evo.turn_upside_down) {
-      conditions.push({ text: 'while turning the device upside down' });
+      conditions.push({ prefix: 'while turning the device upside down' });
     }
 
     if (evo.pokemonV2PokemonspecyByPartySpeciesId) {
-      const name = this.pokemonUtils.getNameByLanguage(evo.pokemonV2PokemonspecyByPartySpeciesId.pokemon_v2_pokemonspeciesnames);
-      conditions.push({ text: 'with', suffix: `${name} in party` });
+      const name = this.pokemonUtils.getNameByLanguage(
+        evo.pokemonV2PokemonspecyByPartySpeciesId.pokemon_v2_pokemonspeciesnames
+      );
+      conditions.push({
+        prefix: 'with ',
+        entity: name,
+        suffix: ' in party',
+        href: `/pokemon/${name}`
+      });
     }
 
     if (evo.pokemonV2TypeByPartyTypeId) {
       const name = this.pokemonUtils.getNameByLanguage(evo.pokemonV2TypeByPartyTypeId.pokemon_v2_typenames);
-      conditions.push({ text: 'with a', suffix: `${name}-type Pokémon in party` });
+      conditions.push({
+        prefix: 'with a ',
+        entity: name,
+        suffix: '-type Pokémon in party',
+        href: `/type/${name}`
+      });
     }
 
     if (evo.pokemonV2PokemonspecyByTradeSpeciesId) {
-      const name = this.pokemonUtils.getNameByLanguage(evo.pokemonV2PokemonspecyByTradeSpeciesId.pokemon_v2_pokemonspeciesnames);
-      conditions.push({ text: 'trade with', suffix: name });
+      const name = this.pokemonUtils.getNameByLanguage(
+        evo.pokemonV2PokemonspecyByTradeSpeciesId.pokemon_v2_pokemonspeciesnames
+      );
+      conditions.push({
+        prefix: 'trade with ',
+        entity: name,
+        href: `/pokemon/${name}`
+      });
     }
 
     if (typeof evo.relative_physical_stats === 'number') {
@@ -203,24 +227,23 @@ export class PokemonEvolutionsComponent implements OnChanges {
           break;
       }
       if (statText) {
-        conditions.push({ text: `when ${statText}` });
+        conditions.push({ prefix: `when ${statText}` });
       }
     }
 
     if (evo.pokemon_v2_evolutiontrigger) {
       const name = this.getEvolutionTriggerName(evo.pokemon_v2_evolutiontrigger);
-      if (!conditions.some(c => c.text === name || c.suffix === name)) {
-        conditions.push({ text: name });
+      if (!conditions.some(c => c.prefix === name || c.entity === name)) {
+        conditions.push({ prefix: name });
       }
     }
 
     if (conditions.length === 0) {
-      conditions.push({ text: 'No evolutions' });
+      conditions.push({ prefix: 'No evolutions' });
     }
 
     return conditions;
   }
-
 
   isMultiStage(path: (PokemonSpecies | null)[]): boolean {
     return path.filter(p => p !== null).length > 1;

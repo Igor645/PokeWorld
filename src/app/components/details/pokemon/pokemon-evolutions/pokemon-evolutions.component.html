@@ -9,34 +9,15 @@
             <app-pokemon-card [pokemon]="species.pokemon_v2_pokemons[0]" [pokemonSpecies]="species">
             </app-pokemon-card>
 
-            <div class="evolution-trigger">
+            <div class="evolution-conditions">
               <ng-container *ngFor="
                 let evo of getPokemonEvolution(species.id);
                 let i = index;
                 let last = last
               ">
-                <div *ngFor="let condition of getEvolutionConditions(evo)" class="condition-row">
-                  <span class="condition-content">
-                    <span *ngIf="condition.text">{{ condition.text }}</span>
-                    <ng-container *ngIf="condition.spriteUrl; else spaceSpacer">
-                      <img [src]="condition.spriteUrl" [ngClass]="{
-                        'condition-icon': true,
-                        'gender-icon': condition.text === 'must be',
-                        'female-icon': condition.spriteUrl.includes('female'),
-                        'male-icon': condition.spriteUrl.includes('male')
-                      }" alt="condition sprite" />
-                    </ng-container>
-                    <ng-template #spaceSpacer>&nbsp;</ng-template>
-                    <span *ngIf="condition.suffix">
-                      <a *ngIf="condition.href" [routerLink]="condition.href" class="evolution-link">
-                        {{ condition.suffix }}
-                      </a>
-                      <span *ngIf="condition.href === undefined">
-                        {{ condition.suffix }}
-                      </span>
-                    </span>
-                  </span>
-                </div>
+                <app-evolution-condition-display *ngFor="let condition of getEvolutionConditions(evo)"
+                  [condition]="condition">
+                </app-evolution-condition-display>
                 <hr *ngIf="!last" class="evolution-separator" />
               </ng-container>
 
