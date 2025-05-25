@@ -40,6 +40,7 @@
 .pokemon-main-view-left {
   width: calc(55% - 2rem);
   color: var(--accent-text-color);
+  font-size: 1.2rem;
 }
 
 .pokemon-main-view-left h1 {
@@ -388,6 +389,10 @@ select:focus {
   grid-column: span 3;
 }
 
+.pokemon-breeding {
+  grid-column: span 1;
+}
+
 /* ──────────────────── Mobile Responsiveness ──────────────────── */
 /* Extra Small Devices (up to 480px) */
 @media (max-width: 480px) {
@@ -475,7 +480,8 @@ select:focus {
 
   .pokemon-stats,
   .pokemon-evolutions,
-  .pokemon-training {
+  .pokemon-training,
+  .pokemon-breeding {
     grid-column: span 3
   }
 }
@@ -563,7 +569,8 @@ select:focus {
 
   .pokemon-stats,
   .pokemon-evolutions,
-  .pokemon-training {
+  .pokemon-training,
+  .pokemon-breeding {
     grid-column: span 3;
   }
 }
