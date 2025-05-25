@@ -9,7 +9,7 @@
     border: var(--primary-color) 2px solid;
     border-radius: 5px;
     padding: 0.4rem;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 6px 12px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 4px var(--shadow-color);
     transition: transform 0.2s ease;
 }
 

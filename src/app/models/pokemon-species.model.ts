@@ -2,6 +2,7 @@ import { Aggregate } from './aggregate.model';
 import { EvolutionChain } from './evolution-chain.model';
 import { FlavorText } from './flavor-text.model';
 import { Generation } from './generation.model';
+import { GrowthRate } from './growthrate.model';
 import { Name } from './species-name.model';
 import { Pokemon } from './pokemon.model';
 import { PokemonColor } from './pokemon-color.model';
@@ -30,6 +31,7 @@ export interface PokemonSpecies {
   pokemon_v2_pokemonshape: PokemonShape;
   pokemon_v2_evolutionchain: EvolutionChain;
   pokemon_v2_pokemonegggroups: PokemonEggGroups[];
+  pokemon_v2_growthrate: GrowthRate;
 }
 
 export interface PokemonSpeciesResponse {

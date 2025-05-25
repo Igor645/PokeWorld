@@ -1,6 +1,7 @@
 import { Component, Input } from '@angular/core';
 
 import { CommonModule } from '@angular/common';
+import { Description } from '../../../../models/description.model';
 import { ExpandableSectionComponent } from '../../../shared/expandable-section/expandable-section.component';
 import { Name } from '../../../../models/species-name.model';
 import { Pokemon } from '../../../../models/pokemon.model';
@@ -50,5 +51,9 @@ export class PokemonBreedingComponent {
 
   getNameByLanguage(names: Name[]): string {
     return this.pokemonUtils.getNameByLanguage(names);
+  }
+
+  getDescriptionByLanguage(descriptions: Description[] | undefined): string {
+    return this.pokemonUtils.getDescriptionByLanguage(descriptions);
   }
 }

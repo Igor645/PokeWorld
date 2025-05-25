@@ -33,10 +33,21 @@
         <span class="label">Egg Groups</span>
         <div class="egg-groups">
             <a *ngFor="let group of pokemonSpecies?.pokemon_v2_pokemonegggroups" class="egg-group"
-                [routerLink]="['/egg-group', group.pokemon_v2_egggroup.id]">
+                [routerLink]="['/egg-group', getNameByLanguage(group.pokemon_v2_egggroup.pokemon_v2_egggroupnames)]">
                 {{ getNameByLanguage(group.pokemon_v2_egggroup.pokemon_v2_egggroupnames) }}
             </a>
         </div>
+    </div>
+
+    <!-- Egg Groups -->
+    <div class="breeding-row growth-rate-row">
+        <span class="label">Growth Rate</span>
+        <a class="growth-rate"
+            [routerLink]="['/growth-rate', getDescriptionByLanguage(pokemonSpecies?.pokemon_v2_growthrate?.pokemon_v2_growthratedescriptions)]">
+            {{
+            getDescriptionByLanguage(pokemonSpecies?.pokemon_v2_growthrate?.pokemon_v2_growthratedescriptions)
+            }}
+        </a>
     </div>
 
 </app-expandable-section>

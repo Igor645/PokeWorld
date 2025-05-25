@@ -62,6 +62,20 @@ export const GraphQLQueries = {
               }
             }
           }
+          pokemon_v2_growthrate {
+            name
+            id
+            formula
+            pokemon_v2_growthratedescriptions {
+              description
+              id
+              language_id
+              pokemon_v2_language {
+                id
+                name
+              }
+            }
+          }
           pokemon_v2_pokemons {
             id
             name
