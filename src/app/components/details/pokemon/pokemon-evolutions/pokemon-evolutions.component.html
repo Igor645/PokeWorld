@@ -9,22 +9,20 @@
             <app-pokemon-card [pokemon]="species.pokemon_v2_pokemons[0]" [pokemonSpecies]="species">
             </app-pokemon-card>
 
-            <div class="evolution-conditions">
-              <ng-container *ngFor="
-                let evo of getPokemonEvolution(species.id);
-                let i = index;
-                let last = last
-              ">
-                <app-evolution-condition-display *ngFor="let condition of getEvolutionConditions(evo)"
-                  [condition]="condition">
-                </app-evolution-condition-display>
-                <hr *ngIf="!last" class="evolution-separator" />
-              </ng-container>
-
-              <div *ngIf="!isMultiStage(path)" class="no-evolution-message">
-                No evolutions
+            <!-- Only show if any evolution has at least one condition -->
+            <ng-container *ngIf="getPokemonEvolution(species.id) as evolutions">
+              <div class="evolution-conditions" *ngIf="hasConditions(evolutions)">
+                <ng-container *ngFor="let evo of evolutions; let i = index; let last = last">
+                  <app-evolution-condition-display *ngFor="let condition of getEvolutionConditions(evo)"
+                    [condition]="condition"></app-evolution-condition-display>
+                  <hr *ngIf="!last" class="evolution-separator" />
+                </ng-container>
               </div>
-            </div>
+            </ng-container>
+            <ng-template #noEvolutions>
+              <div class="no-evolution-message">No evolutions</div>
+            </ng-template>
+
           </ng-container>
         </div>
 

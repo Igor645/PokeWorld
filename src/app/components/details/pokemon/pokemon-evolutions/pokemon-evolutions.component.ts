@@ -245,6 +245,11 @@ export class PokemonEvolutionsComponent implements OnChanges {
     return conditions;
   }
 
+  hasConditions(evolutions: PokemonEvolution[]): boolean {
+    console.log(evolutions.some(evo => this.getEvolutionConditions(evo)?.length > 0))
+    return evolutions.some(evo => this.getEvolutionConditions(evo)?.length > 0);
+  }
+
   isMultiStage(path: (PokemonSpecies | null)[]): boolean {
     return path.filter(p => p !== null).length > 1;
   }

@@ -83,6 +83,12 @@ app-pokemon-card {
     margin-top: 0.5rem;
     font-size: 0.85rem;
     color: var(--accent-text-color);
+    border: var(--primary-color) 2px solid;
+    border-radius: 5px;
+    width: fit-content;
+    align-self: center;
+    padding: 0.2rem 1rem;
+    box-shadow: 0 2px 4px var(--shadow-color);
 }
 
 .empty-placeholder {
