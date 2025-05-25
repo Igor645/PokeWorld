@@ -46,6 +46,7 @@
 app-pokemon-card {
     width: 15rem;
     height: 22rem;
+    align-self: center;
 }
 
 .evolution-chain {
@@ -89,6 +90,7 @@ app-pokemon-card {
     align-self: center;
     padding: 0.5rem 1rem;
     box-shadow: 0 2px 4px var(--shadow-color);
+    box-sizing: border-box;
 }
 
 .empty-placeholder {
