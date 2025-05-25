@@ -71,6 +71,8 @@ app-pokemon-card {
         0 10px 15px rgba(0, 0, 0, 0.05);
     transition: box-shadow 0.3s ease;
     align-items: flex-start;
+    max-width: 100%;
+    box-sizing: border-box;
 }
 
 .evolution-cell {
@@ -91,6 +93,7 @@ app-pokemon-card {
     padding: 0.5rem 1rem;
     box-shadow: 0 2px 4px var(--shadow-color);
     box-sizing: border-box;
+    max-width: 90%;
 }
 
 .empty-placeholder {
