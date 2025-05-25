@@ -82,6 +82,7 @@ app-pokemon-card {
     height: fit-content;
 }
 
+.no-evolution-message,
 .evolution-conditions {
     margin-top: 0.5rem;
     font-size: 0.85rem;

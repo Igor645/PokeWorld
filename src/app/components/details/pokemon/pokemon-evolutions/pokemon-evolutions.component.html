@@ -19,10 +19,10 @@
                 </ng-container>
               </div>
             </ng-container>
-            <ng-template #noEvolutions>
-              <div class="no-evolution-message">No evolutions</div>
-            </ng-template>
 
+            <div *ngIf="!isMultiStage(path)" class="no-evolution-message">
+              No evolutions
+            </div>
           </ng-container>
         </div>
 

@@ -78,9 +78,11 @@ export class PokemonEvolutionsComponent implements OnChanges {
   }
 
   getPokemonEvolution(id: number): PokemonEvolution[] | undefined {
-    return this.pokemonEvolutions.filter(
+    var evos = this.pokemonEvolutions.filter(
       evolution => evolution?.evolved_species_id === id
     );
+
+    return evos.length > 0 ? evos : undefined;
   }
 
   getEvolutionTriggerName(evolutionTrigger: EvolutionTrigger): string {
@@ -246,7 +248,6 @@ export class PokemonEvolutionsComponent implements OnChanges {
   }
 
   hasConditions(evolutions: PokemonEvolution[]): boolean {
-    console.log(evolutions.some(evo => this.getEvolutionConditions(evo)?.length > 0))
     return evolutions.some(evo => this.getEvolutionConditions(evo)?.length > 0);
   }
 
