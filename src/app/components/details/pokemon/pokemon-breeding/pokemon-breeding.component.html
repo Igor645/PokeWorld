@@ -17,6 +17,17 @@
         </ng-template>
     </div>
 
+    <!-- Growth Rate -->
+    <div class="breeding-row growth-rate-row">
+        <span class="label">Growth Rate</span>
+        <a class="growth-rate"
+            [routerLink]="['/growth-rate', getDescriptionByLanguage(pokemonSpecies?.pokemon_v2_growthrate?.pokemon_v2_growthratedescriptions)]">
+            {{
+            getDescriptionByLanguage(pokemonSpecies?.pokemon_v2_growthrate?.pokemon_v2_growthratedescriptions)
+            }}
+        </a>
+    </div>
+
     <!-- Egg Cycles & Hatch Steps -->
     <div class="breeding-row" *ngIf="pokemonSpecies as species">
         <span class="label">Egg Cycles</span>
@@ -39,15 +50,26 @@
         </div>
     </div>
 
-    <!-- Egg Groups -->
-    <div class="breeding-row growth-rate-row">
-        <span class="label">Growth Rate</span>
-        <a class="growth-rate"
-            [routerLink]="['/growth-rate', getDescriptionByLanguage(pokemonSpecies?.pokemon_v2_growthrate?.pokemon_v2_growthratedescriptions)]">
-            {{
-            getDescriptionByLanguage(pokemonSpecies?.pokemon_v2_growthrate?.pokemon_v2_growthratedescriptions)
-            }}
+    <!-- Baby Trigger Item -->
+    <div class="breeding-row">
+        <span class="label">Baby Trigger Item</span>
+        <a class="baby-trigger-item" *ngIf="getBabyTriggerItem() as babyItem; else None"
+            [routerLink]="['/item', babyItem.name]">
+            {{ getNameByLanguage(babyItem.pokemon_v2_itemnames) }}
+            <img *ngIf="babyItem.pokemon_v2_itemsprites?.[0]?.sprites?.default"
+                [src]="babyItem.pokemon_v2_itemsprites[0].sprites.default" [alt]="babyItem.name" class="item-sprite" />
         </a>
+        <ng-template #None>
+            <span>None</span>
+        </ng-template>
+    </div>
+
+    <!-- Habitat -->
+    <div class="breeding-row">
+        <span class="label">Habitat</span>
+        <span class="habitat">
+            {{ getNameByLanguage(pokemonSpecies?.pokemon_v2_pokemonhabitat?.pokemon_v2_pokemonhabitatnames)}}
+        </span>
     </div>
 
 </app-expandable-section>

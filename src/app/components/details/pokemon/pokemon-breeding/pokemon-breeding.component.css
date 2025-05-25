@@ -26,6 +26,8 @@ span {
     align-items: center;
     padding: 8px 0;
     box-sizing: border-box;
+    flex-wrap: wrap;
+    gap: 0.4rem;
 }
 
 .breeding-row:not(:last-child) {
@@ -36,6 +38,8 @@ span {
     display: flex;
     align-items: center;
     gap: 8px;
+    justify-content: flex-end;
+    flex-wrap: wrap;
 }
 
 .breeding-gender-icons img {
@@ -62,6 +66,23 @@ span {
     justify-content: flex-end;
 }
 
+.item-sprite {
+    width: 1.7rem;
+    height: 1.7rem;
+    object-fit: contain;
+    margin-right: -6px;
+    padding: 0;
+    display: block;
+}
+
+.baby-trigger-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    justify-content: flex-end;
+}
+
+.baby-trigger-item,
 .growth-rate,
 .egg-group {
     border: var(--primary-color) 2px solid;
@@ -75,9 +96,10 @@ span {
     box-shadow: 0 2px 4px var(--shadow-color);
 }
 
+.baby-trigger-item:hover,
 .growth-rate:hover,
 .egg-group:hover {
-    scale: 1.05;
+    transform: scale(1.05);
     cursor: pointer;
 }
 
@@ -85,4 +107,50 @@ span {
     display: flex;
     flex-direction: column;
     align-items: flex-end;
+}
+
+.growth-rate::first-letter,
+.egg-group::first-letter,
+.baby-trigger-item::first-letter,
+.habitat::first-letter {
+    text-transform: uppercase;
+}
+
+/* ──────────────── Responsive ──────────────── */
+@media (max-width: 480px) {
+
+    .label,
+    .breeding-row>span:not(.label),
+    .breeding-row>a {
+        font-size: 1rem;
+        text-align: left;
+    }
+
+    .label {
+        width: 100%;
+    }
+
+    .breeding-gender-icons {
+        justify-content: flex-start;
+    }
+
+    .baby-trigger-item,
+    .growth-rate,
+    .egg-group {
+        font-size: 0.95rem;
+        padding: 3px 6px;
+    }
+
+    .breeding-muted {
+        font-size: 0.95rem;
+    }
+
+    .item-sprite {
+        width: 1.5rem;
+        height: 1.5rem;
+    }
+
+    .breeding-egg-cycles {
+        align-items: flex-start;
+    }
 }

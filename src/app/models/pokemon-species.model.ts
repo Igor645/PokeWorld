@@ -7,6 +7,7 @@ import { Name } from './species-name.model';
 import { Pokemon } from './pokemon.model';
 import { PokemonColor } from './pokemon-color.model';
 import { PokemonEggGroups } from './egggroup';
+import { PokemonHabitat } from './pokemon-habitat.model';
 import { PokemonShape } from './pokemon-shape.model';
 import { PokemonSprites } from './sprite.model';
 
@@ -32,6 +33,7 @@ export interface PokemonSpecies {
   pokemon_v2_evolutionchain: EvolutionChain;
   pokemon_v2_pokemonegggroups: PokemonEggGroups[];
   pokemon_v2_growthrate: GrowthRate;
+  pokemon_v2_pokemonhabitat: PokemonHabitat;
 }
 
 export interface PokemonSpeciesResponse {
