@@ -5,6 +5,7 @@ import { Generation } from './generation.model';
 import { Name } from './species-name.model';
 import { Pokemon } from './pokemon.model';
 import { PokemonColor } from './pokemon-color.model';
+import { PokemonEggGroups } from './egggroup';
 import { PokemonShape } from './pokemon-shape.model';
 import { PokemonSprites } from './sprite.model';
 
@@ -17,6 +18,8 @@ export interface PokemonSpecies {
   evolution_chain_id: number;
   base_happiness: number;
   capture_rate: number;
+  gender_rate: number | null;
+  hatch_counter: number;
   evolves_from_species_id: number | null;
   pokemon_v2_pokemons: Pokemon[];
   pokemon_v2_pokemonspeciesnames: Name[];
@@ -26,6 +29,7 @@ export interface PokemonSpecies {
   pokemon_v2_pokemoncolor: PokemonColor;
   pokemon_v2_pokemonshape: PokemonShape;
   pokemon_v2_evolutionchain: EvolutionChain;
+  pokemon_v2_pokemonegggroups: PokemonEggGroups[];
 }
 
 export interface PokemonSpeciesResponse {

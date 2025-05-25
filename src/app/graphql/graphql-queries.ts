@@ -13,6 +13,8 @@ export const GraphQLQueries = {
           evolves_from_species_id
           base_happiness
           capture_rate
+          gender_rate
+          hatch_counter
           pokemon_v2_evolutionchain {
             pokemon_v2_pokemonspecies {
               id
@@ -40,6 +42,22 @@ export const GraphQLQueries = {
                     id
                     name
                   }
+                }
+              }
+            }
+          }
+          pokemon_v2_pokemonegggroups {
+            id
+            egg_group_id
+            pokemon_v2_egggroup {
+              name
+              id
+              pokemon_v2_egggroupnames {
+                name
+                language_id
+                pokemon_v2_language {
+                  id
+                  name
                 }
               }
             }

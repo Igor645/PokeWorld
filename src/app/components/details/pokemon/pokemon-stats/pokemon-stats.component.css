@@ -10,12 +10,6 @@
     box-sizing: border-box;
 }
 
-.stat-title {
-    font-size: 2rem;
-    font-weight: bold;
-    color: var(--accent-text-color);
-}
-
 /* ──────────────── Stat Row ──────────────── */
 .stat-row {
     display: grid;
@@ -35,7 +29,7 @@
 
 .stat-name {
     grid-area: name;
-    font-weight: bold;
+    font-weight: 800;
     color: var(--accent-text-color);
     white-space: normal;
     word-wrap: break-word;
@@ -46,7 +40,6 @@
 
 .stat-value {
     text-align: center;
-    font-weight: bold;
     color: var(--accent-text-color);
     font-size: 1.2rem;
 }
@@ -61,6 +54,10 @@
 
 .stat-val-max {
     grid-area: max;
+}
+
+.bottom-row {
+    font-weight: 800;
 }
 
 .grid-spacer {

@@ -15,7 +15,7 @@
 
 .item-details:hover {
     cursor: pointer;
-    transform: scale(1.05);
+    scale: 1.05;
 }
 
 .item-name {

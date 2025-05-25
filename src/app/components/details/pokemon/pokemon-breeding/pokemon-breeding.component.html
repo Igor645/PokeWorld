@@ -1,0 +1,42 @@
+<app-expandable-section title="Breeding">
+
+    <!-- Gender Distribution -->
+    <div class="breeding-row">
+        <span class="label">Gender Distribution</span>
+        <ng-container *ngIf="pokemonSpecies && !getGenderDisplay().genderless; else genderlessBlock">
+            <span class="breeding-gender-icons">
+                {{ getGenderDisplay().male }}%
+                <img class="male-icon" src="/images/male.png" alt="Male" />
+                /
+                {{ getGenderDisplay().female }}%
+                <img class="female-icon" src="/images/female.png" alt="Female" />
+            </span>
+        </ng-container>
+        <ng-template #genderlessBlock>
+            <span>Genderless</span>
+        </ng-template>
+    </div>
+
+    <!-- Egg Cycles & Hatch Steps -->
+    <div class="breeding-row" *ngIf="pokemonSpecies as species">
+        <span class="label">Egg Cycles</span>
+        <span class="breeding-egg-cycles">
+            {{ getHatchInfo(species.hatch_counter).cycles }} cycles<br />
+            <span class="breeding-muted">
+                ({{ getHatchInfo(species.hatch_counter).steps | number }} steps)
+            </span>
+        </span>
+    </div>
+
+    <!-- Egg Groups -->
+    <div class="breeding-row egg-groups-row">
+        <span class="label">Egg Groups</span>
+        <div class="egg-groups">
+            <a *ngFor="let group of pokemonSpecies?.pokemon_v2_pokemonegggroups" class="egg-group"
+                [routerLink]="['/egg-group', group.pokemon_v2_egggroup.id]">
+                {{ getNameByLanguage(group.pokemon_v2_egggroup.pokemon_v2_egggroupnames) }}
+            </a>
+        </div>
+    </div>
+
+</app-expandable-section>
