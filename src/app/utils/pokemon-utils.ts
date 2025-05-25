@@ -1,3 +1,4 @@
+import { Description } from '../models/description.model';
 import { EvolutionTrigger } from '../models/evolution-trigger.model';
 import { Injectable } from '@angular/core';
 import { LanguageService } from '../services/language.service';
@@ -65,6 +66,19 @@ export class PokemonUtilsService {
     return (
       names?.find((x) => x.pokemon_v2_language.id === languageId)
         ?.name || 'Unknown'
+    );
+  }
+
+  /**
+ * Get the correct description from a list of translations based on the selected language ID.
+ * @param descriptions The list of descriptions.
+ * @returns The description in the selected language.
+ */
+  getDescriptionByLanguage(descriptions: Description[] | undefined): string {
+    const languageId = this.getSelectedLanguageId();
+    return (
+      descriptions?.find((x) => x.pokemon_v2_language.id === languageId)
+        ?.description || 'Unknown'
     );
   }
 

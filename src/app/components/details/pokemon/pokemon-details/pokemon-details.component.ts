@@ -9,6 +9,7 @@ import { MatIcon } from '@angular/material/icon';
 import { Name } from '../../../../models/species-name.model';
 import { Pokemon } from '../../../../models/pokemon.model';
 import { PokemonBgSvgComponent } from '../../../shared/pokemon-bg-svg/pokemon-bg-svg.component';
+import { PokemonBreedingComponent } from '../pokemon-breeding/pokemon-breeding.component';
 import { PokemonEvolution } from '../../../../models/pokemon-evolution.model';
 import { PokemonEvolutionsComponent } from "../pokemon-evolutions/pokemon-evolutions.component";
 import { PokemonNavigatorComponent } from '../pokemon-navigator/pokemon-navigator.component';
@@ -34,7 +35,8 @@ import { catchError } from 'rxjs/operators';
     MatIcon,
     PokemonStatsComponent,
     PokemonEvolutionsComponent,
-    PokemonTrainingComponent
+    PokemonTrainingComponent,
+    PokemonBreedingComponent
   ],
   templateUrl: './pokemon-details.component.html',
   styleUrls: ['./pokemon-details.component.css']

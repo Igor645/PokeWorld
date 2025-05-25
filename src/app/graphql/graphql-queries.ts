@@ -13,7 +13,25 @@ export const GraphQLQueries = {
           evolves_from_species_id
           base_happiness
           capture_rate
+          gender_rate
+          hatch_counter
           pokemon_v2_evolutionchain {
+            baby_trigger_item_id
+            pokemon_v2_item {
+              name
+              id
+              pokemon_v2_itemnames {
+                id
+                name
+                pokemon_v2_language {
+                  id
+                  name
+                }
+              }
+              pokemon_v2_itemsprites {
+                sprites
+              }
+            }
             pokemon_v2_pokemonspecies {
               id
               name
@@ -41,6 +59,49 @@ export const GraphQLQueries = {
                     name
                   }
                 }
+              }
+            }
+          }
+          pokemon_v2_pokemonhabitat {
+            name
+            id
+            pokemon_v2_pokemonhabitatnames {
+              id
+              language_id
+              name
+              pokemon_v2_language {
+                id
+                name
+              }
+            }
+          }
+          pokemon_v2_pokemonegggroups {
+            id
+            egg_group_id
+            pokemon_v2_egggroup {
+              name
+              id
+              pokemon_v2_egggroupnames {
+                name
+                language_id
+                pokemon_v2_language {
+                  id
+                  name
+                }
+              }
+            }
+          }
+          pokemon_v2_growthrate {
+            name
+            id
+            formula
+            pokemon_v2_growthratedescriptions {
+              description
+              id
+              language_id
+              pokemon_v2_language {
+                id
+                name
               }
             }
           }
