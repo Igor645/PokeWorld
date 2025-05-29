@@ -27,10 +27,20 @@ export class PokemonService {
 
     if (id) {
       variables = { value: id };
-      query = query.replace("{FILTER}", "id: { _eq: $value }").replace("{TYPE}", "Int");
+      query = query
+        .replace("{FILTER}", "id: { _eq: $value }")
+        .replace("{TYPE}", "Int");
     } else if (name) {
       variables = { value: name };
-      query = query.replace("{FILTER}", "pokemon_v2_pokemonspeciesnames: { name: { _ilike: $value } }").replace("{TYPE}", "String");
+      query = query
+        .replace(
+          "{FILTER}",
+          `_or: [
+          { pokemon_v2_pokemonspeciesnames: { name: { _ilike: $value } } },
+          { name: { _ilike: $value } }
+        ]`
+        )
+        .replace("{TYPE}", "String");
     }
 
     return this.graphQLService.executeQuery<PokemonSpeciesResponse>(query, variables);
