@@ -44,19 +44,6 @@ export class PokemonUtilsService {
   }
 
   /**
-   * Get the Pokémon species name by the selected language ID.
-   * @param pokemonSpecies The Pokémon species DTO object.
-   * @returns The Pokémon species name in the selected language.
-   */
-  getPokemonSpeciesNameByLanguage(pokemonSpecies: PokemonSpecies | undefined): string {
-    const languageId = this.getSelectedLanguageId();
-    return (
-      pokemonSpecies?.pokemon_v2_pokemonspeciesnames?.find((x) => x.pokemon_v2_language.id === languageId)
-        ?.name || 'Unknown'
-    );
-  }
-
-  /**
    * Get the Pokémon name from a list of translations based on the selected language ID.
    * @param names The list of names.
    * @returns The name in the selected language.
@@ -69,8 +56,14 @@ export class PokemonUtilsService {
     );
   }
 
+  getLocalizedName(entity: { entitynames?: any[], name: string }): string {
+    console
+    const localized = this.getNameByLanguage(entity.entitynames ?? []);
+    return localized !== 'Unknown' ? localized : entity.name;
+  }
+
   /**
- * Get the correct description from a list of translations based on the selected language ID.
+ * Get the correct description from a lWist of translations based on the selected language ID.
  * @param descriptions The list of descriptions.
  * @returns The description in the selected language.
  */

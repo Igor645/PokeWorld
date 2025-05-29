@@ -281,6 +281,7 @@ export const GraphQLQueries = {
   GetPokemonSpeciesPaginated: `
       query PokemonSpeciesOverview($limit: Int, $offset: Int) {
         pokemon_v2_pokemonspecies(limit: $limit, offset: $offset, order_by: {id: asc}) {
+          name
           pokemon_v2_pokemons(where: {is_default: {_eq: true}}) {
             id
             pokemon_v2_pokemonsprites {
@@ -311,6 +312,7 @@ export const GraphQLQueries = {
   GetPokemonSpeciesAll: `
     query GetAllPokemonSpecies {
       pokemon_v2_pokemonspecies(order_by: {id: asc}) {
+        name
         pokemon_v2_pokemons(where: {is_default: {_eq: true}}) {
           id
           pokemon_v2_pokemonsprites {

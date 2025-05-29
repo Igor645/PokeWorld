@@ -37,6 +37,6 @@ export class PokemonNavigatorComponent implements OnInit {
   }
 
   getPokemonName(): string {
-    return this.pokemonUtils.getPokemonSpeciesNameByLanguage(this.pokemon);
+    return this.pokemonUtils.getLocalizedName({ entitynames: this.pokemon.pokemon_v2_pokemonspeciesnames, name: this.pokemon.name || 'Unknown' });
   }
 }

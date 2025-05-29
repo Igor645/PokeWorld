@@ -209,7 +209,7 @@ export class PokemonDetailsComponent implements OnInit {
   }
 
   getPokemonSpeciesName(): string {
-    return this.pokemonUtils.getPokemonSpeciesNameByLanguage(this.pokemonSpeciesDetails);
+    return this.pokemonUtils.getLocalizedName({ entitynames: this.pokemonSpeciesDetails?.pokemon_v2_pokemonspeciesnames, name: this.pokemonSpeciesDetails?.name || 'Unknown' });
   }
 
   getPokemonVariantName(pokemon: any): string {
