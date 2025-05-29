@@ -51,7 +51,7 @@ export class PokemonStatsComponent {
       const isHp = stat.pokemon_v2_stat.name.toLowerCase() === 'hp';
 
       return {
-        name: this.pokemonUtils.getNameByLanguage(stat.pokemon_v2_stat.pokemon_v2_statnames),
+        name: this.pokemonUtils.getLocalizedNameFromEntity(stat.pokemon_v2_stat, 'pokemon_v2_statnames'),
         value: base,
         min: this.calculateMinStat(base, isHp),
         max: this.calculateMaxStat(base, isHp)

@@ -1,11 +1,13 @@
 import { Component, Input } from '@angular/core';
 
 import { CommonModule } from '@angular/common';
-import { Description } from '../../../../models/description.model';
+import { EggGroup } from '../../../../models/egggroup';
 import { ExpandableSectionComponent } from '../../../shared/expandable-section/expandable-section.component';
+import { GrowthRate } from '../../../../models/growthrate.model';
 import { Item } from '../../../../models/item.model';
 import { Name } from '../../../../models/species-name.model';
 import { Pokemon } from '../../../../models/pokemon.model';
+import { PokemonHabitat } from '../../../../models/pokemon-habitat.model';
 import { PokemonSpecies } from '../../../../models/pokemon-species.model';
 import { PokemonUtilsService } from '../../../../utils/pokemon-utils';
 import { RouterModule } from '@angular/router';
@@ -50,12 +52,20 @@ export class PokemonBreedingComponent {
     return { cycles, steps };
   }
 
-  getNameByLanguage(names: Name[] | undefined): string {
-    return this.pokemonUtils.getNameByLanguage(names);
+  getItemNameByLanguage(item: Item | undefined): string {
+    return this.pokemonUtils.getLocalizedNameFromEntity(item, "pokemon_v2_itemnames");
   }
 
-  getDescriptionByLanguage(descriptions: Description[] | undefined): string {
-    return this.pokemonUtils.getDescriptionByLanguage(descriptions);
+  getEggGroupNameByLanguage(eggGroup: EggGroup | undefined): string {
+    return this.pokemonUtils.getLocalizedNameFromEntity(eggGroup, "pokemon_v2_egggroupnames");
+  }
+
+  getHabitatNameByLanguage(habitat: PokemonHabitat | undefined): string {
+    return this.pokemonUtils.getLocalizedNameFromEntity(habitat, "pokemon_v2_pokemonhabitatnames");
+  }
+
+  getGrowthRateDescriptions(growthRate: GrowthRate | undefined): string {
+    return this.pokemonUtils.getLocalizedNameFromEntity(growthRate, "pokemon_v2_growthratedescriptions");
   }
 
   getBabyTriggerItem(): Item | undefined {

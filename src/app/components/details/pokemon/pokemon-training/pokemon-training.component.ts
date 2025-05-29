@@ -52,7 +52,7 @@ export class PokemonTrainingComponent implements OnInit, OnChanges, OnDestroy {
     const grouped = new Map<string, { name: string; rarity: number; count: number; tooltip: string; defaultIcon: string }>();
 
     for (const item of this.pokemon?.pokemon_v2_pokemonitems || []) {
-      const name = this.utils.getNameByLanguage(item.pokemon_v2_item.pokemon_v2_itemnames);
+      const name = this.utils.getLocalizedNameFromEntity(item.pokemon_v2_item, "pokemon_v2_itemnames");
       const key = `${name}_${item.rarity}`;
       const versionName = item.pokemon_v2_version?.pokemon_v2_versionnames?.find(
         vn => vn.language_id === languageId
@@ -85,7 +85,7 @@ export class PokemonTrainingComponent implements OnInit, OnChanges, OnDestroy {
     const stats = this.pokemon?.pokemon_v2_pokemonstats || [];
     const relevant = stats.filter(s => s.effort > 0);
     return relevant.map(s =>
-      `${s.effort} ${this.utils.getNameByLanguage(s.pokemon_v2_stat.pokemon_v2_statnames)}`
+      `${s.effort} ${this.utils.getLocalizedNameFromEntity(s.pokemon_v2_stat, "pokemon_v2_statnames")}`
     ).join(', ');
   }
 

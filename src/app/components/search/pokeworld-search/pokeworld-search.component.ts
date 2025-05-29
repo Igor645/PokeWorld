@@ -93,7 +93,7 @@ export class PokeworldSearchComponent implements OnInit, AfterViewInit, OnDestro
   }
 
   getPokemonName(species: PokemonSpecies): string {
-    return this.pokemonUtils.getNameByLanguage(species.pokemon_v2_pokemonspeciesnames)
+    return this.pokemonUtils.getLocalizedNameFromEntity(species, "pokemon_v2_pokemonspeciesnames")
   }
 
   GetPokemonOfficialImage(pokemon: any) {

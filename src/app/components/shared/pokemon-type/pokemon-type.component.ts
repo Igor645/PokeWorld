@@ -92,8 +92,8 @@ export class PokemonTypeComponent implements OnInit, OnDestroy {
 
   updateLocalizedTypeName() {
     if (this.pokemonType?.pokemon_v2_typenames) {
-      this.localizedTypeName = this.pokemonUtils.getNameByLanguage(
-        this.pokemonType.pokemon_v2_typenames
+      this.localizedTypeName = this.pokemonUtils.getLocalizedNameFromEntity(
+        this.pokemonType, "pokemon_v2_typenames"
       );
     } else {
       this.localizedTypeName = 'Unknown';

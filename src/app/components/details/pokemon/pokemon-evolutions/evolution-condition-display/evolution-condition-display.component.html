@@ -2,16 +2,19 @@
     <span class="condition-content">
         <span *ngIf="condition.prefix">{{ condition.prefix }}</span>
 
-        <img *ngIf="condition.spriteUrl; else spriteBreak" [src]="condition.spriteUrl" [ngClass]="{
-           'condition-icon': true,
-           'gender-icon': condition.prefix === 'must be',
-           'female-icon': condition.spriteUrl.includes('female'),
-           'male-icon': condition.spriteUrl.includes('male')
-         }" alt="condition sprite" />
+        <ng-container *ngIf="condition.spriteUrl; else spriteBreak">
+            <img [src]="condition.spriteUrl" [ngClass]="{
+      'condition-icon': true,
+      'gender-icon': condition.prefix === 'must be',
+      'female-icon': condition.spriteUrl.includes('female'),
+      'male-icon': condition.spriteUrl.includes('male')
+    }" alt="condition sprite" />
+        </ng-container>
 
         <ng-template #spriteBreak>
-            <span>&nbsp;</span>
+            <span *ngIf="condition.entity || condition.suffix">&nbsp;</span>
         </ng-template>
+
 
         <ng-container *ngIf="condition.entity">
             <ng-container *ngIf="condition.href; else plainEntity">

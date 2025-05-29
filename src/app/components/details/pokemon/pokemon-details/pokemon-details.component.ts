@@ -4,16 +4,19 @@ import { ChangeDetectionStrategy, Component, ElementRef, OnInit, ViewChild } fro
 
 import { CommonModule } from '@angular/common';
 import { EvolutionService } from '../../../../services/evolution.service';
+import { Generation } from '../../../../models/generation.model';
 import { LoadingSpinnerComponent } from '../../../shared/loading-spinner/loading-spinner.component';
 import { MatIcon } from '@angular/material/icon';
 import { Name } from '../../../../models/species-name.model';
 import { Pokemon } from '../../../../models/pokemon.model';
 import { PokemonBgSvgComponent } from '../../../shared/pokemon-bg-svg/pokemon-bg-svg.component';
 import { PokemonBreedingComponent } from '../pokemon-breeding/pokemon-breeding.component';
+import { PokemonColor } from '../../../../models/pokemon-color.model';
 import { PokemonEvolution } from '../../../../models/pokemon-evolution.model';
 import { PokemonEvolutionsComponent } from "../pokemon-evolutions/pokemon-evolutions.component";
 import { PokemonNavigatorComponent } from '../pokemon-navigator/pokemon-navigator.component';
 import { PokemonService } from '../../../../services/pokemon.service';
+import { PokemonShape } from '../../../../models/pokemon-shape.model';
 import { PokemonSpecies } from '../../../../models/pokemon-species.model';
 import { PokemonStatsComponent } from '../pokemon-stats/pokemon-stats.component';
 import { PokemonTrainingComponent } from '../pokemon-training/pokemon-training.component';
@@ -209,7 +212,7 @@ export class PokemonDetailsComponent implements OnInit {
   }
 
   getPokemonSpeciesName(): string {
-    return this.pokemonUtils.getLocalizedName({ entitynames: this.pokemonSpeciesDetails?.pokemon_v2_pokemonspeciesnames, name: this.pokemonSpeciesDetails?.name || 'Unknown' });
+    return this.pokemonUtils.getLocalizedNameFromEntity(this.pokemonSpeciesDetails, "pokemon_v2_pokemonspeciesnames");
   }
 
   getPokemonVariantName(pokemon: any): string {
@@ -217,7 +220,7 @@ export class PokemonDetailsComponent implements OnInit {
       return pokemon.name;
     }
 
-    const formName = this.pokemonUtils.getNameByLanguage(pokemon.pokemon_v2_pokemonforms[0].pokemon_v2_pokemonformnames);
+    const formName = this.pokemonUtils.getLocalizedNameFromEntity(pokemon.pokemon_v2_pokemonforms[0], "pokemon_v2_pokemonformnames");
 
     return formName === 'Unknown'
       ? this.getPokemonSpeciesName()
@@ -229,7 +232,7 @@ export class PokemonDetailsComponent implements OnInit {
   }
 
   getAbilityText(ability: any, index: number): string {
-    const abilityName = this.pokemonUtils.getNameByLanguage(ability.pokemon_v2_ability.pokemon_v2_abilitynames);
+    const abilityName = this.pokemonUtils.getLocalizedNameFromEntity(ability.pokemon_v2_ability, "pokemon_v2_abilitynames");
     return `${index + 1}. ${abilityName}${ability.is_hidden ? ' (Hidden)' : ''}`;
   }
 
@@ -237,16 +240,16 @@ export class PokemonDetailsComponent implements OnInit {
     return this.pokemonUtils.getAbilityFlavorTextByLanguage(ability);
   }
 
-  getGenerationName(generationNames: Name[] | undefined): string {
-    return this.pokemonUtils.parseGenerationName(generationNames);
+  getGenerationName(generation: Generation | undefined): string {
+    return this.pokemonUtils.getLocalizedNameFromEntity(generation, "pokemon_v2_generationnames");
   }
 
-  getPokemonShapeName(shapeNames: Name[] | undefined): string {
-    return this.pokemonUtils.getNameByLanguage(shapeNames);
+  getPokemonShapeName(shape: PokemonShape | undefined): string {
+    return this.pokemonUtils.getLocalizedNameFromEntity(shape, "pokemon_v2_pokemonshapenames");
   }
 
-  getPokemonColorName(colorNames: Name[] | undefined): string {
-    return this.pokemonUtils.getNameByLanguage(colorNames);
+  getPokemonColorName(color: PokemonColor | undefined): string {
+    return this.pokemonUtils.getLocalizedNameFromEntity(color, "pokemon_v2_pokemoncolornames");
   }
 
   getFormattedHeight(heightDm: number | undefined): string {

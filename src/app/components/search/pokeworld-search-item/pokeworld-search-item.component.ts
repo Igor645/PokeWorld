@@ -3,6 +3,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Name } from '../../../models/species-name.model';
 import { PokemonBgSvgComponent } from '../../shared/pokemon-bg-svg/pokemon-bg-svg.component';
+import { PokemonSpecies } from '../../../models/pokemon-species.model';
 import { PokemonUtilsService } from '../../../utils/pokemon-utils';
 import { Router } from '@angular/router';
 
@@ -13,7 +14,7 @@ import { Router } from '@angular/router';
   imports: [CommonModule, PokemonBgSvgComponent]
 })
 export class PokeworldSearchItemComponent {
-  @Input() names!: Name[];
+  @Input() species!: PokemonSpecies;
   @Input() imageSrc!: string | undefined;
   @Input() endpoint!: string;
   @Input() isSelectable: boolean = true;
@@ -22,6 +23,6 @@ export class PokeworldSearchItemComponent {
   constructor(private router: Router, private pokemonUtils: PokemonUtilsService) { }
 
   getName(): string {
-    return this.pokemonUtils.getNameByLanguage(this.names);
+    return this.pokemonUtils.getLocalizedNameFromEntity(this.species, "pokemon_v2_pokemonspeciesnames");
   }
 }

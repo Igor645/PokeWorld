@@ -18,7 +18,7 @@
     <div class="pokemon-main-view">
       <!-- Left Side (Details) -->
       <div class="pokemon-main-view-left">
-        <h1>
+        <h1 class="pokemon-name">
           {{ getPokemonSpeciesName() }}
           <div *ngIf="isLegendaryOrMythicalOrBaby()" class="pokemon-status-badge"
             [attr.data-status]="getPokemonStatus(pokemonSpeciesDetails)">
@@ -45,7 +45,7 @@
 
           <li>
             <label class="general-detail-label">Introduced</label>
-            <div>{{ getGenerationName(pokemonSpeciesDetails?.pokemon_v2_generation?.pokemon_v2_generationnames) }}</div>
+            <div>{{ getGenerationName(pokemonSpeciesDetails?.pokemon_v2_generation) }}</div>
           </li>
 
           <li>
@@ -86,13 +86,13 @@
 
           <li>
             <label class="general-detail-label">Shape</label>
-            <div>{{ getPokemonShapeName(pokemonSpeciesDetails?.pokemon_v2_pokemonshape?.pokemon_v2_pokemonshapenames) }}
+            <div>{{ getPokemonShapeName(pokemonSpeciesDetails?.pokemon_v2_pokemonshape) }}
             </div>
           </li>
 
           <li>
             <label class="general-detail-label">Color</label>
-            <div>{{ getPokemonColorName(pokemonSpeciesDetails?.pokemon_v2_pokemoncolor?.pokemon_v2_pokemoncolornames) }}
+            <div>{{ getPokemonColorName(pokemonSpeciesDetails?.pokemon_v2_pokemoncolor) }}
             </div>
           </li>
 

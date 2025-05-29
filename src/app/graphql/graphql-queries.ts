@@ -96,7 +96,7 @@ export const GraphQLQueries = {
             id
             formula
             pokemon_v2_growthratedescriptions {
-              description
+              name: description
               id
               language_id
               pokemon_v2_language {
@@ -193,6 +193,7 @@ export const GraphQLQueries = {
             }
             pokemon_v2_pokemonabilities {
               pokemon_v2_ability {
+                name
                 pokemon_v2_abilitynames {
                   language_id
                   name
@@ -425,6 +426,7 @@ export const GraphQLQueries = {
   GetPokemonSpeciesById: `
       query GetPokemonSpeciesById($id: Int!) {
         pokemon_v2_pokemonspecies(order_by: { id: asc }, where: { id: { _eq: $id } }) {
+          name
           pokemon_v2_pokemons(where: { is_default: { _eq: true } }) {
             id
             pokemon_v2_pokemonsprites {

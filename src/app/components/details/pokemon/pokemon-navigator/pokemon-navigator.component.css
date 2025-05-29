@@ -31,7 +31,6 @@
 /* ──────────── Pokemon Name Styling ──────────── */
 .pokemon-name {
   font-weight: bold;
-  text-transform: capitalize;
   font-size: 1.3rem;
   align-self: center;
 }

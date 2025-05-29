@@ -109,13 +109,6 @@ span {
     align-items: flex-end;
 }
 
-.growth-rate::first-letter,
-.egg-group::first-letter,
-.baby-trigger-item::first-letter,
-.habitat::first-letter {
-    text-transform: uppercase;
-}
-
 /* ──────────────── Responsive ──────────────── */
 @media (max-width: 480px) {
 

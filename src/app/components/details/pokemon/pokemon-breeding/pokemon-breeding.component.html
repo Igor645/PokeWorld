@@ -21,9 +21,9 @@
     <div class="breeding-row growth-rate-row">
         <span class="label">Growth Rate</span>
         <a class="growth-rate"
-            [routerLink]="['/growth-rate', getDescriptionByLanguage(pokemonSpecies?.pokemon_v2_growthrate?.pokemon_v2_growthratedescriptions)]">
+            [routerLink]="['/growth-rate', getGrowthRateDescriptions(pokemonSpecies?.pokemon_v2_growthrate)]">
             {{
-            getDescriptionByLanguage(pokemonSpecies?.pokemon_v2_growthrate?.pokemon_v2_growthratedescriptions)
+            getGrowthRateDescriptions(pokemonSpecies?.pokemon_v2_growthrate)
             }}
         </a>
     </div>
@@ -44,8 +44,8 @@
         <span class="label">Egg Groups</span>
         <div class="egg-groups">
             <a *ngFor="let group of pokemonSpecies?.pokemon_v2_pokemonegggroups" class="egg-group"
-                [routerLink]="['/egg-group', getNameByLanguage(group.pokemon_v2_egggroup.pokemon_v2_egggroupnames)]">
-                {{ getNameByLanguage(group.pokemon_v2_egggroup.pokemon_v2_egggroupnames) }}
+                [routerLink]="['/egg-group', getEggGroupNameByLanguage(group.pokemon_v2_egggroup)]">
+                {{ getEggGroupNameByLanguage(group.pokemon_v2_egggroup) }}
             </a>
         </div>
     </div>
@@ -55,7 +55,7 @@
         <span class="label">Baby Trigger Item</span>
         <a class="baby-trigger-item" *ngIf="getBabyTriggerItem() as babyItem; else None"
             [routerLink]="['/item', babyItem.name]">
-            {{ getNameByLanguage(babyItem.pokemon_v2_itemnames) }}
+            {{ getItemNameByLanguage(babyItem) }}
             <img *ngIf="babyItem.pokemon_v2_itemsprites?.[0]?.sprites?.default"
                 [src]="babyItem.pokemon_v2_itemsprites[0].sprites.default" [alt]="babyItem.name" class="item-sprite" />
         </a>
@@ -68,7 +68,7 @@
     <div class="breeding-row">
         <span class="label">Habitat</span>
         <span class="habitat">
-            {{ getNameByLanguage(pokemonSpecies?.pokemon_v2_pokemonhabitat?.pokemon_v2_pokemonhabitatnames)}}
+            {{ getHabitatNameByLanguage(pokemonSpecies?.pokemon_v2_pokemonhabitat)}}
         </span>
     </div>
 

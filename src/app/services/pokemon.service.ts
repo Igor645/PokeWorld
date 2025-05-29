@@ -1,7 +1,8 @@
+import { Observable, of, switchMap } from 'rxjs';
+
 import { GraphQLQueries } from '../graphql/graphql-queries';
 import { GraphQLService } from './graphql.service';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
 import { PokemonSpeciesResponse } from '../models/pokemon-species.model';
 import { SettingsService } from './settings.service';
 
@@ -22,30 +23,32 @@ export class PokemonService {
       throw new Error("Either 'id' or 'name' must be provided.");
     }
 
-    let query = GraphQLQueries.GetPokemonDetails;
-    let variables: any = {};
+    const execute = (filter: string): Observable<PokemonSpeciesResponse> => {
+      const query = GraphQLQueries.GetPokemonDetails
+        .replace("{FILTER}", filter)
+        .replace("{TYPE}", id ? "Int" : "String");
+
+      const variables = { value: id ?? name };
+      return this.graphQLService.executeQuery<PokemonSpeciesResponse>(query, variables);
+    };
 
     if (id) {
-      variables = { value: id };
-      query = query
-        .replace("{FILTER}", "id: { _eq: $value }")
-        .replace("{TYPE}", "Int");
-    } else if (name) {
-      variables = { value: name };
-      query = query
-        .replace(
-          "{FILTER}",
-          `_or: [
-          { pokemon_v2_pokemonspeciesnames: { name: { _ilike: $value } } },
-          { name: { _ilike: $value } }
-        ]`
-        )
-        .replace("{TYPE}", "String");
+      return execute("id: { _eq: $value }");
     }
 
-    return this.graphQLService.executeQuery<PokemonSpeciesResponse>(query, variables);
-  }
+    const localizedFilter = "pokemon_v2_pokemonspeciesnames: { name: { _ilike: $value } }";
+    const basicNameFilter = "name: { _ilike: $value }";
 
+    return execute(localizedFilter).pipe(
+      switchMap(result => {
+        const species = result?.pokemon_v2_pokemonspecies;
+        if (!species || species.length === 0) {
+          return execute(basicNameFilter);
+        }
+        return of(result);
+      })
+    );
+  }
 
   /**
    * Fetches a paginated list of Pokémon species.

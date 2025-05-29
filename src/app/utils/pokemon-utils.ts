@@ -1,4 +1,3 @@
-import { Description } from '../models/description.model';
 import { EvolutionTrigger } from '../models/evolution-trigger.model';
 import { Injectable } from '@angular/core';
 import { LanguageService } from '../services/language.service';
@@ -43,12 +42,7 @@ export class PokemonUtilsService {
     );
   }
 
-  /**
-   * Get the Pokémon name from a list of translations based on the selected language ID.
-   * @param names The list of names.
-   * @returns The name in the selected language.
-   */
-  getNameByLanguage(names: Name[] | undefined): string {
+  private getNameByLanguage(names: Name[] | undefined): string {
     const languageId = this.getSelectedLanguageId();
     return (
       names?.find((x) => x.pokemon_v2_language.id === languageId)
@@ -56,23 +50,15 @@ export class PokemonUtilsService {
     );
   }
 
-  getLocalizedName(entity: { entitynames?: any[], name: string }): string {
-    console
-    const localized = this.getNameByLanguage(entity.entitynames ?? []);
-    return localized !== 'Unknown' ? localized : entity.name;
-  }
+  getLocalizedNameFromEntity(entity: any, namesKey: string): string {
+    const entitynames = entity?.[namesKey];
+    const fallbackName = entity?.name || 'Unknown';
+    const localized = this.getNameByLanguage(entitynames ?? []);
+    const rawName = localized !== 'Unknown' ? localized : fallbackName;
 
-  /**
- * Get the correct description from a lWist of translations based on the selected language ID.
- * @param descriptions The list of descriptions.
- * @returns The description in the selected language.
- */
-  getDescriptionByLanguage(descriptions: Description[] | undefined): string {
-    const languageId = this.getSelectedLanguageId();
-    return (
-      descriptions?.find((x) => x.pokemon_v2_language.id === languageId)
-        ?.description || 'Unknown'
-    );
+    return typeof rawName === 'string' && rawName.length > 0
+      ? rawName.charAt(0).toUpperCase() + rawName.slice(1)
+      : 'Unknown';
   }
 
   /**
@@ -110,22 +96,6 @@ export class PokemonUtilsService {
     )?.flavor_text;
 
     return flavorText ? flavorText.replace(/\f/g, ' ') : 'No ability description available.';
-  }
-
-  /**
-   * Parses the generation name and returns it in the selected language.
-   * @param generationNames The list of translated generation names.
-   * @returns The formatted generation name based on language preference.
-   */
-  parseGenerationName(generationNames: Name[] | undefined): string {
-    if (!generationNames || generationNames.length === 0) {
-      return 'Unknown Generation';
-    }
-
-    const languageId = this.getSelectedLanguageId();
-    const localizedGeneration = generationNames.find(name => name.pokemon_v2_language.id === languageId)?.name;
-
-    return localizedGeneration || 'Unknown Generation';
   }
 
   /**
