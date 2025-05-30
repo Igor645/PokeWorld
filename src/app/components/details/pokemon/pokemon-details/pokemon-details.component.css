@@ -416,6 +416,7 @@ select:focus {
     width: 100%;
     justify-content: center;
     align-items: center;
+    font-size: 1rem;
   }
 
   .pokemon-main-view-left h1 {
@@ -507,6 +508,7 @@ select:focus {
     width: 100%;
     justify-content: center;
     align-items: center;
+    font-size: 1rem;
   }
 
   .pokemon-main-view-left h1 {
