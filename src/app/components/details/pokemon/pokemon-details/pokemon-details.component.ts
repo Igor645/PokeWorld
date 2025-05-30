@@ -216,8 +216,8 @@ export class PokemonDetailsComponent implements OnInit {
   }
 
   getPokemonVariantName(pokemon: any): string {
-    if (!pokemon?.pokemon_v2_pokemonforms?.length) {
-      return pokemon.name;
+    if (!pokemon?.pokemon_v2_pokemonforms?.length || !this.hasMultipleVariants()) {
+      return this.pokemonUtils.getLocalizedNameFromEntity(this.pokemonSpeciesDetails, "pokemon_v2_pokemonspeciesnames");
     }
 
     const formName = this.pokemonUtils.getLocalizedNameFromEntity(pokemon.pokemon_v2_pokemonforms[0], "pokemon_v2_pokemonformnames");
