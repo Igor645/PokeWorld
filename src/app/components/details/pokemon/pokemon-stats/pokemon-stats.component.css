@@ -93,12 +93,8 @@
         grid-template-columns: minmax(90px, 30%) 35px 1fr 35px 35px;
         grid-template-areas:
             "bar bar bar bar bar"
-            "name value value min max";
+            "name value empty min max";
         gap: 5px;
-    }
-
-    .stat-val-base {
-        text-align: left;
     }
 
     .stat-name,
