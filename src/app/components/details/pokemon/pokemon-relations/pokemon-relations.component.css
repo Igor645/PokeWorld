@@ -46,9 +46,7 @@
 }
 
 .relation-types span {
-    font-weight: 600;
     color: var(--accent-text-color);
-    opacity: 0.75;
 }
 
 .type-chart-button {
