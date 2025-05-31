@@ -277,7 +277,7 @@ select:focus {
   display: grid;
   grid-template-columns: 1fr 1fr;
   align-items: center;
-  padding: 0.75rem 3px;
+  padding: 8px 3px;
   border-bottom: 1px solid var(--seperator-color);
   transition: background-color 0.3s ease, transform 0.2s ease;
 }
@@ -331,7 +331,6 @@ select:focus {
 .cry-buttons {
   display: flex;
   gap: 10px;
-  margin-top: 5px;
 }
 
 .cry-button {

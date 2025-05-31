@@ -24,7 +24,7 @@ span {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 8px 0;
+    padding: 8px 3px;
     box-sizing: border-box;
     flex-wrap: wrap;
     gap: 0.4rem;
