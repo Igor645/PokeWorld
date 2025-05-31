@@ -15,6 +15,7 @@ import { PokemonBreedingComponent } from '../pokemon-breeding/pokemon-breeding.c
 import { PokemonColor } from '../../../../models/pokemon-color.model';
 import { PokemonEvolution } from '../../../../models/pokemon-evolution.model';
 import { PokemonEvolutionsComponent } from "../pokemon-evolutions/pokemon-evolutions.component";
+import { PokemonFormsComponent } from '../pokemon-forms/pokemon-forms.component';
 import { PokemonNavigatorComponent } from '../pokemon-navigator/pokemon-navigator.component';
 import { PokemonRelationsComponent } from '../pokemon-relations/pokemon-relations.component';
 import { PokemonService } from '../../../../services/pokemon.service';
@@ -43,7 +44,8 @@ import { catchError } from 'rxjs/operators';
     PokemonEvolutionsComponent,
     PokemonTrainingComponent,
     PokemonBreedingComponent,
-    PokemonRelationsComponent
+    PokemonRelationsComponent,
+    PokemonFormsComponent
   ],
   templateUrl: './pokemon-details.component.html',
   styleUrls: ['./pokemon-details.component.css']

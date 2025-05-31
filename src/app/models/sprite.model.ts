@@ -15,10 +15,6 @@ export interface OtherSprites {
   home: Sprite;
 }
 
-export interface PokemonSpritesWrapper {
-  sprites: PokemonSprites;
-}
-
 export interface PokemonSprites extends Sprite {
   other: OtherSprites;
 }
