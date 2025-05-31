@@ -1,0 +1,13 @@
+<app-expandable-section title="Defensive Matchups">
+    <div class="relation-row" *ngFor="let key of getRelationKeys()">
+        <div class="relation-label">{{ getLabel(key) }}</div>
+        <div class="relation-types">
+            <ng-container *ngIf="relations[key]?.length; else none">
+                <app-pokemon-type *ngFor="let type of relations[key]" [pokemonType]="type"
+                    [simpleView]="true"></app-pokemon-type>
+            </ng-container>
+            <ng-template #none><span>None</span></ng-template>
+        </div>
+    </div>
+    <button class="type-chart-button" (click)="openTypeChart()">Type Relations Chart</button>
+</app-expandable-section>

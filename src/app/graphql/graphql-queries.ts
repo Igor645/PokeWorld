@@ -587,4 +587,37 @@ export const GraphQLQueries = {
         }
       }
     `,
+
+  GetAllTypes: `
+    query GetTypes {
+      pokemon_v2_type {
+        id
+        name
+        pokemon_v2_typenames {
+          language_id
+          name
+          pokemon_v2_language {
+            id
+            name
+          }
+        }
+        pokemon_v2_typeefficacies {
+          damage_factor
+          damage_type_id
+          target_type_id
+          pokemonV2TypeByTargetTypeId {
+            id
+            name
+            pokemon_v2_typenames {
+              language_id
+              name
+              pokemon_v2_language {
+                id
+                name
+              }
+            }
+          }
+        }
+      }
+    }`,
 };
