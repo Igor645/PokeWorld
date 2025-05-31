@@ -34,7 +34,6 @@ export class PokemonRelationsComponent implements OnChanges {
   };
 
   ngOnChanges(): void {
-    console.log(this.allTypes)
     this.calculateRelations();
   }
 

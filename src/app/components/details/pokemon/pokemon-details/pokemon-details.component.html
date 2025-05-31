@@ -60,7 +60,7 @@
 
           <!-- Forms Dropdown -->
           <li>
-            <label class="general-detail-label">Forms</label>
+            <label class="general-detail-label">Varieties</label>
             <select id="variant-select" (change)="onPokemonChange($event)" [disabled]="!hasMultipleVariants()">
               <option *ngFor="let pokemon of pokemonSpeciesDetails?.pokemon_v2_pokemons || []" [value]="pokemon.id">
                 {{ getPokemonVariantName(pokemon) }}
@@ -142,6 +142,8 @@
       [allTypes]="allTypes" />
     <app-pokemon-training class="pokemon-training" [pokemon]="selectedPokemon" [species]="pokemonSpeciesDetails" />
     <app-pokemon-breeding class="pokemon-breeding" [pokemonSpecies]="pokemonSpeciesDetails" />
+    <app-pokemon-forms class="pokemon-forms" [forms]="selectedPokemon?.pokemon_v2_pokemonforms" />
+
     <app-pokemon-evolutions class="pokemon-evolutions"
       [evolutionChain]="pokemonSpeciesDetails?.pokemon_v2_evolutionchain" [pokemonEvolutions]="pokemonEvolutions" />
   </div>

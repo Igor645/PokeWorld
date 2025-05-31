@@ -390,6 +390,7 @@ select:focus {
 }
 
 .pokemon-relations,
+.pokemon-forms,
 .pokemon-breeding {
   grid-column: span 1;
 }
@@ -484,6 +485,7 @@ select:focus {
   .pokemon-evolutions,
   .pokemon-training,
   .pokemon-relations,
+  .pokemon-forms,
   .pokemon-breeding {
     grid-column: span 3
   }
@@ -575,6 +577,7 @@ select:focus {
   .pokemon-evolutions,
   .pokemon-training,
   .pokemon-relations,
+  .pokemon-forms,
   .pokemon-breeding {
     grid-column: span 3;
   }
