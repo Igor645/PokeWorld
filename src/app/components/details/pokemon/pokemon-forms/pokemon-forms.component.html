@@ -4,10 +4,10 @@
         <span class="form-value">{{ hasAlternativeForms() ? 'Yes' : 'No' }}</span>
     </div>
 
-    <div class="form-section-item dropdown-row" *ngIf="hasAlternativeForms()">
+    <div class="form-section-item dropdown-row">
         <label for="form-select" class="form-label">Select Form</label>
         <div class="form-value dropdown-wrapper">
-            <select id="form-select" [(ngModel)]="selectedFormId">
+            <select id="form-select" [(ngModel)]="selectedFormId" [disabled]="!hasAlternativeForms()">
                 <option *ngFor="let form of forms" [ngValue]="form.id">
                     {{ getFormName(form) }}
                 </option>
