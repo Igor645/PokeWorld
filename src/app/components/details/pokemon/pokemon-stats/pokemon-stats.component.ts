@@ -22,6 +22,7 @@ export class PokemonStatsComponent {
   private readonly MAX_IV = 31;
   private readonly NEGATIVE_NATURE = 0.9;
   private readonly POSITIVE_NATURE = 1.1;
+  readonly STAT_BAR_MAX = 255;
 
   constructor(
     private pokemonUtils: PokemonUtilsService,
