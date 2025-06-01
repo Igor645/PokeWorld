@@ -1,6 +1,7 @@
 import { AfterViewInit, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { NavigationEnd, Router } from '@angular/router';
+import { PokemonSpecies, PokemonSpeciesResponse } from '../../../models/pokemon-species.model';
 import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
 
 import { CommonModule } from '@angular/common';
@@ -9,7 +10,6 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { Name } from '../../../models/species-name.model';
 import { PokemonService } from '../../../services/pokemon.service';
-import { PokemonSpecies } from '../../../models/pokemon-species.model';
 import { PokemonUtilsService } from '../../../utils/pokemon-utils';
 import { PokeworldSearchItemComponent } from '../pokeworld-search-item/pokeworld-search-item.component';
 import { Subscription } from 'rxjs';
@@ -50,9 +50,8 @@ export class PokeworldSearchComponent implements OnInit, AfterViewInit, OnDestro
 
   ngAfterViewInit() {
     this.pokemonService.getPokemonSpeciesByPrefix("").subscribe({
-      next: (response) => {
-        this.filteredPokemonSpecies = response.pokemon_v2_pokemonspecies || [];
-        this.cdr.markForCheck();
+      next: async (response) => {
+        this.handlePokemonSpeciesResponse(response);
       },
       error: (error) => console.error('Error fetching initial Pokémon:', error),
     });
@@ -62,12 +61,27 @@ export class PokeworldSearchComponent implements OnInit, AfterViewInit, OnDestro
       distinctUntilChanged(),
       switchMap(searchQuery => this.pokemonService.getPokemonSpeciesByPrefix(searchQuery || ""))
     ).subscribe({
-      next: (response) => {
-        this.filteredPokemonSpecies = response.pokemon_v2_pokemonspecies || [];
-        this.cdr.markForCheck();
+      next: async (response) => {
+        this.handlePokemonSpeciesResponse(response);
       },
       error: (error) => console.error('Error searching Pokémon:', error),
     });
+  }
+
+  async handlePokemonSpeciesResponse(response: PokemonSpeciesResponse) {
+    const speciesList = response.pokemon_v2_pokemonspecies || [];
+
+    // Preload images
+    await Promise.all(
+      speciesList.map((species) => {
+        const pokemon = species.pokemon_v2_pokemons[0];
+        const imageUrl = this.GetPokemonOfficialImage(pokemon);
+        return this.preloadImage(imageUrl);
+      })
+    );
+
+    this.filteredPokemonSpecies = speciesList;
+    this.cdr.markForCheck();
   }
 
   ngOnDestroy() {
@@ -113,5 +127,18 @@ export class PokeworldSearchComponent implements OnInit, AfterViewInit, OnDestro
         id: 0,
       }
     }];
+  }
+
+  private preloadImage(url: string): Promise<void> {
+    if (typeof window === 'undefined') {
+      return Promise.resolve();
+    }
+
+    return new Promise((resolve) => {
+      const img = new Image();
+      img.src = url;
+      img.onload = () => resolve();
+      img.onerror = () => resolve();
+    });
   }
 }
