@@ -4,7 +4,7 @@
         <div class="stat-name">{{ stat.name }}</div>
         <div class="stat-value stat-val-base">{{ stat.value }}</div>
         <div class="progress-bar">
-            <div class="progress" [style.width.%]="(stat.value / stat.max) * 100"></div>
+            <div class="progress" [style.width.%]="(stat.value / 255) * 100"></div>
         </div>
         <div class="stat-value stat-val-min">{{ stat.min }}</div>
         <div class="stat-value stat-val-max">{{ stat.max }}</div>
