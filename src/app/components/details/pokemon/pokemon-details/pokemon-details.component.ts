@@ -107,16 +107,15 @@ export class PokemonDetailsComponent implements OnInit {
   }
 
   fetchPokemonDetails(id: number) {
-    this.pokemonService.getPokemonDetails(id, undefined).subscribe({
-      next: (response) => {
-        this.handleSpeciesResponse(response);
-      },
-      error: () => this.router.navigate(['/'])
-    });
+    this.fetchPokemonDetailsInternal(id);
   }
 
   fetchPokemonDetailsByName(name: string) {
-    this.pokemonService.getPokemonDetails(undefined, name).subscribe({
+    this.fetchPokemonDetailsInternal(undefined, name);
+  }
+
+  private fetchPokemonDetailsInternal(id?: number, name?: string) {
+    this.pokemonService.getPokemonDetails(id, name).subscribe({
       next: (response) => {
         this.handleSpeciesResponse(response);
       },

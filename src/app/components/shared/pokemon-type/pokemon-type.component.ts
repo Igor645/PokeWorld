@@ -21,6 +21,37 @@ import { InteractiveHostDirective } from '../directives/interactive-host.directi
   styleUrls: ['./pokemon-type.component.css'],
   hostDirectives: [InteractiveHostDirective]
 })
+const TYPE_COLORS_LIGHT: { [key: string]: string } = {
+  normal: '#B9B9AA',
+  fire: '#EE8130', water: '#6390F0', electric: '#F7D02C',
+  grass: '#7AC74C', ice: '#96D9D6', fighting: '#C22E28',
+  poison: '#A33EA1', ground: '#E2BF65', flying: '#A98FF3',
+  psychic: '#F95587', bug: '#A6B91A', rock: '#B6A136',
+  ghost: '#735797', dragon: '#6F35FC', dark: '#705746',
+  steel: '#B7B7CE', fairy: '#D685AD'
+};
+
+const TYPE_COLORS_DARK: { [key: string]: string } = {
+  normal: '#A0A08C',
+  fire: '#D75A4A',
+  water: '#3A6DB2',
+  electric: '#D4B63A',
+  grass: '#5E9C5E',
+  ice: '#7FC8CC',
+  fighting: '#A3453E',
+  poison: '#8F5A9C',
+  ground: '#B9985A',
+  flying: '#8F8ED6',
+  psychic: '#D16C88',
+  bug: '#8E9E3E',
+  rock: '#A08A50',
+  ghost: '#7C6AB0',
+  dragon: '#6C4BCC',
+  dark: '#5C4C44',
+  steel: '#9BA9C0',
+  fairy: '#D18EA6'
+};
+
 export class PokemonTypeComponent implements OnInit, OnDestroy {
   @Input() pokemonType: any;
   @Input() simpleView: boolean = false;
@@ -30,36 +61,8 @@ export class PokemonTypeComponent implements OnInit, OnDestroy {
   private darkModeSubscription!: Subscription;
   private languageSubscription!: Subscription;
 
-  typeColorsLight: { [key: string]: string } = {
-    normal: '#B9B9AA',
-    fire: '#EE8130', water: '#6390F0', electric: '#F7D02C',
-    grass: '#7AC74C', ice: '#96D9D6', fighting: '#C22E28',
-    poison: '#A33EA1', ground: '#E2BF65', flying: '#A98FF3',
-    psychic: '#F95587', bug: '#A6B91A', rock: '#B6A136',
-    ghost: '#735797', dragon: '#6F35FC', dark: '#705746',
-    steel: '#B7B7CE', fairy: '#D685AD'
-  };
-
-  typeColorsDark: { [key: string]: string } = {
-    normal: '#A0A08C',
-    fire: '#D75A4A',
-    water: '#3A6DB2',
-    electric: '#D4B63A',
-    grass: '#5E9C5E',
-    ice: '#7FC8CC',
-    fighting: '#A3453E',
-    poison: '#8F5A9C',
-    ground: '#B9985A',
-    flying: '#8F8ED6',
-    psychic: '#D16C88',
-    bug: '#8E9E3E',
-    rock: '#A08A50',
-    ghost: '#7C6AB0',
-    dragon: '#6C4BCC',
-    dark: '#5C4C44',
-    steel: '#9BA9C0',
-    fairy: '#D18EA6'
-  };
+  readonly typeColorsLight = TYPE_COLORS_LIGHT;
+  readonly typeColorsDark = TYPE_COLORS_DARK;
 
   constructor(
     public pokemonUtils: PokemonUtilsService,
@@ -107,9 +110,10 @@ export class PokemonTypeComponent implements OnInit, OnDestroy {
   }
 
   getTypeColor(): string {
+    const type = this.pokemonType?.name?.toLowerCase();
     return this.isDarkMode
-      ? this.typeColorsDark[this.pokemonType?.name?.toLowerCase()] || '#444'
-      : this.typeColorsLight[this.pokemonType?.name?.toLowerCase()] || '#777';
+      ? this.typeColorsDark[type ?? ''] || '#444'
+      : this.typeColorsLight[type ?? ''] || '#777';
   }
 
   getTypeIcon(): string {
