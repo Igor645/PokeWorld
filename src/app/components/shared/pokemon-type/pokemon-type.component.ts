@@ -4,7 +4,7 @@ import {
   OnDestroy,
   OnInit,
   Optional,
-  Self
+  Self,
 } from '@angular/core';
 
 import { CommonModule } from '@angular/common';
@@ -13,22 +13,25 @@ import { SettingsService } from '../../../services/settings.service';
 import { Subscription } from 'rxjs';
 import { InteractiveHostDirective } from '../directives/interactive-host.directive';
 
-@Component({
-  selector: 'app-pokemon-type',
-  standalone: true,
-  imports: [CommonModule],
-  templateUrl: './pokemon-type.component.html',
-  styleUrls: ['./pokemon-type.component.css'],
-  hostDirectives: [InteractiveHostDirective]
-})
 const TYPE_COLORS_LIGHT: { [key: string]: string } = {
   normal: '#B9B9AA',
-  fire: '#EE8130', water: '#6390F0', electric: '#F7D02C',
-  grass: '#7AC74C', ice: '#96D9D6', fighting: '#C22E28',
-  poison: '#A33EA1', ground: '#E2BF65', flying: '#A98FF3',
-  psychic: '#F95587', bug: '#A6B91A', rock: '#B6A136',
-  ghost: '#735797', dragon: '#6F35FC', dark: '#705746',
-  steel: '#B7B7CE', fairy: '#D685AD'
+  fire: '#EE8130',
+  water: '#6390F0',
+  electric: '#F7D02C',
+  grass: '#7AC74C',
+  ice: '#96D9D6',
+  fighting: '#C22E28',
+  poison: '#A33EA1',
+  ground: '#E2BF65',
+  flying: '#A98FF3',
+  psychic: '#F95587',
+  bug: '#A6B91A',
+  rock: '#B6A136',
+  ghost: '#735797',
+  dragon: '#6F35FC',
+  dark: '#705746',
+  steel: '#B7B7CE',
+  fairy: '#D685AD',
 };
 
 const TYPE_COLORS_DARK: { [key: string]: string } = {
@@ -49,15 +52,23 @@ const TYPE_COLORS_DARK: { [key: string]: string } = {
   dragon: '#6C4BCC',
   dark: '#5C4C44',
   steel: '#9BA9C0',
-  fairy: '#D18EA6'
+  fairy: '#D18EA6',
 };
 
+@Component({
+  selector: 'app-pokemon-type',
+  standalone: true,
+  imports: [CommonModule],
+  templateUrl: './pokemon-type.component.html',
+  styleUrls: ['./pokemon-type.component.css'],
+  hostDirectives: [InteractiveHostDirective],
+})
 export class PokemonTypeComponent implements OnInit, OnDestroy {
   @Input() pokemonType: any;
-  @Input() simpleView: boolean = false;
+  @Input() simpleView = false;
 
-  isDarkMode: boolean = false;
-  localizedTypeName: string = 'Unknown';
+  isDarkMode = false;
+  localizedTypeName = 'Unknown';
   private darkModeSubscription!: Subscription;
   private languageSubscription!: Subscription;
 
@@ -67,13 +78,13 @@ export class PokemonTypeComponent implements OnInit, OnDestroy {
   constructor(
     public pokemonUtils: PokemonUtilsService,
     private settingsService: SettingsService,
-    @Self() @Optional() private interactiveHost?: InteractiveHostDirective
-  ) { }
+    @Self() @Optional() private interactiveHost?: InteractiveHostDirective,
+  ) {}
 
   ngOnInit() {
     this.darkModeSubscription = this.settingsService
       .watchSetting<boolean>('darkMode')
-      .subscribe(isDark => {
+      .subscribe((isDark) => {
         this.isDarkMode = isDark ?? false;
       });
 
@@ -96,7 +107,8 @@ export class PokemonTypeComponent implements OnInit, OnDestroy {
   updateLocalizedTypeName() {
     if (this.pokemonType?.pokemon_v2_typenames) {
       this.localizedTypeName = this.pokemonUtils.getLocalizedNameFromEntity(
-        this.pokemonType, "pokemon_v2_typenames"
+        this.pokemonType,
+        'pokemon_v2_typenames',
       );
     } else {
       this.localizedTypeName = 'Unknown';
