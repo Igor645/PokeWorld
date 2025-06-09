@@ -278,7 +278,7 @@ select:focus {
   grid-template-columns: 1fr 1fr;
   align-items: center;
   padding: 8px 3px;
-  border-bottom: 1px solid var(--seperator-color);
+  border-bottom: 1px solid var(--separator-color);
   transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
