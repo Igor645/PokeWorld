@@ -27,12 +27,14 @@ export class PokemonBreedingComponent {
   getGenderDisplay(): { male: number; female: number; genderless: boolean } {
     const species = this.pokemonSpecies;
 
+    const genderless = { male: 0, female: 0, genderless: true };
+
     if (!species || species.gender_rate === null || species.gender_rate === undefined) {
-      return { male: 0, female: 0, genderless: true };
+      return genderless;
     }
 
     if (species.gender_rate === -1) {
-      return { male: 0, female: 0, genderless: true };
+      return genderless;
     }
 
     const female = (species.gender_rate / 8) * 100;
