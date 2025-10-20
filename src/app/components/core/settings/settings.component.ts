@@ -36,12 +36,6 @@ export class SettingsComponent implements OnInit {
   ngOnInit() {
     this.isDarkMode = this.settingsService.getSetting<boolean>('darkMode') ?? false;
 
-    if (this.isDarkMode) {
-      document.documentElement.classList.add('dark-theme');
-    } else {
-      document.documentElement.classList.remove('dark-theme');
-    }
-
     if (isPlatformBrowser(this.platformId)) {
       this.applyTheme(this.isDarkMode);
     }
