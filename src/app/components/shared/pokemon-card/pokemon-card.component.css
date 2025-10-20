@@ -240,7 +240,13 @@
     font-size: 0.8rem;
 }
 
-@container (width < 140px) {
+@container (width < 120px) {
+    :host>* {
+        font-size: 0.7rem;
+    }
+}
+
+@container (120px <=width < 140px) {
     :host>* {
         font-size: 0.8rem;
     }

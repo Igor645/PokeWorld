@@ -44,6 +44,31 @@ export class DexOverviewComponent implements OnInit, AfterViewInit, OnDestroy {
   private isLoadingSubject = new BehaviorSubject<boolean>(true);
   isLoading$ = this.isLoadingSubject.asObservable();
 
+  private rafId = 0;
+  private ro?: ResizeObserver;
+
+  private safeRaf(cb: FrameRequestCallback): number {
+    if (isPlatformBrowser(this.platformId) && typeof window !== 'undefined' && 'requestAnimationFrame' in window) {
+      return window.requestAnimationFrame(cb);
+    }
+    return setTimeout(() => cb(performance?.now?.() ?? 0), 0) as unknown as number;
+  }
+
+  private safeCancel(id: number) {
+    if (isPlatformBrowser(this.platformId) && typeof window !== 'undefined' && 'cancelAnimationFrame' in window) {
+      return window.cancelAnimationFrame(id);
+    }
+    clearTimeout(id as unknown as ReturnType<typeof setTimeout>);
+  }
+
+  private scheduleLayout = () => {
+    if (this.rafId) this.safeCancel(this.rafId);
+    this.rafId = this.safeRaf(() => {
+      this.rafId = 0;
+      this.updateLayout();
+    });
+  };
+
   constructor(
     private pokemonService: PokemonService,
     @Inject(PLATFORM_ID) private platformId: object
@@ -56,11 +81,16 @@ export class DexOverviewComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngAfterViewInit(): void {
     if (!isPlatformBrowser(this.platformId)) return;
-    // Give layout a tick (or two) so .row has a real width
-    requestAnimationFrame(() => {
-      this.updateLayout();
-      requestAnimationFrame(() => this.updateLayout());
-    });
+
+    if (this.viewport?.elementRef?.nativeElement) {
+      this.ro = new ResizeObserver(this.scheduleLayout);
+      this.ro.observe(this.viewport.elementRef.nativeElement);
+    }
+
+    window.addEventListener('resize', this.scheduleLayout, { passive: true });
+    window.visualViewport?.addEventListener('resize', this.scheduleLayout, { passive: true });
+
+    this.safeRaf(this.scheduleLayout);
   }
 
   @HostListener('window:resize')
@@ -68,7 +98,13 @@ export class DexOverviewComponent implements OnInit, AfterViewInit, OnDestroy {
     this.updateLayout();
   }
 
-  ngOnDestroy(): void { }
+  ngOnDestroy(): void {
+    if (!isPlatformBrowser(this.platformId)) return;
+    if (this.rafId) this.safeCancel(this.rafId);
+    this.ro?.disconnect();
+    window.removeEventListener('resize', this.scheduleLayout);
+    window.visualViewport?.removeEventListener('resize', this.scheduleLayout);
+  }
 
   private updateLayout(): void {
     if (!isPlatformBrowser(this.platformId)) return;
@@ -87,7 +123,7 @@ export class DexOverviewComponent implements OnInit, AfterViewInit, OnDestroy {
       dirty = true;
     }
     if (itemSize !== this.itemSize) {
-      this.itemSize = itemSize; // CDK gets visual + collapsed margin
+      this.itemSize = itemSize;
       dirty = true;
     }
     if (dirty) {
@@ -117,31 +153,21 @@ export class DexOverviewComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private calculateHeightsByAspect(): { visual: number; itemSize: number } {
     const row = document.querySelector<HTMLElement>('.row');
-
     const rowClient = row?.clientWidth ?? 0;
     const viewportClient = this.viewport?.elementRef?.nativeElement?.clientWidth ?? 0;
     const rowWidth = rowClient > 0 ? rowClient : (viewportClient > 0 ? viewportClient : window.innerWidth);
-
     const cs = row ? getComputedStyle(row) : null;
     const gapX = cs ? parseFloat(cs.getPropertyValue('column-gap') || cs.getPropertyValue('gap')) || 0 : 0;
-
     const available = rowWidth - gapX * Math.max(0, this.cardsPerRow - 1);
     const cardWidth = available / this.cardsPerRow;
-
-    const visual = cardWidth / this.CARD_ASPECT_RATIO; // cards only (what you want to SEE)
-
-    // collapsed margin between rows = max(top, bottom)
+    let visual = cardWidth / this.CARD_ASPECT_RATIO;
+    const sampleCard = row?.querySelector<HTMLElement>('app-pokemon-card');
+    const measured = sampleCard?.getBoundingClientRect().height ?? 0;
+    if (measured > 0) visual = measured;
     const mTop = cs ? parseFloat(cs.getPropertyValue('margin-block-start') || cs.marginTop || '0') : 0;
     const mBottom = cs ? parseFloat(cs.getPropertyValue('margin-block-end') || cs.marginBottom || '0') : 0;
     const collapsed = Math.max(mTop, mBottom);
-
-    return { visual: Math.round(visual), itemSize: Math.round(visual + collapsed) };
-  }
-
-  private exposeCssVars(): void {
-    const root = document.documentElement;
-    root.style.setProperty('--cards-per-row', String(this.cardsPerRow));
-    root.style.setProperty('--item-size', `${this.itemSize}px`);
+    return { visual: Math.ceil(visual), itemSize: Math.ceil(visual + collapsed) };
   }
 
   private fetchAllPokemon(): void {
@@ -159,8 +185,9 @@ export class DexOverviewComponent implements OnInit, AfterViewInit, OnDestroy {
       this.allSpecies = response.pokemonspecies;
       this.count = response.pokemonspecies_aggregate.aggregate.count;
       this.updateRows();
-      // Re-run after content exists so widths are stable
-      requestAnimationFrame(() => this.updateLayout());
+      if (isPlatformBrowser(this.platformId)) {
+        this.safeRaf(() => this.updateLayout());
+      }
     });
   }
 

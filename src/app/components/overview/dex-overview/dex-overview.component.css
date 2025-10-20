@@ -7,9 +7,7 @@
 
 :host ::ng-deep .cdk-virtual-scroll-content-wrapper {
     padding-top: 1.5rem;
-    /* top space before the first row */
     padding-bottom: 1.5rem;
-    /* bottom space after the last row (optional) */
 }
 
 app-pokeworld-search {
@@ -94,6 +92,8 @@ app-pokeworld-search {
     animation: fadeIn 1s ease-in-out;
 }
 
+/* -------- Responsive adjustments -------- */
+
 @media (max-width: 480px) {
     .dexTitle {
         font-size: 3rem;
@@ -107,6 +107,14 @@ app-pokeworld-search {
     app-pokeworld-search {
         width: 80%;
         height: 40px;
+    }
+
+    .row {
+        margin-block: 0 0.5rem;
+    }
+
+    :host ::ng-deep .cdk-virtual-scroll-content-wrapper {
+        padding-bottom: 0.5rem;
     }
 }
 
@@ -123,6 +131,14 @@ app-pokeworld-search {
         width: 50%;
         height: 40px;
     }
+
+    .row {
+        margin-block: 0 1rem;
+    }
+
+    :host ::ng-deep .cdk-virtual-scroll-content-wrapper {
+        padding-bottom: 1rem;
+    }
 }
 
 @media (min-width: 769px) and (max-width: 1024px) {
@@ -138,6 +154,14 @@ app-pokeworld-search {
         width: 40%;
         height: 40px;
     }
+
+    .row {
+        margin-block: 0 1.25rem;
+    }
+
+    :host ::ng-deep .cdk-virtual-scroll-content-wrapper {
+        padding-bottom: 1.25rem;
+    }
 }
 
 @media (min-width: 1024px) and (max-width: 1280px) {
@@ -152,5 +176,13 @@ app-pokeworld-search {
     app-pokeworld-search {
         width: 40%;
         height: 40px;
+    }
+
+    .row {
+        margin-block: 0 1.5rem;
+    }
+
+    :host ::ng-deep .cdk-virtual-scroll-content-wrapper {
+        padding-bottom: 1.5rem;
     }
 }
