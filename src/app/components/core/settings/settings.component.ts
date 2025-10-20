@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
 
-import { CommonModule } from '@angular/common';
+import { CommonModule, DOCUMENT, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { LanguageSelectorComponent } from '../../localization/language-selector/language-selector.component';
 import { MatButtonModule } from '@angular/material/button';
@@ -27,7 +27,11 @@ import { SettingsService } from '../../../services/settings.service';
 export class SettingsComponent implements OnInit {
   isDarkMode = false;
 
-  constructor(private settingsService: SettingsService) { }
+  constructor(
+    private settingsService: SettingsService,
+    @Inject(PLATFORM_ID) private platformId: Object,
+    @Inject(DOCUMENT) private doc: Document
+  ) { }
 
   ngOnInit() {
     this.isDarkMode = this.settingsService.getSetting<boolean>('darkMode') ?? false;
@@ -37,10 +41,18 @@ export class SettingsComponent implements OnInit {
     } else {
       document.documentElement.classList.remove('dark-theme');
     }
+
+    if (isPlatformBrowser(this.platformId)) {
+      this.applyTheme(this.isDarkMode);
+    }
   }
 
   toggleDarkMode() {
     this.settingsService.setSetting('darkMode', this.isDarkMode);
     document.documentElement.classList.toggle('dark-theme', this.isDarkMode);
+  }
+
+  private applyTheme(enabled: boolean): void {
+    this.doc.documentElement.classList.toggle('dark-theme', enabled);
   }
 }

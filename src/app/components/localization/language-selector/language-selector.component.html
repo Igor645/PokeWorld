@@ -1,6 +1,6 @@
 <label class="lang-label" for="language-select">Language</label>
 <select id="language-select" class="lang-select" [(ngModel)]="selectedLanguageId"
-    [ngModelOptions]="{ standalone: true }" (ngModelChange)="onChange($event)" [disabled]="!languages.length">
+    [ngModelOptions]="{ standalone: true }" (ngModelChange)="onChange($event)" [disabled]="!(languages.length)">
     <option *ngFor="let lang of languages" [ngValue]="lang.id">
         {{ lang.name }}
     </option>

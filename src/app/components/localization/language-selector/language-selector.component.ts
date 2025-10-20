@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -40,36 +40,39 @@ export class LanguageSelectorComponent implements OnInit, OnDestroy {
 
   constructor(
     private languageService: LanguageService,
-    private settings: SettingsService
+    private settings: SettingsService,
+    private cdr: ChangeDetectorRef
   ) { }
 
   ngOnInit(): void {
-    // Load languages
     this.sub.add(
       this.languageService.getLanguages().subscribe({
         next: (res) => {
           this.languages = (res.language || [])
             .map((l: any) => ({ id: l.id, name: this.languageMap[l.name] || l.name }))
             .sort((a: Lang, b: Lang) => a.name.localeCompare(b.name));
+
+          this.cdr.markForCheck(); // <-- trigger re-render
         },
         error: (e) => console.error('Error fetching languages:', e),
       })
     );
 
-    // Current selection (default English = 9)
     this.sub.add(
       this.settings.watchSetting<number>('selectedLanguageId').subscribe((id) => {
         const value = id ?? 9;
         if (id == null) this.settings.setSetting('selectedLanguageId', value);
         this.selectedLanguageId = value;
+
+        this.cdr.markForCheck(); // <-- ensure select reflects the value
       })
     );
   }
 
   onChange(langId: number) {
-    // `langId` remains a number thanks to [ngValue]
     this.selectedLanguageId = langId;
     this.settings.setSetting('selectedLanguageId', langId);
+    this.cdr.markForCheck();
   }
 
   ngOnDestroy(): void {
