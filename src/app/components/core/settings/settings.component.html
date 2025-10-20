@@ -1,20 +1,10 @@
-<div class="settings-wrapper">
-    <div class="settings-cog-container">
-        <mat-icon class="settings-cog" (click)="toggleSettings()">settings</mat-icon>
-    </div>
+<!-- Pure content; no popover wrapper, no *ngIf -->
+<div class="settings-card">
+    <div class="settings-values">
+        <app-language-selector></app-language-selector>
 
-    <div class="settings-container" *ngIf="showSettings">
-        <mat-card class="settings-card">
-            <div class="settings-header">
-                <h2>Settings</h2>
-                <mat-icon class="close-icon" (click)="toggleSettings()">close</mat-icon>
-            </div>
-            <div class="settings-values">
-                <app-language-selector></app-language-selector>
-                <mat-slide-toggle [(ngModel)]="isDarkMode" (change)="toggleDarkMode()">
-                    Dark Mode
-                </mat-slide-toggle>              
-            </div>
-        </mat-card>
+        <mat-slide-toggle [(ngModel)]="isDarkMode" (change)="toggleDarkMode()">
+            Dark Mode
+        </mat-slide-toggle>
     </div>
 </div>

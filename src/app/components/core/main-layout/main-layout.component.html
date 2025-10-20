@@ -1,19 +1,25 @@
 <header class="main-header" *ngIf="!isMainPage">
-    <h1><a routerLink="/">PokéWorld</a></h1>
-    <app-pokeworld-search/>
-  </header>
-  
-<main class="main-content"> 
-  <app-settings/>
-  <app-scroll-to-top/>
+  <h1><a routerLink="/">PokéWorld</a></h1>
+  <app-pokeworld-search />
+  <button class="hamburger" (click)="drawer.toggle()" aria-label="Open menu">
+    <mat-icon>hamburger</mat-icon>
+  </button>
+</header>
+
+<main class="main-content">
+  <app-scroll-to-top />
   <router-outlet></router-outlet>
 </main>
-  
+
+<app-nav-drawer #drawer [items]="navItems" />
+
+<button class="settings-fab" (click)="drawer.toggle()" aria-label="Open menu">☰</button>
+
 <footer class="main-footer">
   <div class="pokeapi-reference">
     Data provided by
     <a href="https://pokeapi.co/" target="_blank" class="pokeapi-link">
-      <img src="images/pokeapi-logo.png" alt="PokeAPI" class="pokeapi-logo"/>
+      <img src="images/pokeapi-logo.png" alt="PokeAPI" class="pokeapi-logo" />
     </a>
   </div>
 </footer>

@@ -1,32 +1,36 @@
-import { Component, HostListener, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+
 import { CommonModule } from '@angular/common';
-import { MatIconModule } from '@angular/material/icon';
-import { MatCardModule } from '@angular/material/card';
-import { MatButtonModule } from '@angular/material/button';
-import { MatSlideToggleModule } from '@angular/material/slide-toggle';
-import { LanguageSelectorComponent } from '../../localization/language-selector/language-selector.component';
-import { SettingsService } from '../../../services/settings.service';
 import { FormsModule } from '@angular/forms';
+import { LanguageSelectorComponent } from '../../localization/language-selector/language-selector.component';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { SettingsService } from '../../../services/settings.service';
 
 @Component({
   standalone: true,
   selector: 'app-settings',
-  imports: [CommonModule, MatIconModule, FormsModule, MatSlideToggleModule, MatCardModule, MatButtonModule, LanguageSelectorComponent],
+  imports: [
+    CommonModule,
+    FormsModule,
+    MatIconModule,
+    MatCardModule,
+    MatButtonModule,
+    MatSlideToggleModule,
+    LanguageSelectorComponent
+  ],
   templateUrl: './settings.component.html',
   styleUrls: ['./settings.component.css']
 })
 export class SettingsComponent implements OnInit {
-  showSettings = false;
   isDarkMode = false;
 
-  constructor(private settingsService: SettingsService) {}
+  constructor(private settingsService: SettingsService) { }
 
   ngOnInit() {
     this.isDarkMode = this.settingsService.getSetting<boolean>('darkMode') ?? false;
-  }
-
-  toggleDarkMode() {
-    this.settingsService.setSetting('darkMode', this.isDarkMode);
 
     if (this.isDarkMode) {
       document.documentElement.classList.add('dark-theme');
@@ -35,15 +39,8 @@ export class SettingsComponent implements OnInit {
     }
   }
 
-  toggleSettings() {
-    this.showSettings = !this.showSettings;
-  }
-
-  @HostListener('document:click', ['$event'])
-  onClickOutside(event: Event) {
-    const target = event.target as HTMLElement;
-    if (!target.closest('.settings-container') && !target.closest('.settings-cog')) {
-      this.showSettings = false;
-    }
+  toggleDarkMode() {
+    this.settingsService.setSetting('darkMode', this.isDarkMode);
+    document.documentElement.classList.toggle('dark-theme', this.isDarkMode);
   }
 }

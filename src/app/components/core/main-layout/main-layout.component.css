@@ -22,6 +22,7 @@ a:hover {
 /* ────────────── Header Specific ────────────── */
 .main-header {
   grid-area: header;
+  display: flex;
 }
 
 .main-header h1 {
@@ -104,6 +105,67 @@ app-settings {
   right: 10px;
   transition: top 0.001s linear;
 }
+
+.hamburger {
+  margin-left: 0;
+  margin-right: 15px;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  font-size: 22px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  color: var(--text-color);
+}
+
+.hamburger:hover {
+  background: var(--background-hover-color);
+}
+
+.settings-fab {
+  position: fixed;
+  right: max(16px, env(safe-area-inset-right));
+  bottom: max(16px, env(safe-area-inset-bottom));
+  z-index: 1500;
+  border: var(--primary-color) 3px solid;
+  cursor: pointer;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  box-shadow: 0 6px 18px var(--shadow-color);
+  background: var(--background-color);
+  color: var(--text-color);
+  font-size: 22px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+
+@media (max-width: 480px) {
+  .settings-fab {
+    width: 40px;
+    height: 40px;
+    right: 12px;
+  }
+
+  .settings-fab .material-icons {
+    font-size: 24px;
+  }
+}
+
+@media (min-width: 481px) and (max-width: 768px) {
+  .settings-fab {
+    width: 44px;
+    height: 44px;
+    right: 16px;
+  }
+
+  .settings-fab .material-icons {
+    font-size: 26px;
+  }
+}
+
 
 /* ────────────── Responsive Media Queries ────────────── */
 @media (max-width: 480px) {
