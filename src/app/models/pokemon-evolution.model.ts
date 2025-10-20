@@ -29,19 +29,19 @@ export interface PokemonEvolution {
   held_item_id: number;
   evolution_trigger_id: number;
   evolution_item_id: number;
-  pokemonV2ItemByHeldItemId: Item;
-  pokemon_v2_item: Item;
-  pokemon_v2_evolutiontrigger: EvolutionTrigger;
-  pokemon_v2_gender: Gender;
-  pokemonV2PokemonspecyByPartySpeciesId: PokemonSpecies;
-  pokemonV2PokemonspecyByTradeSpeciesId: PokemonSpecies;
-  pokemonV2TypeByPartyTypeId: PokemonType;
-  pokemon_v2_location: Location;
-  pokemon_v2_move: Move;
-  pokemon_v2_type: PokemonType;
+  ItemByHeldItemId: Item;
+  item: Item;
+  evolutiontrigger: EvolutionTrigger;
+  gender: Gender;
+  PokemonspecyByPartySpeciesId: PokemonSpecies;
+  PokemonspecyByTradeSpeciesId: PokemonSpecies;
+  TypeByPartyTypeId: PokemonType;
+  location: Location;
+  move: Move;
+  type: PokemonType;
 }
 
 export interface PokemonEvolutionResponse {
-  pokemon_v2_pokemonevolution: PokemonEvolution[];
-  pokemon_v2_pokemonevolution_aggregate: { aggregate: Aggregate };
+  pokemonevolution: PokemonEvolution[];
+  pokemonevolution_aggregate: { aggregate: Aggregate };
 }

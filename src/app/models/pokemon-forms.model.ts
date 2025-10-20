@@ -5,6 +5,6 @@ import { SpriteWrapper } from "./sprite-wrapper.model";
 export interface PokemonForms {
   id: number;
   name: string;
-  pokemon_v2_pokemonformnames: Name[];
-  pokemon_v2_pokemonformsprites: SpriteWrapper<PokemonSprites>[];
+  pokemonformnames: Name[];
+  pokemonformsprites: SpriteWrapper<PokemonSprites>[];
 }

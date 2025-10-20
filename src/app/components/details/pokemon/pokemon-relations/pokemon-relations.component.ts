@@ -40,11 +40,11 @@ export class PokemonRelationsComponent implements OnChanges {
   calculateRelations(): void {
     if (!this.pokemonTypes || this.pokemonTypes.length === 0 || this.allTypes.length === 0) return;
 
-    const defenderTypeIds = this.pokemonTypes.map(t => t.pokemon_v2_type.id);
+    const defenderTypeIds = this.pokemonTypes.map(t => t.type.id);
     const combined: Record<number, number> = {};
 
     for (const attackType of this.allTypes) {
-      const relevantEfficacies = attackType.pokemon_v2_typeefficacies.filter(eff =>
+      const relevantEfficacies = attackType.typeefficacies.filter(eff =>
         defenderTypeIds.includes(eff.target_type_id)
       );
 

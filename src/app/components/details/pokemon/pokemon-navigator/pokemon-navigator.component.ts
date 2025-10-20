@@ -32,11 +32,11 @@ export class PokemonNavigatorComponent implements OnInit {
 
   get pokemonImage(): string {
     return this.pokemonUtils.getPokemonOfficialImage(
-      this.pokemon?.pokemon_v2_pokemons?.[0]
+      this.pokemon?.pokemons?.[0]
     );
   }
 
   getPokemonName(): string {
-    return this.pokemonUtils.getLocalizedNameFromEntity(this.pokemon, "pokemon_v2_pokemonspeciesnames");
+    return this.pokemonUtils.getLocalizedNameFromEntity(this.pokemon, "pokemonspeciesnames");
   }
 }

@@ -36,12 +36,12 @@ export class PokemonService {
       return execute("id: { _eq: $value }");
     }
 
-    const localizedFilter = "pokemon_v2_pokemonspeciesnames: { name: { _ilike: $value } }";
+    const localizedFilter = "pokemonspeciesnames: { name: { _ilike: $value } }";
     const basicNameFilter = "name: { _ilike: $value }";
 
     return execute(localizedFilter).pipe(
       switchMap(result => {
-        const species = result?.pokemon_v2_pokemonspecies;
+        const species = result?.pokemonspecies;
         if (!species || species.length === 0) {
           return execute(basicNameFilter);
         }

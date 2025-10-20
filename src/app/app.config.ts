@@ -21,6 +21,9 @@ export const appConfig: ApplicationConfig = {
     provideApollo(() => {
       const httpLink = inject(HttpLink);
 
+      console.log('[GraphQL URI]', environment.apiUrl);
+
+
       return {
         link: httpLink.create({
           uri: environment.apiUrl,

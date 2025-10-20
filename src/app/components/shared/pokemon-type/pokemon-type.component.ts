@@ -79,7 +79,7 @@ export class PokemonTypeComponent implements OnInit, OnDestroy {
     public pokemonUtils: PokemonUtilsService,
     private settingsService: SettingsService,
     @Self() @Optional() private interactiveHost?: InteractiveHostDirective,
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.darkModeSubscription = this.settingsService
@@ -105,10 +105,10 @@ export class PokemonTypeComponent implements OnInit, OnDestroy {
   }
 
   updateLocalizedTypeName() {
-    if (this.pokemonType?.pokemon_v2_typenames) {
+    if (this.pokemonType?.typenames) {
       this.localizedTypeName = this.pokemonUtils.getLocalizedNameFromEntity(
         this.pokemonType,
-        'pokemon_v2_typenames',
+        'typenames',
       );
     } else {
       this.localizedTypeName = 'Unknown';

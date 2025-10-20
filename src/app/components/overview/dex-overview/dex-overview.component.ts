@@ -1,6 +1,6 @@
 import {
   Component, OnInit, Inject, PLATFORM_ID, ViewChild, ChangeDetectionStrategy,
-  Renderer2, HostListener, OnDestroy
+  HostListener, OnDestroy, AfterViewInit
 } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { PokemonService } from '../../../services/pokemon.service';
@@ -27,14 +27,16 @@ import { LoadingSpinnerComponent } from '../../shared/loading-spinner/loading-sp
   templateUrl: './dex-overview.component.html',
   styleUrls: ['./dex-overview.component.css'],
 })
-export class DexOverviewComponent implements OnInit, OnDestroy {
+export class DexOverviewComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild(CdkVirtualScrollViewport) viewport!: CdkVirtualScrollViewport;
 
-  pageSize = 6;
+  cardsPerRow = 6;
+  rowVisualHeight = 350;
   itemSize = 350;
   count = 0;
   private allSpecies: PokemonSpecies[] = [];
-  private lastDevicePixelRatio = this.getDevicePixelRatio();
+
+  private CARD_ASPECT_RATIO = 5 / 7;
 
   private speciesRowsSubject = new BehaviorSubject<SpeciesRow[]>([]);
   speciesRows$: Observable<SpeciesRow[]> = this.speciesRowsSubject.asObservable();
@@ -44,111 +46,141 @@ export class DexOverviewComponent implements OnInit, OnDestroy {
 
   constructor(
     private pokemonService: PokemonService,
-    @Inject(PLATFORM_ID) private platformId: object,
-    private renderer: Renderer2
+    @Inject(PLATFORM_ID) private platformId: object
   ) { }
 
   ngOnInit(): void {
-    this.initializeView();
+    this.updateLayout();
     this.fetchAllPokemon();
+  }
+
+  ngAfterViewInit(): void {
+    if (!isPlatformBrowser(this.platformId)) return;
+    // Give layout a tick (or two) so .row has a real width
+    requestAnimationFrame(() => {
+      this.updateLayout();
+      requestAnimationFrame(() => this.updateLayout());
+    });
   }
 
   @HostListener('window:resize')
   onResize() {
-    this.updateViewSettings();
+    this.updateLayout();
   }
 
-  ngOnDestroy(): void {
-    // @HostListener handles cleanup, no need for manual event listener removal
-  }
+  ngOnDestroy(): void { }
 
-  private initializeView(): void {
-    this.updateViewSettings();
-  }
-
-  private getDevicePixelRatio(): number {
-    return isPlatformBrowser(this.platformId) ? window.devicePixelRatio : 1;
-  }
-
-  private updateViewSettings(): void {
+  private updateLayout(): void {
     if (!isPlatformBrowser(this.platformId)) return;
 
-    const newPageSize = this.calculatePageSize();
-    const newItemSize = this.calculateItemSize();
-    const newDevicePixelRatio = window.devicePixelRatio;
-
-    if (newPageSize !== this.pageSize || newDevicePixelRatio !== this.lastDevicePixelRatio) {
-      this.pageSize = newPageSize;
-      this.lastDevicePixelRatio = newDevicePixelRatio;
+    const cols = this.calculateCardsPerRow();
+    if (cols !== this.cardsPerRow) {
+      this.cardsPerRow = cols;
       this.updateRows();
     }
 
-    if (newItemSize !== this.itemSize) {
-      this.itemSize = newItemSize;
+    const { visual, itemSize } = this.calculateHeightsByAspect();
+
+    let dirty = false;
+    if (visual !== this.rowVisualHeight) {
+      this.rowVisualHeight = visual;
+      dirty = true;
     }
-
-    this.updateDynamicStyles();
+    if (itemSize !== this.itemSize) {
+      this.itemSize = itemSize; // CDK gets visual + collapsed margin
+      dirty = true;
+    }
+    if (dirty) {
+      this.applyCssVars();
+      queueMicrotask(() => this.viewport?.checkViewportSize());
+    }
   }
 
-  private calculatePageSize(): number {
-    if (!isPlatformBrowser(this.platformId)) return 6;
-
-    const width = window.innerWidth;
-    return width <= 768
-      ? Math.max(2, Math.round((width / 768) * 3))
-      : Math.max(2, Math.round((width / 1920) * 6));
-  }
-
-  private calculateItemSize(): number {
-    if (!isPlatformBrowser(this.platformId)) return 350;
-
-    const width = window.innerWidth;
-
-    if (width <= 480) return 180; // Phone
-    if (width <= 1024) return 280; // Tablet
-    return 350; // Desktop
-  }
-
-  private updateDynamicStyles(): void {
-    if (!isPlatformBrowser(this.platformId)) return;
-
+  private applyCssVars(): void {
     const root = document.documentElement;
-    root.style.setProperty('--page-size', this.pageSize.toString());
+    root.style.setProperty('--cards-per-row', String(this.cardsPerRow));
+    root.style.setProperty('--row-height', `${this.rowVisualHeight}px`);
+  }
+
+  private calculateCardsPerRow(): number {
+    const w = window.innerWidth;
+    if (w <= 480) return 2;
+    if (w <= 768) return 3;
+    if (w <= 1024) return 4;
+    if (w <= 1440) return 5;
+    if (w <= 1920) return 6;
+    if (w <= 2560) return 7;
+    if (w <= 3440) return 8;
+    if (w <= 3840) return 9;
+    return 10;
+  }
+
+  private calculateHeightsByAspect(): { visual: number; itemSize: number } {
+    const row = document.querySelector<HTMLElement>('.row');
+
+    const rowClient = row?.clientWidth ?? 0;
+    const viewportClient = this.viewport?.elementRef?.nativeElement?.clientWidth ?? 0;
+    const rowWidth = rowClient > 0 ? rowClient : (viewportClient > 0 ? viewportClient : window.innerWidth);
+
+    const cs = row ? getComputedStyle(row) : null;
+    const gapX = cs ? parseFloat(cs.getPropertyValue('column-gap') || cs.getPropertyValue('gap')) || 0 : 0;
+
+    const available = rowWidth - gapX * Math.max(0, this.cardsPerRow - 1);
+    const cardWidth = available / this.cardsPerRow;
+
+    const visual = cardWidth / this.CARD_ASPECT_RATIO; // cards only (what you want to SEE)
+
+    // collapsed margin between rows = max(top, bottom)
+    const mTop = cs ? parseFloat(cs.getPropertyValue('margin-block-start') || cs.marginTop || '0') : 0;
+    const mBottom = cs ? parseFloat(cs.getPropertyValue('margin-block-end') || cs.marginBottom || '0') : 0;
+    const collapsed = Math.max(mTop, mBottom);
+
+    return { visual: Math.round(visual), itemSize: Math.round(visual + collapsed) };
+  }
+
+  private exposeCssVars(): void {
+    const root = document.documentElement;
+    root.style.setProperty('--cards-per-row', String(this.cardsPerRow));
     root.style.setProperty('--item-size', `${this.itemSize}px`);
   }
 
   private fetchAllPokemon(): void {
     this.isLoadingSubject.next(true);
-
     this.pokemonService.getAllPokemonSpecies().pipe(
       finalize(() => this.isLoadingSubject.next(false)),
       catchError(error => {
         console.error('Error fetching Pokémon species:', error);
         return of({
-          pokemon_v2_pokemonspecies: [],
-          pokemon_v2_pokemonspecies_aggregate: { aggregate: { count: 0 } }
+          pokemonspecies: [],
+          pokemonspecies_aggregate: { aggregate: { count: 0 } }
         });
       })
     ).subscribe(response => {
-      this.allSpecies = response.pokemon_v2_pokemonspecies;
-      this.count = response.pokemon_v2_pokemonspecies_aggregate.aggregate.count;
+      this.allSpecies = response.pokemonspecies;
+      this.count = response.pokemonspecies_aggregate.aggregate.count;
       this.updateRows();
+      // Re-run after content exists so widths are stable
+      requestAnimationFrame(() => this.updateLayout());
     });
   }
 
   private updateRows(): void {
-    this.speciesRowsSubject.next(this.transformToRows(this.allSpecies, this.pageSize));
+    this.speciesRowsSubject.next(this.transformToRows(this.allSpecies, this.cardsPerRow));
   }
 
-  private transformToRows(species: PokemonSpecies[], pageSize: number): SpeciesRow[] {
+  private transformToRows(species: PokemonSpecies[], cardsPerRow: number): SpeciesRow[] {
     return species.reduce((acc: SpeciesRow[], _, index) => {
-      if (index % pageSize === 0) {
+      if (index % cardsPerRow === 0) {
         acc.push({
-          rowId: index / pageSize,
-          pokemon_species: species.slice(index, index + pageSize),
+          rowId: index / cardsPerRow,
+          pokemon_species: species.slice(index, index + cardsPerRow),
         });
       }
       return acc;
     }, []);
+  }
+
+  getPlaceholderArray(count: number): number[] {
+    return count > 0 ? Array(count).fill(0) : [];
   }
 }

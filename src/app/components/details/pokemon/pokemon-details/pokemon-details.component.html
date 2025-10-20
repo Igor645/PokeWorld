@@ -28,8 +28,8 @@
 
         <!-- Pokémon Types -->
         <div class="types-container">
-          <app-pokemon-type *ngFor="let type of selectedPokemon?.pokemon_v2_pokemontypes"
-            [pokemonType]="type.pokemon_v2_type" [simpleView]="false">
+          <app-pokemon-type *ngFor="let type of selectedPokemon?.pokemontypes" [pokemonType]="type.type"
+            [simpleView]="false">
           </app-pokemon-type>
         </div>
 
@@ -45,7 +45,7 @@
 
           <li>
             <label class="general-detail-label">Introduced</label>
-            <div>{{ getGenerationName(pokemonSpeciesDetails?.pokemon_v2_generation) }}</div>
+            <div>{{ getGenerationName(pokemonSpeciesDetails?.generation) }}</div>
           </li>
 
           <li>
@@ -62,7 +62,7 @@
           <li>
             <label class="general-detail-label">Varieties</label>
             <select id="variant-select" (change)="onPokemonChange($event)" [disabled]="!hasMultipleVariants()">
-              <option *ngFor="let pokemon of pokemonSpeciesDetails?.pokemon_v2_pokemons || []" [value]="pokemon.id">
+              <option *ngFor="let pokemon of pokemonSpeciesDetails?.pokemons || []" [value]="pokemon.id">
                 {{ getPokemonVariantName(pokemon) }}
               </option>
             </select>
@@ -72,13 +72,12 @@
           <li>
             <label class="general-detail-label">Abilities</label>
             <div class="ability-list">
-              <div class="ability-container"
-                *ngFor="let ability of selectedPokemon?.pokemon_v2_pokemonabilities; let i = index">
+              <div class="ability-container" *ngFor="let ability of selectedPokemon?.pokemonabilities; let i = index">
                 <div class="ability-name">
                   {{ getAbilityText(ability, i) }}
                 </div>
                 <div class="ability-description">
-                  {{ getAbilityFlavorText(ability.pokemon_v2_ability) }}
+                  {{ getAbilityFlavorText(ability.ability) }}
                 </div>
               </div>
             </div>
@@ -86,13 +85,13 @@
 
           <li>
             <label class="general-detail-label">Shape</label>
-            <div>{{ getPokemonShapeName(pokemonSpeciesDetails?.pokemon_v2_pokemonshape) }}
+            <div>{{ getPokemonShapeName(pokemonSpeciesDetails?.pokemonshape) }}
             </div>
           </li>
 
           <li>
             <label class="general-detail-label">Color</label>
-            <div>{{ getPokemonColorName(pokemonSpeciesDetails?.pokemon_v2_pokemoncolor) }}
+            <div>{{ getPokemonColorName(pokemonSpeciesDetails?.pokemoncolor) }}
             </div>
           </li>
 
@@ -138,13 +137,13 @@
 
   <div class="pokemon-other-details">
     <app-pokemon-stats class="pokemon-stats" [pokemon]="selectedPokemon" />
-    <app-pokemon-relations class="pokemon-relations" [pokemonTypes]="selectedPokemon?.pokemon_v2_pokemontypes"
+    <app-pokemon-relations class="pokemon-relations" [pokemonTypes]="selectedPokemon?.pokemontypes"
       [allTypes]="allTypes" />
     <app-pokemon-training class="pokemon-training" [pokemon]="selectedPokemon" [species]="pokemonSpeciesDetails" />
     <app-pokemon-breeding class="pokemon-breeding" [pokemonSpecies]="pokemonSpeciesDetails" />
-    <app-pokemon-forms class="pokemon-forms" [forms]="selectedPokemon?.pokemon_v2_pokemonforms" />
+    <app-pokemon-forms class="pokemon-forms" [forms]="selectedPokemon?.pokemonforms" />
 
-    <app-pokemon-evolutions class="pokemon-evolutions"
-      [evolutionChain]="pokemonSpeciesDetails?.pokemon_v2_evolutionchain" [pokemonEvolutions]="pokemonEvolutions" />
+    <app-pokemon-evolutions class="pokemon-evolutions" [evolutionChain]="pokemonSpeciesDetails?.evolutionchain"
+      [pokemonEvolutions]="pokemonEvolutions" />
   </div>
 </ng-template>

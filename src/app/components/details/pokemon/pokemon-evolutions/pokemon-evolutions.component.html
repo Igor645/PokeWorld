@@ -6,7 +6,7 @@
         <div class="evolution-cell">
           <!-- If species is defined -->
           <ng-container *ngIf="species">
-            <app-pokemon-card [pokemon]="species.pokemon_v2_pokemons[0]" [pokemonSpecies]="species">
+            <app-pokemon-card [pokemon]="species.pokemons[0]" [pokemonSpecies]="species">
             </app-pokemon-card>
 
             <!-- Only show if any evolution has at least one condition -->

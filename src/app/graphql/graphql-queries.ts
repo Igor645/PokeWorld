@@ -1,7 +1,7 @@
 export const GraphQLQueries = {
   GetPokemonDetails: `
       query PokemonDetails($value: {TYPE}) {
-        pokemon_v2_pokemonspecies(
+        pokemonspecies(
           where: { {FILTER} }
         ) {
           id
@@ -15,46 +15,46 @@ export const GraphQLQueries = {
           capture_rate
           gender_rate
           hatch_counter
-          pokemon_v2_evolutionchain {
+          evolutionchain {
             baby_trigger_item_id
-            pokemon_v2_item {
+            item {
               name
               id
-              pokemon_v2_itemnames {
+              itemnames {
                 id
                 name
-                pokemon_v2_language {
+                language {
                   id
                   name
                 }
               }
-              pokemon_v2_itemsprites {
+              itemsprites {
                 sprites
               }
             }
-            pokemon_v2_pokemonspecies {
+            pokemonspecies {
               id
               name
               evolves_from_species_id
-              pokemon_v2_pokemons(where: {is_default: {_eq: true}}) {
+              pokemons(where: {is_default: {_eq: true}}) {
                 id
-                pokemon_v2_pokemonsprites {
+                pokemonsprites {
                   sprites
                 }
               }
-              pokemon_v2_pokemonspeciesnames {
+              pokemonspeciesnames {
                 name
-                pokemon_v2_language {
+                language {
                   name
                   id
                 }
               }
-              pokemon_v2_generation {
+              generation {
                 id
                 name
-                pokemon_v2_generationnames {
+                generationnames {
                   name
-                  pokemon_v2_language {
+                  language {
                     id
                     name
                   }
@@ -62,155 +62,155 @@ export const GraphQLQueries = {
               }
             }
           }
-          pokemon_v2_pokemonhabitat {
+          pokemonhabitat {
             name
             id
-            pokemon_v2_pokemonhabitatnames {
+            pokemonhabitatnames {
               id
               language_id
               name
-              pokemon_v2_language {
+              language {
                 id
                 name
               }
             }
           }
-          pokemon_v2_pokemonegggroups {
+          pokemonegggroups {
             id
             egg_group_id
-            pokemon_v2_egggroup {
+            egggroup {
               name
               id
-              pokemon_v2_egggroupnames {
+              egggroupnames {
                 name
                 language_id
-                pokemon_v2_language {
+                language {
                   id
                   name
                 }
               }
             }
           }
-          pokemon_v2_growthrate {
+          growthrate {
             name
             id
             formula
-            pokemon_v2_growthratedescriptions {
+            growthratedescriptions {
               name: description
               id
               language_id
-              pokemon_v2_language {
+              language {
                 id
                 name
               }
             }
           }
-          pokemon_v2_pokemons {
+          pokemons {
             id
             name
             height
             weight
             is_default
             base_experience
-            pokemon_v2_pokemonsprites {
+            pokemonsprites {
               sprites
             }
-            pokemon_v2_pokemoncries {
+            pokemoncries {
               cries
             }
-            pokemon_v2_pokemonstats {
+            pokemonstats {
               base_stat
               effort
-              pokemon_v2_stat {
+              stat {
                 id
                 name
-                pokemon_v2_statnames {
+                statnames {
                   language_id
                   name
-                  pokemon_v2_language {
+                  language {
                     id
                     name
                   }
                 }
               }
             }
-            pokemon_v2_pokemonforms {
+            pokemonforms {
               id
               name
-              pokemon_v2_pokemonformsprites {
+              pokemonformsprites {
                 sprites
               }
-              pokemon_v2_pokemonformnames {
+              pokemonformnames {
                 language_id
                 name
-                pokemon_v2_language {
+                language {
                   id
                   name
                 }
               }
             }
-            pokemon_v2_pokemontypes {
-              pokemon_v2_type {
+            pokemontypes {
+              type {
                 id
                 name
-                pokemon_v2_typenames {
+                typenames {
                   language_id
                   name
-                  pokemon_v2_language {
+                  language {
                     id
                     name
                   }
                 }
               }
             }
-            pokemon_v2_pokemonitems {
+            pokemonitems {
               id
               rarity
-              pokemon_v2_version {
+              version {
                 name
                 id
-                pokemon_v2_versionnames {
+                versionnames {
                   id
                   language_id
                   name
-                  pokemon_v2_language {
+                  language {
                     id
                     name
                   }
                 }
               }
-              pokemon_v2_item {
+              item {
                 id
                 name
-                pokemon_v2_itemnames {
+                itemnames {
                   id
                   language_id
                   name
-                  pokemon_v2_language {
+                  language {
                     name
                     id
                   }
                 }
-                pokemon_v2_itemsprites {
+                itemsprites {
                   sprites
                 }
               }
             }
-            pokemon_v2_pokemonabilities {
-              pokemon_v2_ability {
+            pokemonabilities {
+              ability {
                 name
-                pokemon_v2_abilitynames {
+                abilitynames {
                   language_id
                   name
-                  pokemon_v2_language {
+                  language {
                     name
                     id
                   }
                 }
-                pokemon_v2_abilityflavortexts {
+                abilityflavortexts {
                   flavor_text
                   language_id
-                  pokemon_v2_language {
+                  language {
                     name
                     id
                   }
@@ -219,62 +219,62 @@ export const GraphQLQueries = {
               is_hidden
             }
           }
-          pokemon_v2_pokemonspeciesnames {
+          pokemonspeciesnames {
             name
-            pokemon_v2_language {
+            language {
               name
               id
             }
           }
-          pokemon_v2_pokemonspeciesflavortexts {
+          pokemonspeciesflavortexts {
             flavor_text
             id
-            pokemon_v2_language {
+            language {
               name
               id
             }
-            pokemon_v2_version {
+            version {
               name
               id
-              pokemon_v2_versionnames {
+              versionnames {
                 name
-                pokemon_v2_language {
+                language {
                   id
                   name
                 }
               }
             }
           }
-          pokemon_v2_generation {
+          generation {
             name
-            pokemon_v2_generationnames {
+            generationnames {
               language_id
               name
-              pokemon_v2_language {
+              language {
                 name
                 id
               }
             }
           }
-          pokemon_v2_pokemoncolor {
+          pokemoncolor {
             id
             name
-            pokemon_v2_pokemoncolornames {
+            pokemoncolornames {
               name
               language_id
-              pokemon_v2_language {
+              language {
                 id
                 name
               }
             }
           }
-          pokemon_v2_pokemonshape {
+          pokemonshape {
             name
             id
-            pokemon_v2_pokemonshapenames {
+            pokemonshapenames {
               language_id
               name
-              pokemon_v2_language {
+              language {
                 name
                 id
               }
@@ -286,28 +286,28 @@ export const GraphQLQueries = {
 
   GetPokemonSpeciesPaginated: `
       query PokemonSpeciesOverview($limit: Int, $offset: Int) {
-        pokemon_v2_pokemonspecies(limit: $limit, offset: $offset, order_by: {id: asc}) {
+        pokemonspecies(limit: $limit, offset: $offset, order_by: {id: asc}) {
           name
-          pokemon_v2_pokemons(where: {is_default: {_eq: true}}) {
+          pokemons(where: {is_default: {_eq: true}}) {
             id
-            pokemon_v2_pokemonsprites {
+            pokemonsprites {
               sprites
             }
           }
           id
-          pokemon_v2_pokemonspeciesnames(where: {pokemon_v2_language: {name: {_eq: "en"}}}) {
+          pokemonspeciesnames(where: {language: {name: {_eq: "en"}}}) {
             name
-            pokemon_v2_language {
+            language {
               name
               id
             }
           }
-          pokemon_v2_generation {
+          generation {
             id
             name
           }
         }
-        pokemon_v2_pokemonspecies_aggregate {
+        pokemonspecies_aggregate {
           aggregate {
             count
           }
@@ -317,35 +317,35 @@ export const GraphQLQueries = {
 
   GetPokemonSpeciesAll: `
     query GetAllPokemonSpecies {
-      pokemon_v2_pokemonspecies(order_by: {id: asc}) {
+      pokemonspecies(order_by: {id: asc}) {
         name
-        pokemon_v2_pokemons(where: {is_default: {_eq: true}}) {
+        pokemons(where: {is_default: {_eq: true}}) {
           id
-          pokemon_v2_pokemonsprites {
+          pokemonsprites {
             sprites
           }
         }
         id
-        pokemon_v2_pokemonspeciesnames {
+        pokemonspeciesnames {
           name
-          pokemon_v2_language {
+          language {
             name
             id
           }
         }
-        pokemon_v2_generation {
+        generation {
           id
           name
-          pokemon_v2_generationnames {
+          generationnames {
             name
-            pokemon_v2_language {
+            language {
               id
               name
             }
           }
         }
       }
-      pokemon_v2_pokemonspecies_aggregate {
+      pokemonspecies_aggregate {
         aggregate {
           count
         }
@@ -355,27 +355,27 @@ export const GraphQLQueries = {
 
   GetPokemonSpeciesByPrefix: `
       query MyQuery($search: String!, $languageId: Int!) {
-        pokemon_v2_pokemonspecies(
+        pokemonspecies(
           where: {
-            pokemon_v2_pokemonspeciesnames: {
+            pokemonspeciesnames: {
               name: { _ilike: $search },
-              pokemon_v2_language: { id: { _eq: $languageId } }
+              language: { id: { _eq: $languageId } }
             }
           }
           order_by: { id: asc }
         ) {
           id
           name
-          pokemon_v2_pokemons {
-            pokemon_v2_pokemonsprites {
+          pokemons {
+            pokemonsprites {
               sprites
             }
           }
-          pokemon_v2_pokemonspeciesnames(
-            where: { pokemon_v2_language: { id: { _eq: $languageId } } }
+          pokemonspeciesnames(
+            where: { language: { id: { _eq: $languageId } } }
           ) {
             name
-            pokemon_v2_language {
+            language {
               name
               id
             }
@@ -386,17 +386,17 @@ export const GraphQLQueries = {
 
   GetPokemonSpeciesWithoutPrefix: `
       query MyQuery {
-        pokemon_v2_pokemonspecies(order_by: {id: asc}, limit: 15) {
+        pokemonspecies(order_by: {id: asc}, limit: 15) {
           id
           name
-          pokemon_v2_pokemons {
-            pokemon_v2_pokemonsprites {
+          pokemons {
+            pokemonsprites {
               sprites
             }
           }
-          pokemon_v2_pokemonspeciesnames {
+          pokemonspeciesnames {
             name
-            pokemon_v2_language {
+            language {
               name
               id
             }
@@ -407,7 +407,7 @@ export const GraphQLQueries = {
 
   GetLanguages: `
       query Languages {
-        pokemon_v2_language {
+        language {
           name
           id
         }
@@ -415,11 +415,11 @@ export const GraphQLQueries = {
     `,
 
   GetVersions: `query Versions {
-      pokemon_v2_version {
+      version {
         id
-        pokemon_v2_versionnames {
+        versionnames {
           name
-          pokemon_v2_language {
+          language {
             id
             name
           }
@@ -430,18 +430,18 @@ export const GraphQLQueries = {
 
   GetPokemonSpeciesById: `
       query GetPokemonSpeciesById($id: Int!) {
-        pokemon_v2_pokemonspecies(order_by: { id: asc }, where: { id: { _eq: $id } }) {
+        pokemonspecies(order_by: { id: asc }, where: { id: { _eq: $id } }) {
           name
-          pokemon_v2_pokemons(where: { is_default: { _eq: true } }) {
+          pokemons(where: { is_default: { _eq: true } }) {
             id
-            pokemon_v2_pokemonsprites {
+            pokemonsprites {
               sprites
             }
           }
           id
-          pokemon_v2_pokemonspeciesnames {
+          pokemonspeciesnames {
             name
-            pokemon_v2_language {
+            language {
               name
               id
             }
@@ -452,7 +452,7 @@ export const GraphQLQueries = {
 
   GetPokemonEvolutions: `
       query GetPokemonEvolutions($id: Int!) {
-        pokemon_v2_pokemonevolution(where: {evolved_species_id: {_eq: $id}}) {
+        pokemonevolution(where: {evolved_species_id: {_eq: $id}}) {
           evolution_item_id
           evolution_trigger_id
           evolved_species_id
@@ -473,117 +473,117 @@ export const GraphQLQueries = {
           time_of_day
           trade_species_id
           turn_upside_down
-          pokemon_v2_evolutiontrigger {
+          evolutiontrigger {
             name
-            pokemon_v2_evolutiontriggernames {
+            evolutiontriggernames {
               name
-              pokemon_v2_language {
+              language {
                 name
                 id
               }
             }
           }
-          pokemonV2ItemByHeldItemId {
+          ItemByHeldItemId {
             name
-            pokemon_v2_itemnames {
+            itemnames {
               name
               language_id
-              pokemon_v2_language {
+              language {
                 name
                 id
               }
             }
-            pokemon_v2_itemsprites {
+            itemsprites {
               sprites
             }
           }
-          pokemon_v2_gender {
+          gender {
             name
             id
           }
-          pokemon_v2_item {
+          item {
             name
-            pokemon_v2_itemnames {
+            itemnames {
               name
               language_id
-              pokemon_v2_language {
+              language {
                 name
                 id
               }
             }
-            pokemon_v2_itemsprites {
+            itemsprites {
               sprites
             }
           }
-          pokemonV2PokemonspecyByPartySpeciesId {
+          PokemonspecyByPartySpeciesId {
             name
             id
-            pokemon_v2_pokemonspeciesnames {
+            pokemonspeciesnames {
               name
               language_id
-              pokemon_v2_language {
+              language {
                 name
                 id
               }
             }
           }
-          pokemonV2PokemonspecyByTradeSpeciesId {
+          PokemonspecyByTradeSpeciesId {
             name
             id
-            pokemon_v2_pokemonspeciesnames {
+            pokemonspeciesnames {
               name
               language_id
-              pokemon_v2_language {
+              language {
                 name
                 id
               }
             }
           }
-          pokemonV2TypeByPartyTypeId {
+          TypeByPartyTypeId {
             name
-            pokemon_v2_typenames {
+            typenames {
               name
               language_id
-              pokemon_v2_language {
+              language {
                 id
                 name
               }
             }
           }
-          pokemon_v2_location {
+          location {
             name
             id
             region_id
-            pokemon_v2_locationnames {
+            locationnames {
               language_id
               name
               id
-              pokemon_v2_language {
+              language {
                 id
                 name
               }
             }
           }
-          pokemon_v2_move {
+          move {
             name
             id
-            pokemon_v2_movenames {
+            movenames {
               id
               name
               language_id
-              pokemon_v2_language {
+              language {
                 name
                 id
               }
             }
           }
-          pokemon_v2_type {
+          type {
             name
             id
-            pokemon_v2_typenames {
+            typenames {
               id
               name
-              pokemon_v2_language {
+              language {
                 id
                 name
               }
@@ -595,28 +595,28 @@ export const GraphQLQueries = {
 
   GetAllTypes: `
     query GetTypes {
-      pokemon_v2_type {
+      type {
         id
         name
-        pokemon_v2_typenames {
+        typenames {
           language_id
           name
-          pokemon_v2_language {
+          language {
             id
             name
           }
         }
-        pokemon_v2_typeefficacies {
+        typeefficacies {
           damage_factor
           damage_type_id
           target_type_id
-          pokemonV2TypeByTargetTypeId {
+          TypeByTargetTypeId {
             id
             name
-            pokemon_v2_typenames {
+            typenames {
               language_id
               name
-              pokemon_v2_language {
+              language {
                 id
                 name
               }

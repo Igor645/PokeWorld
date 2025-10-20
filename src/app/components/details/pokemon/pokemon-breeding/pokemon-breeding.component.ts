@@ -55,22 +55,22 @@ export class PokemonBreedingComponent {
   }
 
   getItemNameByLanguage(item: Item | undefined): string {
-    return this.pokemonUtils.getLocalizedNameFromEntity(item, "pokemon_v2_itemnames");
+    return this.pokemonUtils.getLocalizedNameFromEntity(item, "itemnames");
   }
 
   getEggGroupNameByLanguage(eggGroup: EggGroup | undefined): string {
-    return this.pokemonUtils.getLocalizedNameFromEntity(eggGroup, "pokemon_v2_egggroupnames");
+    return this.pokemonUtils.getLocalizedNameFromEntity(eggGroup, "egggroupnames");
   }
 
   getHabitatNameByLanguage(habitat: PokemonHabitat | undefined): string {
-    return this.pokemonUtils.getLocalizedNameFromEntity(habitat, "pokemon_v2_pokemonhabitatnames");
+    return this.pokemonUtils.getLocalizedNameFromEntity(habitat, "pokemonhabitatnames");
   }
 
   getGrowthRateDescriptions(growthRate: GrowthRate | undefined): string {
-    return this.pokemonUtils.getLocalizedNameFromEntity(growthRate, "pokemon_v2_growthratedescriptions");
+    return this.pokemonUtils.getLocalizedNameFromEntity(growthRate, "growthratedescriptions");
   }
 
   getBabyTriggerItem(): Item | undefined {
-    return this.pokemonSpecies?.pokemon_v2_evolutionchain?.pokemon_v2_item
+    return this.pokemonSpecies?.evolutionchain?.item
   }
 }

@@ -31,13 +31,13 @@ export class PokemonFormsComponent implements OnInit {
   }
 
   get spriteUrl(): string {
-    const sprite = this.selectedForm?.pokemon_v2_pokemonformsprites?.[0]?.sprites?.front_default;
+    const sprite = this.selectedForm?.pokemonformsprites?.[0]?.sprites?.front_default;
 
     return sprite || '/images/placeholder.png';
   }
 
   getFormName(form: PokemonForms): string {
-    return this.pokemonUtils.getLocalizedNameFromEntity(form, 'pokemon_v2_pokemonformnames');
+    return this.pokemonUtils.getLocalizedNameFromEntity(form, 'pokemonformnames');
   }
 
   hasAlternativeForms(): boolean {

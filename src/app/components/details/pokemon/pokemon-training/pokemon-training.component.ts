@@ -51,10 +51,10 @@ export class PokemonTrainingComponent implements OnInit, OnChanges, OnDestroy {
     const languageId = this.utils.getSelectedLanguageId();
     const grouped = new Map<string, { name: string; rarity: number; count: number; tooltip: string; defaultIcon: string }>();
 
-    for (const item of this.pokemon?.pokemon_v2_pokemonitems || []) {
-      const name = this.utils.getLocalizedNameFromEntity(item.pokemon_v2_item, "pokemon_v2_itemnames");
+    for (const item of this.pokemon?.pokemonitems || []) {
+      const name = this.utils.getLocalizedNameFromEntity(item.item, "itemnames");
       const key = `${name}_${item.rarity}`;
-      const versionName = item.pokemon_v2_version?.pokemon_v2_versionnames?.find(
+      const versionName = item.version?.versionnames?.find(
         vn => vn.language_id === languageId
       )?.name ?? 'Unknown Version';
 
@@ -64,7 +64,7 @@ export class PokemonTrainingComponent implements OnInit, OnChanges, OnDestroy {
           rarity: item.rarity,
           count: 1,
           tooltip: `Held in:\n${versionName}`,
-          defaultIcon: item.pokemon_v2_item?.pokemon_v2_itemsprites[0]?.sprites.default
+          defaultIcon: item.item?.itemsprites[0]?.sprites.default
         });
       } else {
         const existing = grouped.get(key)!;
@@ -82,10 +82,10 @@ export class PokemonTrainingComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   get evYield(): string {
-    const stats = this.pokemon?.pokemon_v2_pokemonstats || [];
+    const stats = this.pokemon?.pokemonstats || [];
     const relevant = stats.filter(s => s.effort > 0);
     return relevant.map(s =>
-      `${s.effort} ${this.utils.getLocalizedNameFromEntity(s.pokemon_v2_stat, "pokemon_v2_statnames")}`
+      `${s.effort} ${this.utils.getLocalizedNameFromEntity(s.stat, "statnames")}`
     ).join(', ');
   }
 

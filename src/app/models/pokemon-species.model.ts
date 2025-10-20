@@ -23,20 +23,20 @@ export interface PokemonSpecies {
   gender_rate: number | null;
   hatch_counter: number;
   evolves_from_species_id: number | null;
-  pokemon_v2_pokemons: Pokemon[];
-  pokemon_v2_pokemonspeciesnames: Name[];
-  pokemon_v2_generation: Generation;
-  pokemon_v2_pokemonsprites?: PokemonSprites;
-  pokemon_v2_pokemonspeciesflavortexts: FlavorText[];
-  pokemon_v2_pokemoncolor: PokemonColor;
-  pokemon_v2_pokemonshape: PokemonShape;
-  pokemon_v2_evolutionchain: EvolutionChain;
-  pokemon_v2_pokemonegggroups: PokemonEggGroups[];
-  pokemon_v2_growthrate: GrowthRate;
-  pokemon_v2_pokemonhabitat: PokemonHabitat;
+  pokemons: Pokemon[];
+  pokemonspeciesnames: Name[];
+  generation: Generation;
+  pokemonsprites?: PokemonSprites;
+  pokemonspeciesflavortexts: FlavorText[];
+  pokemoncolor: PokemonColor;
+  pokemonshape: PokemonShape;
+  evolutionchain: EvolutionChain;
+  pokemonegggroups: PokemonEggGroups[];
+  growthrate: GrowthRate;
+  pokemonhabitat: PokemonHabitat;
 }
 
 export interface PokemonSpeciesResponse {
-  pokemon_v2_pokemonspecies: PokemonSpecies[];
-  pokemon_v2_pokemonspecies_aggregate: { aggregate: Aggregate };
+  pokemonspecies: PokemonSpecies[];
+  pokemonspecies_aggregate: { aggregate: Aggregate };
 }

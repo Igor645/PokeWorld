@@ -23,6 +23,6 @@ export class PokeworldSearchItemComponent {
   constructor(private router: Router, private pokemonUtils: PokemonUtilsService) { }
 
   getName(): string {
-    return this.pokemonUtils.getLocalizedNameFromEntity(this.species, "pokemon_v2_pokemonspeciesnames");
+    return this.pokemonUtils.getLocalizedNameFromEntity(this.species, "pokemonspeciesnames");
   }
 }

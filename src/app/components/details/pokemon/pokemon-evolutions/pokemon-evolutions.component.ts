@@ -49,7 +49,7 @@ export class PokemonEvolutionsComponent implements OnChanges {
     const speciesMap = new Map<number, PokemonSpecies>();
     if (!this.evolutionChain) return [];
 
-    for (const species of this.evolutionChain.pokemon_v2_pokemonspecies) {
+    for (const species of this.evolutionChain.pokemonspecies) {
       speciesMap.set(species.id, species);
     }
 
@@ -86,7 +86,7 @@ export class PokemonEvolutionsComponent implements OnChanges {
   }
 
   getEvolutionTriggerName(evolutionTrigger: EvolutionTrigger): string {
-    return this.pokemonUtils.getLocalizedNameFromEntity(evolutionTrigger, "pokemon_v2_evolutiontriggernames");
+    return this.pokemonUtils.getLocalizedNameFromEntity(evolutionTrigger, "evolutiontriggernames");
   }
 
   getEvolutionConditions(evo: PokemonEvolution): EvolutionCondition[] {
@@ -112,10 +112,10 @@ export class PokemonEvolutionsComponent implements OnChanges {
       conditions.push({ prefix: 'with high affection' });
     }
 
-    if (evo.pokemon_v2_item) {
-      const item = evo.pokemon_v2_item;
-      const name = this.pokemonUtils.getLocalizedNameFromEntity(item, "pokemon_v2_itemnames");
-      const sprite = item.pokemon_v2_itemsprites?.[0]?.sprites?.default;
+    if (evo.item) {
+      const item = evo.item;
+      const name = this.pokemonUtils.getLocalizedNameFromEntity(item, "itemnames");
+      const sprite = item.itemsprites?.[0]?.sprites?.default;
       conditions.push({
         prefix: 'use',
         entity: name,
@@ -124,10 +124,10 @@ export class PokemonEvolutionsComponent implements OnChanges {
       });
     }
 
-    if (evo.pokemonV2ItemByHeldItemId) {
-      const item = evo.pokemonV2ItemByHeldItemId;
-      const name = this.pokemonUtils.getLocalizedNameFromEntity(item, "pokemon_v2_itemnames");
-      const sprite = item.pokemon_v2_itemsprites?.[0]?.sprites?.default;
+    if (evo.ItemByHeldItemId) {
+      const item = evo.ItemByHeldItemId;
+      const name = this.pokemonUtils.getLocalizedNameFromEntity(item, "itemnames");
+      const sprite = item.itemsprites?.[0]?.sprites?.default;
       conditions.push({
         prefix: 'hold',
         entity: name,
@@ -136,8 +136,8 @@ export class PokemonEvolutionsComponent implements OnChanges {
       });
     }
 
-    if (evo.pokemon_v2_gender?.name) {
-      const isFemale = evo.pokemon_v2_gender.name.toLowerCase() === 'female';
+    if (evo.gender?.name) {
+      const isFemale = evo.gender.name.toLowerCase() === 'female';
       const spriteUrl = isFemale ? '/images/female.png' : '/images/male.png';
 
       conditions.push({
@@ -146,8 +146,8 @@ export class PokemonEvolutionsComponent implements OnChanges {
       });
     }
 
-    if (evo.pokemon_v2_location) {
-      const name = this.pokemonUtils.getLocalizedNameFromEntity(evo.pokemon_v2_location, "pokemon_v2_locationnames");
+    if (evo.location) {
+      const name = this.pokemonUtils.getLocalizedNameFromEntity(evo.location, "locationnames");
       conditions.push({
         prefix: 'at ',
         entity: name,
@@ -155,8 +155,8 @@ export class PokemonEvolutionsComponent implements OnChanges {
       });
     }
 
-    if (evo.pokemon_v2_move) {
-      const name = this.pokemonUtils.getLocalizedNameFromEntity(evo.pokemon_v2_move, "pokemon_v2_movenames");
+    if (evo.move) {
+      const name = this.pokemonUtils.getLocalizedNameFromEntity(evo.move, "movenames");
       conditions.push({
         prefix: 'knowing the move ',
         entity: name,
@@ -164,8 +164,8 @@ export class PokemonEvolutionsComponent implements OnChanges {
       });
     }
 
-    if (evo.pokemon_v2_type) {
-      const name = this.pokemonUtils.getLocalizedNameFromEntity(evo.pokemon_v2_type, "pokemon_v2_typenames");
+    if (evo.type) {
+      const name = this.pokemonUtils.getLocalizedNameFromEntity(evo.type, "typenames");
       conditions.push({
         prefix: 'knowing a ',
         entity: name,
@@ -182,8 +182,8 @@ export class PokemonEvolutionsComponent implements OnChanges {
       conditions.push({ prefix: 'while turning the device upside down' });
     }
 
-    if (evo.pokemonV2PokemonspecyByPartySpeciesId) {
-      const name = this.pokemonUtils.getLocalizedNameFromEntity(evo.pokemonV2PokemonspecyByPartySpeciesId, "pokemon_v2_pokemonspeciesnames");
+    if (evo.PokemonspecyByPartySpeciesId) {
+      const name = this.pokemonUtils.getLocalizedNameFromEntity(evo.PokemonspecyByPartySpeciesId, "pokemonspeciesnames");
       conditions.push({
         prefix: 'with ',
         entity: name,
@@ -192,8 +192,8 @@ export class PokemonEvolutionsComponent implements OnChanges {
       });
     }
 
-    if (evo.pokemonV2TypeByPartyTypeId) {
-      const name = this.pokemonUtils.getLocalizedNameFromEntity(evo.pokemonV2TypeByPartyTypeId, "pokemon_v2_typenames");
+    if (evo.TypeByPartyTypeId) {
+      const name = this.pokemonUtils.getLocalizedNameFromEntity(evo.TypeByPartyTypeId, "typenames");
       conditions.push({
         prefix: 'with a ',
         entity: name,
@@ -202,8 +202,8 @@ export class PokemonEvolutionsComponent implements OnChanges {
       });
     }
 
-    if (evo.pokemonV2PokemonspecyByTradeSpeciesId) {
-      const name = this.pokemonUtils.getLocalizedNameFromEntity(evo.pokemonV2PokemonspecyByTradeSpeciesId, "pokemon_v2_pokemonspeciesnames");
+    if (evo.PokemonspecyByTradeSpeciesId) {
+      const name = this.pokemonUtils.getLocalizedNameFromEntity(evo.PokemonspecyByTradeSpeciesId, "pokemonspeciesnames");
       conditions.push({
         prefix: 'trade with ',
         entity: name,
@@ -229,8 +229,8 @@ export class PokemonEvolutionsComponent implements OnChanges {
       }
     }
 
-    if (evo.pokemon_v2_evolutiontrigger) {
-      const name = this.getEvolutionTriggerName(evo.pokemon_v2_evolutiontrigger);
+    if (evo.evolutiontrigger) {
+      const name = this.getEvolutionTriggerName(evo.evolutiontrigger);
       if (!conditions.some(c => c.prefix === name || c.entity === name)) {
         conditions.push({ prefix: name });
       }

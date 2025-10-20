@@ -10,12 +10,12 @@
 <app-loading-spinner *ngIf="(isLoading$ | async) ?? false; else pokemonList" message="Loading Pokémon..." />
 
 <ng-template #pokemonList>
-    <cdk-virtual-scroll-viewport scrollWindow="false" [itemSize]="(itemSize+20)" class="pokedexOverview">
+    <cdk-virtual-scroll-viewport scrollWindow="false" [itemSize]="itemSize" class="pokedexOverview">
         <div class="row" *cdkVirtualFor="let row of speciesRows$">
-            <app-pokemon-card *ngFor="let species of row.pokemon_species" [pokemon]="species.pokemon_v2_pokemons[0]"
+            <app-pokemon-card *ngFor="let species of row.pokemon_species" [pokemon]="species.pokemons[0]"
                 [pokemonSpecies]="species"></app-pokemon-card>
 
-            <div *ngFor="let i of [].constructor(pageSize - row.pokemon_species.length)" class="pokemon-placeholder">
+            <div *ngFor="let i of [].constructor(cardsPerRow - row.pokemon_species.length)" class="pokemon-placeholder">
             </div>
         </div>
     </cdk-virtual-scroll-viewport>

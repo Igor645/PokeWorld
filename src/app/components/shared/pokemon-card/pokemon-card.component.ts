@@ -73,9 +73,9 @@ export class PokemonCardComponent implements OnInit, OnDestroy, AfterViewInit {
   private updateViewModel(): void {
     this.pokemonViewModel = {
       id: this.pokemon?.id || this.pokemonSpecies?.id || 0,
-      name: this.pokemonUtils.getLocalizedNameFromEntity(this.pokemonSpecies, "pokemon_v2_pokemonspeciesnames") || 'Unknown',
+      name: this.pokemonUtils.getLocalizedNameFromEntity(this.pokemonSpecies, "pokemonspeciesnames") || 'Unknown',
       image: this.pokemonUtils.getPokemonOfficialImage(this.pokemon),
-      generation: this.pokemonUtils.getLocalizedNameFromEntity(this.pokemonSpecies.pokemon_v2_generation, "pokemon_v2_generationnames") || 'Unknown',
+      generation: this.pokemonUtils.getLocalizedNameFromEntity(this.pokemonSpecies.generation, "generationnames") || 'Unknown',
     };
   }
 

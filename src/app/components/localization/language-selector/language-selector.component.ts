@@ -45,7 +45,7 @@ export class LanguageSelectorComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.languageService.getLanguages().subscribe({
       next: (response) => {
-        this.languages = response.pokemon_v2_language.map((lang: any) => ({
+        this.languages = response.language.map((lang: any) => ({
           id: lang.id,
           name: this.languageMap[lang.name] || lang.name
         })).sort((a: any, b: any) => a.name.localeCompare(b.name));

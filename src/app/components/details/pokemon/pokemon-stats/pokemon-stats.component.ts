@@ -41,25 +41,25 @@ export class PokemonStatsComponent {
   }
 
   private computeStats() {
-    if (!this._pokemon?.pokemon_v2_pokemonstats) {
+    if (!this._pokemon?.pokemonstats) {
       this.stats = [];
       this.statTotal = 0;
       return;
     }
 
-    this.stats = this._pokemon.pokemon_v2_pokemonstats.map(stat => {
+    this.stats = this._pokemon.pokemonstats.map(stat => {
       const base = stat.base_stat;
-      const isHp = stat.pokemon_v2_stat.name.toLowerCase() === 'hp';
+      const isHp = stat.stat.name.toLowerCase() === 'hp';
 
       return {
-        name: this.pokemonUtils.getLocalizedNameFromEntity(stat.pokemon_v2_stat, 'pokemon_v2_statnames'),
+        name: this.pokemonUtils.getLocalizedNameFromEntity(stat.stat, 'statnames'),
         value: base,
         min: this.calculateMinStat(base, isHp),
         max: this.calculateMaxStat(base, isHp)
       };
     });
 
-    this.statTotal = this._pokemon.pokemon_v2_pokemonstats.reduce((sum, stat) => sum + stat.base_stat, 0);
+    this.statTotal = this._pokemon.pokemonstats.reduce((sum, stat) => sum + stat.base_stat, 0);
   }
 
   private calculateMinStat(baseStat: number, isHp: boolean): number {

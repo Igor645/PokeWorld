@@ -18,11 +18,11 @@ export interface Pokemon {
   weight: number;
   is_default: boolean;
   base_experience: number;
-  pokemon_v2_pokemonsprites: SpriteWrapper<PokemonSprites>[];
-  pokemon_v2_pokemoncries: PokemonCryWrapper[];
-  pokemon_v2_pokemonstats: PokemonStat[];
-  pokemon_v2_pokemonforms: PokemonForms[];
-  pokemon_v2_pokemontypes: PokemonTypeWrapper[];
-  pokemon_v2_pokemonabilities: PokemonAbilityWrapper[];
-  pokemon_v2_pokemonitems: PokemonItem[];
+  pokemonsprites: SpriteWrapper<PokemonSprites>[];
+  pokemoncries: PokemonCryWrapper[];
+  pokemonstats: PokemonStat[];
+  pokemonforms: PokemonForms[];
+  pokemontypes: PokemonTypeWrapper[];
+  pokemonabilities: PokemonAbilityWrapper[];
+  pokemonitems: PokemonItem[];
 }

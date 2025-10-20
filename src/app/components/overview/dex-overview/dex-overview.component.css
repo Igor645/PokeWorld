@@ -5,13 +5,19 @@
     min-height: 100%;
 }
 
+:host ::ng-deep .cdk-virtual-scroll-content-wrapper {
+    padding-top: 1.5rem;
+    /* top space before the first row */
+    padding-bottom: 1.5rem;
+    /* bottom space after the last row (optional) */
+}
+
 app-pokeworld-search {
     width: 40%;
 }
 
 .pokedexOverview {
     width: var(--general-width);
-    gap: 2rem;
     padding: 1rem;
     margin: 2rem auto;
     background-color: var(--background-color);
@@ -22,24 +28,17 @@ app-pokeworld-search {
 }
 
 .row {
-    display: flex;
-    flex-wrap: nowrap;
-    justify-content: space-between;
-    align-items: center;
-    margin: 20px 0;
-    padding: 0 1.5rem;
-    height: var(--item-size);
+    display: grid;
+    grid-template-columns: repeat(var(--cards-per-row), 1fr);
     gap: 1.5rem;
-}
-
-.row>app-pokemon-card,
-.row>.pokemon-placeholder {
-    flex: 1 1 calc(100% / var(--page-size));
-    max-width: calc(100% / var(--page-size));
+    padding: 0 1.5rem;
+    height: var(--row-height);
+    align-items: center;
+    margin-block: 0 1.5rem;
 }
 
 .pokemon-placeholder {
-    content: "";
+    visibility: hidden;
 }
 
 .dexSearch-container {
@@ -140,7 +139,6 @@ app-pokeworld-search {
         height: 40px;
     }
 }
-
 
 @media (min-width: 1024px) and (max-width: 1280px) {
     .dexTitle {

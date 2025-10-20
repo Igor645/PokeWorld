@@ -4,5 +4,5 @@ export interface Language {
 }
 
 export interface LanguageResponse {
-  pokemon_v2_language: Language[];
+  language: Language[];
 }

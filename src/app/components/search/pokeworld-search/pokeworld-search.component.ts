@@ -69,12 +69,12 @@ export class PokeworldSearchComponent implements OnInit, AfterViewInit, OnDestro
   }
 
   async handlePokemonSpeciesResponse(response: PokemonSpeciesResponse) {
-    const speciesList = response.pokemon_v2_pokemonspecies || [];
+    const speciesList = response.pokemonspecies || [];
 
     // Preload images
     await Promise.all(
       speciesList.map((species) => {
-        const pokemon = species.pokemon_v2_pokemons[0];
+        const pokemon = species.pokemons[0];
         const imageUrl = this.GetPokemonOfficialImage(pokemon);
         return this.preloadImage(imageUrl);
       })
@@ -99,7 +99,7 @@ export class PokeworldSearchComponent implements OnInit, AfterViewInit, OnDestro
 
     if (!selectedItem) return;
 
-    if ('pokemon_v2_pokemonspeciesnames' in selectedItem) {
+    if ('pokemonspeciesnames' in selectedItem) {
       this.router.navigate(['/pokemon', this.getPokemonName(selectedItem)]);
     } else {
       console.warn("Unknown selection type:", selectedItem);
@@ -107,7 +107,7 @@ export class PokeworldSearchComponent implements OnInit, AfterViewInit, OnDestro
   }
 
   getPokemonName(species: PokemonSpecies): string {
-    return this.pokemonUtils.getLocalizedNameFromEntity(species, "pokemon_v2_pokemonspeciesnames")
+    return this.pokemonUtils.getLocalizedNameFromEntity(species, "pokemonspeciesnames")
   }
 
   GetPokemonOfficialImage(pokemon: any) {
@@ -122,7 +122,7 @@ export class PokeworldSearchComponent implements OnInit, AfterViewInit, OnDestro
     return [{
       name: name,
       language_id: 0,
-      pokemon_v2_language: {
+      language: {
         name: language,
         id: 0,
       }

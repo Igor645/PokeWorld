@@ -37,7 +37,7 @@ export class PokemonUtilsService {
    */
   getPokemonOfficialImage(pokemon: Pokemon | undefined): string {
     return (
-      pokemon?.pokemon_v2_pokemonsprites?.[0]?.sprites.other?.["official-artwork"]?.front_default ||
+      pokemon?.pokemonsprites?.[0]?.sprites.other?.["official-artwork"]?.front_default ||
       '/invalid/image.png'
     );
   }
@@ -45,7 +45,7 @@ export class PokemonUtilsService {
   private getNameByLanguage(names: Name[] | undefined): string {
     const languageId = this.getSelectedLanguageId();
     return (
-      names?.find((x) => x.pokemon_v2_language.id === languageId)
+      names?.find((x) => x.language.id === languageId)
         ?.name || 'Unknown'
     );
   }
@@ -74,10 +74,10 @@ export class PokemonUtilsService {
     const languageId = this.getSelectedLanguageId();
     const isNoVersionCheck = versionId === null;
 
-    const flavortext = pokemonSpecies?.pokemon_v2_pokemonspeciesflavortexts?.find(
+    const flavortext = pokemonSpecies?.pokemonspeciesflavortexts?.find(
       (entry) =>
-        entry.pokemon_v2_language.id === languageId &&
-        (isNoVersionCheck || entry.pokemon_v2_version.id === versionId)
+        entry.language.id === languageId &&
+        (isNoVersionCheck || entry.version.id === versionId)
     )?.flavor_text;
 
     return flavortext ? flavortext.replace(/\f/g, ' ') : 'No entry available.';
@@ -91,8 +91,8 @@ export class PokemonUtilsService {
   getAbilityFlavorTextByLanguage(ability: PokemonAbility): string {
     const languageId = this.getSelectedLanguageId();
 
-    const flavorText = ability?.pokemon_v2_abilityflavortexts?.find(
-      (entry) => entry.pokemon_v2_language.id === languageId
+    const flavorText = ability?.abilityflavortexts?.find(
+      (entry) => entry.language.id === languageId
     )?.flavor_text;
 
     return flavorText ? flavorText.replace(/\f/g, ' ') : 'No ability description available.';
@@ -110,7 +110,7 @@ export class PokemonUtilsService {
 
     const languageId = this.getSelectedLanguageId();
 
-    const localizedVersion = versionNames.find(name => name.pokemon_v2_language.id === languageId)?.name;
+    const localizedVersion = versionNames.find(name => name.language.id === languageId)?.name;
 
     return localizedVersion || 'Unknown Version';
   }

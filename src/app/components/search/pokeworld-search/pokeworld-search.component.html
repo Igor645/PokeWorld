@@ -6,7 +6,7 @@
     <mat-optgroup *ngIf="filteredPokemonSpecies.length" label="Pokémon">
       <mat-option *ngFor="let species of filteredPokemonSpecies; trackBy: trackByPokemon" [value]="species">
         <app-pokemon-search-item [species]="species" endpoint="pokemon"
-          [imageSrc]="GetPokemonOfficialImage(species.pokemon_v2_pokemons[0])">
+          [imageSrc]="GetPokemonOfficialImage(species.pokemons[0])">
         </app-pokemon-search-item>
       </mat-option>
     </mat-optgroup>

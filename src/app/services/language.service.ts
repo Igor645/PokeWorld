@@ -27,13 +27,13 @@ export class LanguageService {
 
   getLanguages(): Observable<LanguageResponse> {
     if (this.cachedLanguages) {
-      return of({ pokemon_v2_language: this.cachedLanguages });
+      return of({ language: this.cachedLanguages });
     }
 
     if (!this.languages$) {
       this.languages$ = this.graphQLService.executeQuery<LanguageResponse>(GraphQLQueries.GetLanguages).pipe(
         tap(response => {
-          this.cachedLanguages = response.pokemon_v2_language;
+          this.cachedLanguages = response.language;
         }),
         shareReplay(1)
       );

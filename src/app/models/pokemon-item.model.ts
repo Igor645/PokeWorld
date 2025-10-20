@@ -3,7 +3,7 @@ import { Version } from "./version.model";
 
 export interface PokemonItem {
     id: number;
-    pokemon_v2_item: Item;
+    item: Item;
     rarity: number;
-    pokemon_v2_version: Version;
+    version: Version;
 }
