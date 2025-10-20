@@ -95,3 +95,9 @@ img {
     -o-user-drag: none;
     user-drag: none;
 }
+
+.cdk-overlay-container,
+.cdk-overlay-pane,
+.mdc-menu-surface--open {
+    z-index: 4000 !important;
+}

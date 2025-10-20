@@ -4,13 +4,12 @@ import { NavigationEnd, Router, RouterModule } from '@angular/router';
 
 import { CommonModule } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
-import { PokeworldSearchComponent } from '../../search/pokeworld-search/pokeworld-search.component';
 import { ScrollToTopComponent } from '../scroll-to-top/scroll-to-top.component';
 
 @Component({
   selector: 'app-main-layout',
   standalone: true,
-  imports: [CommonModule, RouterModule, NavDrawerComponent, PokeworldSearchComponent, ScrollToTopComponent, MatIcon],
+  imports: [CommonModule, RouterModule, NavDrawerComponent, ScrollToTopComponent, MatIcon],
   templateUrl: './main-layout.component.html',
   styleUrls: ['./main-layout.component.css'],
 })

@@ -89,25 +89,10 @@ a:hover {
   transform: scale(1.1);
 }
 
-/* ────────────── Pokeworld Search Component ────────────── */
-app-pokeworld-search {
-  width: 350px;
-  height: 70%;
-  margin: 5px 15px;
-  margin-left: auto;
-}
-
 /* ────────────── Pokeworld Settings ────────────── */
 
-app-settings {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  transition: top 0.001s linear;
-}
-
 .hamburger {
-  margin-left: 0;
+  margin-left: auto;
   margin-right: 15px;
   border: 0;
   background: transparent;
@@ -150,11 +135,6 @@ app-settings {
 
 /* ────────────── Responsive Media Queries ────────────── */
 @media (max-width: 480px) {
-  app-pokeworld-search {
-    width: 200px;
-    height: 50%;
-  }
-
   .main-header h1 {
     font-size: 1.2rem;
   }
@@ -172,10 +152,6 @@ app-settings {
 }
 
 @media (min-width: 481px) and (max-width: 768px) {
-  app-pokeworld-search {
-    width: 250px;
-  }
-
   .main-header h1 {
     font-size: 1.5rem;
   }

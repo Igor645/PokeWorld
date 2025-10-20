@@ -203,3 +203,11 @@ mat-icon {
     font: 600 1.4rem/1.2 system-ui, Arial, sans-serif;
     color: var(--accent-text-color);
 }
+
+app-pokeworld-search {
+    box-sizing: border-box;
+    height: 40px;
+    margin: 15px 0;
+    padding: 0 8px;
+    width: 100%;
+}

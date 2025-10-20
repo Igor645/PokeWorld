@@ -13,6 +13,8 @@
     </header>
 
     <nav class="nd-nav" *ngIf="items?.length">
+        <app-pokeworld-search />
+
         <ng-container *ngFor="let item of items">
 
             <!-- Simple internal link -->

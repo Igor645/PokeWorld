@@ -1,75 +1,78 @@
-import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
 
 import { CommonModule } from '@angular/common';
-import { Language } from '../../../models/language.model';
+import { FormsModule } from '@angular/forms';
 import { LanguageService } from '../../../services/language.service';
-import { MatExpansionModule } from '@angular/material/expansion';
-import { MatIconModule } from '@angular/material/icon';
 import { SettingsService } from '../../../services/settings.service';
 import { Subscription } from 'rxjs';
 
+type Lang = { id: number; name: string };
+
 @Component({
   standalone: true,
-  imports: [CommonModule, MatExpansionModule, MatIconModule],
   selector: 'app-language-selector',
+  imports: [CommonModule, FormsModule],
   templateUrl: './language-selector.component.html',
   styleUrls: ['./language-selector.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LanguageSelectorComponent implements OnInit, OnDestroy {
-  languages: { id: number; name: string }[] = [];
+  languages: Lang[] = [];
   selectedLanguageId: number | null = null;
-  private languageSubscription!: Subscription;
+
+  private sub = new Subscription();
 
   private languageMap: Record<string, string> = {
     'ja-Hrkt': 'Japanese (Hiragana/Katakana)',
-    'roomaji': 'Japanese (Romaji)',
-    'ko': 'Korean',
+    roomaji: 'Japanese (Romaji)',
+    ko: 'Korean',
     'zh-Hant': 'Chinese (Traditional)',
-    'fr': 'French',
-    'de': 'German',
-    'es': 'Spanish',
-    'it': 'Italian',
-    'en': 'English',
-    'cs': 'Czech',
-    'ja': 'Japanese',
+    fr: 'French',
+    de: 'German',
+    es: 'Spanish',
+    it: 'Italian',
+    en: 'English',
+    cs: 'Czech',
+    ja: 'Japanese',
     'zh-Hans': 'Chinese (Simplified)',
-    'pt-BR': 'Portuguese (Brazil)'
+    'pt-BR': 'Portuguese (Brazil)',
   };
 
   constructor(
     private languageService: LanguageService,
-    private settingsService: SettingsService,
-    private cdr: ChangeDetectorRef
+    private settings: SettingsService
   ) { }
 
-  ngOnInit() {
-    this.languageService.getLanguages().subscribe({
-      next: (response) => {
-        this.languages = response.language.map((lang: any) => ({
-          id: lang.id,
-          name: this.languageMap[lang.name] || lang.name
-        })).sort((a: any, b: any) => a.name.localeCompare(b.name));
-      },
-      error: (error) => console.error('Error fetching languages:', error)
-    });
+  ngOnInit(): void {
+    // Load languages
+    this.sub.add(
+      this.languageService.getLanguages().subscribe({
+        next: (res) => {
+          this.languages = (res.language || [])
+            .map((l: any) => ({ id: l.id, name: this.languageMap[l.name] || l.name }))
+            .sort((a: Lang, b: Lang) => a.name.localeCompare(b.name));
+        },
+        error: (e) => console.error('Error fetching languages:', e),
+      })
+    );
 
-    this.languageSubscription = this.settingsService.watchSetting<number>('selectedLanguageId')
-      .subscribe(id => {
-        if (id === null || id === undefined) {
-          this.settingsService.setSetting('selectedLanguageId', 9);
-          this.selectedLanguageId = 9;
-        } else {
-          this.selectedLanguageId = id;
-        }
-        this.cdr.detectChanges();
-      });
+    // Current selection (default English = 9)
+    this.sub.add(
+      this.settings.watchSetting<number>('selectedLanguageId').subscribe((id) => {
+        const value = id ?? 9;
+        if (id == null) this.settings.setSetting('selectedLanguageId', value);
+        this.selectedLanguageId = value;
+      })
+    );
   }
 
-  selectLanguage(languageId: number) {
-    this.settingsService.setSetting('selectedLanguageId', languageId);
+  onChange(langId: number) {
+    // `langId` remains a number thanks to [ngValue]
+    this.selectedLanguageId = langId;
+    this.settings.setSetting('selectedLanguageId', langId);
   }
 
-  ngOnDestroy() {
-    this.languageSubscription.unsubscribe();
+  ngOnDestroy(): void {
+    this.sub.unsubscribe();
   }
 }
