@@ -144,11 +144,7 @@ export class DexOverviewComponent implements OnInit, AfterViewInit, OnDestroy {
     if (w <= 768) return 3;
     if (w <= 1024) return 4;
     if (w <= 1440) return 5;
-    if (w <= 1920) return 6;
-    if (w <= 2560) return 7;
-    if (w <= 3440) return 8;
-    if (w <= 3840) return 9;
-    return 10;
+    return 6;
   }
 
   private calculateHeightsByAspect(): { visual: number; itemSize: number } {
