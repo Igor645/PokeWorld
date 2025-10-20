@@ -89,7 +89,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 100%;
+  margin: auto;
+  width: min(100%, 800px);
   background-color: var(--glass-color);
   border-radius: 30px;
   position: relative;
