@@ -96,6 +96,15 @@ app-pokeworld-search {
   margin-left: auto;
 }
 
+/* ────────────── Pokeworld Settings ────────────── */
+
+app-settings {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  transition: top 0.001s linear;
+}
+
 /* ────────────── Responsive Media Queries ────────────── */
 @media (max-width: 480px) {
   app-pokeworld-search {

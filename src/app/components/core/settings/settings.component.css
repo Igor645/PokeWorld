@@ -1,10 +1,4 @@
 /* ────── Settings Wrapper & Cog Button ────── */
-.settings-wrapper {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-}
-
 .settings-cog-container {
   background-color: var(--background-color);
   padding: 3px;
