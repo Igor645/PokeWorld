@@ -2,7 +2,7 @@
   <h1><a routerLink="/">PokéWorld</a></h1>
   <app-pokeworld-search />
   <button class="hamburger" (click)="drawer.toggle()" aria-label="Open menu">
-    <mat-icon>hamburger</mat-icon>
+    <mat-icon>menu</mat-icon>
   </button>
 </header>
 
@@ -13,7 +13,9 @@
 
 <app-nav-drawer #drawer [items]="navItems" />
 
-<button class="settings-fab" (click)="drawer.toggle()" aria-label="Open menu">☰</button>
+<button class="settings-fab" (click)="drawer.toggle()" aria-label="Open menu">
+  <mat-icon>menu</mat-icon>
+</button>
 
 <footer class="main-footer">
   <div class="pokeapi-reference">

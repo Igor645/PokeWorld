@@ -115,7 +115,9 @@ app-settings {
   font-size: 22px;
   padding: 6px 10px;
   border-radius: 8px;
-  color: var(--text-color);
+  color: var(--accent-text-color) !important;
+  display: flex;
+  justify-content: center;
 }
 
 .hamburger:hover {
@@ -134,38 +136,17 @@ app-settings {
   border-radius: 50%;
   box-shadow: 0 6px 18px var(--shadow-color);
   background: var(--background-color);
-  color: var(--text-color);
+  color: var(--accent-text-color) !important;
   font-size: 22px;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
-
-@media (max-width: 480px) {
-  .settings-fab {
-    width: 40px;
-    height: 40px;
-    right: 12px;
-  }
-
-  .settings-fab .material-icons {
-    font-size: 24px;
-  }
+.settings-fab:hover {
+  opacity: 1;
+  transform: scale(1.1);
 }
-
-@media (min-width: 481px) and (max-width: 768px) {
-  .settings-fab {
-    width: 44px;
-    height: 44px;
-    right: 16px;
-  }
-
-  .settings-fab .material-icons {
-    font-size: 26px;
-  }
-}
-
 
 /* ────────────── Responsive Media Queries ────────────── */
 @media (max-width: 480px) {
@@ -177,6 +158,17 @@ app-settings {
   .main-header h1 {
     font-size: 1.2rem;
   }
+
+  .settings-fab {
+    width: 40px;
+    height: 40px;
+    right: 12px;
+    padding: 2px 6px;
+  }
+
+  .settings-fab .material-icons {
+    font-size: 24px;
+  }
 }
 
 @media (min-width: 481px) and (max-width: 768px) {
@@ -186,6 +178,17 @@ app-settings {
 
   .main-header h1 {
     font-size: 1.5rem;
+  }
+
+  .settings-fab {
+    width: 44px;
+    height: 44px;
+    right: 16px;
+    padding: 4px 8px;
+  }
+
+  .settings-fab .material-icons {
+    font-size: 26px;
   }
 }
 
