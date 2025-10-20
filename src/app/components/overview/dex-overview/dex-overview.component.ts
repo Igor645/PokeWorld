@@ -1,6 +1,7 @@
 import {
   Component, OnInit, Inject, PLATFORM_ID, ViewChild, ChangeDetectionStrategy,
-  HostListener, OnDestroy, AfterViewInit
+  HostListener, OnDestroy, AfterViewInit,
+  ElementRef
 } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { PokemonService } from '../../../services/pokemon.service';
@@ -29,6 +30,7 @@ import { LoadingSpinnerComponent } from '../../shared/loading-spinner/loading-sp
 })
 export class DexOverviewComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild(CdkVirtualScrollViewport) viewport!: CdkVirtualScrollViewport;
+  @ViewChild('rowContainer', { static: false }) rowContainer?: ElementRef<HTMLElement>;
 
   cardsPerRow = 6;
   rowVisualHeight = 350;
@@ -138,13 +140,20 @@ export class DexOverviewComponent implements OnInit, AfterViewInit, OnDestroy {
     root.style.setProperty('--row-height', `${this.rowVisualHeight}px`);
   }
 
+  private getContainerWidth(): number {
+    return (
+      this.rowContainer?.nativeElement?.clientWidth ??
+      this.viewport?.elementRef?.nativeElement?.clientWidth ??
+      window.innerWidth
+    );
+  }
+
   private calculateCardsPerRow(): number {
-    const w = window.innerWidth;
-    if (w <= 480) return 2;
-    if (w <= 768) return 3;
-    if (w <= 1024) return 4;
-    if (w <= 1440) return 5;
-    return 6;
+    const w = this.getContainerWidth();
+    const gap = 24;
+    const minCard = 220;
+    const cols = Math.floor((w + gap) / (minCard + gap));
+    return Math.max(2, Math.min(10, cols));
   }
 
   private calculateHeightsByAspect(): { visual: number; itemSize: number } {

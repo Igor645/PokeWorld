@@ -11,7 +11,7 @@
 
 <ng-template #pokemonList>
     <cdk-virtual-scroll-viewport scrollWindow="false" [itemSize]="itemSize" class="pokedexOverview">
-        <div class="row" *cdkVirtualFor="let row of speciesRows$">
+        <div #rowContainer class="row" *cdkVirtualFor="let row of speciesRows$">
             <app-pokemon-card *ngFor="let species of row.pokemon_species" [pokemon]="species.pokemons[0]"
                 [pokemonSpecies]="species"></app-pokemon-card>
 
