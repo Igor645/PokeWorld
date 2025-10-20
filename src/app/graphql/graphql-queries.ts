@@ -625,10 +625,8 @@ export const GraphQLQueries = {
         }
       }
     }`,
-};
 
-
-GetPokemonSpeciesByGenerationId: `
+  GetPokemonSpeciesByGenerationId: `
       query getPokemonSpeciesByGenerationId($generationId: Int!) {
         pokemon_v2_pokemonspecies_aggregate(
           where: {pokemon_v2_generation: {id: {_eq: $generationId}}}
