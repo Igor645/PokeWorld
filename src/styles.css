@@ -1,23 +1,28 @@
 @import './assets/styles/variables.css';
 
-html, body {
+html,
+body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
     margin: 0;
     padding: 0;
     height: 100%;
 }
 
+html {
+    background-color: var(--background-color);
+}
+
 * {
     font-family: "Exo 2", serif;
     color: var(--accent-text-color);
-    transition: 
+    transition:
         color 0.3s ease,
         background-color 0.3s ease,
         background 0.3s ease,
         border-color 0.3s ease,
-        box-shadow 0.3s ease, 
-        filter 0.3s ease, 
-        fill 0.3s ease, 
+        box-shadow 0.3s ease,
+        filter 0.3s ease,
+        fill 0.3s ease,
         stroke 0.3s ease;
 }
 
@@ -29,6 +34,12 @@ body {
     position: relative;
 }
 
+*:focus-visible {
+    outline-offset: 4px;
+    outline: var(--primary-color) solid 2px;
+    border: none
+}
+
 .background-image {
     position: fixed;
     top: 0;
@@ -36,6 +47,7 @@ body {
     width: 100vw;
     height: 100vh;
     z-index: -1;
+    background-color: var(--background-color);
     background-image: url('../public/images/background-wave.svg');
     background-size: cover;
     background-repeat: no-repeat;
@@ -57,6 +69,7 @@ app-root {
         opacity: 0;
         transform: translateY(-20px);
     }
+
     100% {
         opacity: 1;
         transform: translateY(0);
@@ -81,4 +94,10 @@ img {
     -moz-user-drag: none;
     -o-user-drag: none;
     user-drag: none;
+}
+
+.cdk-overlay-container,
+.cdk-overlay-pane,
+.mdc-menu-surface--open {
+    z-index: 4000 !important;
 }

@@ -2,17 +2,20 @@
     display: grid;
     grid-template-rows: auto 1fr auto;
     align-items: center;
-    height: 100%;
+    aspect-ratio: 5 / 7;
     width: 100%;
+    height: auto;
+    container-type: inline-size;
+    font-size: 1rem;
     background-color: var(--glass-color);
-    border: 2px solid var(--border-color);
-    backdrop-filter: blur(1px);
-    box-shadow: 0 4px 8px var(--shadow-color), 0 6px 20px var(--shadow-color);
+    border: 0.15em solid var(--border-color);
+    backdrop-filter: blur(0.075em);
+    box-shadow: 0 0.3em 0.6em var(--shadow-color), 0 0.45em 1.5em var(--shadow-color);
     position: relative;
     overflow: hidden;
-    transform: perspective(1000px) rotateX(0) rotateY(0);
+    transform: perspective(75em) rotateX(0) rotateY(0);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
-    border-radius: 10px;
+    border-radius: 0.75em;
     padding: 0;
     box-sizing: border-box;
 }
@@ -32,26 +35,33 @@
     z-index: 1;
 }
 
+:host:focus-visible::before,
 :host:hover::before {
     transform: rotate(45deg);
     opacity: 0.8;
 }
 
+:host:focus-visible,
 :host:hover {
-    transform: perspective(1000px) scale(1.05) rotateX(8deg);
+    transform: perspective(75em) scale(1.05) rotateX(8deg);
     cursor: pointer;
     transition: transform 0.5s ease;
-    box-shadow: 0 8px 16px var(--shadow-hover-color), 0 12px 24px var(--shadow-hover-color);
+    box-shadow: 0 0.6em 1.2em var(--shadow-hover-color), 0 0.9em 1.8em var(--shadow-hover-color);
+}
+
+:host:focus-visible {
+    border: none;
+    outline-offset: 0;
 }
 
 :host:active {
-    transform: perspective(1000px) scale(0.95) rotateX(-2deg);
+    transform: perspective(75em) scale(0.95) rotateX(-2deg);
     transition: transform 0.1s ease;
 }
 
 .pokemonCard__image {
     width: 90%;
-    filter: drop-shadow(0 4px 6px var(--pokemon-img-shadow-color));
+    filter: drop-shadow(0 0.3em 0.45em var(--pokemon-img-shadow-color));
     z-index: 15;
     position: relative;
     will-change: transform;
@@ -79,11 +89,41 @@
 
 .pokemonCard__id,
 .pokemonCard__text {
-    font-size: 1.5rem;
     text-align: center;
     word-wrap: anywhere;
     font-family: "Exo 2", serif;
     color: var(--accent-text-color);
+}
+
+.pokemonCard__text {
+    font-weight: 700;
+}
+
+.pokemonCard__text.pokemonCard__generation {
+    font-weight: unset;
+}
+
+.pokemonCard__id {
+    margin-bottom: auto;
+    border-radius: 0 0 0.75em 0.75em;
+}
+
+.pokemonCard__id,
+.pokemonCard__text__container {
+    background-color: var(--pokemon-card-text-background-color);
+    width: 100%;
+    position: relative;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    filter: drop-shadow(0 0.075em 0.375em var(--shadow-color));
+    padding: 0.375em 0;
+    box-sizing: content-box;
+}
+
+.pokemonCard__text__container {
+    margin-top: auto;
+    border-radius: 0.75em 0.75em 0 0;
 }
 
 .pokemonCard__image.pop-in {
@@ -95,46 +135,16 @@
         transform: scale(0.5);
         opacity: 0;
     }
+
     50% {
         transform: scale(1.2);
         opacity: 1;
     }
+
     100% {
         transform: scale(1);
         opacity: 1;
     }
-}
-
-.pokemonCard__id, .pokemonCard__text__container {
-    background-color: var(--pokemon-card-text-background-color);
-    width: 100%;
-    position: relative;
-    z-index: 10;
-    display: flex;
-    flex-direction: column;
-    filter: drop-shadow(0 1px 5px var(--shadow-color));
-    padding: 0.5rem 0;
-    box-sizing: content-box;
-}
-
-.pokemonCard__text {
-    font-weight: 700;
-}
-
-.pokemonCard__text.pokemonCard__generation {
-    font-size: 1.2rem;
-    font-weight: unset;
-}
-
-.pokemonCard__id {
-    font-size: 1.2rem;
-    margin-bottom: auto;
-    border-radius: 0 0 10px 10px;
-}
-
-.pokemonCard__text__container {
-    margin-top: auto;
-    border-radius: 10px 10px 0 0;
 }
 
 .pokemonCard__image.initial-load:not(.shaking_egg) {
@@ -143,13 +153,15 @@
 
 @keyframes popUp {
     0% {
-        transform: translateY(50px) scale(0.8);
+        transform: translateY(3.75em) scale(0.8);
         opacity: 0;
     }
+
     60% {
-        transform: translateY(-10px) scale(1.1);
+        transform: translateY(-0.75em) scale(1.1);
         opacity: 1;
     }
+
     100% {
         transform: translateY(0) scale(1);
         opacity: 1;
@@ -157,18 +169,21 @@
 }
 
 :host:hover .pokemonCard__image:not(.shaking_egg):not(.initial-load) {
-    transform: translateY(5px) scale(1.1);
+    transform: translateY(0.375em) scale(1.1);
     transition: transform 0.5s ease;
     animation: floatUpDown 3s ease-in-out infinite;
     animation-delay: 0.5s;
 }
 
 @keyframes floatUpDown {
-    0%, 100% {
-        transform: translateY(5px) scale(1.1);
+
+    0%,
+    100% {
+        transform: translateY(0.375em) scale(1.1);
     }
+
     50% {
-        transform: translateY(-5px) scale(1.1);
+        transform: translateY(-0.375em) scale(1.1);
     }
 }
 
@@ -176,15 +191,19 @@
     0% {
         transform: rotate(0deg);
     }
+
     25% {
         transform: rotate(-25deg);
     }
+
     50% {
         transform: rotate(25deg);
     }
+
     75% {
         transform: rotate(-25deg);
     }
+
     100% {
         transform: rotate(0deg);
     }
@@ -207,38 +226,64 @@
 
 @keyframes shrink-away {
     0% {
-      transform: scale(1);
-      opacity: 1;
+        transform: scale(1);
+        opacity: 1;
     }
+
     100% {
-      transform: scale(0.5);
-      opacity: 0;
+        transform: scale(0.5);
+        opacity: 0;
     }
 }
 
-@media (max-width: 480px) {
-    .pokemonCard__id, .pokemonCard__text__container {
-        font-size: 0.6rem;
-        padding: 0.3rem 0;
-    }
-    .pokemonCard__text {
-        font-size: 0.7rem;
-    }
-    .pokemonCard__text.pokemonCard__generation {
-        font-size: 0.55rem;
-    }
-    .pokemonCard__id {
-        font-size: 0.7rem;
-    }
-    .pokemonCard__id {
-        border-radius: 0 0 5px 5px;
-    }
-    
-    .pokemonCard__text__container {
-        border-radius: 5px 5px 0 0;
-    }
+:host>* {
+    font-size: 0.8rem;
+}
 
-    :host{
-        border-radius: 6px;
+@container (width < 120px) {
+    :host>* {
+        font-size: 0.7rem;
     }
-  }
+}
+
+@container (120px <=width < 140px) {
+    :host>* {
+        font-size: 0.8rem;
+    }
+}
+
+@container (140px <=width < 200px) {
+    :host>* {
+        font-size: 1rem;
+    }
+}
+
+@container (200px <=width < 240px) {
+    :host>* {
+        font-size: 1.2rem;
+    }
+}
+
+@container (240px <=width < 280px) {
+    :host>* {
+        font-size: 1.3rem;
+    }
+}
+
+@container (280px <=width < 320px) {
+    :host>* {
+        font-size: 1.4rem;
+    }
+}
+
+@container (320px <=width < 380px) {
+    :host>* {
+        font-size: 1.5rem;
+    }
+}
+
+@container (width >=380px) {
+    :host>* {
+        font-size: 1.6rem;
+    }
+}

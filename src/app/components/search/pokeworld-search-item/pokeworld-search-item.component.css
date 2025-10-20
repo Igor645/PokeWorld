@@ -28,7 +28,7 @@
     backdrop-filter: blur(1px);
     border-radius: 10px;
     box-shadow: inset 0 4px 15px rgba(0, 0, 0, 0.2),
-    inset 0 -4px 10px rgba(255, 255, 255, 0.2);
+        inset 0 -4px 10px rgba(255, 255, 255, 0.2);
 }
 
 .item__bg {
@@ -45,19 +45,14 @@
     .dropdown-item {
         font-size: 0.8rem;
     }
+
     .item__img__container {
         width: 10rem;
     }
 }
 
-@media (min-width: 481px) and (max-width: 768px) {
+@media (min-width: 481px) and (max-width: 768px) {}
 
-}
+@media (min-width: 769px) and (max-width: 1024px) {}
 
-@media (min-width: 769px) and (max-width: 1024px) {
-
-}
-
-@media (min-width: 1025px) {
-
-}
+@media (min-width: 1025px) {}

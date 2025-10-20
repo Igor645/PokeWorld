@@ -1,21 +1,34 @@
-import { Component, OnInit, ElementRef, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { forkJoin, of, BehaviorSubject } from 'rxjs';
-import { catchError } from 'rxjs/operators';
-import { PokemonService } from '../../../../services/pokemon.service';
-import { PokemonSpecies } from '../../../../models/pokemon-species.model';
-import { Version } from '../../../../models/version.model';
+import { BehaviorSubject, forkJoin, of } from 'rxjs';
+import { ChangeDetectionStrategy, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { PokemonSpecies, PokemonSpeciesResponse } from '../../../../models/pokemon-species.model';
+
 import { CommonModule } from '@angular/common';
-import { PokemonUtilsService } from '../../../../utils/pokemon-utils';
-import { PokemonBgSvgComponent } from '../../../shared/pokemon-bg-svg/pokemon-bg-svg.component';
+import { EvolutionService } from '../../../../services/evolution.service';
+import { Generation } from '../../../../models/generation.model';
 import { LoadingSpinnerComponent } from '../../../shared/loading-spinner/loading-spinner.component';
-import { PokemonNavigatorComponent } from '../pokemon-navigator/pokemon-navigator.component';
-import { Pokemon } from '../../../../models/pokemon.model';
-import { Sprite } from '../../../../models/sprite.model';
-import { PokemonTypeComponent } from '../../../shared/pokemon-type/pokemon-type.component';
-import { Name } from '../../../../models/species-name.model';
 import { MatIcon } from '@angular/material/icon';
+import { Name } from '../../../../models/species-name.model';
+import { Pokemon } from '../../../../models/pokemon.model';
+import { PokemonBgSvgComponent } from '../../../shared/pokemon-bg-svg/pokemon-bg-svg.component';
+import { PokemonBreedingComponent } from '../pokemon-breeding/pokemon-breeding.component';
+import { PokemonColor } from '../../../../models/pokemon-color.model';
+import { PokemonEvolution } from '../../../../models/pokemon-evolution.model';
+import { PokemonEvolutionsComponent } from "../pokemon-evolutions/pokemon-evolutions.component";
+import { PokemonFormsComponent } from '../pokemon-forms/pokemon-forms.component';
+import { PokemonNavigatorComponent } from '../pokemon-navigator/pokemon-navigator.component';
+import { PokemonRelationsComponent } from '../pokemon-relations/pokemon-relations.component';
+import { PokemonService } from '../../../../services/pokemon.service';
+import { PokemonShape } from '../../../../models/pokemon-shape.model';
 import { PokemonStatsComponent } from '../pokemon-stats/pokemon-stats.component';
+import { PokemonTrainingComponent } from '../pokemon-training/pokemon-training.component';
+import { PokemonType } from '../../../../models/pokemon-type.model';
+import { PokemonTypeComponent } from '../../../shared/pokemon-type/pokemon-type.component';
+import { PokemonUtilsService } from '../../../../utils/pokemon-utils';
+import { Sprite } from '../../../../models/sprite.model';
+import { TypeService } from '../../../../services/type.service';
+import { Version } from '../../../../models/version.model';
+import { catchError } from 'rxjs/operators';
 
 @Component({
   selector: 'app-pokemon-details',
@@ -27,7 +40,12 @@ import { PokemonStatsComponent } from '../pokemon-stats/pokemon-stats.component'
     LoadingSpinnerComponent,
     PokemonTypeComponent,
     MatIcon,
-    PokemonStatsComponent
+    PokemonStatsComponent,
+    PokemonEvolutionsComponent,
+    PokemonTrainingComponent,
+    PokemonBreedingComponent,
+    PokemonRelationsComponent,
+    PokemonFormsComponent
   ],
   templateUrl: './pokemon-details.component.html',
   styleUrls: ['./pokemon-details.component.css']
@@ -35,6 +53,7 @@ import { PokemonStatsComponent } from '../pokemon-stats/pokemon-stats.component'
 export class PokemonDetailsComponent implements OnInit {
   @ViewChild('pokemonImage') pokemonImageElement!: ElementRef;
   pokemonSpeciesDetails?: PokemonSpecies;
+  pokemonEvolutions: PokemonEvolution[] = [];
   selectedPokemonImage?: string;
   selectedPokemon?: Pokemon;
   isShiny: boolean = false;
@@ -42,19 +61,24 @@ export class PokemonDetailsComponent implements OnInit {
   nextPokemonSpecies?: PokemonSpecies;
   versions: Version[] = [];
   selectedVersion: Version | null = null;
+  allTypes: PokemonType[] = [];
   private selectedLanguageId$ = new BehaviorSubject<number>(9);
+  isTypesLoading = true;
   isMainLoading = true;
   isAdjacentLoading = true;
+  isEvolutionsLoading = true;
   get isLoading(): boolean {
-    return this.isMainLoading || this.isAdjacentLoading;
+    return this.isMainLoading || this.isAdjacentLoading || this.isEvolutionsLoading || this.isTypesLoading;
   }
-  
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private pokemonService: PokemonService,
+    private typeService: TypeService,
+    private evolutionService: EvolutionService,
     public pokemonUtils: PokemonUtilsService
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.subscribeToRouteChanges();
@@ -81,70 +105,98 @@ export class PokemonDetailsComponent implements OnInit {
       }
     });
   }
-  
+
   fetchPokemonDetails(id: number) {
-    this.pokemonService.getPokemonDetails(id, undefined).subscribe({
-      next: (response) => {
-        this.pokemonSpeciesDetails = response.pokemon_v2_pokemonspecies[0];
-        this.isShiny = false;
-        this.selectedPokemon = this.pokemonSpeciesDetails?.pokemon_v2_pokemons?.[0];
-        this.updateSelectedPokemonImage();
-        this.isMainLoading = false;
-        if (this.pokemonSpeciesDetails?.id) {
-          this.fetchAdjacentPokemon(this.pokemonSpeciesDetails.id);
-        } else {
-          this.isAdjacentLoading = false;
-        }
-      },
-      error: () => this.router.navigate(['/'])
-    });
+    this.fetchPokemonDetailsInternal(id);
   }
-  
+
   fetchPokemonDetailsByName(name: string) {
-    this.pokemonService.getPokemonDetails(undefined, name).subscribe({
+    this.fetchPokemonDetailsInternal(undefined, name);
+  }
+
+  private fetchPokemonDetailsInternal(id?: number, name?: string) {
+    this.pokemonService.getPokemonDetails(id, name).subscribe({
       next: (response) => {
-        this.pokemonSpeciesDetails = response.pokemon_v2_pokemonspecies[0];
-        this.isShiny = false;
-        this.selectedPokemon = this.pokemonSpeciesDetails?.pokemon_v2_pokemons?.[0];
-        this.updateSelectedPokemonImage();
-        this.isMainLoading = false;
-        if (this.pokemonSpeciesDetails?.id) {
-          this.fetchAdjacentPokemon(this.pokemonSpeciesDetails.id);
-        } else {
-          this.isAdjacentLoading = false;
-        }
+        this.handleSpeciesResponse(response);
       },
       error: () => this.router.navigate(['/'])
     });
   }
 
-  private fetchAdjacentPokemon(currentId: number) {
-    const previous$ = currentId > 1 
+  handleSpeciesResponse(response: PokemonSpeciesResponse) {
+    this.pokemonSpeciesDetails = response.pokemonspecies[0];
+    this.isShiny = false;
+    this.selectedPokemon = this.pokemonSpeciesDetails?.pokemons?.[0];
+    this.updateSelectedPokemonImage();
+    this.isMainLoading = false;
+    this.fetchAllTypes();
+    this.fetchAdjacentPokemon(this.pokemonSpeciesDetails.id);
+    this.pokemonSpeciesDetails.evolutionchain.pokemonspecies.forEach((evolution) => {
+      this.fetchPokemonEvolution(evolution.id);
+    });
+  }
+
+  fetchAllTypes(): void {
+    this.isTypesLoading = true;
+
+    this.typeService.getAllTypes().subscribe({
+      next: (result) => {
+        this.allTypes = result.type;
+        this.isTypesLoading = false;
+      },
+      error: (err) => {
+        console.error('Failed to fetch all types', err);
+        this.allTypes = [];
+        this.isTypesLoading = false;
+      }
+    });
+  }
+
+  private fetchAdjacentPokemon(currentId: number | undefined): void {
+    if (!currentId) {
+      this.isAdjacentLoading = false;
+      return;
+    }
+
+    const previous$ = currentId > 1
       ? this.pokemonService.getPokemonSpeciesById(currentId - 1).pipe(
-          catchError(err => {
-            console.error("Error fetching previous Pokémon:", err);
-            return of(null);
-          })
-        )
+        catchError(err => {
+          console.error("Error fetching previous Pokémon:", err);
+          return of(null);
+        })
+      )
       : of(null);
+
     const next$ = this.pokemonService.getPokemonSpeciesById(currentId + 1).pipe(
       catchError(err => {
         console.error("Error fetching next Pokémon:", err);
         return of(null);
       })
     );
+
     forkJoin([previous$, next$]).subscribe(([prevResponse, nextResponse]) => {
-      this.previousPokemonSpecies = prevResponse ? prevResponse.pokemon_v2_pokemonspecies[0] : undefined;
-      this.nextPokemonSpecies = nextResponse ? nextResponse.pokemon_v2_pokemonspecies[0] : undefined;
+      this.previousPokemonSpecies = prevResponse?.pokemonspecies?.[0];
+      this.nextPokemonSpecies = nextResponse?.pokemonspecies?.[0];
       this.isAdjacentLoading = false;
+    });
+  }
+
+  fetchPokemonEvolution(id: number) {
+    this.pokemonEvolutions = [];
+    this.evolutionService.getPokemonEvolution(id).subscribe({
+      next: (response) => {
+        this.pokemonEvolutions.push(...response.pokemonevolution);
+        this.isEvolutionsLoading = false;
+      },
+      error: () => this.router.navigate(['/'])
     });
   }
 
   onPokemonChange(event: Event): void {
     const selectElement = event.target as HTMLSelectElement;
     const selectedPokemonId = selectElement.value;
-    if (!this.pokemonSpeciesDetails?.pokemon_v2_pokemons) return;
-    const selected = this.pokemonSpeciesDetails.pokemon_v2_pokemons.find(
+    if (!this.pokemonSpeciesDetails?.pokemons) return;
+    const selected = this.pokemonSpeciesDetails.pokemons.find(
       p => p.id === +selectedPokemonId
     );
     if (selected) {
@@ -154,16 +206,16 @@ export class PokemonDetailsComponent implements OnInit {
   }
 
   updateSelectedPokemonImage(): void {
-    if (!this.selectedPokemon || !this.selectedPokemon.pokemon_v2_pokemonsprites?.length) {
+    if (!this.selectedPokemon || !this.selectedPokemon.pokemonsprites?.length) {
       this.selectedPokemonImage = undefined;
       return;
     }
-    const spritesData = this.selectedPokemon.pokemon_v2_pokemonsprites[0].sprites;
+    const spritesData = this.selectedPokemon.pokemonsprites[0].sprites;
     const officialArtwork = spritesData.other["official-artwork"];
     let spriteKey: keyof Sprite = this.isShiny ? 'front_shiny' : 'front_default';
     this.selectedPokemonImage = officialArtwork[spriteKey] || officialArtwork['front_default'];
-  }  
-  
+  }
+
   onImageLoad(): void {
     if (this.pokemonImageElement) {
       const el = this.pokemonImageElement.nativeElement;
@@ -172,7 +224,7 @@ export class PokemonDetailsComponent implements OnInit {
         el.classList.remove('pop');
       }, 300);
     }
-  }  
+  }
 
   onSpriteTypeChange(isShiny: boolean): void {
     this.isShiny = isShiny;
@@ -180,70 +232,70 @@ export class PokemonDetailsComponent implements OnInit {
   }
 
   getPokemonSpeciesName(): string {
-    return this.pokemonUtils.getPokemonSpeciesNameByLanguage(this.pokemonSpeciesDetails);
+    return this.pokemonUtils.getLocalizedNameFromEntity(this.pokemonSpeciesDetails, "pokemonspeciesnames");
   }
 
   getPokemonVariantName(pokemon: any): string {
-    if (!pokemon?.pokemon_v2_pokemonforms?.length) {
-      return pokemon.name;
+    if (!pokemon?.pokemonforms?.length || !this.hasMultipleVariants()) {
+      return this.pokemonUtils.getLocalizedNameFromEntity(this.pokemonSpeciesDetails, "pokemonspeciesnames");
     }
-  
-    const formName = this.pokemonUtils.getNameByLanguage(pokemon.pokemon_v2_pokemonforms[0].pokemon_v2_pokemonformnames);
-    
+
+    const formName = this.pokemonUtils.getLocalizedNameFromEntity(pokemon.pokemonforms[0], "pokemonformnames");
+
     return formName === 'Unknown'
       ? this.getPokemonSpeciesName()
       : formName;
   }
 
   hasMultipleVariants(): boolean {
-    return (this.pokemonSpeciesDetails?.pokemon_v2_pokemons?.length || 0) > 1;
-  }  
+    return (this.pokemonSpeciesDetails?.pokemons?.length || 0) > 1;
+  }
 
   getAbilityText(ability: any, index: number): string {
-    const abilityName = this.pokemonUtils.getNameByLanguage(ability.pokemon_v2_ability.pokemon_v2_abilitynames);
+    const abilityName = this.pokemonUtils.getLocalizedNameFromEntity(ability.ability, "abilitynames");
     return `${index + 1}. ${abilityName}${ability.is_hidden ? ' (Hidden)' : ''}`;
   }
-  
+
   getAbilityFlavorText(ability: any): string {
     return this.pokemonUtils.getAbilityFlavorTextByLanguage(ability);
-  }  
-
-  getGenerationName(generationNames: Name[] | undefined): string {
-    return this.pokemonUtils.parseGenerationName(generationNames);
-  }  
-
-  getPokemonShapeName(shapeNames: Name[] | undefined): string {
-    return this.pokemonUtils.getNameByLanguage(shapeNames);
   }
 
-  getPokemonColorName(colorNames: Name[] | undefined): string {
-    return this.pokemonUtils.getNameByLanguage(colorNames);
-  }  
+  getGenerationName(generation: Generation | undefined): string {
+    return this.pokemonUtils.getLocalizedNameFromEntity(generation, "generationnames");
+  }
+
+  getPokemonShapeName(shape: PokemonShape | undefined): string {
+    return this.pokemonUtils.getLocalizedNameFromEntity(shape, "pokemonshapenames");
+  }
+
+  getPokemonColorName(color: PokemonColor | undefined): string {
+    return this.pokemonUtils.getLocalizedNameFromEntity(color, "pokemoncolornames");
+  }
 
   getFormattedHeight(heightDm: number | undefined): string {
     if (!heightDm) return "Unknown";
-    
+
     const meters = heightDm / 10;
     const totalInches = meters * 39.37;
     const feet = Math.floor(totalInches / 12);
     const inches = Math.round(totalInches % 12);
-  
+
     return `${meters.toFixed(1)}m (${feet}'${inches}")`;
   }
 
   getFormattedWeight(weightHg: number | undefined): string {
     if (!weightHg) return "Unknown";
-  
+
     const kg = weightHg / 10;
     const lbs = kg * 2.20462;
-  
+
     return `${kg.toFixed(1)}kg (${lbs.toFixed(1)}lbs)`;
-  }  
+  }
 
   isLegendaryOrMythicalOrBaby(): boolean | undefined {
     return (
-      this.pokemonSpeciesDetails?.is_legendary || 
-      this.pokemonSpeciesDetails?.is_mythical || 
+      this.pokemonSpeciesDetails?.is_legendary ||
+      this.pokemonSpeciesDetails?.is_mythical ||
       this.pokemonSpeciesDetails?.is_baby
     );
   }
@@ -256,11 +308,11 @@ export class PokemonDetailsComponent implements OnInit {
   }
 
   getLegacyCryUrl(): string | null {
-    return this.selectedPokemon?.pokemon_v2_pokemoncries?.[0]?.cries?.legacy || null;
+    return this.selectedPokemon?.pokemoncries?.[0]?.cries?.legacy || null;
   }
 
   getLatestCryUrl(): string | null {
-    return this.selectedPokemon?.pokemon_v2_pokemoncries?.[0]?.cries?.latest || null;
+    return this.selectedPokemon?.pokemoncries?.[0]?.cries?.latest || null;
   }
 
   getPokemonDexEntry(): string {
@@ -272,7 +324,7 @@ export class PokemonDetailsComponent implements OnInit {
 
   playCry(version: 'legacy' | 'latest') {
     const cryUrl = version === 'legacy' ? this.getLegacyCryUrl() : this.getLatestCryUrl();
-    
+
     if (cryUrl) {
       const audio = new Audio(cryUrl);
       audio.volume = 0.05;

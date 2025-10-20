@@ -3,13 +3,13 @@ import { Language } from "./language.model";
 import { Name } from "./species-name.model";
 
 export interface PokemonAbilityWrapper {
-  pokemon_v2_ability: PokemonAbility;
+  ability: PokemonAbility;
   is_hidden: boolean;
 }
 
 export interface PokemonAbility {
-    id: number;
-    name: string;
-    pokemon_v2_abilityflavortexts: FlavorText[];
-    pokemon_v2_abilitynames: Name[];  
+  id: number;
+  name: string;
+  abilityflavortexts: FlavorText[];
+  abilitynames: Name[];
 }

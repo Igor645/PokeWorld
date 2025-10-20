@@ -1,15 +1,15 @@
-import { ApplicationConfig, provideZoneChangeDetection, inject } from '@angular/core';
-import { provideRouter } from '@angular/router';
-import { provideAnimations } from '@angular/platform-browser/animations';
-import { routes } from './app.routes';
+import { ApplicationConfig, inject, provideZoneChangeDetection } from '@angular/core';
 import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
 import { provideHttpClient, withFetch } from '@angular/common/http';
-import { provideApollo } from 'apollo-angular';
+
 import { HttpLink } from 'apollo-angular/http';
 import { InMemoryCache } from '@apollo/client/core';
-import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
-
 import { environment } from '../environments/environment';
+import { provideAnimations } from '@angular/platform-browser/animations';
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
+import { provideApollo } from 'apollo-angular';
+import { provideRouter } from '@angular/router';
+import { routes } from './app.routes';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -21,13 +21,16 @@ export const appConfig: ApplicationConfig = {
     provideApollo(() => {
       const httpLink = inject(HttpLink);
 
+      console.log('[GraphQL URI]', environment.apiUrl);
+
+
       return {
         link: httpLink.create({
           uri: environment.apiUrl,
         }),
         cache: new InMemoryCache(),
       };
-    }), 
+    }),
     provideAnimationsAsync(),
   ]
 };

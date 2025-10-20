@@ -1,0 +1,55 @@
+:host {
+    border-radius: 5px;
+}
+
+.item-details {
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+    border: var(--primary-color) 2px solid;
+    border-radius: 5px;
+    padding: 0.4rem;
+    box-shadow: 0 2px 4px var(--shadow-color);
+    transition: transform 0.2s ease;
+}
+
+.item-details:hover {
+    cursor: pointer;
+    scale: 1.05;
+}
+
+.item-name {
+    font-weight: 800;
+}
+
+.item-icon {
+    width: 2.5rem;
+}
+
+.item-right {
+    display: flex;
+    gap: 0.1rem;
+}
+
+.info-icon {
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--primary-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    height: 24px;
+    position: relative;
+    top: 1px;
+}
+
+.tooltipSpan {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+::ng-deep .tooltip-pre {
+    white-space: pre-line;
+}

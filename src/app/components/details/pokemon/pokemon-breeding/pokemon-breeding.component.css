@@ -1,0 +1,149 @@
+:host {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+    background-color: var(--background-color);
+    padding: 1rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 6px 12px rgba(0, 0, 0, 0.1);
+    box-sizing: border-box;
+}
+
+span {
+    font-size: 1.2rem;
+}
+
+.label {
+    font-weight: 800;
+    color: var(--accent-text-color);
+    font-size: 1.2rem;
+}
+
+.breeding-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 3px;
+    box-sizing: border-box;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+}
+
+.breeding-row:not(:last-child) {
+    border-bottom: 1px solid var(--separator-color);
+}
+
+.breeding-gender-icons {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+}
+
+.breeding-gender-icons img {
+    width: 16px;
+    height: 16px;
+}
+
+.female-icon {
+    margin: 0 -0.2rem;
+}
+
+.breeding-muted {
+    color: var(--muted-color, #888);
+}
+
+.egg-groups-row {
+    align-items: center;
+}
+
+.egg-groups {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    justify-content: flex-end;
+}
+
+.item-sprite {
+    width: 1.7rem;
+    height: 1.7rem;
+    object-fit: contain;
+    margin-right: -6px;
+    padding: 0;
+    display: block;
+}
+
+.baby-trigger-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    justify-content: flex-end;
+}
+
+.baby-trigger-item,
+.growth-rate,
+.egg-group {
+    border: var(--primary-color) 2px solid;
+    padding: 4px 8px;
+    border-radius: 7px;
+    text-decoration: none;
+    color: inherit;
+    font-size: 1rem;
+    transition: background-color 0.2s ease;
+    font-weight: 800;
+    box-shadow: 0 2px 4px var(--shadow-color);
+}
+
+.baby-trigger-item:hover,
+.growth-rate:hover,
+.egg-group:hover {
+    transform: scale(1.05);
+    cursor: pointer;
+}
+
+.breeding-egg-cycles {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+/* ──────────────── Responsive ──────────────── */
+@media (max-width: 480px) {
+
+    .label,
+    .breeding-row>span:not(.label),
+    .breeding-row>a {
+        font-size: 1rem;
+        text-align: left;
+    }
+
+    .label {
+        width: 100%;
+    }
+
+    .breeding-gender-icons {
+        justify-content: flex-start;
+    }
+
+    .baby-trigger-item,
+    .growth-rate,
+    .egg-group {
+        font-size: 0.95rem;
+        padding: 3px 6px;
+    }
+
+    .breeding-muted {
+        font-size: 0.95rem;
+    }
+
+    .item-sprite {
+        width: 1.5rem;
+        height: 1.5rem;
+    }
+
+    .breeding-egg-cycles {
+        align-items: flex-start;
+    }
+}

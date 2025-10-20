@@ -1,4 +1,3 @@
 export interface Aggregate {
-    count: number;
-  }
-  
+  count: number;
+}

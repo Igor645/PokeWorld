@@ -1,14 +1,15 @@
-:root{
+:root {
     --icon-sizing: 50px;
 }
 
 :root {
     /* ====== GENERAL LAYOUT ====== */
-    --general-width: 85%;
-    
+    --general-width: min(85%, 1920px);
+
     /* ====== PRIMARY COLORS ====== */
     --primary-color: #1b6ec2;
     --primary-hover-color: #155a9c;
+    --primary-color-light: #88c0f871;
     --primary-active-color: #278ff7;
     --secondary-color: #006bb7;
     --secondary-hover-color: #004a8f;
@@ -18,17 +19,17 @@
     --background-hover-color: #e4e1e1;
     --primary-background-color: rgb(206, 216, 247);
     --pokemon-card-text-background-color: #ffffff;
-    
+
     /* ====== BORDERS & OUTLINES ====== */
     --border-color: rgba(38, 143, 255, 0.5);
     --border-focus-color: rgba(38, 143, 255, 0.8);
     --dropdown-border-color: var(--border-color);
-    --seperator-color: rgb(235, 235, 235);
+    --separator-color: rgb(235, 235, 235);
 
     /* ====== STATUS COLORS ====== */
     --error-color: #e50000;
     --valid-color: #26b050;
-    
+
     /* ====== SHADOWS ====== */
     --shadow-color: rgba(0, 0, 0, 0.2);
     --shadow-hover-color: rgba(0, 0, 0, 0.3);
@@ -48,13 +49,15 @@
 
 /* ====== DARK THEME ====== */
 .dark-theme {
+    --primary-color-light: #399cff38;
+
     /* General */
     --text-color: #e0e0e0;
     --background-color: #121212;
     --background-hover-color: #1e1e1e;
     --primary-background-color: #272727;
     --pokemon-card-text-background-color: #1e1e1e;
-    
+
     /* Colors */
     --accent-text-color: rgba(255, 255, 255, 0.8);
     --title-color: rgba(255, 255, 255, 0.8);
@@ -67,11 +70,11 @@
     --dropdown-border-color: rgb(36, 35, 35);
     --shadow-color: rgba(255, 255, 255, 0.1);
     --shadow-hover-color: rgba(255, 255, 255, 0.2);
-    --seperator-color: rgb(68, 68, 68);
+    --separator-color: rgb(68, 68, 68);
 
     /* Scrollbars */
     --scrollbar-thumb-color: rgba(255, 255, 255, 0.1);
-    
+
     /* Component-specific */
     --glass-color: rgba(255, 255, 255, 0.1);
     --svg-color: rgba(255, 255, 255, 0.1);

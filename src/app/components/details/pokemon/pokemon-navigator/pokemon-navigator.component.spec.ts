@@ -10,7 +10,7 @@ describe('PokemonNavigatorComponent', () => {
     await TestBed.configureTestingModule({
       imports: [PokemonNavigatorComponent]
     })
-    .compileComponents();
+      .compileComponents();
 
     fixture = TestBed.createComponent(PokemonNavigatorComponent);
     component = fixture.componentInstance;

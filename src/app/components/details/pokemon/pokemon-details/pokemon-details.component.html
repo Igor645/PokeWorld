@@ -1,7 +1,6 @@
-<app-loading-spinner 
-  message="Loading Pokémon details..." 
-  *ngIf="isLoading; else pokemonContent">
+<app-loading-spinner message="Loading Pokémon details..." *ngIf="isLoading; else pokemonContent">
 </app-loading-spinner>
+
 
 <ng-template #pokemonContent>
   <!-- Navigation Buttons -->
@@ -19,22 +18,17 @@
     <div class="pokemon-main-view">
       <!-- Left Side (Details) -->
       <div class="pokemon-main-view-left">
-        <h1>
+        <h1 class="pokemon-name">
           {{ getPokemonSpeciesName() }}
-          <div 
-            *ngIf="isLegendaryOrMythicalOrBaby()" 
-            class="pokemon-status-badge"
-            [attr.data-status]="getPokemonStatus(pokemonSpeciesDetails)"
-          >
+          <div *ngIf="isLegendaryOrMythicalOrBaby()" class="pokemon-status-badge"
+            [attr.data-status]="getPokemonStatus(pokemonSpeciesDetails)">
             {{ getPokemonStatus(pokemonSpeciesDetails) }}
           </div>
-        </h1>               
-                
+        </h1>
+
         <!-- Pokémon Types -->
         <div class="types-container">
-          <app-pokemon-type 
-            *ngFor="let type of selectedPokemon?.pokemon_v2_pokemontypes"
-            [pokemonType]="type.pokemon_v2_type"
+          <app-pokemon-type *ngFor="let type of selectedPokemon?.pokemontypes" [pokemonType]="type.type"
             [simpleView]="false">
           </app-pokemon-type>
         </div>
@@ -51,14 +45,14 @@
 
           <li>
             <label class="general-detail-label">Introduced</label>
-            <div>{{ getGenerationName(pokemonSpeciesDetails?.pokemon_v2_generation?.pokemon_v2_generationnames) }}</div>
-          </li>          
+            <div>{{ getGenerationName(pokemonSpeciesDetails?.generation) }}</div>
+          </li>
 
           <li>
             <label class="general-detail-label">Height</label>
             <div>{{ getFormattedHeight(selectedPokemon?.height) }}</div>
           </li>
-          
+
           <li>
             <label class="general-detail-label">Weight</label>
             <div>{{ getFormattedWeight(selectedPokemon?.weight) }}</div>
@@ -66,14 +60,9 @@
 
           <!-- Forms Dropdown -->
           <li>
-            <label class="general-detail-label">Forms</label>
-            <select 
-              id="variant-select"
-              (change)="onPokemonChange($event)"
-              [disabled]="!hasMultipleVariants()">
-              <option 
-                *ngFor="let pokemon of pokemonSpeciesDetails?.pokemon_v2_pokemons || []"
-                [value]="pokemon.id">
+            <label class="general-detail-label">Varieties</label>
+            <select id="variant-select" (change)="onPokemonChange($event)" [disabled]="!hasMultipleVariants()">
+              <option *ngFor="let pokemon of pokemonSpeciesDetails?.pokemons || []" [value]="pokemon.id">
                 {{ getPokemonVariantName(pokemon) }}
               </option>
             </select>
@@ -83,14 +72,12 @@
           <li>
             <label class="general-detail-label">Abilities</label>
             <div class="ability-list">
-              <div 
-                class="ability-container" 
-                *ngFor="let ability of selectedPokemon?.pokemon_v2_pokemonabilities; let i = index">
+              <div class="ability-container" *ngFor="let ability of selectedPokemon?.pokemonabilities; let i = index">
                 <div class="ability-name">
                   {{ getAbilityText(ability, i) }}
-                </div>  
+                </div>
                 <div class="ability-description">
-                  {{ getAbilityFlavorText(ability.pokemon_v2_ability) }}
+                  {{ getAbilityFlavorText(ability.ability) }}
                 </div>
               </div>
             </div>
@@ -98,14 +85,16 @@
 
           <li>
             <label class="general-detail-label">Shape</label>
-            <div>{{ getPokemonShapeName(pokemonSpeciesDetails?.pokemon_v2_pokemonshape?.pokemon_v2_pokemonshapenames) }}</div>
+            <div>{{ getPokemonShapeName(pokemonSpeciesDetails?.pokemonshape) }}
+            </div>
           </li>
-          
+
           <li>
             <label class="general-detail-label">Color</label>
-            <div>{{ getPokemonColorName(pokemonSpeciesDetails?.pokemon_v2_pokemoncolor?.pokemon_v2_pokemoncolornames) }}</div>
-          </li> 
-          
+            <div>{{ getPokemonColorName(pokemonSpeciesDetails?.pokemoncolor) }}
+            </div>
+          </li>
+
           <li>
             <label class="general-detail-label">Pokémon Cries</label>
             <div class="cry-buttons">
@@ -113,12 +102,12 @@
                 <mat-icon>volume_up</mat-icon>
                 Latest Cry
               </button>
-            
+
               <button *ngIf="getLegacyCryUrl()" (click)="playCry('legacy')" class="cry-button legacy">
                 <mat-icon>volume_down</mat-icon>
                 Legacy Cry
               </button>
-            </div>            
+            </div>
           </li>
         </ul>
       </div>
@@ -127,27 +116,18 @@
       <div class="pokemon-main-view-right">
         <div class="pokemon-official-sprite-container">
           <div class="float-container">
-            <img 
-              #pokemonImage 
-              class="pokemon-detail-img" 
-              [src]="selectedPokemonImage" 
-              [alt]="getPokemonSpeciesName()"
-              (error)="selectedPokemonImage = '/images/placeholder.png'"
-              (load)="onImageLoad()" />
+            <img #pokemonImage class="pokemon-detail-img" [src]="selectedPokemonImage" [alt]="getPokemonSpeciesName()"
+              (error)="selectedPokemonImage = '/images/placeholder.png'" (load)="onImageLoad()" />
           </div>
           <app-pokemon-bg-svg class="pokemonCard__bg detail"></app-pokemon-bg-svg>
-        </div>        
+        </div>
 
         <!-- Sprite Toggle Buttons -->
         <div class="sprite-buttons">
-          <button 
-            [class.active]="!isShiny" 
-            (click)="onSpriteTypeChange(false)">
+          <button [class.active]="!isShiny" (click)="onSpriteTypeChange(false)">
             Normal
           </button>
-          <button 
-            [class.active]="isShiny" 
-            (click)="onSpriteTypeChange(true)">
+          <button [class.active]="isShiny" (click)="onSpriteTypeChange(true)">
             Shiny
           </button>
         </div>
@@ -156,6 +136,14 @@
   </div>
 
   <div class="pokemon-other-details">
-    <app-pokemon-stats class="pokemon-stats" [pokemon]="selectedPokemon"></app-pokemon-stats>
+    <app-pokemon-stats class="pokemon-stats" [pokemon]="selectedPokemon" />
+    <app-pokemon-relations class="pokemon-relations" [pokemonTypes]="selectedPokemon?.pokemontypes"
+      [allTypes]="allTypes" />
+    <app-pokemon-training class="pokemon-training" [pokemon]="selectedPokemon" [species]="pokemonSpeciesDetails" />
+    <app-pokemon-breeding class="pokemon-breeding" [pokemonSpecies]="pokemonSpeciesDetails" />
+    <app-pokemon-forms class="pokemon-forms" [forms]="selectedPokemon?.pokemonforms" />
+
+    <app-pokemon-evolutions class="pokemon-evolutions" [evolutionChain]="pokemonSpeciesDetails?.evolutionchain"
+      [pokemonEvolutions]="pokemonEvolutions" />
   </div>
 </ng-template>

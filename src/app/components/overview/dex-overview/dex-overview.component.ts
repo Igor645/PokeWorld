@@ -1,6 +1,7 @@
-import { 
-  Component, OnInit, Inject, PLATFORM_ID, ViewChild, ChangeDetectionStrategy, 
-  Renderer2, HostListener, OnDestroy 
+import {
+  Component, OnInit, Inject, PLATFORM_ID, ViewChild, ChangeDetectionStrategy,
+  HostListener, OnDestroy, AfterViewInit,
+  ElementRef
 } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { PokemonService } from '../../../services/pokemon.service';
@@ -18,23 +19,26 @@ import { LoadingSpinnerComponent } from '../../shared/loading-spinner/loading-sp
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule, 
-    PokemonCardComponent, 
-    ScrollingModule, 
-    PokeworldSearchComponent, 
+    CommonModule,
+    PokemonCardComponent,
+    ScrollingModule,
+    PokeworldSearchComponent,
     LoadingSpinnerComponent,
   ],
   templateUrl: './dex-overview.component.html',
   styleUrls: ['./dex-overview.component.css'],
 })
-export class DexOverviewComponent implements OnInit, OnDestroy {
+export class DexOverviewComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild(CdkVirtualScrollViewport) viewport!: CdkVirtualScrollViewport;
+  @ViewChild('rowContainer', { static: false }) rowContainer?: ElementRef<HTMLElement>;
 
-  pageSize = 6;
+  cardsPerRow = 6;
+  rowVisualHeight = 350;
   itemSize = 350;
   count = 0;
   private allSpecies: PokemonSpecies[] = [];
-  private lastDevicePixelRatio = this.getDevicePixelRatio();
+
+  private CARD_ASPECT_RATIO = 5 / 7;
 
   private speciesRowsSubject = new BehaviorSubject<SpeciesRow[]>([]);
   speciesRows$: Observable<SpeciesRow[]> = this.speciesRowsSubject.asObservable();
@@ -42,113 +46,173 @@ export class DexOverviewComponent implements OnInit, OnDestroy {
   private isLoadingSubject = new BehaviorSubject<boolean>(true);
   isLoading$ = this.isLoadingSubject.asObservable();
 
+  private rafId = 0;
+  private ro?: ResizeObserver;
+
+  private safeRaf(cb: FrameRequestCallback): number {
+    if (isPlatformBrowser(this.platformId) && typeof window !== 'undefined' && 'requestAnimationFrame' in window) {
+      return window.requestAnimationFrame(cb);
+    }
+    return setTimeout(() => cb(performance?.now?.() ?? 0), 0) as unknown as number;
+  }
+
+  private safeCancel(id: number) {
+    if (isPlatformBrowser(this.platformId) && typeof window !== 'undefined' && 'cancelAnimationFrame' in window) {
+      return window.cancelAnimationFrame(id);
+    }
+    clearTimeout(id as unknown as ReturnType<typeof setTimeout>);
+  }
+
+  private scheduleLayout = () => {
+    if (this.rafId) this.safeCancel(this.rafId);
+    this.rafId = this.safeRaf(() => {
+      this.rafId = 0;
+      this.updateLayout();
+    });
+  };
+
   constructor(
     private pokemonService: PokemonService,
-    @Inject(PLATFORM_ID) private platformId: object,
-    private renderer: Renderer2
-  ) {}
+    @Inject(PLATFORM_ID) private platformId: object
+  ) { }
 
   ngOnInit(): void {
-    this.initializeView();
+    this.updateLayout();
     this.fetchAllPokemon();
+  }
+
+  ngAfterViewInit(): void {
+    if (!isPlatformBrowser(this.platformId)) return;
+
+    if (this.viewport?.elementRef?.nativeElement) {
+      this.ro = new ResizeObserver(this.scheduleLayout);
+      this.ro.observe(this.viewport.elementRef.nativeElement);
+    }
+
+    window.addEventListener('resize', this.scheduleLayout, { passive: true });
+    window.visualViewport?.addEventListener('resize', this.scheduleLayout, { passive: true });
+
+    this.safeRaf(this.scheduleLayout);
   }
 
   @HostListener('window:resize')
   onResize() {
-    this.updateViewSettings();
+    this.updateLayout();
   }
 
   ngOnDestroy(): void {
-    // @HostListener handles cleanup, no need for manual event listener removal
+    if (!isPlatformBrowser(this.platformId)) return;
+    if (this.rafId) this.safeCancel(this.rafId);
+    this.ro?.disconnect();
+    window.removeEventListener('resize', this.scheduleLayout);
+    window.visualViewport?.removeEventListener('resize', this.scheduleLayout);
   }
 
-  private initializeView(): void {
-    this.updateViewSettings();
-  }
-
-  private getDevicePixelRatio(): number {
-    return isPlatformBrowser(this.platformId) ? window.devicePixelRatio : 1;
-  }
-
-  private updateViewSettings(): void {
+  private updateLayout(): void {
     if (!isPlatformBrowser(this.platformId)) return;
 
-    const newPageSize = this.calculatePageSize();
-    const newItemSize = this.calculateItemSize();
-    const newDevicePixelRatio = window.devicePixelRatio;
-
-    if (newPageSize !== this.pageSize || newDevicePixelRatio !== this.lastDevicePixelRatio) {
-      this.pageSize = newPageSize;
-      this.lastDevicePixelRatio = newDevicePixelRatio;
+    const cols = this.calculateCardsPerRow();
+    if (cols !== this.cardsPerRow) {
+      this.cardsPerRow = cols;
       this.updateRows();
     }
 
-    if (newItemSize !== this.itemSize) {
-      this.itemSize = newItemSize;
+    const { visual, itemSize } = this.calculateHeightsByAspect();
+
+    let dirty = false;
+    if (visual !== this.rowVisualHeight) {
+      this.rowVisualHeight = visual;
+      dirty = true;
     }
-
-    this.updateDynamicStyles();
+    if (itemSize !== this.itemSize) {
+      this.itemSize = itemSize;
+      dirty = true;
+    }
+    if (dirty) {
+      this.applyCssVars();
+      queueMicrotask(() => this.viewport?.checkViewportSize());
+    }
   }
 
-  private calculatePageSize(): number {
-    if (!isPlatformBrowser(this.platformId)) return 6;
-
-    const width = window.innerWidth;
-    return width <= 768 
-      ? Math.max(2, Math.round((width / 768) * 3))
-      : Math.max(2, Math.round((width / 1920) * 6));
-  }
-
-  private calculateItemSize(): number {
-    if (!isPlatformBrowser(this.platformId)) return 350;
-
-    const width = window.innerWidth;
-
-    if (width <= 480) return 180; // Phone
-    if (width <= 1024) return 280; // Tablet
-    return 350; // Desktop
-  }
-
-  private updateDynamicStyles(): void {
-    if (!isPlatformBrowser(this.platformId)) return;
-
+  private applyCssVars(): void {
     const root = document.documentElement;
-    root.style.setProperty('--page-size', this.pageSize.toString());
-    root.style.setProperty('--item-size', `${this.itemSize}px`);
+    root.style.setProperty('--cards-per-row', String(this.cardsPerRow));
+    root.style.setProperty('--row-height', `${this.rowVisualHeight}px`);
+  }
+
+  private getContainerWidth(): number {
+    return (
+      this.rowContainer?.nativeElement?.clientWidth ??
+      this.viewport?.elementRef?.nativeElement?.clientWidth ??
+      window.innerWidth
+    );
+  }
+
+  private calculateCardsPerRow(): number {
+    const w = this.getContainerWidth();
+    const gap = 24;
+    const minCard = 220;
+    const cols = Math.floor((w + gap) / (minCard + gap));
+    return Math.max(2, Math.min(10, cols));
+  }
+
+  private calculateHeightsByAspect(): { visual: number; itemSize: number } {
+    const row = document.querySelector<HTMLElement>('.row');
+    const rowClient = row?.clientWidth ?? 0;
+    const viewportClient = this.viewport?.elementRef?.nativeElement?.clientWidth ?? 0;
+    const rowWidth = rowClient > 0 ? rowClient : (viewportClient > 0 ? viewportClient : window.innerWidth);
+    const cs = row ? getComputedStyle(row) : null;
+    const gapX = cs ? parseFloat(cs.getPropertyValue('column-gap') || cs.getPropertyValue('gap')) || 0 : 0;
+    const available = rowWidth - gapX * Math.max(0, this.cardsPerRow - 1);
+    const cardWidth = available / this.cardsPerRow;
+    let visual = cardWidth / this.CARD_ASPECT_RATIO;
+    const sampleCard = row?.querySelector<HTMLElement>('app-pokemon-card');
+    const measured = sampleCard?.getBoundingClientRect().height ?? 0;
+    if (measured > 0) visual = measured;
+    const mTop = cs ? parseFloat(cs.getPropertyValue('margin-block-start') || cs.marginTop || '0') : 0;
+    const mBottom = cs ? parseFloat(cs.getPropertyValue('margin-block-end') || cs.marginBottom || '0') : 0;
+    const collapsed = Math.max(mTop, mBottom);
+    return { visual: Math.ceil(visual), itemSize: Math.ceil(visual + collapsed) };
   }
 
   private fetchAllPokemon(): void {
     this.isLoadingSubject.next(true);
-
     this.pokemonService.getAllPokemonSpecies().pipe(
       finalize(() => this.isLoadingSubject.next(false)),
       catchError(error => {
         console.error('Error fetching Pokémon species:', error);
         return of({
-          pokemon_v2_pokemonspecies: [],
-          pokemon_v2_pokemonspecies_aggregate: { aggregate: { count: 0 } }
+          pokemonspecies: [],
+          pokemonspecies_aggregate: { aggregate: { count: 0 } }
         });
       })
     ).subscribe(response => {
-      this.allSpecies = response.pokemon_v2_pokemonspecies;
-      this.count = response.pokemon_v2_pokemonspecies_aggregate.aggregate.count;
+      this.allSpecies = response.pokemonspecies;
+      this.count = response.pokemonspecies_aggregate.aggregate.count;
       this.updateRows();
+      if (isPlatformBrowser(this.platformId)) {
+        this.safeRaf(() => this.updateLayout());
+      }
     });
   }
 
   private updateRows(): void {
-    this.speciesRowsSubject.next(this.transformToRows(this.allSpecies, this.pageSize));
+    this.speciesRowsSubject.next(this.transformToRows(this.allSpecies, this.cardsPerRow));
   }
 
-  private transformToRows(species: PokemonSpecies[], pageSize: number): SpeciesRow[] {
+  private transformToRows(species: PokemonSpecies[], cardsPerRow: number): SpeciesRow[] {
     return species.reduce((acc: SpeciesRow[], _, index) => {
-      if (index % pageSize === 0) {
+      if (index % cardsPerRow === 0) {
         acc.push({
-          rowId: index / pageSize,
-          pokemon_species: species.slice(index, index + pageSize),
+          rowId: index / cardsPerRow,
+          pokemon_species: species.slice(index, index + cardsPerRow),
         });
       }
       return acc;
     }, []);
+  }
+
+  getPlaceholderArray(count: number): number[] {
+    return count > 0 ? Array(count).fill(0) : [];
   }
 }

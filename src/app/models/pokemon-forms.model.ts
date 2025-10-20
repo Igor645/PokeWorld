@@ -1,5 +1,10 @@
 import { Name } from "./species-name.model";
+import { PokemonSprites } from "./sprite.model";
+import { SpriteWrapper } from "./sprite-wrapper.model";
 
 export interface PokemonForms {
-  pokemon_v2_pokemonformnames: Name[];
+  id: number;
+  name: string;
+  pokemonformnames: Name[];
+  pokemonformsprites: SpriteWrapper<PokemonSprites>[];
 }

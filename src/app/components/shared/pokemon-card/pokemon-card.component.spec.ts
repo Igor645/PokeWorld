@@ -10,7 +10,7 @@ describe('PokemonCardComponent', () => {
     await TestBed.configureTestingModule({
       imports: [PokemonCardComponent]
     })
-    .compileComponents();
+      .compileComponents();
 
     fixture = TestBed.createComponent(PokemonCardComponent);
     component = fixture.componentInstance;

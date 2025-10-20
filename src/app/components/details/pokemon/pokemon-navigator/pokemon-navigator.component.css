@@ -1,3 +1,7 @@
+:host {
+  border-radius: 10px;
+}
+
 /* ──────────── Pokemon Navigator Container ──────────── */
 .pokemon-navigator {
   cursor: pointer;
@@ -12,6 +16,7 @@
   height: 100%;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 6px 12px rgba(0, 0, 0, 0.1);
   gap: 5%;
+  overflow: hidden;
 }
 
 .pokemon-navigator:hover {
@@ -26,7 +31,6 @@
 /* ──────────── Pokemon Name Styling ──────────── */
 .pokemon-name {
   font-weight: bold;
-  text-transform: capitalize;
   font-size: 1.3rem;
   align-self: center;
 }
@@ -52,7 +56,7 @@
   background-color: var(--glass-color);
   border-radius: 10px;
   box-shadow: inset 0 4px 10px rgba(0, 0, 0, 0.2),
-              inset 0 -4px 10px rgba(255, 255, 255, 0.2);
+    inset 0 -4px 10px rgba(255, 255, 255, 0.2);
 }
 
 .pokemonCard__bg {
@@ -83,6 +87,7 @@
   .pokemon-name {
     font-size: 1.1rem;
   }
+
   .arrow {
     font-size: 5rem;
     margin: auto -1.5rem;
@@ -93,6 +98,7 @@
   .pokemon-name {
     font-size: 2rem;
   }
+
   .arrow {
     font-size: 8rem;
     margin: auto -2rem;

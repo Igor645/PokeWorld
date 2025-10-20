@@ -40,6 +40,7 @@
 .pokemon-main-view-left {
   width: calc(55% - 2rem);
   color: var(--accent-text-color);
+  font-size: 1.2rem;
 }
 
 .pokemon-main-view-left h1 {
@@ -88,13 +89,14 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 100%;
+  margin: auto;
+  width: min(100%, 800px);
   background-color: var(--glass-color);
   border-radius: 30px;
   position: relative;
   overflow: hidden;
   box-shadow: inset 0 4px 10px rgba(0, 0, 0, 0.2),
-              inset 0 -4px 10px rgba(255, 255, 255, 0.2);
+    inset 0 -4px 10px rgba(255, 255, 255, 0.2);
 }
 
 .pokemon-detail-img {
@@ -111,9 +113,17 @@
 }
 
 @keyframes popAnimation {
-  0%   { transform: scale(1); }
-  50%  { transform: scale(1.1); }
-  100% { transform: scale(1); }
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.1);
+  }
+
+  100% {
+    transform: scale(1);
+  }
 }
 
 .pokemonCard__bg.detail {
@@ -140,8 +150,15 @@
 }
 
 @keyframes floatUpDownNoScaling {
-  0%, 100% { transform: translateY(5px); }
-  50%      { transform: translateY(-5px); }
+
+  0%,
+  100% {
+    transform: translateY(5px);
+  }
+
+  50% {
+    transform: translateY(-5px);
+  }
 }
 
 /* ──────────────────── Navigation & Misc. ──────────────────── */
@@ -183,6 +200,11 @@ select {
   background-size: 10px 5px;
 }
 
+select:hover {
+  cursor: pointer;
+  box-shadow: 0 0 0 3px var(--background-hover-color);
+}
+
 select:disabled {
   color: var(--text-color);
   cursor: not-allowed;
@@ -196,7 +218,7 @@ select:disabled {
 
 select:focus {
   outline: none;
-  box-shadow: 0 0 0 3px var(--glass-color);
+  box-shadow: 0 0 0 3px var(--primary-color-light);
 }
 
 /* ──────────────────── Sprite Buttons ──────────────────── */
@@ -217,7 +239,6 @@ select:focus {
   border-radius: 4px;
   background-color: var(--background-color);
   color: var(--primary-color);
-  cursor: pointer;
   transition: background-color 0.2s ease, color 0.2s ease;
   box-shadow: 0 2px 4px var(--shadow-color);
 }
@@ -229,6 +250,11 @@ select:focus {
 
 .sprite-buttons button:hover:not(.active) {
   background-color: var(--background-hover-color);
+}
+
+.sprite-buttons button:hover {
+  transform: scale(1.05);
+  cursor: pointer;
 }
 
 /* ──────────────────── Details List ──────────────────── */
@@ -252,8 +278,8 @@ select:focus {
   display: grid;
   grid-template-columns: 1fr 1fr;
   align-items: center;
-  padding: 0.75rem 3px;
-  border-bottom: 1px solid var(--seperator-color);
+  padding: 8px 3px;
+  border-bottom: 1px solid var(--separator-color);
   transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
@@ -306,7 +332,6 @@ select:focus {
 .cry-buttons {
   display: flex;
   gap: 10px;
-  margin-top: 5px;
 }
 
 .cry-button {
@@ -348,10 +373,26 @@ select:focus {
   gap: 1rem;
   margin: 0 auto 1rem;
   animation: fadeIn 1s ease-in-out;
+  max-width: var(--general-width);
+  align-items: stretch;
 }
 
-.pokemon-stats{
+.pokemon-stats {
   grid-column: span 2;
+}
+
+.pokemon-training {
+  grid-column: span 1;
+}
+
+.pokemon-evolutions {
+  grid-column: span 3;
+}
+
+.pokemon-relations,
+.pokemon-forms,
+.pokemon-breeding {
+  grid-column: span 1;
 }
 
 /* ──────────────────── Mobile Responsiveness ──────────────────── */
@@ -360,21 +401,26 @@ select:focus {
   :host {
     padding: 0.5rem;
   }
+
   .pokemon-main-view {
     flex-direction: column;
     flex-flow: column-reverse;
     justify-content: center;
     gap: 1rem;
   }
-  .pokemon-main-view-container{
+
+  .pokemon-main-view-container {
     padding: 1rem;
   }
+
   .pokemon-main-view-left,
   .pokemon-main-view-right {
     width: 100%;
     justify-content: center;
     align-items: center;
+    font-size: 1rem;
   }
+
   .pokemon-main-view-left h1 {
     font-size: 3rem;
     display: flex;
@@ -383,46 +429,65 @@ select:focus {
     justify-content: center;
     gap: 0;
   }
+
   select {
     font-size: 0.85rem;
     padding: 0.4rem 0.8rem;
     background-position: right 0.8rem center;
   }
+
   .sprite-buttons button {
     font-size: 0.85rem;
     padding: 0.4rem;
   }
+
   app-pokemon-navigator {
     width: 280px;
   }
+
   .pokemon-nav-buttons {
     flex-direction: column;
     justify-content: center;
     align-items: center;
     gap: 0.5rem;
   }
-  .nav-button.left{
+
+  .nav-button.left {
     margin-left: 0;
   }
+
   .cry-buttons {
     flex-direction: column;
   }
-  .types-container{
+
+  .types-container {
     justify-content: center;
   }
+
   .pokemon-status-badge {
     position: relative;
     right: unset;
     top: unset;
     margin-bottom: 0.5rem;
   }
+
   .pokemon-dex-entry {
     text-align: center;
     font-size: 1.3rem;
     margin-top: 1rem;
   }
+
   .pokemon-other-details {
-    grid-template-columns: repeat(1, 1fr);
+    grid-template-columns: 1fr;
+  }
+
+  .pokemon-stats,
+  .pokemon-evolutions,
+  .pokemon-training,
+  .pokemon-relations,
+  .pokemon-forms,
+  .pokemon-breeding {
+    grid-column: span 3
   }
 }
 
@@ -431,20 +496,25 @@ select:focus {
   :host {
     padding: 1rem;
   }
+
   .pokemon-main-view {
     flex-direction: column;
     flex-flow: column-reverse;
     gap: 1.5rem;
   }
-  .pokemon-main-view-container{
+
+  .pokemon-main-view-container {
     padding: 1.5rem;
   }
+
   .pokemon-main-view-left,
   .pokemon-main-view-right {
     width: 100%;
     justify-content: center;
     align-items: center;
+    font-size: 1rem;
   }
+
   .pokemon-main-view-left h1 {
     font-size: 3rem;
     display: flex;
@@ -453,44 +523,63 @@ select:focus {
     justify-content: center;
     gap: 0;
   }
+
   select {
     font-size: 0.9rem;
     padding: 0.4rem 0.8rem;
   }
+
   .sprite-buttons button {
     font-size: 0.9rem;
     padding: 0.4rem;
   }
+
   app-pokemon-navigator {
     width: 500px;
   }
+
   .pokemon-nav-buttons {
     flex-direction: column;
     justify-content: center;
     align-items: center;
     gap: 1rem;
   }
-  .nav-button.left{
+
+  .nav-button.left {
     margin-left: 0;
   }
+
   .cry-buttons {
     flex-direction: column;
   }
-  .types-container{
+
+  .types-container {
     justify-content: center;
   }
+
   .pokemon-status-badge {
     position: relative;
     right: unset;
     top: unset;
     margin-bottom: 0.5rem;
   }
+
   .pokemon-dex-entry {
     text-align: center;
     margin-top: 1rem;
   }
+
   .pokemon-other-details {
-    grid-template-columns: repeat(1, 1fr);
+    grid-template-columns: 1fr;
+  }
+
+  .pokemon-stats,
+  .pokemon-evolutions,
+  .pokemon-training,
+  .pokemon-relations,
+  .pokemon-forms,
+  .pokemon-breeding {
+    grid-column: span 3;
   }
 }
 
@@ -500,12 +589,15 @@ select:focus {
     flex-direction: row;
     gap: 1.5rem;
   }
+
   .pokemon-main-view-left {
     width: calc(55% - 1rem);
   }
+
   .pokemon-main-view-right {
     width: calc(45% - 1rem);
   }
+
   app-pokemon-navigator {
     width: 320px;
   }
@@ -517,9 +609,11 @@ select:focus {
     flex-direction: row;
     gap: 2rem;
   }
+
   .pokemon-main-view-left {
     width: calc(55% - 1rem);
   }
+
   .pokemon-main-view-right {
     width: 45%;
   }

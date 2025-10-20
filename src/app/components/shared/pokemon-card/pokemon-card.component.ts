@@ -1,43 +1,61 @@
-import { Component, Input, OnInit, OnDestroy, ChangeDetectorRef, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
-import { Router } from '@angular/router';
+import {
+  Component,
+  OnInit,
+  Input,
+  ViewChild,
+  ElementRef,
+  AfterViewInit,
+  OnDestroy,
+  ChangeDetectorRef,
+  Optional,
+  Self
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Subscription } from 'rxjs';
-import { PokemonBgSvgComponent } from '../pokemon-bg-svg/pokemon-bg-svg.component';
-import { PokemonUtilsService } from '../../../utils/pokemon-utils';
-import { SettingsService } from '../../../services/settings.service';
+import { Router } from '@angular/router';
+
 import { Pokemon } from '../../../models/pokemon.model';
 import { PokemonSpecies } from '../../../models/pokemon-species.model';
+import { PokemonUtilsService } from '../../../utils/pokemon-utils';
+import { SettingsService } from '../../../services/settings.service';
+import { PokemonBgSvgComponent } from '../pokemon-bg-svg/pokemon-bg-svg.component';
+import { InteractiveHostDirective } from '../directives/interactive-host.directive';
 
 @Component({
   selector: 'app-pokemon-card',
   templateUrl: './pokemon-card.component.html',
   styleUrls: ['./pokemon-card.component.css'],
+  standalone: true,
   imports: [CommonModule, PokemonBgSvgComponent],
-  host: { 
-    '(click)': 'navigateToPokemonDetails()'
-  }
+  hostDirectives: [InteractiveHostDirective]
 })
 export class PokemonCardComponent implements OnInit, OnDestroy, AfterViewInit {
   @Input() pokemon!: Pokemon;
   @Input() pokemonSpecies!: PokemonSpecies;
   @ViewChild('pokemonImage', { static: false }) pokemonImage!: ElementRef<HTMLImageElement>;
-  
-  pokemonViewModel: { id: number; name: string; image: string; generation: string } = { id: 0, name: '', image: '', generation: '' };
 
-  imageLoaded: boolean = false;
-  eggGone: boolean = false;
-  eggSwooping: boolean = false;
+  pokemonViewModel = { id: 0, name: '', image: '', generation: '' };
+  imageLoaded = false;
+  eggGone = false;
+  eggSwooping = false;
   private languageSubscription!: Subscription;
 
   constructor(
-    private router: Router, 
+    private router: Router,
     private pokemonUtils: PokemonUtilsService,
     private settingsService: SettingsService,
-    private cdr: ChangeDetectorRef
-  ) {}
+    private cdr: ChangeDetectorRef,
+    @Self() @Optional() private interactiveHost?: InteractiveHostDirective
+  ) { }
 
   ngOnInit(): void {
     this.updateViewModel();
+
+    if (this.interactiveHost) {
+      const name = this.pokemonViewModel.name || this.pokemonViewModel.id;
+      this.interactiveHost.href = ['/pokemon', name];
+    }
+
     this.languageSubscription = this.settingsService
       .watchSetting<number>('selectedLanguageId')
       .subscribe(() => {
@@ -46,7 +64,7 @@ export class PokemonCardComponent implements OnInit, OnDestroy, AfterViewInit {
       });
   }
 
-  ngAfterViewInit(): void {}
+  ngAfterViewInit(): void { }
 
   ngOnDestroy(): void {
     this.languageSubscription.unsubscribe();
@@ -55,20 +73,10 @@ export class PokemonCardComponent implements OnInit, OnDestroy, AfterViewInit {
   private updateViewModel(): void {
     this.pokemonViewModel = {
       id: this.pokemon?.id || this.pokemonSpecies?.id || 0,
-      name: this.pokemonUtils.getPokemonSpeciesNameByLanguage(this.pokemonSpecies),
+      name: this.pokemonUtils.getLocalizedNameFromEntity(this.pokemonSpecies, "pokemonspeciesnames") || 'Unknown',
       image: this.pokemonUtils.getPokemonOfficialImage(this.pokemon),
-      generation: this.pokemonUtils.parseGenerationName(this.pokemonSpecies?.pokemon_v2_generation?.pokemon_v2_generationnames),
+      generation: this.pokemonUtils.getLocalizedNameFromEntity(this.pokemonSpecies.generation, "generationnames") || 'Unknown',
     };
-  }
-
-  navigateToPokemonDetails(): void {
-    if (this.pokemonViewModel.name) {
-      this.router.navigate(['/pokemon', this.pokemonViewModel.name]);
-    } else if (this.pokemonViewModel.id) {
-      this.router.navigate(['/pokemon', this.pokemonViewModel.id]);
-    } else {
-      console.error('No valid Pokémon ID or name found.');
-    }
   }
 
   onImageLoad(): void {
@@ -78,7 +86,7 @@ export class PokemonCardComponent implements OnInit, OnDestroy, AfterViewInit {
     }, 700);
     this.eggSwooping = true;
     this.cdr.detectChanges();
-  }  
+  }
 
   onEggAnimationEnd(): void {
     this.eggGone = true;

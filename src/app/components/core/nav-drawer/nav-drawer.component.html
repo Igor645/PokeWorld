@@ -1,0 +1,68 @@
+<!-- Backdrop -->
+<div class="nd-backdrop" *ngIf="open" (click)="close()" aria-hidden="true"></div>
+
+<!-- Drawer -->
+<aside class="nd-drawer" [class.open]="open" role="dialog" aria-modal="true" aria-label="Navigation and settings"
+    cdkTrapFocus [cdkTrapFocusAutoCapture]="open">
+
+    <header class="nd-header">
+        <button class="nd-icon" (click)="close()" aria-label="Close menu">
+            <mat-icon>close</mat-icon>
+        </button>
+        <h2 class="nd-title">Menu</h2>
+    </header>
+
+    <nav class="nd-nav" *ngIf="items?.length">
+        <app-pokeworld-search />
+
+        <ng-container *ngFor="let item of items">
+
+            <!-- Simple internal link -->
+            <a *ngIf="item.type === 'link' && !item.external" class="nd-link" [routerLink]="item.route"
+                routerLinkActive="active" [routerLinkActiveOptions]="{ exact: item.route === '/' }"
+                (click)="handleLinkClick(item)">
+                <mat-icon *ngIf="item.icon" class="nd-link-icon" aria-hidden="true">{{ item.icon }}</mat-icon>
+                <span class="nd-link-label">{{ item.label }}</span>
+            </a>
+
+            <!-- External link -->
+            <a *ngIf="item.type === 'link' && item.external" class="nd-link" [attr.href]="item.route" target="_blank"
+                rel="noopener">
+                <mat-icon *ngIf="item.icon" class="nd-link-icon" aria-hidden="true">{{ item.icon }}</mat-icon>
+                <span class="nd-link-label">{{ item.label }}</span>
+                <mat-icon class="nd-link-icon" aria-hidden="true">open_in_new</mat-icon>
+            </a>
+
+            <!-- Group with children -->
+            <div *ngIf="item.type === 'group'" class="nd-group">
+                <button class="nd-group-header" type="button" (click)="toggleGroup(item.label)"
+                    (keydown)="onGroupKey($event, item.label)" [attr.aria-expanded]="isExpanded(item.label)"
+                    [attr.aria-controls]="'grp-'+item.label">
+                    <mat-icon *ngIf="item.icon" class="nd-link-icon" aria-hidden="true">{{ item.icon }}</mat-icon>
+                    <span class="nd-link-label">{{ item.label }}</span>
+                    <span class="nd-spacer"></span>
+                    <mat-icon class="nd-chevron" [class.expanded]="isExpanded(item.label)"
+                        aria-hidden="true">chevron_right</mat-icon>
+                </button>
+
+                <div class="nd-subnav" [id]="'grp-'+item.label" [class.open]="isExpanded(item.label)">
+                    <a *ngFor="let child of item.children" class="nd-sublink"
+                        [routerLink]="!child.external ? child.route : null" routerLinkActive="active"
+                        [routerLinkActiveOptions]="{ exact: child.route === '/' }" (click)="handleLinkClick(child)"
+                        [attr.href]="child.external ? child.route : null"
+                        [attr.target]="child.external ? '_blank' : null"
+                        [attr.rel]="child.external ? 'noopener' : null">
+                        <mat-icon *ngIf="child.icon" class="nd-link-icon" aria-hidden="true">{{ child.icon }}</mat-icon>
+                        <span class="nd-link-label">{{ child.label }}</span>
+                    </a>
+                </div>
+            </div>
+
+        </ng-container>
+    </nav>
+
+    <section class="nd-section">
+        <h3 class="nd-subtitle">Settings</h3>
+        <app-settings />
+    </section>
+</aside>

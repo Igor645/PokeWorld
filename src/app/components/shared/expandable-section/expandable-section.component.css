@@ -1,0 +1,81 @@
+.expandable-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.expandable-title {
+    font-size: 2rem;
+    font-weight: bold;
+    color: var(--accent-text-color);
+}
+
+.toggle-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.2rem;
+    display: flex;
+    align-items: center;
+    font-size: 1.5rem;
+}
+
+.chevron-icon {
+    display: inline-block;
+    transition: transform 0.3s ease;
+    font-size: 2rem;
+    color: var(--accent-text-color);
+    line-height: 1;
+    padding: 0;
+    margin: -0.8rem;
+    display: inline-flex;
+}
+
+.chevron-icon.expanded {
+    transform: rotate(180deg);
+}
+
+.expandable-body {
+    margin-top: 1rem;
+}
+
+/* ───────────── Responsive Font Sizes ───────────── */
+@media (max-width: 480px) {
+    .expandable-title {
+        font-size: 1.5rem;
+    }
+
+    .chevron-icon {
+        font-size: 2.5rem;
+    }
+}
+
+@media (min-width: 481px) and (max-width: 768px) {
+    .expandable-title {
+        font-size: 1.75rem;
+    }
+
+    .chevron-icon {
+        font-size: 3rem;
+    }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+    .expandable-title {
+        font-size: 1.9rem;
+    }
+
+    .chevron-icon {
+        font-size: 3rem;
+    }
+}
+
+@media (min-width: 1025px) {
+    .expandable-title {
+        font-size: 2rem;
+    }
+
+    .chevron-icon {
+        font-size: 3.5rem;
+    }
+}

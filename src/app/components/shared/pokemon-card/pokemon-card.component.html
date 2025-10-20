@@ -3,25 +3,13 @@
 </div>
 
 <div class="pokemonCard__img__container">
-  <img 
-    #pokemonImage
-    [src]="pokemonViewModel.image"
-    (load)="onImageLoad()"
-    (error)="handleImageError($event)"
-    class="pokemonCard__image initial-load"
-    [class.visible]="eggGone"
-    [class.hidden]="!eggGone"
-  />
+  <img #pokemonImage [src]="pokemonViewModel.image" (load)="onImageLoad()" (error)="handleImageError($event)"
+    class="pokemonCard__image initial-load" [class.visible]="eggGone" [class.hidden]="!eggGone" />
 
-  <img 
-    src="/images/egg.png"
-    class="pokemonCard__placeholder shaking_egg"
-    [class.shrink-away]="eggSwooping"
-    [class.hidden]="eggGone"
-    (animationend)="onEggAnimationEnd()"
-  />
+  <img src="/images/egg.png" class="pokemonCard__placeholder shaking_egg" [class.shrink-away]="eggSwooping"
+    [class.hidden]="eggGone" (animationend)="onEggAnimationEnd()" />
 
-  <app-pokemon-bg-svg class="pokemonCard__bg"></app-pokemon-bg-svg>    
+  <app-pokemon-bg-svg class="pokemonCard__bg"></app-pokemon-bg-svg>
 </div>
 
 <div class="pokemonCard__text__container">

@@ -10,7 +10,7 @@ describe('PokemonBgSvgComponent', () => {
     await TestBed.configureTestingModule({
       imports: [PokemonBgSvgComponent]
     })
-    .compileComponents();
+      .compileComponents();
 
     fixture = TestBed.createComponent(PokemonBgSvgComponent);
     component = fixture.componentInstance;

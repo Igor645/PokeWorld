@@ -1,0 +1,74 @@
+<app-expandable-section title="Breeding">
+
+    <!-- Gender Distribution -->
+    <div class="breeding-row">
+        <span class="label">Gender Distribution</span>
+        <ng-container *ngIf="pokemonSpecies && !getGenderDisplay().genderless; else genderlessBlock">
+            <span class="breeding-gender-icons">
+                {{ getGenderDisplay().male }}%
+                <img class="male-icon" src="/images/male.png" alt="Male" />
+                /
+                {{ getGenderDisplay().female }}%
+                <img class="female-icon" src="/images/female.png" alt="Female" />
+            </span>
+        </ng-container>
+        <ng-template #genderlessBlock>
+            <span>Genderless</span>
+        </ng-template>
+    </div>
+
+    <!-- Growth Rate -->
+    <div class="breeding-row growth-rate-row">
+        <span class="label">Growth Rate</span>
+        <a class="growth-rate" [routerLink]="['/growth-rate', getGrowthRateDescriptions(pokemonSpecies?.growthrate)]">
+            {{
+            getGrowthRateDescriptions(pokemonSpecies?.growthrate)
+            }}
+        </a>
+    </div>
+
+    <!-- Egg Cycles & Hatch Steps -->
+    <div class="breeding-row" *ngIf="pokemonSpecies as species">
+        <span class="label">Egg Cycles</span>
+        <span class="breeding-egg-cycles">
+            {{ getHatchInfo(species.hatch_counter).cycles }} cycles<br />
+            <span class="breeding-muted">
+                ({{ getHatchInfo(species.hatch_counter).steps | number }} steps)
+            </span>
+        </span>
+    </div>
+
+    <!-- Egg Groups -->
+    <div class="breeding-row egg-groups-row">
+        <span class="label">Egg Groups</span>
+        <div class="egg-groups">
+            <a *ngFor="let group of pokemonSpecies?.pokemonegggroups" class="egg-group"
+                [routerLink]="['/egg-group', getEggGroupNameByLanguage(group.egggroup)]">
+                {{ getEggGroupNameByLanguage(group.egggroup) }}
+            </a>
+        </div>
+    </div>
+
+    <!-- Baby Trigger Item -->
+    <div class="breeding-row">
+        <span class="label">Baby Trigger Item</span>
+        <a class="baby-trigger-item" *ngIf="getBabyTriggerItem() as babyItem; else None"
+            [routerLink]="['/item', babyItem.name]">
+            {{ getItemNameByLanguage(babyItem) }}
+            <img *ngIf="babyItem.itemsprites?.[0]?.sprites?.default" [src]="babyItem.itemsprites[0].sprites.default"
+                [alt]="babyItem.name" class="item-sprite" />
+        </a>
+        <ng-template #None>
+            <span>None</span>
+        </ng-template>
+    </div>
+
+    <!-- Habitat -->
+    <div class="breeding-row">
+        <span class="label">Habitat</span>
+        <span class="habitat">
+            {{ getHabitatNameByLanguage(pokemonSpecies?.pokemonhabitat)}}
+        </span>
+    </div>
+
+</app-expandable-section>
