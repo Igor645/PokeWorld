@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://beta.pokeapi.co/graphql/v1beta2'
+  apiUrl: 'https://graphql.pokeapi.co/v1beta2'
 };
