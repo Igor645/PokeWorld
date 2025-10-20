@@ -2,41 +2,28 @@
   <div class="toast" *ngIf="showToast">{{ toastMessage }}</div>
 
   <div class="guessing-game__controls head">
-    <input 
-      type="text" 
-      class="guessing-game__input"
-      placeholder="Guess a Pokémon..."
-      [(ngModel)]="currentGuess"
-      (input)="onGuessInput()"
-    />
-    <app-guessing-pokemon-icon  
-      class="pokemon-icon last-guessed"
-      *ngIf="lastGuessedPokemonId !== null"
-      [pokemonSpecies]="guessingGameStateService.getPokemonById(lastGuessedPokemonId)"
-      [disableSound]="true">
+    <input type="text" class="guessing-game__input" placeholder="Guess a Pokémon..." [(ngModel)]="currentGuess"
+      (input)="onGuessInput()" />
+    <app-guessing-pokemon-icon class="pokemon-icon last-guessed" *ngIf="lastGuessedPokemonId !== null"
+      [pokemonSpecies]="guessingGameStateService.getPokemonById(lastGuessedPokemonId)" [disableSound]="true">
     </app-guessing-pokemon-icon>
     <div class="guessing-game__stats">
       <p>
-        {{ (guessingGameStateService.state$ | async)?.foundPokemonCount }} / 
+        {{ (guessingGameStateService.state$ | async)?.foundPokemonCount }} /
         {{ (guessingGameStateService.state$ | async)?.totalPokemonCount }}
       </p>
     </div>
   </div>
 
   <div class="generations-wrapper">
-    <app-generation-container 
-      *ngFor="let gen of generations"
-      [generationId]="gen.id"
-      [generationName]="getRegionName(gen.pokemon_v2_region)"
-      [class.completed]="completedGenerations.has(gen.id)">
+    <app-generation-container *ngFor="let gen of generations" [generationId]="gen.id"
+      [generationName]="getRegionName(gen.region)" [class.completed]="completedGenerations.has(gen.id)">
     </app-generation-container>
   </div>
 
   <div class="guessing-game__controls">
-    <button 
-      class="guessing-game__controls__button" 
-      [class.active]="(guessingGameStateService.state$ | async)?.isSilhouette"
-      (click)="toggleSilhouette()">
+    <button class="guessing-game__controls__button"
+      [class.active]="(guessingGameStateService.state$ | async)?.isSilhouette" (click)="toggleSilhouette()">
       Silhouette
     </button>
   </div>

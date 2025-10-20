@@ -55,7 +55,7 @@ export class PokemonUtilsService {
   }
 
   getDefaultPokemon(pokemonSpecies: PokemonSpecies | undefined): Pokemon | undefined {
-    return pokemonSpecies?.pokemon_v2_pokemons.find(pokemon => pokemon.is_default);
+    return pokemonSpecies?.pokemons.find(pokemon => pokemon.is_default);
   }
 
   /**
@@ -63,7 +63,7 @@ export class PokemonUtilsService {
    * @param pokemonSpecies The Pokémon species DTO object.
    * @returns The Pokémon species name in the selected language.
    */
-  private getNameByLanguage(names: Name[] | undefined): string {
+  getNameByLanguage(names: Name[] | undefined): string {
     const languageId = this.getSelectedLanguageId();
     return (
       names?.find((x) => x.language.id === languageId)

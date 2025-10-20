@@ -27,7 +27,7 @@ export class GuessingGameComponent implements OnInit {
     private pokemonUtils: PokemonUtilsService,
     public guessingGameStateService: GuessingGameStateService,
     @Inject(PLATFORM_ID) private platformId: object
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.fetchGenerations();
@@ -39,15 +39,15 @@ export class GuessingGameComponent implements OnInit {
 
   onGuessInput(): void {
     const result = this.guessingGameStateService.guessPokemonByName(this.currentGuess);
-    
+
     if (result.message) {
       this.showToastMessage(result.message);
     }
 
-    if(result.message || result.guessed) {
+    if (result.message || result.guessed) {
       this.currentGuess = '';
     }
-  }  
+  }
 
   showToastMessage(message: string): void {
     this.toastMessage = message;
@@ -57,12 +57,12 @@ export class GuessingGameComponent implements OnInit {
 
   private fetchGenerations(): void {
     this.generationService.getGenerations().subscribe(response => {
-      this.generations = response.pokemon_v2_generation;
+      this.generations = response.generation;
     });
   }
 
   getRegionName(region: any): string {
-    return this.pokemonUtils.getNameByLanguage(region.pokemon_v2_regionnames);
+    return this.pokemonUtils.getNameByLanguage(region.regionnames);
   }
 
   toggleSilhouette(): void {

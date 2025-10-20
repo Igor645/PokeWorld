@@ -1,9 +1,10 @@
-import { Component, Input, OnInit, OnDestroy } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+
 import { CommonModule } from '@angular/common';
-import { PokemonService } from '../../../../services/pokemon.service';
-import { GuessingPokemonIconComponent } from '../guessing-pokemon-icon/guessing-pokemon-icon.component';
-import { PokemonSpecies } from '../../../../models/pokemon-species.model';
 import { GuessingGameStateService } from '../services/guessing-game-state.service';
+import { GuessingPokemonIconComponent } from '../guessing-pokemon-icon/guessing-pokemon-icon.component';
+import { PokemonService } from '../../../../services/pokemon.service';
+import { PokemonSpecies } from '../../../../models/pokemon-species.model';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
@@ -21,7 +22,7 @@ export class GenerationContainerComponent implements OnInit, OnDestroy {
   completed = false;
   private destroy$ = new Subject<void>();
 
-  constructor(private pokemonService: PokemonService, private guessingGameStateService: GuessingGameStateService) {}
+  constructor(private pokemonService: PokemonService, private guessingGameStateService: GuessingGameStateService) { }
 
   ngOnInit(): void {
     this.fetchPokemonByGeneration();
@@ -35,7 +36,7 @@ export class GenerationContainerComponent implements OnInit, OnDestroy {
 
   private fetchPokemonByGeneration(): void {
     this.pokemonService.getPokemonSpeciesByGenerationId(this.generationId).subscribe(response => {
-      this.pokemonList = response.pokemon_v2_pokemonspecies;
+      this.pokemonList = response.pokemonspecies;
 
       this.pokemonList.forEach(pokemon => {
         this.guessingGameStateService.registerPokemon(pokemon);

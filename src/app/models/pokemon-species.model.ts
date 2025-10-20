@@ -35,13 +35,6 @@ export interface PokemonSpecies {
   growthrate: GrowthRate;
   pokemonhabitat: PokemonHabitat;
   isFound: boolean;
-  pokemon_v2_pokemons: Pokemon[];
-  pokemon_v2_pokemonspeciesnames: Name[];
-  pokemon_v2_generation: Generation;
-  pokemon_v2_pokemonsprites?: PokemonSprites;
-  pokemon_v2_pokemonspeciesflavortexts: FlavorText[];
-  pokemon_v2_pokemoncolor: PokemonColor;
-  pokemon_v2_pokemonshape: PokemonShape;
 }
 
 export interface PokemonSpeciesResponse {

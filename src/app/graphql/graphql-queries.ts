@@ -628,33 +628,33 @@ export const GraphQLQueries = {
 
   GetPokemonSpeciesByGenerationId: `
       query getPokemonSpeciesByGenerationId($generationId: Int!) {
-        pokemon_v2_pokemonspecies_aggregate(
-          where: {pokemon_v2_generation: {id: {_eq: $generationId}}}
+        pokemonspecies_aggregate(
+          where: {generation: {id: {_eq: $generationId}}}
         ) {
           aggregate {
             count
           }
         }
-        pokemon_v2_pokemonspecies(
+        pokemonspecies(
           order_by: {id: asc}
-          where: {pokemon_v2_generation: {id: {_eq: $generationId}}}
+          where: {generation: {id: {_eq: $generationId}}}
         ) {
           name
           id
-          pokemon_v2_pokemons {
+          pokemons {
             is_default
-            pokemon_v2_pokemonsprites {
+            pokemonsprites {
               sprites
             }
           }
-          pokemon_v2_pokemonspeciesnames {
+          pokemonspeciesnames {
             name
-            pokemon_v2_language {
+            language {
               name
               id
             }
           }
-          pokemon_v2_generation {
+          generation {
             id
           }
         }
@@ -663,24 +663,24 @@ export const GraphQLQueries = {
 
   GetGenerations: `
       query GetGenerations {
-        pokemon_v2_generation {
+        generation {
           id
           name
-          pokemon_v2_generationnames {
+          generationnames {
             name
-            pokemon_v2_language {
+            language {
               id
               name
             }
           }
-          pokemon_v2_region {
+          region {
             id
             name
-            pokemon_v2_regionnames {
+            regionnames {
               id
               language_id
               name
-              pokemon_v2_language {
+              language {
                 id
                 name
               }

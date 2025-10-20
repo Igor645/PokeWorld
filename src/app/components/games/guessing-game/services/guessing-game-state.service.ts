@@ -1,5 +1,6 @@
-import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
+
+import { Injectable } from '@angular/core';
 import { PokemonSpecies } from '../../../../models/pokemon-species.model';
 
 interface GuessingGameState {
@@ -41,15 +42,15 @@ export class GuessingGameStateService {
 
   registerPokemon(pokemonSpecies: PokemonSpecies): void {
     const speciesId = pokemonSpecies.id;
-    const generationId = pokemonSpecies.pokemon_v2_generation.id;
-    
+    const generationId = pokemonSpecies.generation.id;
+
     this.allPokemonSpecies.set(speciesId, pokemonSpecies);
-    
+
     if (!this.pokemonByGeneration.has(generationId)) {
       this.pokemonByGeneration.set(generationId, new Set<number>());
     }
     this.pokemonByGeneration.get(generationId)!.add(speciesId);
-    
+
     this.updateState({ totalPokemonCount: this.allPokemonSpecies.size });
   }
 
@@ -64,7 +65,7 @@ export class GuessingGameStateService {
       lastGuessedPokemonId: speciesId
     });
 
-    this.checkCompletedGeneration(this.allPokemonSpecies.get(speciesId)?.pokemon_v2_generation.id);
+    this.checkCompletedGeneration(this.allPokemonSpecies.get(speciesId)?.generation.id);
   }
 
   private sanitizeName(name: string): string {
@@ -82,7 +83,7 @@ export class GuessingGameStateService {
     const guessedSet = this.currentState.guessedPokemonIds;
 
     const allMatches = Array.from(this.allPokemonSpecies.entries()).filter(([id, pokemon]) =>
-      pokemon.pokemon_v2_pokemonspeciesnames.some(n => this.sanitizeName(n.name) === trimmedGuess)
+      pokemon.pokemonspeciesnames.some(n => this.sanitizeName(n.name) === trimmedGuess)
     );
 
     const unguessedMatches = allMatches.filter(([id]) => !guessedSet.has(id));
@@ -93,13 +94,13 @@ export class GuessingGameStateService {
     }
 
     const partialMatches = Array.from(this.allPokemonSpecies.entries()).filter(([id, pokemon]) =>
-      pokemon.pokemon_v2_pokemonspeciesnames.some(n => this.sanitizeName(n.name).startsWith(trimmedGuess))
+      pokemon.pokemonspeciesnames.some(n => this.sanitizeName(n.name).startsWith(trimmedGuess))
     );
 
     const unguessedPartialMatches = partialMatches.filter(([id]) => !guessedSet.has(id));
 
     if (unguessedPartialMatches.length === 1 &&
-        unguessedPartialMatches[0][1].pokemon_v2_pokemonspeciesnames.some(n => this.sanitizeName(n.name) === trimmedGuess)) {
+      unguessedPartialMatches[0][1].pokemonspeciesnames.some(n => this.sanitizeName(n.name) === trimmedGuess)) {
       this.guessPokemon(unguessedPartialMatches[0][0]);
       return { guessed: true };
     }
@@ -113,10 +114,10 @@ export class GuessingGameStateService {
 
   private checkCompletedGeneration(generationId?: number): void {
     if (!generationId) return;
-    
+
     const generationPokemon = this.pokemonByGeneration.get(generationId);
     if (!generationPokemon) return;
-    
+
     const totalInGen = generationPokemon.size;
     const guessedInGen = Array.from(generationPokemon)
       .filter(id => this.currentState.guessedPokemonIds.has(id))
