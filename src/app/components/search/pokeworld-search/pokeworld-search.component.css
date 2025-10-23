@@ -65,7 +65,7 @@
 }
 
 ::ng-deep .mat-mdc-optgroup-label {
-    background-color: var(--primary-color);
+    background-color: var(--primary-color) !important;
     color: white;
     font-size: x-large !important;
 }
