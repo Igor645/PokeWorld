@@ -15,6 +15,9 @@
     --primary-background-color: rgb(206, 216, 247);
     --pokemon-card-text-background-color: #ffffff;
 
+    --interactive-bg-color: #f2f5fa;
+    --interactive-bg-hover: #eceff6;
+
     /* ====== BORDERS & OUTLINES ====== */
     --border-color: rgba(38, 143, 255, 0.5);
     --border-focus-color: rgba(38, 143, 255, 0.8);
@@ -61,6 +64,9 @@
     --primary-background-color: #272727;
     --pokemon-card-text-background-color: #1e1e1e;
 
+    --interactive-bg-color: #16181c;
+    --interactive-bg-hover: #1d2025;
+
     /* Colors */
     --accent-text-color: rgba(255, 255, 255, 0.8);
     --title-color: rgba(255, 255, 255, 0.8);
@@ -68,20 +74,20 @@
     --valid-color: #03dac6;
 
     /* Borders & Shadows */
-    --border-color: rgba(63, 63, 63, 0.5);
+    --border-color: rgba(21, 43, 74, 0.5);
     --border-focus-color: rgba(122, 122, 122, 0.5);
     --dropdown-border-color: rgb(36, 35, 35);
-    --shadow-color: rgba(255, 255, 255, 0.1);
-    --shadow-hover-color: rgba(255, 255, 255, 0.2);
+    --shadow-color: rgba(105, 105, 105, 0.1);
+    --shadow-hover-color: rgba(174, 174, 174, 0.2);
     --separator-color: rgb(68, 68, 68);
 
     /* Scrollbars */
     --scrollbar-thumb-color: rgba(255, 255, 255, 0.1);
 
     /* Component-specific */
-    --glass-color: rgba(255, 255, 255, 0.1);
-    --svg-color: rgba(255, 255, 255, 0.1);
-    --selected-color: rgba(255, 255, 255, 0.8);
+    --glass-color: rgba(73, 90, 186, 0.1);
+    --svg-color: rgba(89, 138, 235, 0.1);
+    --selected-color: rgba(0, 102, 255, 0.8);
 }
 
 .dark-theme {
@@ -91,4 +97,19 @@
     --legendary-text-color: black;
     --mythical-text-color: white;
     --baby-text-color: black;
+}
+
+
+:root {
+    --card-sheen-start: rgba(255, 255, 255, 0.65);
+    --card-sheen-end: rgba(255, 255, 255, 0.08);
+    --card-sheen-opacity: 0.45;
+    --card-sheen-hover-opacity: 0.75;
+}
+
+.dark-theme {
+    --card-sheen-start: rgba(197, 197, 197, 0.28);
+    --card-sheen-end: rgba(145, 145, 145, 0.06);
+    --card-sheen-opacity: 0.35;
+    --card-sheen-hover-opacity: 0.55;
 }

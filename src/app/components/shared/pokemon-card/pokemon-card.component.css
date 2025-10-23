@@ -27,9 +27,9 @@
     left: -50%;
     width: 200%;
     height: 200%;
-    background: linear-gradient(45deg, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.1));
+    background: linear-gradient(45deg, var(--card-sheen-start), var(--card-sheen-end));
     transform: rotate(25deg) translateX(-100%);
-    opacity: 0.5;
+    opacity: var(--card-sheen-opacity);
     pointer-events: none;
     transition: transform 0.5s ease;
     z-index: 1;
@@ -38,7 +38,7 @@
 :host:focus-visible::before,
 :host:hover::before {
     transform: rotate(45deg);
-    opacity: 0.8;
+    opacity: var(--card-sheen-hover-opacity);
 }
 
 :host:focus-visible,
@@ -110,7 +110,7 @@
 
 .pokemonCard__id,
 .pokemonCard__text__container {
-    background-color: var(--pokemon-card-text-background-color);
+    background-color: var(--background-color);
     width: 100%;
     position: relative;
     z-index: 10;
