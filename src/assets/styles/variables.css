@@ -6,8 +6,6 @@
     --primary-color: #1b6ec2;
     --primary-hover-color: #155a9c;
     --primary-color-light: #88c0f871;
-    --secondary-color: #006bb7;
-    --secondary-hover-color: #004a8f;
     --accent-text-color: #004a8f;
     --text-color: #333;
     --background-color: #ffffff;
@@ -55,17 +53,18 @@
 
 /* ====== DARK THEME ====== */
 .dark-theme {
-    --primary-color-light: #399cff38;
-
     /* General */
+    --primary-color: #3f41c0;
+    --primary-hover-color: #38399c;
+    --primary-color-light: #262748;
     --text-color: #e0e0e0;
     --background-color: #121212;
     --background-hover-color: #1e1e1e;
     --primary-background-color: #272727;
     --pokemon-card-text-background-color: #1e1e1e;
 
-    --interactive-bg-color: #16181c;
-    --interactive-bg-hover: #1d2025;
+    --interactive-bg-color: #1c1d26;
+    --interactive-bg-hover: #21222d;
 
     /* Colors */
     --accent-text-color: rgba(255, 255, 255, 0.8);
@@ -75,7 +74,7 @@
 
     /* Borders & Shadows */
     --border-color: rgba(21, 43, 74, 0.5);
-    --border-focus-color: rgba(122, 122, 122, 0.5);
+    --border-focus-color: rgba(51, 61, 111, 0.5);
     --dropdown-border-color: rgb(36, 35, 35);
     --shadow-color: rgba(105, 105, 105, 0.1);
     --shadow-hover-color: rgba(174, 174, 174, 0.2);
