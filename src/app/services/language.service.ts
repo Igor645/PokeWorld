@@ -1,14 +1,13 @@
-import { BehaviorSubject, Observable, of, shareReplay, tap } from 'rxjs';
+import { BehaviorSubject, Observable, of } from 'rxjs';
 import { Language, LanguageResponse } from '../models/language.model';
+import { catchError, defaultIfEmpty, map, shareReplay, tap } from 'rxjs/operators';
 
 import { GraphQLQueries } from '../graphql/graphql-queries';
 import { GraphQLService } from './graphql.service';
 import { Injectable } from '@angular/core';
 import { SettingsService } from './settings.service';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class LanguageService {
   private selectedLanguageId$ = new BehaviorSubject<number>(9);
   private cachedLanguages: Language[] | null = null;
@@ -21,8 +20,6 @@ export class LanguageService {
     this.settingsService.watchSetting<number>('selectedLanguageId').subscribe(id => {
       this.setSelectedLanguageId(id ?? 9);
     });
-
-    this.getLanguages().subscribe();
   }
 
   getLanguages(): Observable<LanguageResponse> {
@@ -31,12 +28,15 @@ export class LanguageService {
     }
 
     if (!this.languages$) {
-      this.languages$ = this.graphQLService.executeQuery<LanguageResponse>(GraphQLQueries.GetLanguages).pipe(
-        tap(response => {
-          this.cachedLanguages = response.language;
-        }),
-        shareReplay(1)
-      );
+      this.languages$ = this.graphQLService
+        .executeQuery<LanguageResponse>(GraphQLQueries.GetLanguages)
+        .pipe(
+          defaultIfEmpty({ language: [] }),
+          map(res => res ?? { language: [] }),
+          catchError(() => of({ language: [] })),
+          tap(res => { this.cachedLanguages = res.language; }),
+          shareReplay({ bufferSize: 1, refCount: true })
+        );
     }
 
     return this.languages$;

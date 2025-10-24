@@ -22,7 +22,6 @@ export class PokemonFormsComponent implements OnInit {
   constructor(public pokemonUtils: PokemonUtilsService) { }
 
   ngOnInit(): void {
-    console.log(999, 'PokemonFormsComponent initialized with forms:', this.forms);
     this.selectedFormId = this.forms?.[0]?.id ?? null;
   }
 

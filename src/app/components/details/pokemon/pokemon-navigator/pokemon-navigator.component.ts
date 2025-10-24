@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, Optional, Self } from '@angular/core';
+import { Component, Input, OnChanges, Optional, Self, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
 import { PokemonBgSvgComponent } from '../../../shared/pokemon-bg-svg/pokemon-bg-svg.component';
@@ -14,7 +14,7 @@ import { InteractiveHostDirective } from '../../../shared/directives/interactive
   imports: [PokemonBgSvgComponent, CommonModule, MatIcon],
   hostDirectives: [InteractiveHostDirective]
 })
-export class PokemonNavigatorComponent implements OnInit {
+export class PokemonNavigatorComponent implements OnChanges {
   @Input() pokemon!: PokemonSpecies;
   @Input() facing: 'left' | 'right' = 'right';
 
@@ -23,20 +23,17 @@ export class PokemonNavigatorComponent implements OnInit {
     @Self() @Optional() private interactiveHost?: InteractiveHostDirective
   ) { }
 
-  ngOnInit(): void {
-    if (this.interactiveHost && this.pokemon) {
-      const name = this.getPokemonName();
-      this.interactiveHost.href = ['/pokemon', name];
+  ngOnChanges(changes: SimpleChanges): void {
+    if (this.interactiveHost && this.pokemon?.id) {
+      this.interactiveHost.href = ['/pokemon', this.pokemon.id];
     }
   }
 
   get pokemonImage(): string {
-    return this.pokemonUtils.getPokemonOfficialImage(
-      this.pokemon?.pokemons?.[0]
-    );
+    return this.pokemonUtils.getPokemonOfficialImage(this.pokemon?.pokemons?.[0]);
   }
 
   getPokemonName(): string {
-    return this.pokemonUtils.getLocalizedNameFromEntity(this.pokemon, "pokemonspeciesnames");
+    return this.pokemonUtils.getLocalizedNameFromEntity(this.pokemon, 'pokemonspeciesnames');
   }
 }

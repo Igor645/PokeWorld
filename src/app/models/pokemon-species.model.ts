@@ -40,3 +40,8 @@ export interface PokemonSpeciesResponse {
   pokemonspecies: PokemonSpecies[];
   pokemonspecies_aggregate: { aggregate: Aggregate };
 }
+
+export const EMPTY_POKEMON_SPECIES_RESPONSE: PokemonSpeciesResponse = {
+  pokemonspecies: [],
+  pokemonspecies_aggregate: { aggregate: { count: 0 } },
+};
