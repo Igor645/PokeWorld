@@ -52,7 +52,6 @@ function makeQueryClient() {
 export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes),
-    provideClientHydration(withEventReplay()),
     provideAnimations(),
     provideHttpClient(withFetch()),
     provideTanStackQuery(makeQueryClient()),
