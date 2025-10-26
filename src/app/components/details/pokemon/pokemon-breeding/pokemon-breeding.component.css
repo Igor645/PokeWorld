@@ -10,6 +10,10 @@
     box-sizing: border-box;
 }
 
+:host.expanded {
+    align-self: stretch;
+}
+
 span {
     font-size: 1.2rem;
 }

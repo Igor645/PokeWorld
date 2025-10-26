@@ -1,12 +1,12 @@
 <div class="expandable-header">
     <div class="expandable-title">{{ title }}</div>
     <button class="toggle-button" (click)="toggle()" aria-label="Toggle Section">
-        <span [class.expanded]="isExpanded" class="material-icons chevron-icon">
+        <span [class.expanded]="expanded()" class="material-icons chevron-icon">
             expand_more
         </span>
     </button>
 </div>
 
-<div class="expandable-body" [@expandCollapse]="isExpanded ? 'expanded' : 'collapsed'">
+<div class="expandable-body" [@expandCollapse]="expanded() ? 'expanded' : 'collapsed'">
     <ng-content></ng-content>
 </div>

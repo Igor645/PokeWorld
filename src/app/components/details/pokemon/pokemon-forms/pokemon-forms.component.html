@@ -1,4 +1,4 @@
-<app-expandable-section title="Forms">
+<app-expandable-section title="Forms" [(expanded)]="isExpanded">
     <div class="form-section-item">
         <span class="form-label">Alternative Forms</span>
         <span class="form-value">{{ hasAlternativeForms() ? 'Yes' : 'No' }}</span>

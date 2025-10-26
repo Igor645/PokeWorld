@@ -10,6 +10,10 @@
     box-sizing: border-box;
 }
 
+:host.expanded {
+    align-self: stretch;
+}
+
 /* ──────────────── Stat Row ──────────────── */
 .stat-row {
     display: grid;

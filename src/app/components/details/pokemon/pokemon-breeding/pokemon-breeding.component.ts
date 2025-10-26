@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, HostBinding, Input } from '@angular/core';
 
 import { CommonModule } from '@angular/common';
 import { EggGroup } from '../../../../models/egggroup';
@@ -21,6 +21,11 @@ import { RouterModule } from '@angular/router';
 export class PokemonBreedingComponent {
   @Input() pokemonSpecies: PokemonSpecies | undefined;
   @Input() pokemon: Pokemon | undefined;
+
+  isExpanded = true;
+
+  @HostBinding('class.expanded')
+  get hostExpanded() { return this.isExpanded; }
 
   constructor(private pokemonUtils: PokemonUtilsService) { }
 

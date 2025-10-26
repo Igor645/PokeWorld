@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges } from '@angular/core';
+import { Component, HostBinding, Input, OnChanges } from '@angular/core';
 import { PokemonType, PokemonTypeWrapper } from '../../../../models/pokemon-type.model';
 
 import { CommonModule } from '@angular/common';
@@ -24,6 +24,11 @@ type EffectivenessMap = Record<EffectivenessCategory, PokemonType[]>;
 export class PokemonRelationsComponent implements OnChanges {
   @Input() pokemonTypes: PokemonTypeWrapper[] | undefined = [];
   @Input() allTypes: PokemonType[] = [];
+
+  isExpanded = true;
+
+  @HostBinding('class.expanded')
+  get hostExpanded() { return this.isExpanded; }
 
   relations: EffectivenessMap = {
     noDamage: [],

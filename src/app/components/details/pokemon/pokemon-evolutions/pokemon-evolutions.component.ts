@@ -1,4 +1,4 @@
-import { Component, HostListener, Input, OnChanges } from '@angular/core';
+import { Component, HostBinding, HostListener, Input, OnChanges } from '@angular/core';
 import { EvolutionCondition, EvolutionConditionDisplayComponent } from './evolution-condition-display/evolution-condition-display.component';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 
@@ -33,6 +33,8 @@ export class PokemonEvolutionsComponent implements OnChanges {
   evolutionPaths: (PokemonSpecies | null)[][] = [];
   isExpanded = true;
 
+  @HostBinding('class.expanded')
+  get hostExpanded() { return this.isExpanded; }
   constructor(public pokemonUtils: PokemonUtilsService) { }
 
   ngOnChanges(): void {

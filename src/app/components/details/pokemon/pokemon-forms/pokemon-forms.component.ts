@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, HostBinding, Input, OnInit } from '@angular/core';
 
 import { CommonModule } from '@angular/common';
 import { ExpandableSectionComponent } from '../../../shared/expandable-section/expandable-section.component';
@@ -16,6 +16,11 @@ import { PokemonUtilsService } from '../../../../utils/pokemon-utils';
 })
 export class PokemonFormsComponent implements OnInit {
   @Input() forms?: PokemonForms[] = [];
+
+  isExpanded = true;
+
+  @HostBinding('class.expanded')
+  get hostExpanded() { return this.isExpanded; }
 
   selectedFormId: number | null = null;
 

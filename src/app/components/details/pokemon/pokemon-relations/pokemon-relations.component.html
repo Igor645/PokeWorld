@@ -1,4 +1,4 @@
-<app-expandable-section title="Defensive Matchups">
+<app-expandable-section title="Defensive Matchups" [(expanded)]="isExpanded">
     <div class="relation-row" *ngFor="let key of getRelationKeys()">
         <div class="relation-label">{{ getLabel(key) }}</div>
         <div class="relation-types">

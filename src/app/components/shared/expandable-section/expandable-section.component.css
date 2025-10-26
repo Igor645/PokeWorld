@@ -37,6 +37,7 @@
 
 .expandable-body {
     margin-top: 1rem;
+    overflow: hidden;
 }
 
 /* ───────────── Responsive Font Sizes ───────────── */

@@ -374,7 +374,7 @@ select:focus {
   margin: 0 auto 1rem;
   animation: fadeIn 1s ease-in-out;
   max-width: var(--general-width);
-  align-items: stretch;
+  align-items: start;
 }
 
 .pokemon-stats {

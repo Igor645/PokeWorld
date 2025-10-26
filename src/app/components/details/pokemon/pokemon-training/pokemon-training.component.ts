@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, OnDestroy, OnInit } from '@angular/core';
+import { Component, HostBinding, Input, OnChanges, OnDestroy, OnInit } from '@angular/core';
 
 import { CommonModule } from '@angular/common';
 import { ExpandableSectionComponent } from '../../../shared/expandable-section/expandable-section.component';
@@ -20,6 +20,11 @@ import { Subscription } from 'rxjs';
 export class PokemonTrainingComponent implements OnInit, OnChanges, OnDestroy {
   @Input() pokemon!: Pokemon | undefined;
   @Input() species!: PokemonSpecies | undefined;
+
+  isExpanded = true;
+
+  @HostBinding('class.expanded')
+  get hostExpanded() { return this.isExpanded; }
 
   heldItemsGrouped: {
     name: string;

@@ -1,4 +1,4 @@
-<app-expandable-section title="Base Stats">
+<app-expandable-section title="Base Stats" [(expanded)]="isExpanded">
 
     <div *ngFor="let stat of stats; trackBy: trackStat" class="stat-row">
         <div class="stat-name">{{ stat.name }}</div>

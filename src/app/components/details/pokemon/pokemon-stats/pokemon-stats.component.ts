@@ -1,4 +1,4 @@
-import { AfterViewChecked, ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { AfterViewChecked, ChangeDetectionStrategy, Component, HostBinding, Input } from '@angular/core';
 
 import { CommonModule } from '@angular/common';
 import { ExpandableSectionComponent } from '../../../shared/expandable-section/expandable-section.component';
@@ -23,6 +23,11 @@ export class PokemonStatsComponent {
   private readonly NEGATIVE_NATURE = 0.9;
   private readonly POSITIVE_NATURE = 1.1;
   readonly STAT_BAR_MAX = 255;
+
+  isExpanded = true;
+
+  @HostBinding('class.expanded')
+  get hostExpanded() { return this.isExpanded; }
 
   constructor(
     private pokemonUtils: PokemonUtilsService,
