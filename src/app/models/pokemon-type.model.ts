@@ -23,3 +23,9 @@ export interface PokemonTypeResponse {
   type: PokemonType[];
   type_aggregate: { aggregate: Aggregate };
 }
+
+export const EMPTY_POKEMON_TYPE_RESPONSE: PokemonTypeResponse = {
+  type: [],
+  type_aggregate: { aggregate: { count: 0 } },
+};
+
