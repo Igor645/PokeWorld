@@ -47,6 +47,7 @@
 
 option:checked {
     background-color: var(--primary-color) !important;
+    color: white !important;
 }
 
 option:hover {
