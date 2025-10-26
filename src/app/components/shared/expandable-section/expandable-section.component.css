@@ -29,6 +29,7 @@
     padding: 0;
     margin: -0.8rem;
     display: inline-flex;
+    user-select: none;
 }
 
 .chevron-icon.expanded {
