@@ -4,6 +4,10 @@
     align-items: center;
 }
 
+.expandable-header:hover {
+    cursor: pointer;
+}
+
 .expandable-title {
     font-size: 2rem;
     font-weight: bold;

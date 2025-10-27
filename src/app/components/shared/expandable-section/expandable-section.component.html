@@ -1,6 +1,6 @@
-<div class="expandable-header">
+<div class="expandable-header" (click)="toggle()">
     <div class="expandable-title">{{ title }}</div>
-    <button class="toggle-button" (click)="toggle()" aria-label="Toggle Section">
+    <button class="toggle-button" aria-label="Toggle Section">
         <span [class.expanded]="expanded()" class="material-icons chevron-icon">
             expand_more
         </span>

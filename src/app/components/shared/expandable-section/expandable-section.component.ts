@@ -11,11 +11,19 @@ import { animate, state, style, transition, trigger } from '@angular/animations'
       state('expanded', style({
         height: '*',
         opacity: 1,
+        paddingTop: '*',
+        paddingBottom: '*',
+        marginTop: '*',
+        marginBottom: '*',
         overflow: 'visible'
       })),
       state('collapsed', style({
         height: '0px',
         opacity: 0,
+        paddingTop: '0',
+        paddingBottom: '0',
+        marginTop: '0',
+        marginBottom: '0',
         overflow: 'hidden'
       })),
       transition('expanded <=> collapsed', animate('300ms ease-in-out'))
