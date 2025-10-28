@@ -3,7 +3,7 @@ import { EvolutionChain } from './evolution-chain.model';
 import { FlavorText } from './flavor-text.model';
 import { Generation } from './generation.model';
 import { GrowthRate } from './growthrate.model';
-import { Name } from './species-name.model';
+import { Name } from './name.model';
 import { Pokemon } from './pokemon.model';
 import { PokemonColor } from './pokemon-color.model';
 import { PokemonEggGroups } from './egggroup';

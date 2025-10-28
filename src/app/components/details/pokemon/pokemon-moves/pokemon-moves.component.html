@@ -1,0 +1,59 @@
+<app-expandable-section title="Moves" [(expanded)]="isExpanded">
+    <div class="moves-toolbar">
+        <label for="vgSelect">Version group:</label>
+        <select id="vgSelect" [ngModel]="selectedVgId" (ngModelChange)="onVgChange($event)">
+            <option *ngFor="let vg of vgOptions" [value]="vg.id">{{ vg.label }}</option>
+        </select>
+
+        <label for="methodSelect">Learn method:</label>
+        <select id="methodSelect" [ngModel]="selectedMethodId" (ngModelChange)="onMethodChange($event)">
+            <option *ngFor="let m of methodOptions" [value]="m.id">{{ m.label }}</option>
+        </select>
+    </div>
+
+    <ng-container *ngIf="rows.length; else noMoves">
+        <div class="moves-table">
+            <div class="thead">
+                <div>{{ firstColHeader }}</div>
+                <div>Move</div>
+                <div>Type</div>
+                <div>Class</div>
+                <div>Pow</div>
+                <div>Acc</div>
+                <div>PP</div>
+                <div>Prio</div>
+                <div>Gen</div>
+            </div>
+
+            <div class="tbody">
+                <div class="row" *ngFor="let r of rows">
+                    <div class="first">
+                        <ng-container [ngSwitch]="firstColHeader">
+                            <span *ngSwitchCase="'Lv.'">{{ r.level ?? '—' }}</span>
+                            <span *ngSwitchCase="'TM/TR'">{{ r.machineLabel ?? '—' }}</span>
+                            <span *ngSwitchDefault>—</span>
+                        </ng-container>
+                    </div>
+
+                    <div class="name">{{ r.name }}</div>
+
+                    <!-- Use your type badge component -->
+                    <div class="type">
+                        <app-pokemon-type [pokemonType]="r.type" [simpleView]="true"></app-pokemon-type>
+                    </div>
+
+                    <div class="cls">{{ r.damageClassName }}</div>
+                    <div class="pow">{{ r.power ?? '—' }}</div>
+                    <div class="acc">{{ r.accuracy ?? '—' }}</div>
+                    <div class="pp">{{ r.pp ?? '—' }}</div>
+                    <div class="prio">{{ r.priority ?? '—' }}</div>
+                    <div class="gen">{{ r.generationName }}</div>
+                </div>
+            </div>
+        </div>
+    </ng-container>
+
+    <ng-template #noMoves>
+        <div class="no-moves">No moves match your filters.</div>
+    </ng-template>
+</app-expandable-section>

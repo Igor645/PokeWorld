@@ -4,7 +4,7 @@ import { Gender } from "./gender.model";
 import { Item } from "./item.model";
 import { Location } from "./location.model";
 import { Move } from "./move.model";
-import { Name } from "./species-name.model";
+import { Name } from "./name.model";
 import { PokemonSpecies } from "./pokemon-species.model";
 import { PokemonType } from "./pokemon-type.model";
 

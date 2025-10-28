@@ -8,7 +8,7 @@ import { CommonModule } from '@angular/common';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { Name } from '../../../models/species-name.model';
+import { Name } from '../../../models/name.model';
 import { PokemonService } from '../../../services/pokemon.service';
 import { PokemonUtilsService } from '../../../utils/pokemon-utils';
 import { PokeworldSearchItemComponent } from '../pokeworld-search-item/pokeworld-search-item.component';

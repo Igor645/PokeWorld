@@ -386,6 +386,7 @@ select:focus {
   grid-column: span 1;
 }
 
+.pokemon-moves,
 .pokemon-evolutions {
   grid-column: span 3;
 }

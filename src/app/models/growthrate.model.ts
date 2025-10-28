@@ -1,4 +1,4 @@
-import { Name } from "./species-name.model";
+import { Name } from "./name.model";
 
 export interface GrowthRate {
     id: number;

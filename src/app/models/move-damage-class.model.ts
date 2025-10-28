@@ -1,7 +1,7 @@
 import { Name } from "./name.model";
 
-export interface PokemonShape {
+export interface MoveDamageClass {
     id: number;
     name: string;
-    pokemonshapenames: Name[];
+    movedamageclassnames: Name[];
 }

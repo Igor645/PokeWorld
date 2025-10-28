@@ -1,6 +1,6 @@
 import { FlavorText } from "./flavor-text.model";
 import { Language } from "./language.model";
-import { Name } from "./species-name.model";
+import { Name } from "./name.model";
 
 export interface PokemonAbilityWrapper {
   ability: PokemonAbility;
