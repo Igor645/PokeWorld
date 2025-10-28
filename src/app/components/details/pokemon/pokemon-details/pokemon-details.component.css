@@ -245,7 +245,7 @@ select:focus {
 
 .sprite-buttons button.active {
   background-color: var(--primary-color);
-  color: var(--selected-color);
+  color: var(--adjusted-white);
 }
 
 .sprite-buttons button:hover:not(.active) {

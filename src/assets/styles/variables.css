@@ -38,7 +38,7 @@
     /* ====== COMPONENT-SPECIFIC ====== */
     --glass-color: rgba(38, 143, 255, 0.3);
     --svg-color: rgba(38, 143, 255, 0.2);
-    --selected-color: white;
+    --adjusted-white: white;
     --title-color: rgba(38, 143, 255, 0.8);
 }
 
@@ -86,7 +86,7 @@
     /* Component-specific */
     --glass-color: rgba(73, 90, 186, 0.1);
     --svg-color: rgba(89, 138, 235, 0.1);
-    --selected-color: white;
+    --adjusted-white: #e0e0e0;
 }
 
 .dark-theme {
