@@ -1,7 +1,31 @@
+:host {
+    display: flex;
+    flex-direction: column;
+    border-radius: 10px;
+    box-sizing: border-box;
+    overflow: hidden;
+    height: 100%;
+}
+
 .expandable-header {
+    background-color: var(--background-color);
     display: flex;
     justify-content: space-between;
     align-items: center;
+    padding: 0.5rem 1rem;
+    border: 3px solid var(--primary-color);
+    border-radius: 10px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+    transition: border-radius 0.4s ease;
+}
+
+:host.expanded .expandable-header {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.expandable-header * {
+    color: var(--primary-text-color);
 }
 
 .expandable-header:hover {
@@ -41,8 +65,11 @@
 }
 
 .expandable-body {
-    margin-top: 1rem;
     overflow: hidden;
+    padding: 1rem;
+    background-color: var(--background-color);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 6px 12px rgba(0, 0, 0, 0.1);
+    height: 100%;
 }
 
 /* ───────────── Responsive Font Sizes ───────────── */

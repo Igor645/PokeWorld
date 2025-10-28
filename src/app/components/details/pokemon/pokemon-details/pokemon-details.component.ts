@@ -125,6 +125,10 @@ export class PokemonDetailsComponent implements OnInit {
 
   handleSpeciesResponse(response: PokemonSpeciesResponse) {
     this.pokemonSpeciesDetails = response.pokemonspecies[0];
+    if (!this.pokemonSpeciesDetails) {
+      return;
+    }
+
     this.isShiny = false;
     this.selectedPokemon = this.pokemonSpeciesDetails?.pokemons?.[0];
     this.updateSelectedPokemonImage();

@@ -1,29 +1,5 @@
-:host {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    width: 100%;
-    background-color: var(--background-color);
-    padding: 1rem;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 6px 12px rgba(0, 0, 0, 0.1);
-    box-sizing: border-box;
-}
-
 :host.expanded {
     align-self: stretch;
-}
-
-.evolution-title {
-    font-size: 2rem;
-    font-weight: bold;
-    color: var(--accent-text-color);
-}
-
-.evolution-title-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
 }
 
 .toggle-button {
