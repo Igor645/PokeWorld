@@ -501,7 +501,6 @@ export const GraphQLQueries = {
 
   GetLanguages: `
       query Languages {
-        language_id
         language {
           name
           id

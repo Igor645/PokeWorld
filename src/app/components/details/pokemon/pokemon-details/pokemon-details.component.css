@@ -183,45 +183,6 @@ app-pokemon-navigator {
   height: fit-content;
 }
 
-/* ──────────────────── Select Box ──────────────────── */
-select {
-  width: 100%;
-  max-width: var(--general-width);
-  padding: 0.5rem 1rem;
-  font-size: 1rem;
-  border: 2px solid var(--primary-color);
-  border-radius: 4px;
-  background-color: var(--background-color);
-  color: var(--text-color);
-  box-shadow: 0 2px 4px var(--shadow-color);
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
-  appearance: none;
-  background-repeat: no-repeat;
-  background-position: right 1rem center;
-  background-size: 10px 5px;
-}
-
-select:hover {
-  cursor: pointer;
-  box-shadow: 0 0 0 3px var(--background-hover-color);
-}
-
-select:disabled {
-  color: var(--text-color);
-  cursor: not-allowed;
-  opacity: 0.5;
-  box-shadow: none;
-}
-
-.dark-theme select:disabled {
-  color: var(--accent-text-color);
-}
-
-select:focus {
-  outline: none;
-  box-shadow: 0 0 0 3px var(--primary-color-light);
-}
-
 /* ──────────────────── Sprite Buttons ──────────────────── */
 .sprite-buttons {
   display: flex;

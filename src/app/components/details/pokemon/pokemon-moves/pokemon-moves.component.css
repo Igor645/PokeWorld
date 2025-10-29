@@ -10,17 +10,13 @@
     flex-wrap: wrap;
 }
 
-.moves-toolbar select {
-    padding: .25rem .5rem;
-    border-radius: 8px;
-    border: 1px solid var(--border-color, rgba(255, 255, 255, 0.15));
-    background: var(--background-color);
-    color: var(--primary-text-color);
-}
-
 .moves-table {
     display: grid;
     gap: 0.25rem;
+}
+
+.moves-toolbar select {
+    width: 200px;
 }
 
 .thead,
