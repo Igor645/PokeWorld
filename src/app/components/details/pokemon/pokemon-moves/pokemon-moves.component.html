@@ -12,47 +12,49 @@
     </div>
 
     <ng-container *ngIf="rows.length; else noMoves">
-        <div class="moves-table">
+        <div class="moves-shell">
             <div class="moves-scroll">
-                <div class="thead">
-                    <div>{{ firstColHeader }}</div>
-                    <div>Move</div>
-                    <div>Type</div>
-                    <div>Class</div>
-                    <div>Pow</div>
-                    <div>Acc</div>
-                    <div>PP</div>
-                    <div>Prio</div>
-                    <div>Gen</div>
-                </div>
-
-                <div class="tbody">
-                    <div class="row" *ngFor="let r of rows">
-                        <div class="first">
-                            <ng-container [ngSwitch]="firstColHeader">
-                                <span *ngSwitchCase="'Lv.'">{{ r.level ?? '—' }}</span>
-                                <span *ngSwitchCase="'TM/TR'">{{ r.machineLabel ?? '—' }}</span>
-                                <span *ngSwitchDefault>—</span>
-                            </ng-container>
-                        </div>
-
-                        <div class="name">{{ r.name }}</div>
-
-                        <!-- Use your type badge component -->
-                        <div class="type">
-                            <app-pokemon-type [pokemonType]="r.type" [simpleView]="true"></app-pokemon-type>
-                        </div>
-
-                        <div class="cls">{{ r.damageClassName }}</div>
-                        <div class="pow">{{ r.power ?? '—' }}</div>
-                        <div class="acc">{{ r.accuracy ?? '—' }}</div>
-                        <div class="pp">{{ r.pp ?? '—' }}</div>
-                        <div class="prio">{{ r.priority ?? '—' }}</div>
-                        <div class="gen">{{ r.generationName }}</div>
+                <div class="moves-table">
+                    <div class="thead">
+                        <div>{{ firstColHeader }}</div>
+                        <div>Move</div>
+                        <div>Type</div>
+                        <div>Class</div>
+                        <div>Pow</div>
+                        <div>Acc</div>
+                        <div>PP</div>
+                        <div>Prio</div>
+                        <div>Gen</div>
                     </div>
-                </div>
 
-                <div class="tfooter"></div>
+                    <div class="tbody">
+                        <div class="row" *ngFor="let r of rows">
+                            <div class="first">
+                                <ng-container [ngSwitch]="firstColHeader">
+                                    <span *ngSwitchCase="'Lv.'">{{ r.level ?? '—' }}</span>
+                                    <span *ngSwitchCase="'TM/TR'">{{ r.machineLabel ?? '—' }}</span>
+                                    <span *ngSwitchDefault>—</span>
+                                </ng-container>
+                            </div>
+
+                            <div class="name">{{ r.name }}</div>
+
+                            <!-- Use your type badge component -->
+                            <div class="type">
+                                <app-pokemon-type [pokemonType]="r.type" [simpleView]="true"></app-pokemon-type>
+                            </div>
+
+                            <div class="cls">{{ r.damageClassName }}</div>
+                            <div class="pow">{{ r.power ?? '—' }}</div>
+                            <div class="acc">{{ r.accuracy ?? '—' }}</div>
+                            <div class="pp">{{ r.pp ?? '—' }}</div>
+                            <div class="prio">{{ r.priority ?? '—' }}</div>
+                            <div class="gen">{{ r.generationName }}</div>
+                        </div>
+                    </div>
+
+                    <div class="tfooter"></div>
+                </div>
             </div>
         </div>
     </ng-container>

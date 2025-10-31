@@ -1,6 +1,7 @@
 :host {
     display: block;
     width: 100%;
+    min-width: 0;
 }
 
 .moves-toolbar {
@@ -15,14 +16,35 @@
     width: 200px;
 }
 
+.moves-shell {
+    border: 2px solid var(--primary-color);
+    border-radius: 10px;
+    overflow: hidden;
+    background-color: var(--background-color);
+    box-shadow: 0 4px 12px var(--shadow-color);
+    width: 100%;
+    background-color: var(--primary-color);
+}
+
+@supports not (overflow: clip) {
+    .moves-shell {
+        overflow: hidden;
+    }
+}
+
 .moves-scroll {
-    max-height: 66vh;
+    display: block;
+    width: 100%;
     overflow: auto;
     -webkit-overflow-scrolling: touch;
     overscroll-behavior: contain;
     min-width: 0;
-    position: relative;
     scroll-padding-bottom: 0;
+    overflow: auto;
+    border: 0;
+    border-radius: inherit;
+    max-height: 66vh;
+    background-color: inherit;
 }
 
 .moves-table {
@@ -42,14 +64,10 @@
 
 .moves-table {
     display: grid;
-    gap: 0;
-    border: 2px solid var(--primary-color);
-    border-radius: 10px;
-    overflow: hidden;
-    box-shadow: 0 4px 12px var(--shadow-color);
-    background-color: var(--background-color);
+    width: max-content;
+    width: max(100%, 980px);
     font-variant-numeric: tabular-nums;
-    min-width: 980px;
+    background-color: var(--background-color);
 }
 
 .thead {
