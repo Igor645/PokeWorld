@@ -8,7 +8,7 @@ import { EvolutionService } from '../../../../services/evolution.service';
 import { Generation } from '../../../../models/generation.model';
 import { LoadingSpinnerComponent } from '../../../shared/loading-spinner/loading-spinner.component';
 import { MatIcon } from '@angular/material/icon';
-import { Name } from '../../../../models/species-name.model';
+import { Name } from '../../../../models/name.model';
 import { Pokemon } from '../../../../models/pokemon.model';
 import { PokemonBgSvgComponent } from '../../../shared/pokemon-bg-svg/pokemon-bg-svg.component';
 import { PokemonBreedingComponent } from '../pokemon-breeding/pokemon-breeding.component';
@@ -16,6 +16,7 @@ import { PokemonColor } from '../../../../models/pokemon-color.model';
 import { PokemonEvolution } from '../../../../models/pokemon-evolution.model';
 import { PokemonEvolutionsComponent } from "../pokemon-evolutions/pokemon-evolutions.component";
 import { PokemonFormsComponent } from '../pokemon-forms/pokemon-forms.component';
+import { PokemonMovesComponent } from '../pokemon-moves/pokemon-moves.component';
 import { PokemonNavigatorComponent } from '../pokemon-navigator/pokemon-navigator.component';
 import { PokemonRelationsComponent } from '../pokemon-relations/pokemon-relations.component';
 import { PokemonService } from '../../../../services/pokemon.service';
@@ -26,6 +27,7 @@ import { PokemonType } from '../../../../models/pokemon-type.model';
 import { PokemonTypeComponent } from '../../../shared/pokemon-type/pokemon-type.component';
 import { PokemonUtilsService } from '../../../../utils/pokemon-utils';
 import { Sprite } from '../../../../models/sprite.model';
+import { Type } from '../../../../models/type.model';
 import { TypeService } from '../../../../services/type.service';
 import { Version } from '../../../../models/version.model';
 import { catchError } from 'rxjs/operators';
@@ -45,7 +47,8 @@ import { catchError } from 'rxjs/operators';
     PokemonTrainingComponent,
     PokemonBreedingComponent,
     PokemonRelationsComponent,
-    PokemonFormsComponent
+    PokemonFormsComponent,
+    PokemonMovesComponent
   ],
   templateUrl: './pokemon-details.component.html',
   styleUrls: ['./pokemon-details.component.css']
@@ -61,7 +64,7 @@ export class PokemonDetailsComponent implements OnInit {
   nextPokemonSpecies?: PokemonSpecies;
   versions: Version[] = [];
   selectedVersion: Version | null = null;
-  allTypes: PokemonType[] = [];
+  allTypes: Type[] = [];
   private selectedLanguageId$ = new BehaviorSubject<number>(9);
   isTypesLoading = true;
   isMainLoading = true;

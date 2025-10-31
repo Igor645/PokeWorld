@@ -23,6 +23,7 @@ export const GraphQLQueries = {
               itemnames {
                 id
                 name
+                language_id
                 language {
                   id
                   name
@@ -44,6 +45,7 @@ export const GraphQLQueries = {
               }
               pokemonspeciesnames {
                 name
+                language_id
                 language {
                   name
                   id
@@ -54,6 +56,7 @@ export const GraphQLQueries = {
                 name
                 generationnames {
                   name
+                  language_id
                   language {
                     id
                     name
@@ -131,6 +134,89 @@ export const GraphQLQueries = {
                     id
                     name
                   }
+                }
+              }
+            }
+            pokemonmoves {
+              level
+              id
+              versiongroup {
+                id
+                name
+                generation {
+                  id
+                  name
+                  generationnames {
+                    name
+                    language_id
+                  }
+                }
+                versions {
+                  versionnames {
+                    name
+                    language_id
+                  }
+                }
+              }
+              move {
+                id
+                name
+                accuracy
+                power
+                pp
+                priority
+                generation {
+                  id
+                  name
+                  generationnames {
+                    language_id
+                    name
+                  }
+                }
+                movenames {
+                  name
+                  language_id
+                }
+                movedamageclass {
+                  id
+                  name
+                  movedamageclassnames {
+                    language_id
+                    name
+                  }
+                }
+                machines {
+                  id
+                  machine_number
+                  version_group_id
+                  item {
+                    id
+                    name
+                    itemnames {
+                      name
+                      language_id
+                    }
+                    itemsprites {
+                      sprites
+                    }
+                  }
+                }
+                type {
+                  id
+                  name
+                  typenames {
+                    name
+                    language_id
+                  }
+                }
+              }
+              movelearnmethod {
+                id
+                name
+                movelearnmethodnames {
+                  language_id
+                  id
+                  name
                 }
               }
             }
@@ -221,6 +307,7 @@ export const GraphQLQueries = {
           }
           pokemonspeciesnames {
             name
+            language_id
             language {
               name
               id
@@ -229,6 +316,7 @@ export const GraphQLQueries = {
           pokemonspeciesflavortexts {
             flavor_text
             id
+            language_id
             language {
               name
               id
@@ -238,6 +326,7 @@ export const GraphQLQueries = {
               id
               versionnames {
                 name
+                language_id
                 language {
                   id
                   name
@@ -297,6 +386,7 @@ export const GraphQLQueries = {
           id
           pokemonspeciesnames(where: {language: {name: {_eq: "en"}}}) {
             name
+            language_id
             language {
               name
               id
@@ -328,6 +418,7 @@ export const GraphQLQueries = {
         id
         pokemonspeciesnames {
           name
+          language_id
           language {
             name
             id
@@ -338,6 +429,7 @@ export const GraphQLQueries = {
           name
           generationnames {
             name
+            language_id
             language {
               id
               name
@@ -372,9 +464,10 @@ export const GraphQLQueries = {
             }
           }
           pokemonspeciesnames(
-            where: { language: { id: { _eq: $languageId } } }
+            where: { language_id: { _eq: $languageId } }
           ) {
             name
+            language_id
             language {
               name
               id
@@ -396,6 +489,7 @@ export const GraphQLQueries = {
           }
           pokemonspeciesnames {
             name
+            language_id
             language {
               name
               id
@@ -419,6 +513,7 @@ export const GraphQLQueries = {
         id
         versionnames {
           name
+          language_id
           language {
             id
             name
@@ -441,6 +536,7 @@ export const GraphQLQueries = {
           id
           pokemonspeciesnames {
             name
+            language_id
             language {
               name
               id
@@ -477,6 +573,7 @@ export const GraphQLQueries = {
             name
             evolutiontriggernames {
               name
+              language_id
               language {
                 name
                 id
@@ -583,6 +680,7 @@ export const GraphQLQueries = {
             typenames {
               id
               name
+              language_id
               language {
                 id
                 name

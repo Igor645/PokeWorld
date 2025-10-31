@@ -1,9 +1,10 @@
 import { Component, HostBinding, Input, OnChanges } from '@angular/core';
-import { PokemonType, PokemonTypeWrapper } from '../../../../models/pokemon-type.model';
 
 import { CommonModule } from '@angular/common';
 import { ExpandableSectionComponent } from '../../../shared/expandable-section/expandable-section.component';
+import { PokemonType } from '../../../../models/pokemon-type.model';
 import { PokemonTypeComponent } from '../../../shared/pokemon-type/pokemon-type.component';
+import { Type } from '../../../../models/type.model';
 
 type EffectivenessCategory =
   | 'noDamage'
@@ -12,7 +13,7 @@ type EffectivenessCategory =
   | 'doubleDamage'
   | 'quadrupleDamage';
 
-type EffectivenessMap = Record<EffectivenessCategory, PokemonType[]>;
+type EffectivenessMap = Record<EffectivenessCategory, Type[]>;
 
 @Component({
   selector: 'app-pokemon-relations',
@@ -22,8 +23,8 @@ type EffectivenessMap = Record<EffectivenessCategory, PokemonType[]>;
   styleUrls: ['./pokemon-relations.component.css']
 })
 export class PokemonRelationsComponent implements OnChanges {
-  @Input() pokemonTypes: PokemonTypeWrapper[] | undefined = [];
-  @Input() allTypes: PokemonType[] = [];
+  @Input() pokemonTypes: PokemonType[] | undefined = [];
+  @Input() allTypes: Type[] = [];
 
   isExpanded = true;
 
@@ -83,7 +84,7 @@ export class PokemonRelationsComponent implements OnChanges {
     this.relations = categorized;
   }
 
-  getTypeById(id: number): PokemonType | undefined {
+  getTypeById(id: number): Type | undefined {
     return this.allTypes.find(t => t.id === id);
   }
 

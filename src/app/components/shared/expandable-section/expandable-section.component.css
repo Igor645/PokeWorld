@@ -5,6 +5,7 @@
     box-sizing: border-box;
     overflow: hidden;
     height: 100%;
+    min-width: 0;
 }
 
 .expandable-header {
@@ -15,13 +16,7 @@
     padding: 0.5rem 1rem;
     border: 3px solid var(--primary-color);
     border-radius: 10px;
-    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
     transition: border-radius 0.4s ease;
-}
-
-:host.expanded .expandable-header {
-    border-bottom-left-radius: 0;
-    border-bottom-right-radius: 0;
 }
 
 .expandable-header * {
@@ -65,11 +60,18 @@
 }
 
 .expandable-body {
+    align-self: center;
     overflow: hidden;
     padding: 1rem;
     background-color: var(--background-color);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 6px 12px rgba(0, 0, 0, 0.1);
     height: 100%;
+    width: calc(100% - 15px);
+    box-sizing: border-box;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+    min-width: 0;
+    overflow: hidden;
 }
 
 /* ───────────── Responsive Font Sizes ───────────── */

@@ -101,3 +101,69 @@ img {
 .mdc-menu-surface--open {
     z-index: 4000 !important;
 }
+
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+    outline: none;
+    border: 2px solid var(--primary-hover-color);
+    box-shadow: 0 0 0 3px var(--primary-color-light);
+}
+
+select {
+    width: 100%;
+    max-width: var(--general-width);
+    padding: 0.6rem 1rem;
+    font-size: 1rem;
+    border: 2px solid var(--primary-color);
+    border-radius: 6px;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    box-shadow: 0 2px 4px var(--shadow-color);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    appearance: none;
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 10px 5px;
+    box-sizing: border-box;
+}
+
+select:hover {
+    cursor: pointer;
+    box-shadow: 0 0 0 3px var(--background-hover-color);
+}
+
+select:focus {
+    outline: none;
+    border-color: var(--primary-hover-color);
+    box-shadow: 0 0 0 3px var(--primary-color-light);
+}
+
+select:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    box-shadow: none;
+    color: var(--text-color);
+}
+
+.dark-theme select:disabled {
+    color: var(--accent-text-color);
+}
+
+option:checked {
+    background-color: var(--primary-color) !important;
+    color: white !important;
+}
+
+option:hover {
+    background-color: var(--primary-color) !important;
+    color: white !important;
+}
+
+@media (max-width: 480px) {
+    select {
+        font-size: .85rem;
+        padding: .4rem .8rem;
+        background-position: right .8rem center;
+    }
+}

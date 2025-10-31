@@ -1,7 +1,7 @@
 import { EvolutionTrigger } from '../models/evolution-trigger.model';
 import { Injectable } from '@angular/core';
 import { LanguageService } from '../services/language.service';
-import { Name } from '../models/species-name.model';
+import { Name } from '../models/name.model';
 import { Observable } from 'rxjs';
 import { Pokemon } from '../models/pokemon.model';
 import { PokemonAbility } from '../models/pokemon-ability.model';
@@ -45,7 +45,7 @@ export class PokemonUtilsService {
   private getNameByLanguage(names: Name[] | undefined): string {
     const languageId = this.getSelectedLanguageId();
     return (
-      names?.find((x) => x.language.id === languageId)
+      names?.find((x) => x.language_id === languageId)
         ?.name || 'Unknown'
     );
   }
@@ -110,7 +110,7 @@ export class PokemonUtilsService {
 
     const languageId = this.getSelectedLanguageId();
 
-    const localizedVersion = versionNames.find(name => name.language.id === languageId)?.name;
+    const localizedVersion = versionNames.find(name => name.language_id === languageId)?.name;
 
     return localizedVersion || 'Unknown Version';
   }

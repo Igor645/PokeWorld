@@ -5,7 +5,7 @@ import { EggGroup } from '../../../../models/egggroup';
 import { ExpandableSectionComponent } from '../../../shared/expandable-section/expandable-section.component';
 import { GrowthRate } from '../../../../models/growthrate.model';
 import { Item } from '../../../../models/item.model';
-import { Name } from '../../../../models/species-name.model';
+import { Name } from '../../../../models/name.model';
 import { Pokemon } from '../../../../models/pokemon.model';
 import { PokemonHabitat } from '../../../../models/pokemon-habitat.model';
 import { PokemonSpecies } from '../../../../models/pokemon-species.model';
