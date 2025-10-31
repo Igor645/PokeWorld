@@ -57,19 +57,17 @@ export class PokemonMovesComponent implements OnInit, OnChanges, OnDestroy {
 
   constructor(public pokemonUtils: PokemonUtilsService) { }
 
-  // ---------------- lifecycle ----------------
-
   ngOnInit(): void {
     this.pokemonUtils
       .watchLanguageChanges()
       .pipe(takeUntil(this.destroy$))
       .subscribe(() => {
-        this.relabelForLanguage(); // do NOT reorder or touch selections
+        this.relabelForLanguage();
       });
   }
 
   ngOnChanges(): void {
-    this.rebuildFromData(); // structural changes; preserve order/selection when possible
+    this.rebuildFromData();
   }
 
   ngOnDestroy(): void {
@@ -77,15 +75,11 @@ export class PokemonMovesComponent implements OnInit, OnChanges, OnDestroy {
     this.destroy$.complete();
   }
 
-  // ---------------- data build vs relabel ----------------
-
-  /** Full rebuild when the underlying pokemon data changes (structure). */
   private rebuildFromData(): void {
     this.moveById.clear();
     this.allRows = (this.pokemon?.pokemonmoves ?? []).map(pm => this.toRow(pm));
 
-    // --- Build "new" lists from data in FIRST-APPEARANCE order (no sorting) ---
-    const newVgMap = new Map<number, string>(); // id -> label
+    const newVgMap = new Map<number, string>();
     for (const pm of (this.pokemon?.pokemonmoves ?? [])) {
       const vg = pm.versiongroup;
       if (!vg || newVgMap.has(vg.id)) continue;
@@ -100,16 +94,14 @@ export class PokemonMovesComponent implements OnInit, OnChanges, OnDestroy {
       newMethodMap.set(m.id, { label: localized, key: this.normalizeMethodKey(m.name ?? localized) });
     }
 
-    // --- Merge to preserve existing order & selection ---
     this.vgOptions = this.mergeByIdPreserveOrder(this.vgOptions, newVgMap, (old, label) => ({ id: old.id, label }), (id, label) => ({ id, label }));
     this.methodOptions = this.mergeByIdPreserveOrder(
       this.methodOptions,
       newMethodMap,
-      (old, v) => ({ id: old.id, label: v.label, key: old.key }),          // update label only
-      (id, v) => ({ id, label: v.label, key: v.key })                     // append new at end
+      (old, v) => ({ id: old.id, label: v.label, key: old.key }),
+      (id, v) => ({ id, label: v.label, key: v.key })
     );
 
-    // --- Validate selections (keep them if still present) ---
     if (!this.vgOptions.some(v => v.id === this.selectedVgId)) {
       this.selectedVgId = this.vgOptions[0]?.id ?? 0;
     }
@@ -118,14 +110,11 @@ export class PokemonMovesComponent implements OnInit, OnChanges, OnDestroy {
       this.selectedMethodId = levelUp?.id ?? (this.methodOptions[0]?.id ?? 0);
     }
 
-    // Machine labels depend on VG
     this.refreshMachineLabels();
-    this.sortRows(); // table rows, not dropdowns
+    this.sortRows();
   }
 
-  /** Only relabel text for current language. Do not touch selections or resort option arrays. */
   private relabelForLanguage(): void {
-    // Relabel rows
     for (const r of this.allRows) {
       const move = this.moveById.get(r.id);
       if (!move) continue;
@@ -135,7 +124,6 @@ export class PokemonMovesComponent implements OnInit, OnChanges, OnDestroy {
       r.generationName = this.pokemonUtils.getLocalizedNameFromEntity(move.generation, 'generationnames');
     }
 
-    // Relabel VG options in place
     const vgById = new Map<number, any>();
     for (const pm of (this.pokemon?.pokemonmoves ?? [])) {
       if (pm.versiongroup) vgById.set(pm.versiongroup.id, pm.versiongroup);
@@ -145,7 +133,6 @@ export class PokemonMovesComponent implements OnInit, OnChanges, OnDestroy {
       label: vgById.has(v.id) ? this.buildVgLabel(vgById.get(v.id)) : v.label
     }));
 
-    // Relabel method options in place
     const methodById = new Map<number, any>();
     for (const pm of (this.pokemon?.pokemonmoves ?? [])) {
       const m = (pm as any).movelearnmethod;
@@ -157,18 +144,9 @@ export class PokemonMovesComponent implements OnInit, OnChanges, OnDestroy {
     });
 
     this.refreshMachineLabels();
-    this.sortRows(); // only affects table rows
+    this.sortRows();
   }
 
-  // ---------------- helpers: stable merge ----------------
-
-  /**
-   * Merge "next" (Map<id, payload>) into existing list while:
-   * - Keeping existing order for ids that still exist
-   * - Updating labels/payload via updater
-   * - Appending truly new ids at the end (using creator)
-   * - Dropping ids that no longer exist
-   */
   private mergeByIdPreserveOrder<T, V>(
     prev: T[],
     next: Map<number, V>,
@@ -178,25 +156,20 @@ export class PokemonMovesComponent implements OnInit, OnChanges, OnDestroy {
     const result: T[] = [];
     const seen = new Set<number>();
 
-    // keep existing order, update payloads
     for (const item of prev as (T & { id: number })[]) {
       const id = item.id;
       if (next.has(id)) {
         result.push(updater(item, next.get(id)!));
         seen.add(id);
       }
-      // if not in next, drop it (vanished from data)
     }
 
-    // append any brand-new ids (deterministic: by first-appearance order in "next")
     for (const [id, val] of next.entries()) {
       if (!seen.has(id)) result.push(creator(id, val));
     }
 
     return result;
   }
-
-  // ---------------- getters / UI handlers ----------------
 
   get rows(): Row[] {
     let r = this.allRows;
@@ -224,8 +197,6 @@ export class PokemonMovesComponent implements OnInit, OnChanges, OnDestroy {
     this.selectedMethodId = Number(idStr) || 0;
     this.sortRows();
   }
-
-  // ---------------- helpers ----------------
 
   private toRow(pm: PokemonMove): Row {
     const move: Move = pm.move;
