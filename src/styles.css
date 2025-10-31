@@ -102,9 +102,7 @@ img {
     z-index: 4000 !important;
 }
 
-input:focus-visible,
-select:focus-visible,
-textarea:focus-visible {
+select:focus-visible {
     outline: none;
     border: 2px solid var(--primary-hover-color);
     box-shadow: 0 0 0 3px var(--primary-color-light);
