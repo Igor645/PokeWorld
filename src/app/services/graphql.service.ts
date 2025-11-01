@@ -128,7 +128,6 @@ export class GraphQLService {
     this.lastMinuteQueue.push(now);
     while (this.lastMinuteQueue.length && now - this.lastMinuteQueue[0] > 60_000) this.lastMinuteQueue.shift();
     this.stats.lastMinute = this.lastMinuteQueue.length;
-    if (isBrowser) console.log(`[GQL] ${tag} #${this.stats.byKey[key]} :: ${key}`);
   }
 }
 

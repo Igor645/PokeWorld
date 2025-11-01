@@ -43,17 +43,17 @@ export class PokemonMovesComponent implements OnInit, OnChanges, OnDestroy {
   @Input() pokemon: Pokemon | undefined;
 
   private destroy$ = new Subject<void>();
-
-  isExpanded = true;
-
   private allRows: Row[] = [];
   private moveById = new Map<number, Move>();
+
+  isExpanded = true;
 
   vgOptions: VgOption[] = [];
   selectedVgId = 0;
 
   methodOptions: MethodOption[] = [];
   selectedMethodId = 0;
+  private allMethodOptions: MethodOption[] = [];
 
   constructor(public pokemonUtils: PokemonUtilsService) { }
 
@@ -94,17 +94,26 @@ export class PokemonMovesComponent implements OnInit, OnChanges, OnDestroy {
       newMethodMap.set(m.id, { label: localized, key: this.normalizeMethodKey(m.name ?? localized) });
     }
 
-    this.vgOptions = this.mergeByIdPreserveOrder(this.vgOptions, newVgMap, (old, label) => ({ id: old.id, label }), (id, label) => ({ id, label }));
-    this.methodOptions = this.mergeByIdPreserveOrder(
-      this.methodOptions,
+    this.vgOptions = this.mergeByIdPreserveOrder(
+      this.vgOptions,
+      newVgMap,
+      (old, label) => ({ id: old.id, label }),
+      (id, label) => ({ id, label })
+    );
+
+    this.allMethodOptions = this.mergeByIdPreserveOrder(
+      this.allMethodOptions,
       newMethodMap,
       (old, v) => ({ id: old.id, label: v.label, key: old.key }),
       (id, v) => ({ id, label: v.label, key: v.key })
     );
 
+    this.rebuildMethodOptionsForVg();
+
     if (!this.vgOptions.some(v => v.id === this.selectedVgId)) {
       this.selectedVgId = this.vgOptions[0]?.id ?? 0;
     }
+
     if (!this.methodOptions.some(o => o.id === this.selectedMethodId)) {
       const levelUp = this.methodOptions.find(o => o.key === 'level-up');
       this.selectedMethodId = levelUp?.id ?? (this.methodOptions[0]?.id ?? 0);
@@ -112,6 +121,26 @@ export class PokemonMovesComponent implements OnInit, OnChanges, OnDestroy {
 
     this.refreshMachineLabels();
     this.sortRows();
+  }
+
+  private rebuildMethodOptionsForVg(): void {
+    if (!this.allRows.length) {
+      this.methodOptions = this.allMethodOptions.slice();
+      return;
+    }
+
+    if (!this.selectedVgId) {
+      const hasAny = new Set<number>();
+      for (const r of this.allRows) hasAny.add(r.methodId);
+      this.methodOptions = this.allMethodOptions.filter(o => hasAny.has(o.id));
+      return;
+    }
+
+    const hasInVg = new Set<number>();
+    for (const r of this.allRows) {
+      if (r.versionGroupId === this.selectedVgId) hasInVg.add(r.methodId);
+    }
+    this.methodOptions = this.allMethodOptions.filter(o => hasInVg.has(o.id));
   }
 
   private relabelForLanguage(): void {
@@ -138,10 +167,17 @@ export class PokemonMovesComponent implements OnInit, OnChanges, OnDestroy {
       const m = (pm as any).movelearnmethod;
       if (m && !methodById.has(m.id)) methodById.set(m.id, m);
     }
-    this.methodOptions = this.methodOptions.map(o => {
+    this.allMethodOptions = this.allMethodOptions.map(o => {
       const m = methodById.get(o.id);
       return { ...o, label: m ? this.pokemonUtils.getLocalizedNameFromEntity(m, 'movelearnmethodnames') : o.label };
     });
+
+    this.rebuildMethodOptionsForVg();
+
+    if (!this.methodOptions.some(o => o.id === this.selectedMethodId)) {
+      const levelUp = this.methodOptions.find(o => o.key === 'level-up');
+      this.selectedMethodId = levelUp?.id ?? (this.methodOptions[0]?.id ?? 0);
+    }
 
     this.refreshMachineLabels();
     this.sortRows();
@@ -155,7 +191,6 @@ export class PokemonMovesComponent implements OnInit, OnChanges, OnDestroy {
   ): T[] {
     const result: T[] = [];
     const seen = new Set<number>();
-
     for (const item of prev as (T & { id: number })[]) {
       const id = item.id;
       if (next.has(id)) {
@@ -163,11 +198,9 @@ export class PokemonMovesComponent implements OnInit, OnChanges, OnDestroy {
         seen.add(id);
       }
     }
-
     for (const [id, val] of next.entries()) {
       if (!seen.has(id)) result.push(creator(id, val));
     }
-
     return result;
   }
 
@@ -190,6 +223,11 @@ export class PokemonMovesComponent implements OnInit, OnChanges, OnDestroy {
   onVgChange(idStr: string) {
     this.selectedVgId = Number(idStr);
     this.refreshMachineLabels();
+    this.rebuildMethodOptionsForVg();
+    if (!this.methodOptions.some(o => o.id === this.selectedMethodId)) {
+      const levelUp = this.methodOptions.find(o => o.key === 'level-up');
+      this.selectedMethodId = levelUp?.id ?? (this.methodOptions[0]?.id ?? 0);
+    }
     this.sortRows();
   }
 
@@ -201,17 +239,13 @@ export class PokemonMovesComponent implements OnInit, OnChanges, OnDestroy {
   private toRow(pm: PokemonMove): Row {
     const move: Move = pm.move;
     this.moveById.set(move.id, move);
-
     const name = this.pokemonUtils.getLocalizedNameFromEntity(move, 'movenames');
     const typeName = this.pokemonUtils.getLocalizedNameFromEntity(move.type, 'typenames');
     const damageClassName = this.pokemonUtils.getLocalizedNameFromEntity(move.movedamageclass, 'movedamageclassnames');
     const generationName = this.pokemonUtils.getLocalizedNameFromEntity(move.generation, 'generationnames');
-
     const method = (pm as any).movelearnmethod;
     const methodName = this.pokemonUtils.getLocalizedNameFromEntity(method, 'movelearnmethodnames');
-
     const machineLabel = this.computeMachineLabel(move, pm);
-
     return {
       id: move.id,
       level: pm.level ?? null,
@@ -249,14 +283,11 @@ export class PokemonMovesComponent implements OnInit, OnChanges, OnDestroy {
 
   private computeMachineLabel(move: Move, pm: PokemonMove | any): string | null {
     if (!move.machines.length) return null;
-
     let m = this.selectedVgId
       ? move.machines.find(x => x.version_group_id === this.selectedVgId)
       : undefined;
-
     if (!m) m = move.machines.find(x => x.version_group_id === pm?.versiongroup?.id);
     if (!m) m = move.machines[0];
-
     const itemLabel = this.pokemonUtils.getLocalizedNameFromEntity(m.item, 'itemnames');
     return itemLabel.toUpperCase();
   }

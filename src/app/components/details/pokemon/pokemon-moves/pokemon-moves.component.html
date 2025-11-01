@@ -1,6 +1,6 @@
 <app-expandable-section title="Moves" [(expanded)]="isExpanded">
     <div class="moves-toolbar">
-        <label for="vgSelect">Version group:</label>
+        <label for="vgSelect">Version:</label>
         <select id="vgSelect" [ngModel]="selectedVgId" (ngModelChange)="onVgChange($event)">
             <option *ngFor="let vg of vgOptions" [value]="vg.id">{{ vg.label }}</option>
         </select>
