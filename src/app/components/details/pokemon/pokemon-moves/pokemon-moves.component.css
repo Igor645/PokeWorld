@@ -4,6 +4,10 @@
     min-width: 0;
 }
 
+:host ::ng-deep .thead * {
+    color: var(--adjusted-white) !important;
+}
+
 .moves-toolbar {
     display: flex;
     align-items: center;
@@ -76,7 +80,7 @@
     align-items: center;
     padding: 0 0.5rem;
     background: var(--primary-color);
-    color: var(--adjusted-white);
+    color: var(--adjusted-white) !important;
     position: sticky;
     top: 0;
     z-index: 2;
@@ -220,11 +224,6 @@
     border-color: var(--primary-color);
     background-color: var(--background-color);
     box-shadow: 0 3px 8px var(--shadow-hover-color);
-}
-
-.dark-theme .thead,
-.dark-theme .thead * {
-    color: var(--adjusted-white) !important;
 }
 
 .dark-theme .tbody .row:nth-child(even) {
