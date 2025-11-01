@@ -11,12 +11,18 @@
         </select>
     </div>
 
-    <ng-container *ngIf="rows.length; else noMoves">
+    <ng-container *ngIf="(rows$ | async) as rows; else noMoves">
         <div class="moves-shell">
             <div class="moves-scroll">
                 <div class="moves-table">
                     <div class="thead">
-                        <div>{{ firstColHeader }}</div>
+                        <div>
+                            <ng-container [ngSwitch]="selectedMethodKeyFromId(selectedMethodId)">
+                                <span *ngSwitchCase="'level-up'">Lv.</span>
+                                <span *ngSwitchCase="'machine'">TM/TR</span>
+                                <span *ngSwitchDefault>—</span>
+                            </ng-container>
+                        </div>
                         <div>Move</div>
                         <div>Type</div>
                         <div>Class</div>
@@ -28,11 +34,12 @@
                     </div>
 
                     <div class="tbody">
-                        <div class="row" *ngFor="let r of rows">
+                        <div class="row" *ngFor="let r of rows; trackBy: trackById" (click)="onRowClick(r)" tabindex="0"
+                            role="button">
                             <div class="first">
-                                <ng-container [ngSwitch]="firstColHeader">
-                                    <span *ngSwitchCase="'Lv.'">{{ r.level ?? '—' }}</span>
-                                    <span *ngSwitchCase="'TM/TR'">{{ r.machineLabel ?? '—' }}</span>
+                                <ng-container [ngSwitch]="selectedMethodKeyFromId(selectedMethodId)">
+                                    <span *ngSwitchCase="'level-up'">{{ r.level ?? '—' }}</span>
+                                    <span *ngSwitchCase="'machine'">{{ r.machineLabel ?? '—' }}</span>
                                     <span *ngSwitchDefault>—</span>
                                 </ng-container>
                             </div>
