@@ -1,4 +1,3 @@
-import { EvolutionTrigger } from '../models/evolution-trigger.model';
 import { Injectable } from '@angular/core';
 import { LanguageService } from '../services/language.service';
 import { Name } from '../models/name.model';
@@ -6,7 +5,6 @@ import { Observable } from 'rxjs';
 import { Pokemon } from '../models/pokemon.model';
 import { PokemonAbility } from '../models/pokemon-ability.model';
 import { PokemonSpecies } from '../models/pokemon-species.model';
-import { Version } from '../models/version.model';
 
 @Injectable({
   providedIn: 'root'
@@ -15,7 +13,7 @@ export class PokemonUtilsService {
   constructor(private languageService: LanguageService) { }
 
   /**
-   * Get the selected language ID reactively.
+   * Get the selected language ID.
    * @returns The selected language ID.
    */
   public getSelectedLanguageId(): number {
@@ -42,14 +40,24 @@ export class PokemonUtilsService {
     );
   }
 
+  /**
+   * Get a localized name by language from an array of names.
+   * @param names The name array.
+   * @returns The localized name or 'Unknown'.
+   */
   private getNameByLanguage(names: Name[] | undefined): string {
     const languageId = this.getSelectedLanguageId();
     return (
-      names?.find((x) => x.language_id === languageId)
-        ?.name || 'Unknown'
+      names?.find((x) => x.language_id === languageId)?.name || 'Unknown'
     );
   }
 
+  /**
+   * Get a localized name from an entity.
+   * @param entity The object that contains a names array.
+   * @param namesKey The key where names are stored (e.g., "pokemon_species_names").
+   * @returns The localized and formatted name.
+   */
   getLocalizedNameFromEntity(entity: any, namesKey: string): string {
     const entitynames = entity?.[namesKey];
     const fallbackName = entity?.name || 'Unknown';
@@ -62,56 +70,26 @@ export class PokemonUtilsService {
   }
 
   /**
-   * Get the Pokémon species Pokédex entry (flavor text) by the selected language ID and version ID.
-   * @param pokemonSpecies The Pokémon species DTO object.
-   * @param versionId The Pokémon game version ID (optional).
-   * @returns The formatted Pokédex entry.
+   * Get a localized flavor text from an entity.
+   * @param entity The object containing flavor text entries (e.g., pokemonspeciesflavortexts).
+   * @param flavorTextsKey The key where flavor texts are stored.
+   * @param versionId Optional version ID to filter by.
+   * @returns The localized flavor text or a fallback.
    */
-  getPokemonSpeciesDexEntryByVersion(
-    pokemonSpecies: PokemonSpecies | undefined,
-    versionId: number | null
+  getLocalizedFlavorTextFromEntity(
+    entity: any,
+    flavorTextsKey: string,
+    versionId: number | null = null
   ): string {
     const languageId = this.getSelectedLanguageId();
-    const isNoVersionCheck = versionId === null;
+    const list: any[] = entity?.[flavorTextsKey] ?? [];
 
-    const flavortext = pokemonSpecies?.pokemonspeciesflavortexts?.find(
-      (entry) =>
-        entry.language.id === languageId &&
-        (isNoVersionCheck || entry.version.id === versionId)
-    )?.flavor_text;
+    const match = list.find(entry =>
+      entry?.language?.id === languageId &&
+      (versionId === null || entry?.version?.id === versionId)
+    );
 
-    return flavortext ? flavortext.replace(/\f/g, ' ') : 'No entry available.';
-  }
-
-  /**
-   * Get the Pokémon ability flavor text by the selected language ID.
-   * @param ability The Pokémon ability DTO object.
-   * @returns The formatted ability flavor text.
-   */
-  getAbilityFlavorTextByLanguage(ability: PokemonAbility): string {
-    const languageId = this.getSelectedLanguageId();
-
-    const flavorText = ability?.abilityflavortexts?.find(
-      (entry) => entry.language.id === languageId
-    )?.flavor_text;
-
-    return flavorText ? flavorText.replace(/\f/g, ' ') : 'No ability description available.';
-  }
-
-  /**
-   * Filters an array of versions to include only those that match the selected language ID.
-   * @param versionNames The array of versionnames.
-   * @returns Filtered array of versions in the selected language.
-   */
-  getVersionNameByLanguage(versionNames: Name[] | undefined): string {
-    if (!versionNames) {
-      return 'Unknown Version';
-    }
-
-    const languageId = this.getSelectedLanguageId();
-
-    const localizedVersion = versionNames.find(name => name.language_id === languageId)?.name;
-
-    return localizedVersion || 'Unknown Version';
+    const text: string | undefined = match?.flavor_text;
+    return text ? text.replace(/\f/g, ' ').trim() : 'No entry available.';
   }
 }

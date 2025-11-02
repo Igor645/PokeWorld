@@ -1,8 +1,8 @@
-import { AfterViewInit, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { NavigationEnd, Router } from '@angular/router';
-import { PokemonSpecies, PokemonSpeciesResponse } from '../../../models/pokemon-species.model';
-import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
+import { Subject, Subscription } from 'rxjs';
+import { debounceTime, distinctUntilChanged, filter, map, startWith, switchMap, takeUntil, tap } from 'rxjs/operators';
 
 import { CommonModule } from '@angular/common';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
@@ -10,28 +10,24 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { Name } from '../../../models/name.model';
 import { PokemonService } from '../../../services/pokemon.service';
+import { PokemonSpecies } from '../../../models/pokemon-species.model';
 import { PokemonUtilsService } from '../../../utils/pokemon-utils';
 import { PokeworldSearchItemComponent } from '../pokeworld-search-item/pokeworld-search-item.component';
-import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-pokeworld-search',
   standalone: true,
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    MatAutocompleteModule,
-    MatFormFieldModule,
-    MatInputModule,
-    PokeworldSearchItemComponent
-  ],
+  imports: [CommonModule, ReactiveFormsModule, MatAutocompleteModule, MatFormFieldModule, MatInputModule, PokeworldSearchItemComponent],
   templateUrl: './pokeworld-search.component.html',
-  styleUrls: ['./pokeworld-search.component.css']
+  styleUrls: ['./pokeworld-search.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class PokeworldSearchComponent implements OnInit, AfterViewInit, OnDestroy {
-  searchControl = new FormControl('');
+export class PokeworldSearchComponent implements AfterViewInit, OnDestroy {
+  searchControl = new FormControl<string>('', { nonNullable: true });
   filteredPokemonSpecies: PokemonSpecies[] = [];
   private routeSubscription!: Subscription;
+  private destroy$ = new Subject<void>();
+  isLoading = false;
 
   constructor(
     private pokemonService: PokemonService,
@@ -40,105 +36,81 @@ export class PokeworldSearchComponent implements OnInit, AfterViewInit, OnDestro
     private pokemonUtils: PokemonUtilsService
   ) { }
 
-  ngOnInit() {
-    this.routeSubscription = this.router.events.subscribe((event) => {
-      if (event instanceof NavigationEnd) {
-        this.clearSearch();
+  ngAfterViewInit() {
+    this.routeSubscription = this.router.events
+      .pipe(takeUntil(this.destroy$), filter(e => e instanceof NavigationEnd))
+      .subscribe(() => this.clearSearch());
+
+    this.searchControl.valueChanges.pipe(
+      startWith(this.searchControl.value),
+      map(v => (v ?? '').toString().trim().toLowerCase()),
+      distinctUntilChanged(),
+      debounceTime(250),
+      tap(() => { this.isLoading = true; this.cdr.markForCheck(); }),
+      switchMap(q => this.pokemonService.getPokemonSpeciesByPrefix(q)),
+      takeUntil(this.destroy$)
+    ).subscribe({
+      next: (response) => {
+        const speciesList = response?.pokemonspecies ?? [];
+        this.filteredPokemonSpecies = speciesList;
+        this.isLoading = false;
+        this.cdr.markForCheck();
+
+        queueMicrotask(() => {
+          for (const s of speciesList) {
+            const p = s.pokemons?.[0];
+            const url = p ? this.getPokemonOfficialImage(p) : '';
+            if (url) this.preloadImage(url);
+          }
+        });
+      },
+      error: (err) => {
+        console.error('Error searching Pokémon:', err);
+        this.isLoading = false;
+        this.cdr.markForCheck();
       }
     });
   }
 
-  ngAfterViewInit() {
-    this.pokemonService.getPokemonSpeciesByPrefix("").subscribe({
-      next: async (response) => {
-        this.handlePokemonSpeciesResponse(response);
-      },
-      error: (error) => console.error('Error fetching initial Pokémon:', error),
-    });
-
-    this.searchControl.valueChanges.pipe(
-      debounceTime(100),
-      distinctUntilChanged(),
-      switchMap(searchQuery => this.pokemonService.getPokemonSpeciesByPrefix(searchQuery || ""))
-    ).subscribe({
-      next: async (response) => {
-        this.handlePokemonSpeciesResponse(response);
-      },
-      error: (error) => console.error('Error searching Pokémon:', error),
-    });
-  }
-
-  async handlePokemonSpeciesResponse(response: PokemonSpeciesResponse) {
-    const speciesList = response.pokemonspecies || [];
-
-    // Preload images
-    await Promise.all(
-      speciesList.map((species) => {
-        const pokemon = species.pokemons[0];
-        const imageUrl = this.GetPokemonOfficialImage(pokemon);
-        return this.preloadImage(imageUrl);
-      })
-    );
-
-    this.filteredPokemonSpecies = speciesList;
-    this.cdr.markForCheck();
-  }
-
   ngOnDestroy() {
-    if (this.routeSubscription) {
-      this.routeSubscription.unsubscribe();
-    }
+    this.destroy$.next();
+    this.destroy$.complete();
+    if (this.routeSubscription) this.routeSubscription.unsubscribe();
   }
 
   clearSearch() {
-    this.searchControl.setValue('', { emitEvent: true });
+    if (this.searchControl.value !== '') {
+      this.searchControl.setValue('', { emitEvent: true });
+    }
   }
 
   onOptionSelected(event: any) {
     const selectedItem = event.option.value;
-
     if (!selectedItem) return;
-
     if ('pokemonspeciesnames' in selectedItem) {
       this.router.navigate(['/pokemon', this.getPokemonName(selectedItem)]);
     } else {
-      console.warn("Unknown selection type:", selectedItem);
+      console.warn('Unknown selection type:', selectedItem);
     }
   }
 
   getPokemonName(species: PokemonSpecies): string {
-    return this.pokemonUtils.getLocalizedNameFromEntity(species, "pokemonspeciesnames")
+    return this.pokemonUtils.getLocalizedNameFromEntity(species, 'pokemonspeciesnames');
   }
 
-  GetPokemonOfficialImage(pokemon: any) {
+  getPokemonOfficialImage(pokemon: any) {
     return this.pokemonUtils.getPokemonOfficialImage(pokemon);
   }
 
-  trackByPokemon(index: number, item: PokemonSpecies): number {
-    return item.id;
+  trackByPokemon = (_: number, item: PokemonSpecies) => item.id;
+
+  GetPokemonOfficialImage(pokemon: any) {
+    return this.getPokemonOfficialImage(pokemon);
   }
 
-  getCategoryNames(name: string, language: string): Name[] {
-    return [{
-      name: name,
-      language_id: 0,
-      language: {
-        name: language,
-        id: 0,
-      }
-    }];
-  }
-
-  private preloadImage(url: string): Promise<void> {
-    if (typeof window === 'undefined') {
-      return Promise.resolve();
-    }
-
-    return new Promise((resolve) => {
-      const img = new Image();
-      img.src = url;
-      img.onload = () => resolve();
-      img.onerror = () => resolve();
-    });
+  private preloadImage(url: string): void {
+    if (typeof window === 'undefined' || !url) return;
+    const img = new Image();
+    img.src = url;
   }
 }

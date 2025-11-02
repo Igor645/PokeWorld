@@ -264,7 +264,7 @@ export class PokemonDetailsComponent implements OnInit {
   }
 
   getAbilityFlavorText(ability: any): string {
-    return this.pokemonUtils.getAbilityFlavorTextByLanguage(ability);
+    return this.pokemonUtils.getLocalizedFlavorTextFromEntity(ability, 'abilityflavortexts');
   }
 
   getGenerationName(generation: Generation | undefined): string {
@@ -323,8 +323,9 @@ export class PokemonDetailsComponent implements OnInit {
   }
 
   getPokemonDexEntry(): string {
-    return this.pokemonUtils.getPokemonSpeciesDexEntryByVersion(
+    return this.pokemonUtils.getLocalizedFlavorTextFromEntity(
       this.pokemonSpeciesDetails,
+      'pokemonspeciesflavortexts',
       this.selectedVersion?.id || null
     );
   }

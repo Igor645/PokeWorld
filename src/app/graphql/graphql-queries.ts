@@ -173,6 +173,15 @@ export const GraphQLQueries = {
                     name
                   }
                 }
+                moveflavortexts {
+                  id
+                  flavor_text
+                  language_id
+                  language {
+                    name
+                    id
+                  }
+                }
                 movenames {
                   name
                   language_id
@@ -451,7 +460,7 @@ export const GraphQLQueries = {
           where: {
             pokemonspeciesnames: {
               name: { _ilike: $search },
-              language: { id: { _eq: $languageId } }
+              language_id: { _eq: $languageId }
             }
           }
           order_by: { id: asc }

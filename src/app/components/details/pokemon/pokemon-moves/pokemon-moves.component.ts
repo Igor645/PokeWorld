@@ -304,7 +304,7 @@ export class PokemonMovesComponent implements OnInit, OnChanges, OnDestroy {
 
   private buildVgLabel(versionGroup: any): string {
     const parts: string[] = (versionGroup.versions ?? [])
-      .map((v: any) => this.pokemonUtils.getVersionNameByLanguage(v.versionnames))
+      .map((v: any) => this.pokemonUtils.getLocalizedNameFromEntity(v, "versionnames"))
       .filter((x: string) => !!x && x !== 'Unknown Version');
     return parts.length ? parts.join(' / ') : this.pokemonUtils.getLocalizedNameFromEntity(versionGroup, 'versiongroupnames');
   }

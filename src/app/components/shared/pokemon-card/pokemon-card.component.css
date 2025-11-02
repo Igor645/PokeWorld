@@ -1,5 +1,11 @@
 :host {
+    cursor: pointer;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
     display: grid;
+    user-select: none;
+    -webkit-user-select: none;
+    will-change: transform;
     grid-template-rows: auto 1fr auto;
     align-items: center;
     aspect-ratio: 5 / 7;
@@ -54,7 +60,7 @@
     outline-offset: 0;
 }
 
-:host:active {
+:host:has(:active) {
     transform: perspective(75em) scale(0.95) rotateX(-2deg);
     transition: transform 0.1s ease;
 }

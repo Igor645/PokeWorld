@@ -1,3 +1,4 @@
+import { FlavorText } from "./flavor-text.model";
 import { Generation } from "./generation.model";
 import { Machine } from "./machine.model";
 import { MoveDamageClass } from "./move-damage-class.model";
@@ -14,6 +15,7 @@ export interface Move {
     type: Type;
     machines: Machine[];
     movedamageclass: MoveDamageClass;
+    moveflavortexts: FlavorText[];
     movenames: Name[];
     generation: Generation;
 }
