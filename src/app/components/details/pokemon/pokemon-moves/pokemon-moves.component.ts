@@ -28,6 +28,7 @@ type Row = {
   machineLabel: string | null;
   methodId: number;
   methodName: string;
+  flavorText: string;
 };
 
 type VgOption = { id: number; label: string };
@@ -118,6 +119,7 @@ export class PokemonMovesComponent implements OnInit, OnChanges, OnDestroy {
     this.selectedVgId$.next(id);
     this.setMethodOptionsForVg(id);
     this.refreshMachineLabelsForVg(id, this.allRows);
+    this.refreshFlavorTextsForVg(id, this.allRows);
     this.cdr.markForCheck();
   }
 
@@ -149,6 +151,7 @@ export class PokemonMovesComponent implements OnInit, OnChanges, OnDestroy {
     }
     this.selectedMethodId$.next(this.selectedMethodId);
     this.refreshMachineLabelsForVg(this.selectedVgId, this.allRows);
+    this.refreshFlavorTextsForVg(this.selectedVgId, this.allRows);
     this.allRows$.next(this.allRows);
     this.cdr.markForCheck();
   }
@@ -229,6 +232,7 @@ export class PokemonMovesComponent implements OnInit, OnChanges, OnDestroy {
       r.typeName = this.pokemonUtils.getLocalizedNameFromEntity(move.type, 'typenames');
       r.damageClassName = this.pokemonUtils.getLocalizedNameFromEntity(move.movedamageclass, 'movedamageclassnames');
       r.generationName = this.pokemonUtils.getLocalizedNameFromEntity(move.generation, 'generationnames');
+      r.flavorText = this.pokemonUtils.getLocalizedFlavorTextFromEntity(move, 'moveflavortexts', r.versionGroupId);
     }
     const vgById = new Map<number, any>();
     for (const pm of (this.pokemon?.pokemonmoves ?? [])) {
@@ -249,6 +253,7 @@ export class PokemonMovesComponent implements OnInit, OnChanges, OnDestroy {
     });
     this.machineLabelCache.clear();
     this.refreshMachineLabelsForVg(this.selectedVgId, this.allRows);
+    this.refreshFlavorTextsForVg(this.selectedVgId, this.allRows);
     this.buildMethodOptionsByVg(this.allRows);
     this.setMethodOptionsForVg(this.selectedVgId);
     this.allRows$.next(this.allRows);
@@ -259,6 +264,14 @@ export class PokemonMovesComponent implements OnInit, OnChanges, OnDestroy {
     for (const r of rows) {
       const move = this.moveById.get(r.id);
       if (move) r.machineLabel = this.getMachineLabelCached(move, vgId || r.versionGroupId);
+    }
+  }
+
+  private refreshFlavorTextsForVg(vgId: number, rows: Row[]) {
+    for (const r of rows) {
+      const move = this.moveById.get(r.id);
+      if (!move) continue;
+      r.flavorText = this.pokemonUtils.getLocalizedFlavorTextFromEntity(move, 'moveflavortexts', vgId || r.versionGroupId);
     }
   }
 
@@ -283,6 +296,7 @@ export class PokemonMovesComponent implements OnInit, OnChanges, OnDestroy {
     const method = (pm as any).movelearnmethod;
     const methodName = this.pokemonUtils.getLocalizedNameFromEntity(method, 'movelearnmethodnames');
     const machineLabel = this.computeMachineLabel(move, pm);
+    const flavorText = this.pokemonUtils.getLocalizedFlavorTextFromEntity(move, 'moveflavortexts', pm.versiongroup.id);
     return {
       id: move.id,
       level: pm.level ?? null,
@@ -298,7 +312,8 @@ export class PokemonMovesComponent implements OnInit, OnChanges, OnDestroy {
       versionGroupId: pm.versiongroup.id,
       machineLabel,
       methodId: method?.id ?? 0,
-      methodName
+      methodName,
+      flavorText
     };
   }
 

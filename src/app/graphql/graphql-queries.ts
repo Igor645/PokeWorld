@@ -176,6 +176,7 @@ export const GraphQLQueries = {
                 moveflavortexts {
                   id
                   flavor_text
+                  version_group_id
                   language_id
                   language {
                     name

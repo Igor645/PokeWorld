@@ -79,17 +79,29 @@ export class PokemonUtilsService {
   getLocalizedFlavorTextFromEntity(
     entity: any,
     flavorTextsKey: string,
-    versionId: number | null = null
+    versionOrGroupId: number | null = null
   ): string {
     const languageId = this.getSelectedLanguageId();
     const list: any[] = entity?.[flavorTextsKey] ?? [];
 
-    const match = list.find(entry =>
-      entry?.language?.id === languageId &&
-      (versionId === null || entry?.version?.id === versionId)
-    );
+    const pick = (xs: any[]) => xs.find(e => {
+      const eLangId = e?.language_id ?? e?.language?.id;
+      const eVer =
+        e?.version?.id ??
+        e?.version_id ??
+        e?.versiongroup?.id ??
+        e?.version_group_id ??
+        null;
+
+      const versionOk =
+        versionOrGroupId == null || eVer == null || eVer === versionOrGroupId;
+
+      return eLangId === languageId && versionOk;
+    });
+
+    const match = pick(list) ?? list.find(e => (e?.language_id ?? e?.language?.id) === languageId);
 
     const text: string | undefined = match?.flavor_text;
-    return text ? text.replace(/\f/g, ' ').trim() : 'No entry available.';
+    return text ? text.replace(/[\f\r\n]+/g, ' ').replace(/\s+/g, ' ').trim() : 'No entry available.';
   }
 }
