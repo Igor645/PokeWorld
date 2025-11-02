@@ -13,47 +13,49 @@
 
     <ng-container *ngIf="(rows$ | async) as rows; else noMoves">
         <div class="moves-shell">
-            <div class="moves-table">
-                <div class="thead">
-                    <div class="first">
-                        <ng-container [ngSwitch]="selectedMethodKeyFromId(selectedMethodId)">
-                            <span *ngSwitchCase="'level-up'">Lv.</span>
-                            <span *ngSwitchCase="'machine'">TM/TR</span>
-                            <span *ngSwitchDefault>—</span>
-                        </ng-container>
-                    </div>
-                    <div>Move</div>
-                    <div class="desc">Info</div>
-                    <div>Type</div>
-                    <div>Class</div>
-                    <div>Pow</div>
-                    <div>Acc</div>
-                    <div>PP</div>
-                    <div>Prio</div>
-                    <div>Gen</div>
-                </div>
-
-                <div class="tbody">
-                    <div class="row" *ngFor="let r of rows; trackBy: trackById" (click)="onRowClick(r)" tabindex="0"
-                        role="button">
+            <div class="moves-scroll">
+                <div class="moves-table">
+                    <div class="thead">
                         <div class="first">
                             <ng-container [ngSwitch]="selectedMethodKeyFromId(selectedMethodId)">
-                                <span *ngSwitchCase="'level-up'">{{ r.level ?? '—' }}</span>
-                                <span *ngSwitchCase="'machine'">{{ r.machineLabel ?? '—' }}</span>
+                                <span *ngSwitchCase="'level-up'">Lv.</span>
+                                <span *ngSwitchCase="'machine'">TM/TR</span>
                                 <span *ngSwitchDefault>—</span>
                             </ng-container>
                         </div>
-                        <div class="name">{{ r.name }}</div>
-                        <div class="desc">{{ r.flavorText }}</div>
-                        <div class="type">
-                            <app-pokemon-type [pokemonType]="r.type" [simpleView]="true"></app-pokemon-type>
+                        <div>Move</div>
+                        <div class="desc">Info</div>
+                        <div>Type</div>
+                        <div>Class</div>
+                        <div>Pow</div>
+                        <div>Acc</div>
+                        <div>PP</div>
+                        <div>Prio</div>
+                        <div>Gen</div>
+                    </div>
+
+                    <div class="tbody">
+                        <div class="row" *ngFor="let r of rows; trackBy: trackById" (click)="onRowClick(r)" tabindex="0"
+                            role="button">
+                            <div class="first">
+                                <ng-container [ngSwitch]="selectedMethodKeyFromId(selectedMethodId)">
+                                    <span *ngSwitchCase="'level-up'">{{ r.level ?? '—' }}</span>
+                                    <span *ngSwitchCase="'machine'">{{ r.machineLabel ?? '—' }}</span>
+                                    <span *ngSwitchDefault>—</span>
+                                </ng-container>
+                            </div>
+                            <div class="name">{{ r.name }}</div>
+                            <div class="desc">{{ r.flavorText }}</div>
+                            <div class="type">
+                                <app-pokemon-type [pokemonType]="r.type" [simpleView]="true"></app-pokemon-type>
+                            </div>
+                            <div class="cls">{{ r.damageClassName }}</div>
+                            <div class="pow">{{ r.power ?? '—' }}</div>
+                            <div class="acc">{{ r.accuracy ?? '—' }}</div>
+                            <div class="pp">{{ r.pp ?? '—' }}</div>
+                            <div class="prio">{{ r.priority ?? '—' }}</div>
+                            <div class="gen">{{ r.generationName }}</div>
                         </div>
-                        <div class="cls">{{ r.damageClassName }}</div>
-                        <div class="pow">{{ r.power ?? '—' }}</div>
-                        <div class="acc">{{ r.accuracy ?? '—' }}</div>
-                        <div class="pp">{{ r.pp ?? '—' }}</div>
-                        <div class="prio">{{ r.priority ?? '—' }}</div>
-                        <div class="gen">{{ r.generationName }}</div>
                     </div>
                 </div>
             </div>
