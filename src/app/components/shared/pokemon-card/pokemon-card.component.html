@@ -3,6 +3,18 @@
 </div>
 
 <div class="pokemonCard__img__container">
+  @if (showTypes && pokemonTypes.length > 0) {
+  <div class="pokemonCard__typesWrapper" [class.visible]="eggGone" [class.hidden]="!eggGone">
+    <div class="pokemonCard__typesTray">
+      @for (pokemonTypeEntry of pokemonTypes; track $index) {
+      <app-pokemon-type [pokemonType]="pokemonTypeEntry.type ?? pokemonTypeEntry" [simpleView]="true"
+        [navigation]="false">
+      </app-pokemon-type>
+      }
+    </div>
+  </div>
+  }
+
   <img #pokemonImage [src]="pokemonViewModel.image" (load)="onImageLoad()" (error)="handleImageError($event)"
     class="pokemonCard__image initial-load" [class.visible]="eggGone" [class.hidden]="!eggGone" />
 

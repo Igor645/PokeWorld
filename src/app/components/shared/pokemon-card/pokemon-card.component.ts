@@ -20,18 +20,21 @@ import { PokemonUtilsService } from '../../../utils/pokemon-utils';
 import { SettingsService } from '../../../services/settings.service';
 import { PokemonBgSvgComponent } from '../pokemon-bg-svg/pokemon-bg-svg.component';
 import { InteractiveHostDirective } from '../directives/interactive-host.directive';
+import { PokemonTypeComponent } from '../pokemon-type/pokemon-type.component';
 
 @Component({
   selector: 'app-pokemon-card',
   templateUrl: './pokemon-card.component.html',
   styleUrls: ['./pokemon-card.component.css'],
   standalone: true,
-  imports: [CommonModule, PokemonBgSvgComponent],
+  imports: [CommonModule, PokemonBgSvgComponent, PokemonTypeComponent],
   hostDirectives: [InteractiveHostDirective]
 })
 export class PokemonCardComponent implements OnInit, OnDestroy, AfterViewInit {
   @Input() pokemon!: Pokemon;
   @Input() pokemonSpecies!: PokemonSpecies;
+  @Input() showTypes = false;
+
   @ViewChild('pokemonImage', { static: false }) pokemonImage!: ElementRef<HTMLImageElement>;
 
   pokemonViewModel = { id: 0, name: '', image: '', generation: '' };
@@ -73,10 +76,14 @@ export class PokemonCardComponent implements OnInit, OnDestroy, AfterViewInit {
   private updateViewModel(): void {
     this.pokemonViewModel = {
       id: this.pokemon?.id || this.pokemonSpecies?.id || 0,
-      name: this.pokemonUtils.getLocalizedNameFromEntity(this.pokemonSpecies, "pokemonspeciesnames") || 'Unknown',
+      name: this.pokemonUtils.getLocalizedNameFromEntity(this.pokemonSpecies, 'pokemonspeciesnames') || 'Unknown',
       image: this.pokemonUtils.getPokemonOfficialImage(this.pokemon),
-      generation: this.pokemonUtils.getLocalizedNameFromEntity(this.pokemonSpecies.generation, "generationnames") || 'Unknown',
+      generation: this.pokemonUtils.getLocalizedNameFromEntity(this.pokemonSpecies.generation, 'generationnames') || 'Unknown',
     };
+  }
+
+  get pokemonTypes(): any[] {
+    return this.pokemon?.pokemontypes ?? [];
   }
 
   onImageLoad(): void {

@@ -66,6 +66,7 @@ const TYPE_COLORS_DARK: { [key: string]: string } = {
 export class PokemonTypeComponent implements OnInit, OnDestroy {
   @Input() pokemonType: any;
   @Input() simpleView = false;
+  @Input() navigation = true;
 
   isDarkMode = false;
   localizedTypeName = 'Unknown';
@@ -116,7 +117,11 @@ export class PokemonTypeComponent implements OnInit, OnDestroy {
   }
 
   setNavigationLink() {
-    if (this.interactiveHost && this.localizedTypeName !== 'Unknown') {
+    if (
+      this.interactiveHost &&
+      this.navigation &&
+      this.localizedTypeName !== 'Unknown'
+    ) {
       this.interactiveHost.href = ['/type', this.localizedTypeName.toLowerCase()];
     }
   }

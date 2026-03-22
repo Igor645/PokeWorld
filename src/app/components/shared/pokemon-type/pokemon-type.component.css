@@ -1,24 +1,25 @@
 :host {
   border-radius: 10px;
+  width: var(--type-width, 90px);
 }
 
 .pokemon-type {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  padding: 6px 12px;
+  gap: var(--type-gap, 8px);
+  padding: var(--type-padding, 6px 12px);
   border-radius: 10px;
   font-weight: bold;
-  font-size: 1rem;
-  min-width: 90px;
+  font-size: var(--type-font-size, 1rem);
+  width: 100%;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
   transition: transform 0.2s ease-in-out;
 }
 
 .type-icon {
-  width: 18px;
-  height: 18px;
+  width: var(--type-icon-size, 18px);
+  height: var(--type-icon-size, 18px);
 }
 
 .type-name {
@@ -30,11 +31,12 @@
   cursor: pointer;
 }
 
+/* SIMPLE VIEW */
 .pokemon-type.simple {
-  width: 40px;
-  height: 40px;
-  min-width: 40px;
-  min-height: 40px;
+  width: var(--type-simple-size, 40px);
+  height: var(--type-simple-size, 40px);
+  min-width: var(--type-simple-size, 40px);
+  min-height: var(--type-simple-size, 40px);
   border-radius: 50%;
   padding: 0;
   gap: 0;
@@ -45,6 +47,6 @@
 }
 
 .pokemon-type.simple .type-icon {
-  width: 24px;
-  height: 24px;
+  width: var(--type-simple-icon-size, 24px);
+  height: var(--type-simple-icon-size, 24px);
 }

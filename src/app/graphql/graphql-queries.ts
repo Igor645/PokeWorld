@@ -424,6 +424,12 @@ export const GraphQLQueries = {
           pokemonsprites {
             sprites
           }
+          pokemontypes {
+            type {
+              id
+              name
+            }
+          }
         }
         id
         pokemonspeciesnames {

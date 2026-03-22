@@ -179,6 +179,7 @@
     transition: transform 0.5s ease;
     animation: floatUpDown 3s ease-in-out infinite;
     animation-delay: 0.5s;
+    z-index: 40;
 }
 
 @keyframes floatUpDown {
@@ -244,6 +245,69 @@
 
 :host>* {
     font-size: 0.8rem;
+}
+
+.pokemonCard__typesWrapper {
+    position: absolute;
+    right: 0.15em;
+    bottom: 0.15em;
+    z-index: 30;
+    pointer-events: none;
+    transform: scale(1);
+    transform-origin: bottom right;
+    transition: transform 0.22s ease, opacity 0.22s ease;
+}
+
+:host:hover .pokemonCard__typesWrapper.visible {
+    transform: scale(0.82);
+    transition: transform 0.5s ease;
+}
+
+.pokemonCard__typesTray {
+    display: flex;
+    align-items: center;
+    gap: 0.28em;
+    padding: 0.2em 0.28em;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--background-color) 72%, transparent);
+    backdrop-filter: blur(0.3em);
+    box-shadow:
+        0 0.1em 0.3em rgba(0, 0, 0, 0.35),
+        inset 0 0 0 0.05em rgba(255, 255, 255, 0.08);
+    opacity: 0;
+    transform: translateY(0.8em) scale(0.85);
+}
+
+.pokemonCard__typesWrapper.visible .pokemonCard__typesTray {
+    animation: typeTrayPopUp 0.45s ease-out forwards;
+}
+
+@keyframes typeTrayPopUp {
+    0% {
+        opacity: 0;
+        transform: translateY(0.8em) scale(0.85);
+    }
+
+    60% {
+        opacity: 1;
+        transform: translateY(-0.12em) scale(1.04);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.pokemonCard__typesTray app-pokemon-type {
+    --type-width: 28px;
+    --type-simple-size: 28px;
+    --type-simple-icon-size: 14px;
+    width: 28px;
+    min-width: 28px;
+    max-width: 28px;
+    flex: 0 0 28px;
+    display: block;
 }
 
 @container (width < 120px) {
