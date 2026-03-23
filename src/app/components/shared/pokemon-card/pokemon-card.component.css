@@ -81,6 +81,7 @@
     margin: 0 auto;
     display: flex;
     justify-content: center;
+    container-type: inline-size;
 }
 
 .pokemonCard__bg {
@@ -300,14 +301,13 @@
 }
 
 .pokemonCard__typesTray app-pokemon-type {
-    --type-width: 28px;
-    --type-simple-size: 28px;
-    --type-simple-icon-size: 14px;
-    width: 28px;
-    min-width: 28px;
-    max-width: 28px;
-    flex: 0 0 28px;
-    display: block;
+    --type-simple-size: 14cqi;
+    --type-simple-icon-size: 8cqi;
+
+    width: var(--type-simple-size);
+    min-width: var(--type-simple-size);
+    max-width: var(--type-simple-size);
+    flex: 0 0 var(--type-simple-size);
 }
 
 @container (width < 120px) {
