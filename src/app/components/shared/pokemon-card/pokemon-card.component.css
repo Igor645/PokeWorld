@@ -302,7 +302,7 @@
 
 .pokemonCard__typesTray app-pokemon-type {
     --type-simple-size: 14cqi;
-    --type-simple-icon-size: 8cqi;
+    --type-simple-icon-size: 7cqi;
 
     width: var(--type-simple-size);
     min-width: var(--type-simple-size);
