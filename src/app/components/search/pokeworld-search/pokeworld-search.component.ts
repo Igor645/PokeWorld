@@ -1,14 +1,13 @@
-import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnDestroy, ViewChild } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { NavigationEnd, Router } from '@angular/router';
-import { Subject, Subscription } from 'rxjs';
-import { debounceTime, distinctUntilChanged, filter, map, startWith, switchMap, takeUntil, tap } from 'rxjs/operators';
+import { Subject, Subscription, asyncScheduler } from 'rxjs';
+import { debounceTime, distinctUntilChanged, filter, map, observeOn, startWith, switchMap, takeUntil, tap } from 'rxjs/operators';
 
 import { CommonModule } from '@angular/common';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { Name } from '../../../models/name.model';
 import { PokemonService } from '../../../services/pokemon.service';
 import { PokemonSpecies } from '../../../models/pokemon-species.model';
 import { PokemonUtilsService } from '../../../utils/pokemon-utils';
@@ -23,11 +22,17 @@ import { PokeworldSearchItemComponent } from '../pokeworld-search-item/pokeworld
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PokeworldSearchComponent implements AfterViewInit, OnDestroy {
+  @ViewChild('searchInput') private searchInputEl?: ElementRef<HTMLInputElement>;
+
   searchControl = new FormControl<string>('', { nonNullable: true });
   filteredPokemonSpecies: PokemonSpecies[] = [];
   private routeSubscription!: Subscription;
   private destroy$ = new Subject<void>();
   isLoading = false;
+
+  focusInput(): void {
+    setTimeout(() => this.searchInputEl?.nativeElement?.focus(), 180);
+  }
 
   constructor(
     private pokemonService: PokemonService,
@@ -47,7 +52,9 @@ export class PokeworldSearchComponent implements AfterViewInit, OnDestroy {
       distinctUntilChanged(),
       debounceTime(250),
       tap(() => { this.isLoading = true; this.cdr.markForCheck(); }),
-      switchMap(q => this.pokemonService.getPokemonSpeciesByPrefix(q)),
+      switchMap(q => this.pokemonService.getPokemonSpeciesByPrefix(q).pipe(
+        observeOn(asyncScheduler) // ensures cached results also pass through async, giving Angular a tick to render isLoading=true
+      )),
       takeUntil(this.destroy$)
     ).subscribe({
       next: (response) => {

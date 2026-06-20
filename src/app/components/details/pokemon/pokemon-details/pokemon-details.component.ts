@@ -1,18 +1,16 @@
 import { ActivatedRoute, Router } from '@angular/router';
-import { BehaviorSubject, forkJoin, of } from 'rxjs';
-import { ChangeDetectionStrategy, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { forkJoin, of } from 'rxjs';
+import { Component, DestroyRef, ElementRef, OnInit, ViewChild, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { PokemonSpecies, PokemonSpeciesResponse } from '../../../../models/pokemon-species.model';
 
 import { CommonModule } from '@angular/common';
 import { EvolutionService } from '../../../../services/evolution.service';
-import { Generation } from '../../../../models/generation.model';
 import { LoadingSpinnerComponent } from '../../../shared/loading-spinner/loading-spinner.component';
 import { MatIcon } from '@angular/material/icon';
-import { Name } from '../../../../models/name.model';
 import { Pokemon } from '../../../../models/pokemon.model';
 import { PokemonBgSvgComponent } from '../../../shared/pokemon-bg-svg/pokemon-bg-svg.component';
 import { PokemonBreedingComponent } from '../pokemon-breeding/pokemon-breeding.component';
-import { PokemonColor } from '../../../../models/pokemon-color.model';
 import { PokemonEvolution } from '../../../../models/pokemon-evolution.model';
 import { PokemonEvolutionsComponent } from "../pokemon-evolutions/pokemon-evolutions.component";
 import { PokemonFormsComponent } from '../pokemon-forms/pokemon-forms.component';
@@ -20,17 +18,41 @@ import { PokemonMovesComponent } from '../pokemon-moves/pokemon-moves.component'
 import { PokemonNavigatorComponent } from '../pokemon-navigator/pokemon-navigator.component';
 import { PokemonRelationsComponent } from '../pokemon-relations/pokemon-relations.component';
 import { PokemonService } from '../../../../services/pokemon.service';
-import { PokemonShape } from '../../../../models/pokemon-shape.model';
 import { PokemonStatsComponent } from '../pokemon-stats/pokemon-stats.component';
 import { PokemonTrainingComponent } from '../pokemon-training/pokemon-training.component';
-import { PokemonType } from '../../../../models/pokemon-type.model';
 import { PokemonTypeComponent } from '../../../shared/pokemon-type/pokemon-type.component';
 import { PokemonUtilsService } from '../../../../utils/pokemon-utils';
+import { RecentlyViewedService } from '../../../../services/recently-viewed.service';
+import { SettingsService } from '../../../../services/settings.service';
 import { Sprite } from '../../../../models/sprite.model';
 import { Type } from '../../../../models/type.model';
 import { TypeService } from '../../../../services/type.service';
 import { Version } from '../../../../models/version.model';
 import { catchError } from 'rxjs/operators';
+
+interface DetailsVm {
+  speciesName: string;
+  status: string;
+  isSpecial: boolean;
+  dexEntry: string;
+  generationName: string;
+  formattedHeight: string;
+  formattedWeight: string;
+  shapeName: string;
+  colorName: string;
+  hasMultipleVariants: boolean;
+  variants: { id: number; name: string }[];
+  abilities: { text: string; flavorText: string }[];
+  latestCryUrl: string | null;
+  legacyCryUrl: string | null;
+}
+
+const EMPTY_VM: DetailsVm = {
+  speciesName: '', status: '', isSpecial: false, dexEntry: '',
+  generationName: '', formattedHeight: 'Unknown', formattedWeight: 'Unknown',
+  shapeName: '', colorName: '', hasMultipleVariants: false,
+  variants: [], abilities: [], latestCryUrl: null, legacyCryUrl: null,
+};
 
 @Component({
   selector: 'app-pokemon-details',
@@ -65,11 +87,15 @@ export class PokemonDetailsComponent implements OnInit {
   versions: Version[] = [];
   selectedVersion: Version | null = null;
   allTypes: Type[] = [];
-  private selectedLanguageId$ = new BehaviorSubject<number>(9);
   isTypesLoading = true;
   isMainLoading = true;
   isAdjacentLoading = true;
   isEvolutionsLoading = true;
+
+  vm: DetailsVm = { ...EMPTY_VM };
+
+  private readonly destroyRef = inject(DestroyRef);
+
   get isLoading(): boolean {
     return this.isMainLoading || this.isAdjacentLoading || this.isEvolutionsLoading || this.isTypesLoading;
   }
@@ -80,11 +106,54 @@ export class PokemonDetailsComponent implements OnInit {
     private pokemonService: PokemonService,
     private typeService: TypeService,
     private evolutionService: EvolutionService,
-    public pokemonUtils: PokemonUtilsService
+    private settingsService: SettingsService,
+    private recentlyViewedService: RecentlyViewedService,
+    public pokemonUtils: PokemonUtilsService,
   ) { }
 
   ngOnInit() {
     this.subscribeToRouteChanges();
+    this.settingsService.watchSetting<number>('selectedLanguageId')
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.rebuildVm());
+  }
+
+  private rebuildVm(): void {
+    const sp = this.pokemonSpeciesDetails;
+    const pk = this.selectedPokemon;
+    if (!sp) return;
+
+    const hasMultiple = (sp.pokemons?.length ?? 0) > 1;
+
+    this.vm = {
+      speciesName: this.pokemonUtils.getLocalizedNameFromEntity(sp, 'pokemonspeciesnames'),
+      status: sp.is_mythical ? 'Mythical' : sp.is_legendary ? 'Legendary' : sp.is_baby ? 'Baby' : '',
+      isSpecial: !!(sp.is_legendary || sp.is_mythical || sp.is_baby),
+      dexEntry: this.pokemonUtils.getLocalizedFlavorTextFromEntity(sp, 'pokemonspeciesflavortexts', this.selectedVersion?.id ?? null),
+      generationName: this.pokemonUtils.getLocalizedNameFromEntity(sp.generation, 'generationnames'),
+      formattedHeight: this.formatHeight(pk?.height),
+      formattedWeight: this.formatWeight(pk?.weight),
+      shapeName: this.pokemonUtils.getLocalizedNameFromEntity(sp.pokemonshape, 'pokemonshapenames'),
+      colorName: this.pokemonUtils.getLocalizedNameFromEntity(sp.pokemoncolor, 'pokemoncolornames'),
+      hasMultipleVariants: hasMultiple,
+      variants: (sp.pokemons ?? []).map(p => ({
+        id: p.id,
+        name: this.resolveVariantName(p, sp, hasMultiple),
+      })),
+      abilities: (pk?.pokemonabilities ?? []).map((ability, i) => ({
+        text: `${i + 1}. ${this.pokemonUtils.getLocalizedNameFromEntity(ability.ability, 'abilitynames')}${ability.is_hidden ? ' (Hidden)' : ''}`,
+        flavorText: this.pokemonUtils.getLocalizedFlavorTextFromEntity(ability.ability, 'abilityflavortexts'),
+      })),
+      latestCryUrl: pk?.pokemoncries?.[0]?.cries?.latest || null,
+      legacyCryUrl: pk?.pokemoncries?.[0]?.cries?.legacy || null,
+    };
+  }
+
+  private resolveVariantName(pokemon: Pokemon, species: PokemonSpecies, hasMultiple: boolean): string {
+    const speciesName = this.pokemonUtils.getLocalizedNameFromEntity(species, 'pokemonspeciesnames');
+    if (!hasMultiple || !pokemon.pokemonforms?.length) return speciesName;
+    const formName = this.pokemonUtils.getLocalizedNameFromEntity(pokemon.pokemonforms[0], 'pokemonformnames');
+    return formName === 'Unknown' ? speciesName : formName;
   }
 
   private subscribeToRouteChanges(): void {
@@ -92,6 +161,7 @@ export class PokemonDetailsComponent implements OnInit {
       this.pokemonSpeciesDetails = undefined;
       this.previousPokemonSpecies = undefined;
       this.nextPokemonSpecies = undefined;
+      this.vm = { ...EMPTY_VM };
       this.isMainLoading = true;
       this.isAdjacentLoading = true;
       const speciesIdOrName = params.get('speciesIdOrName');
@@ -119,28 +189,32 @@ export class PokemonDetailsComponent implements OnInit {
 
   private fetchPokemonDetailsInternal(id?: number, name?: string) {
     this.pokemonService.getPokemonDetails(id, name).subscribe({
-      next: (response) => {
-        this.handleSpeciesResponse(response);
-      },
+      next: (response) => this.handleSpeciesResponse(response),
       error: () => this.router.navigate(['/'])
     });
   }
 
   handleSpeciesResponse(response: PokemonSpeciesResponse) {
     this.pokemonSpeciesDetails = response.pokemonspecies[0];
-    if (!this.pokemonSpeciesDetails) {
-      return;
-    }
+    if (!this.pokemonSpeciesDetails) return;
 
     this.isShiny = false;
     this.selectedPokemon = this.pokemonSpeciesDetails?.pokemons?.[0];
     this.updateSelectedPokemonImage();
+    this.rebuildVm();
+
+    this.recentlyViewedService.add({
+      id: this.pokemonSpeciesDetails.id,
+      name: this.pokemonSpeciesDetails.name,
+      displayName: this.vm.speciesName || this.pokemonSpeciesDetails.name,
+      spriteUrl: this.selectedPokemon?.pokemonsprites?.[0]?.sprites?.front_default ?? null,
+    });
+
     this.isMainLoading = false;
     this.fetchAllTypes();
     this.fetchAdjacentPokemon(this.pokemonSpeciesDetails.id);
-    this.pokemonSpeciesDetails.evolutionchain.pokemonspecies.forEach((evolution) => {
-      this.fetchPokemonEvolution(evolution.id);
-    });
+    const speciesIds = this.pokemonSpeciesDetails.evolutionchain.pokemonspecies.map(e => e.id);
+    this.fetchEvolutions(speciesIds);
   }
 
   fetchAllTypes(): void {
@@ -188,27 +262,31 @@ export class PokemonDetailsComponent implements OnInit {
     });
   }
 
-  fetchPokemonEvolution(id: number) {
+  private fetchEvolutions(ids: number[]): void {
     this.pokemonEvolutions = [];
-    this.evolutionService.getPokemonEvolution(id).subscribe({
+    this.isEvolutionsLoading = true;
+    this.evolutionService.getPokemonEvolutionsByIds(ids).subscribe({
       next: (response) => {
-        this.pokemonEvolutions.push(...response.pokemonevolution);
+        this.pokemonEvolutions = response.pokemonevolution;
         this.isEvolutionsLoading = false;
       },
       error: () => this.router.navigate(['/'])
     });
   }
 
+  trackVariantById(_: number, v: { id: number; name: string }): number {
+    return v.id;
+  }
+
   onPokemonChange(event: Event): void {
     const selectElement = event.target as HTMLSelectElement;
     const selectedPokemonId = selectElement.value;
     if (!this.pokemonSpeciesDetails?.pokemons) return;
-    const selected = this.pokemonSpeciesDetails.pokemons.find(
-      p => p.id === +selectedPokemonId
-    );
+    const selected = this.pokemonSpeciesDetails.pokemons.find(p => p.id === +selectedPokemonId);
     if (selected) {
       this.selectedPokemon = selected;
       this.updateSelectedPokemonImage();
+      this.rebuildVm();
     }
   }
 
@@ -227,9 +305,7 @@ export class PokemonDetailsComponent implements OnInit {
     if (this.pokemonImageElement) {
       const el = this.pokemonImageElement.nativeElement;
       el.classList.add('pop');
-      setTimeout(() => {
-        el.classList.remove('pop');
-      }, 300);
+      setTimeout(() => el.classList.remove('pop'), 300);
     }
   }
 
@@ -238,107 +314,28 @@ export class PokemonDetailsComponent implements OnInit {
     this.updateSelectedPokemonImage();
   }
 
-  getPokemonSpeciesName(): string {
-    return this.pokemonUtils.getLocalizedNameFromEntity(this.pokemonSpeciesDetails, "pokemonspeciesnames");
-  }
-
-  getPokemonVariantName(pokemon: any): string {
-    if (!pokemon?.pokemonforms?.length || !this.hasMultipleVariants()) {
-      return this.pokemonUtils.getLocalizedNameFromEntity(this.pokemonSpeciesDetails, "pokemonspeciesnames");
-    }
-
-    const formName = this.pokemonUtils.getLocalizedNameFromEntity(pokemon.pokemonforms[0], "pokemonformnames");
-
-    return formName === 'Unknown'
-      ? this.getPokemonSpeciesName()
-      : formName;
-  }
-
-  hasMultipleVariants(): boolean {
-    return (this.pokemonSpeciesDetails?.pokemons?.length || 0) > 1;
-  }
-
-  getAbilityText(ability: any, index: number): string {
-    const abilityName = this.pokemonUtils.getLocalizedNameFromEntity(ability.ability, "abilitynames");
-    return `${index + 1}. ${abilityName}${ability.is_hidden ? ' (Hidden)' : ''}`;
-  }
-
-  getAbilityFlavorText(ability: any): string {
-    return this.pokemonUtils.getLocalizedFlavorTextFromEntity(ability, 'abilityflavortexts');
-  }
-
-  getGenerationName(generation: Generation | undefined): string {
-    return this.pokemonUtils.getLocalizedNameFromEntity(generation, "generationnames");
-  }
-
-  getPokemonShapeName(shape: PokemonShape | undefined): string {
-    return this.pokemonUtils.getLocalizedNameFromEntity(shape, "pokemonshapenames");
-  }
-
-  getPokemonColorName(color: PokemonColor | undefined): string {
-    return this.pokemonUtils.getLocalizedNameFromEntity(color, "pokemoncolornames");
-  }
-
-  getFormattedHeight(heightDm: number | undefined): string {
-    if (!heightDm) return "Unknown";
-
-    const meters = heightDm / 10;
-    const totalInches = meters * 39.37;
-    const feet = Math.floor(totalInches / 12);
-    const inches = Math.round(totalInches % 12);
-
-    return `${meters.toFixed(1)}m (${feet}'${inches}")`;
-  }
-
-  getFormattedWeight(weightHg: number | undefined): string {
-    if (!weightHg) return "Unknown";
-
-    const kg = weightHg / 10;
-    const lbs = kg * 2.20462;
-
-    return `${kg.toFixed(1)}kg (${lbs.toFixed(1)}lbs)`;
-  }
-
-  isLegendaryOrMythicalOrBaby(): boolean | undefined {
-    return (
-      this.pokemonSpeciesDetails?.is_legendary ||
-      this.pokemonSpeciesDetails?.is_mythical ||
-      this.pokemonSpeciesDetails?.is_baby
-    );
-  }
-
-  getPokemonStatus(pokemonSpecies: any): string {
-    if (pokemonSpecies?.is_mythical) return "Mythical";
-    if (pokemonSpecies?.is_legendary) return "Legendary";
-    if (pokemonSpecies?.is_baby) return "Baby";
-    return "";
-  }
-
-  getLegacyCryUrl(): string | null {
-    return this.selectedPokemon?.pokemoncries?.[0]?.cries?.legacy || null;
-  }
-
-  getLatestCryUrl(): string | null {
-    return this.selectedPokemon?.pokemoncries?.[0]?.cries?.latest || null;
-  }
-
-  getPokemonDexEntry(): string {
-    return this.pokemonUtils.getLocalizedFlavorTextFromEntity(
-      this.pokemonSpeciesDetails,
-      'pokemonspeciesflavortexts',
-      this.selectedVersion?.id || null
-    );
-  }
-
   playCry(version: 'legacy' | 'latest') {
-    const cryUrl = version === 'legacy' ? this.getLegacyCryUrl() : this.getLatestCryUrl();
-
+    const cryUrl = version === 'legacy' ? this.vm.legacyCryUrl : this.vm.latestCryUrl;
     if (cryUrl) {
       const audio = new Audio(cryUrl);
       audio.volume = 0.05;
       audio.play();
-    } else {
-      console.error(`No ${version} cry found for this Pokémon.`);
     }
+  }
+
+  private formatHeight(heightDm: number | undefined): string {
+    if (!heightDm) return 'Unknown';
+    const meters = heightDm / 10;
+    const totalInches = meters * 39.37;
+    const feet = Math.floor(totalInches / 12);
+    const inches = Math.round(totalInches % 12);
+    return `${meters.toFixed(1)}m (${feet}'${inches}")`;
+  }
+
+  private formatWeight(weightHg: number | undefined): string {
+    if (!weightHg) return 'Unknown';
+    const kg = weightHg / 10;
+    const lbs = kg * 2.20462;
+    return `${kg.toFixed(1)}kg (${lbs.toFixed(1)}lbs)`;
   }
 }

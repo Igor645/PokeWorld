@@ -7,12 +7,12 @@ import {
   AfterViewInit,
   OnDestroy,
   ChangeDetectorRef,
+  ChangeDetectionStrategy,
   Optional,
   Self
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Subscription } from 'rxjs';
-import { Router } from '@angular/router';
 
 import { Pokemon } from '../../../models/pokemon.model';
 import { PokemonSpecies } from '../../../models/pokemon-species.model';
@@ -22,18 +22,22 @@ import { PokemonBgSvgComponent } from '../pokemon-bg-svg/pokemon-bg-svg.componen
 import { InteractiveHostDirective } from '../directives/interactive-host.directive';
 import { PokemonTypeComponent } from '../pokemon-type/pokemon-type.component';
 
+const REGIONAL_SUFFIXES = ['alola', 'galar', 'hisui', 'paldea'];
+
 @Component({
   selector: 'app-pokemon-card',
   templateUrl: './pokemon-card.component.html',
   styleUrls: ['./pokemon-card.component.css'],
   standalone: true,
   imports: [CommonModule, PokemonBgSvgComponent, PokemonTypeComponent],
-  hostDirectives: [InteractiveHostDirective]
+  hostDirectives: [InteractiveHostDirective],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PokemonCardComponent implements OnInit, OnDestroy, AfterViewInit {
   @Input() pokemon!: Pokemon;
   @Input() pokemonSpecies!: PokemonSpecies;
   @Input() showTypes = false;
+  @Input() showRegion = false;
 
   @ViewChild('pokemonImage', { static: false }) pokemonImage!: ElementRef<HTMLImageElement>;
 
@@ -43,8 +47,13 @@ export class PokemonCardComponent implements OnInit, OnDestroy, AfterViewInit {
   eggSwooping = false;
   private languageSubscription!: Subscription;
 
+  get regionLabel(): string | null {
+    if (!this.showRegion || !this.pokemon || this.pokemon.is_default) return null;
+    const suffix = REGIONAL_SUFFIXES.find(s => this.pokemon.name.endsWith(`-${s}`));
+    return suffix ? suffix.charAt(0).toUpperCase() + suffix.slice(1) : null;
+  }
+
   constructor(
-    private router: Router,
     private pokemonUtils: PokemonUtilsService,
     private settingsService: SettingsService,
     private cdr: ChangeDetectorRef,

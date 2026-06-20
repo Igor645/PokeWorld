@@ -1,14 +1,22 @@
-<mat-form-field class="search-container">
-  <input matInput type="text" placeholder="Search through PokeWorld..." [formControl]="searchControl"
-    [matAutocomplete]="auto" />
+<div class="search-field-wrap">
+  <mat-form-field class="search-container">
+    <input #searchInput matInput type="text" placeholder="Search through PokeWorld..." [formControl]="searchControl"
+      [matAutocomplete]="auto" />
 
-  <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onOptionSelected($event)">
-    <mat-optgroup *ngIf="filteredPokemonSpecies.length" label="Pokémon">
-      <mat-option *ngFor="let species of filteredPokemonSpecies; trackBy: trackByPokemon" [value]="species">
-        <app-pokemon-search-item [species]="species" endpoint="pokemon"
-          [imageSrc]="GetPokemonOfficialImage(species.pokemons[0])">
-        </app-pokemon-search-item>
+    <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onOptionSelected($event)">
+      <mat-option *ngIf="isLoading && !filteredPokemonSpecies.length" disabled class="search-loading-option">
+        Searching…
       </mat-option>
-    </mat-optgroup>
-  </mat-autocomplete>
-</mat-form-field>
+      <mat-optgroup *ngIf="filteredPokemonSpecies.length" label="Pokémon">
+        <mat-option *ngFor="let species of filteredPokemonSpecies; trackBy: trackByPokemon" [value]="species">
+          <app-pokemon-search-item [species]="species" endpoint="pokemon"
+            [imageSrc]="GetPokemonOfficialImage(species.pokemons[0])">
+          </app-pokemon-search-item>
+        </mat-option>
+      </mat-optgroup>
+    </mat-autocomplete>
+  </mat-form-field>
+
+  <!-- Spinner overlaid on the right side of the input — avoids Angular Material suffix slot issues -->
+  <span *ngIf="isLoading" class="search-spinner" role="status" aria-label="Loading"></span>
+</div>

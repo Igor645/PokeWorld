@@ -1,4 +1,11 @@
+:host {
+    display: block;
+}
+
 svg {
+    display: block;
+    width: 100%;
+    height: auto;
     transform: translateZ(0);
     fill: var(--svg-color);
     stroke: var(--svg-color);

@@ -15,6 +15,10 @@
   </div>
   }
 
+  @if (regionLabel) {
+    <span class="pokemonCard__region">{{ regionLabel }}</span>
+  }
+
   <img #pokemonImage [src]="pokemonViewModel.image" (load)="onImageLoad()" (error)="handleImageError($event)"
     class="pokemonCard__image initial-load" [class.visible]="eggGone" [class.hidden]="!eggGone" />
 

@@ -1,6 +1,6 @@
 :host {
+  display: inline-flex;
   border-radius: 10px;
-  width: var(--type-width, 90px);
 }
 
 .pokemon-type {
@@ -12,7 +12,7 @@
   border-radius: 10px;
   font-weight: bold;
   font-size: var(--type-font-size, 1rem);
-  width: 100%;
+  min-width: var(--type-width, 90px);
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
   transition: transform 0.2s ease-in-out;
 }

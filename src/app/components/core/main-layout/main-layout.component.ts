@@ -1,6 +1,7 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, DestroyRef, ViewChild, inject } from '@angular/core';
 import { NavDrawerComponent, NavItem } from '../nav-drawer/nav-drawer.component';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { CommonModule } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
@@ -30,9 +31,13 @@ export class MainLayoutComponent {
     },
   ];
 
+  private readonly destroyRef = inject(DestroyRef);
+
   constructor(private router: Router) {
-    this.router.events.subscribe(e => {
-      if (e instanceof NavigationEnd) this.isMainPage = e.urlAfterRedirects === '/';
-    });
+    this.router.events
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(e => {
+        if (e instanceof NavigationEnd) this.isMainPage = e.urlAfterRedirects === '/';
+      });
   }
 }

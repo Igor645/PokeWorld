@@ -1,21 +1,181 @@
 <div class="dexSearch-container">
+
+    <!-- Floating background silhouettes -->
+    <div class="header-silhouettes" aria-hidden="true" *ngIf="bgSilhouettes.length">
+        <img *ngFor="let s of bgSilhouettes"
+             [src]="getSprite(s.species)"
+             class="silhouette-img"
+             [ngStyle]="s.styles"
+             loading="lazy"
+             alt="" />
+    </div>
+
     <div class="dexTitle">PokéWorld</div>
     <app-pokeworld-search></app-pokeworld-search>
+
+    <!-- Quick stats -->
+    <div class="header-stats" *ngIf="count > 0">
+        <span class="header-stat">{{ count }} Pokémon</span>
+        <span class="header-stat-sep">·</span>
+        <span class="header-stat">{{ availableGenerations.length }} Generations</span>
+        <span class="header-stat-sep">·</span>
+        <span class="header-stat">{{ allTypes.length }} Types</span>
+    </div>
+
 </div>
 
-<div class="pokemonCount">
-    Select your Pokémon ({{ count }})
+<!-- ── Infinite marquee ───────────────────────────────────────────────────── -->
+<div class="showcase-marquee" *ngIf="marqueeRow1.length" aria-hidden="true">
+    <div class="marquee-row">
+        <div class="marquee-track">
+            <img *ngFor="let sp of marqueeRow1" [src]="getSprite(sp)" class="marquee-sprite" [alt]="sp.name" loading="lazy" />
+            <img *ngFor="let sp of marqueeRow1" [src]="getSprite(sp)" class="marquee-sprite" aria-hidden="true" loading="lazy" alt="" />
+        </div>
+    </div>
+    <div class="marquee-row">
+        <div class="marquee-track marquee-track--reverse">
+            <img *ngFor="let sp of marqueeRow2" [src]="getSprite(sp)" class="marquee-sprite" [alt]="sp.name" loading="lazy" />
+            <img *ngFor="let sp of marqueeRow2" [src]="getSprite(sp)" class="marquee-sprite" aria-hidden="true" loading="lazy" alt="" />
+        </div>
+    </div>
+</div>
+
+<!-- ── Generation tiles ───────────────────────────────────────────────────── -->
+<div class="gen-tiles-container" *ngIf="genTiles.length">
+    <div class="gen-tiles-scroll">
+        <div class="gen-tile"
+             *ngFor="let tile of genTiles"
+             [style.--accent]="tile.accentColor"
+             [class.active]="genFilter === tile.id"
+             (click)="onGenTileClick(tile.id)"
+             role="button"
+             [attr.aria-pressed]="genFilter === tile.id">
+            <div class="gen-tile-header">
+                <span class="gen-tile-roman">{{ tile.roman }}</span>
+                <span class="gen-tile-region">{{ tile.region }}</span>
+            </div>
+            <img class="gen-tile-sprite"
+                 *ngIf="tile.spriteUrl"
+                 [src]="tile.spriteUrl"
+                 [alt]="tile.region + ' legendary'"
+                 loading="lazy" />
+            <div class="gen-tile-count">{{ tile.count }} Pokémon</div>
+            <div class="gen-tile-games">
+                <span class="gen-game-chip"
+                      *ngFor="let game of tile.games"
+                      [style.--game-color]="getGameColor(game)">{{ game }}</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ── Recently Viewed ────────────────────────────────────────────────────── -->
+<div class="recent-viewed" *ngIf="recentSpeciesData.length">
+    <h3 class="recent-title">Recently Viewed</h3>
+    <div class="recent-scroll">
+        <div class="recent-card-wrap" *ngFor="let entry of recentSpeciesData; trackBy: trackRecentById">
+            <app-pokemon-card
+                [pokemon]="entry.pokemon"
+                [pokemonSpecies]="entry.species"
+                [showTypes]="true" />
+        </div>
+    </div>
+</div>
+
+<div class="dex-subheader">
+
+    <!-- Row 1: count + gen / form pill filters -->
+    <div class="dex-filter-row">
+        <div class="pokemonCount">
+            Select your Pokémon
+            <span *ngIf="hasActiveFilters">({{ filteredCount }} / {{ count }})</span>
+            <span *ngIf="!hasActiveFilters">({{ count }})</span>
+        </div>
+
+        <div class="filters-bar">
+
+            <div class="filter-group">
+                <span class="filter-label">Gen</span>
+                <div class="filter-pills">
+                    <button class="filter-pill"
+                            [class.active]="genFilter === null"
+                            (click)="setGenFilter(null)">All</button>
+                    <button class="filter-pill"
+                            *ngFor="let gen of availableGenerations"
+                            [class.active]="genFilter === gen.id"
+                            (click)="setGenFilter(gen.id)">
+                        {{ getRomanForGenId(gen.id) }}
+                    </button>
+                </div>
+            </div>
+
+            <div class="filter-divider"></div>
+
+            <div class="filter-group">
+                <span class="filter-label">Form</span>
+                <div class="filter-pills">
+                    <button class="filter-pill"
+                            [class.active]="formFilter === null"
+                            (click)="setFormFilter(null)">Standard</button>
+                    <button class="filter-pill"
+                            *ngFor="let f of formFilterOptions"
+                            [class.active]="formFilter === f.value"
+                            (click)="setFormFilter(f.value)">
+                        {{ f.label }}
+                    </button>
+                </div>
+                <button class="filter-clear-btn"
+                        [style.visibility]="hasActiveFilters ? 'visible' : 'hidden'"
+                        (click)="clearFilters()">
+                    ✕ Clear
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Row 2: type selector pills -->
+    <div class="type-selector" *ngIf="allTypes.length">
+        <span class="filter-label type-selector-label">Type</span>
+        <div class="type-grid">
+            <div *ngFor="let t of allTypes"
+                 class="type-badge-wrap"
+                 [class.sel-1]="type1Filter === t.id"
+                 [class.sel-2]="type2Filter === t.id"
+                 [title]="pokemonUtils.getLocalizedNameFromEntity(t, 'typenames')"
+                 (click)="onTypeClick(t.id)">
+                <app-pokemon-type [pokemonType]="t" [simpleView]="false" [navigation]="false" />
+                <span class="type-badge-num" *ngIf="type1Filter === t.id">1</span>
+                <span class="type-badge-num type-badge-num--2" *ngIf="type2Filter === t.id">2</span>
+            </div>
+        </div>
+    </div>
+
 </div>
 
 <app-loading-spinner *ngIf="(isLoading$ | async) ?? false; else pokemonList" message="Loading Pokémon..." />
 
 <ng-template #pokemonList>
-    <cdk-virtual-scroll-viewport scrollWindow="false" [itemSize]="itemSize" class="pokedexOverview">
-        <div #rowContainer class="row" *cdkVirtualFor="let row of speciesRows$">
-            <app-pokemon-card *ngFor="let species of row.pokemon_species" [pokemon]="species.pokemons[0]"
-                [pokemonSpecies]="species" [showTypes]="true" />
-            <div *ngFor="let i of [].constructor(cardsPerRow - row.pokemon_species.length)" class="pokemon-placeholder">
+
+    <!-- No results state -->
+    <div *ngIf="filteredCount === 0 && hasActiveFilters; else virtualList" class="no-results">
+        <mat-icon class="no-results-icon">search_off</mat-icon>
+        <p class="no-results-text">No Pokémon match your current filters.</p>
+        <button class="filter-clear-btn no-results-clear" (click)="clearFilters()">✕ Clear filters</button>
+    </div>
+
+    <ng-template #virtualList>
+        <cdk-virtual-scroll-viewport scrollWindow="false" [itemSize]="itemSize" class="pokedexOverview">
+            <div #rowContainer class="row" *cdkVirtualFor="let row of speciesRows$">
+                <app-pokemon-card *ngFor="let entry of row.entries"
+                    [pokemon]="entry.pokemon"
+                    [pokemonSpecies]="entry.species"
+                    [showTypes]="true" />
+                <div *ngFor="let i of getPlaceholderArray(cardsPerRow - row.entries.length)"
+                    class="pokemon-placeholder">
+                </div>
             </div>
-        </div>
-    </cdk-virtual-scroll-viewport>
+        </cdk-virtual-scroll-viewport>
+    </ng-template>
+
 </ng-template>

@@ -19,10 +19,9 @@
       <!-- Left Side (Details) -->
       <div class="pokemon-main-view-left">
         <h1 class="pokemon-name">
-          {{ getPokemonSpeciesName() }}
-          <div *ngIf="isLegendaryOrMythicalOrBaby()" class="pokemon-status-badge"
-            [attr.data-status]="getPokemonStatus(pokemonSpeciesDetails)">
-            {{ getPokemonStatus(pokemonSpeciesDetails) }}
+          {{ vm.speciesName }}
+          <div *ngIf="vm.isSpecial" class="pokemon-status-badge" [attr.data-status]="vm.status">
+            {{ vm.status }}
           </div>
         </h1>
 
@@ -34,7 +33,7 @@
         </div>
 
         <div class="pokemon-dex-entry">
-          {{ getPokemonDexEntry() }}
+          {{ vm.dexEntry }}
         </div>
 
         <ul class="general-detail-list">
@@ -45,25 +44,27 @@
 
           <li>
             <label class="general-detail-label">Introduced</label>
-            <div>{{ getGenerationName(pokemonSpeciesDetails?.generation) }}</div>
+            <div>{{ vm.generationName }}</div>
           </li>
 
           <li>
             <label class="general-detail-label">Height</label>
-            <div>{{ getFormattedHeight(selectedPokemon?.height) }}</div>
+            <div>{{ vm.formattedHeight }}</div>
           </li>
 
           <li>
             <label class="general-detail-label">Weight</label>
-            <div>{{ getFormattedWeight(selectedPokemon?.weight) }}</div>
+            <div>{{ vm.formattedWeight }}</div>
           </li>
 
           <!-- Forms Dropdown -->
           <li>
             <label class="general-detail-label">Varieties</label>
-            <select id="variant-select" (change)="onPokemonChange($event)" [disabled]="!hasMultipleVariants()">
-              <option *ngFor="let pokemon of pokemonSpeciesDetails?.pokemons || []" [value]="pokemon.id">
-                {{ getPokemonVariantName(pokemon) }}
+            <select id="variant-select" (change)="onPokemonChange($event)" [disabled]="!vm.hasMultipleVariants">
+              <option *ngFor="let v of vm.variants; trackBy: trackVariantById"
+                      [value]="v.id"
+                      [selected]="v.id === selectedPokemon?.id">
+                {{ v.name }}
               </option>
             </select>
           </li>
@@ -72,38 +73,32 @@
           <li>
             <label class="general-detail-label">Abilities</label>
             <div class="ability-list">
-              <div class="ability-container" *ngFor="let ability of selectedPokemon?.pokemonabilities; let i = index">
-                <div class="ability-name">
-                  {{ getAbilityText(ability, i) }}
-                </div>
-                <div class="ability-description">
-                  {{ getAbilityFlavorText(ability.ability) }}
-                </div>
+              <div class="ability-container" *ngFor="let a of vm.abilities">
+                <div class="ability-name">{{ a.text }}</div>
+                <div class="ability-description">{{ a.flavorText }}</div>
               </div>
             </div>
           </li>
 
           <li>
             <label class="general-detail-label">Shape</label>
-            <div>{{ getPokemonShapeName(pokemonSpeciesDetails?.pokemonshape) }}
-            </div>
+            <div>{{ vm.shapeName }}</div>
           </li>
 
           <li>
             <label class="general-detail-label">Color</label>
-            <div>{{ getPokemonColorName(pokemonSpeciesDetails?.pokemoncolor) }}
-            </div>
+            <div>{{ vm.colorName }}</div>
           </li>
 
           <li>
             <label class="general-detail-label">Pokémon Cries</label>
             <div class="cry-buttons">
-              <button *ngIf="getLatestCryUrl()" (click)="playCry('latest')" class="cry-button latest">
+              <button *ngIf="vm.latestCryUrl" (click)="playCry('latest')" class="cry-button latest">
                 <mat-icon>volume_up</mat-icon>
                 Latest Cry
               </button>
 
-              <button *ngIf="getLegacyCryUrl()" (click)="playCry('legacy')" class="cry-button legacy">
+              <button *ngIf="vm.legacyCryUrl" (click)="playCry('legacy')" class="cry-button legacy">
                 <mat-icon>volume_down</mat-icon>
                 Legacy Cry
               </button>
@@ -116,7 +111,7 @@
       <div class="pokemon-main-view-right">
         <div class="pokemon-official-sprite-container">
           <div class="float-container">
-            <img #pokemonImage class="pokemon-detail-img" [src]="selectedPokemonImage" [alt]="getPokemonSpeciesName()"
+            <img #pokemonImage class="pokemon-detail-img" [src]="selectedPokemonImage" [alt]="vm.speciesName"
               (error)="selectedPokemonImage = '/images/placeholder.png'" (load)="onImageLoad()" />
           </div>
           <app-pokemon-bg-svg class="pokemonCard__bg detail"></app-pokemon-bg-svg>
@@ -146,7 +141,7 @@
     <app-pokemon-evolutions class="pokemon-evolutions" [evolutionChain]="pokemonSpeciesDetails?.evolutionchain"
       [pokemonEvolutions]="pokemonEvolutions" />
 
-    <app-pokemon-moves class="pokemon-moves" [pokemon]="selectedPokemon" />
+    <app-pokemon-moves class="pokemon-moves" [pokemonId]="selectedPokemon?.id" />
 
   </div>
 </ng-template>

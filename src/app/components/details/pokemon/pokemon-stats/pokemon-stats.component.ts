@@ -1,11 +1,11 @@
-import { AfterViewChecked, ChangeDetectionStrategy, Component, HostBinding, Input } from '@angular/core';
+import { Component, DestroyRef, HostBinding, Input, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { CommonModule } from '@angular/common';
 import { ExpandableSectionComponent } from '../../../shared/expandable-section/expandable-section.component';
 import { LanguageService } from '../../../../services/language.service';
 import { Pokemon } from '../../../../models/pokemon.model';
 import { PokemonUtilsService } from '../../../../utils/pokemon-utils';
-import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-pokemon-stats',
@@ -15,7 +15,6 @@ import { Subscription } from 'rxjs';
 })
 export class PokemonStatsComponent {
   private _pokemon: Pokemon | undefined;
-  private languageSub: Subscription;
   stats: any[] = [];
   statTotal: number = 0;
   private readonly MAX_EV = 63;
@@ -29,13 +28,15 @@ export class PokemonStatsComponent {
   @HostBinding('class.expanded')
   get hostExpanded() { return this.isExpanded; }
 
+  private readonly destroyRef = inject(DestroyRef);
+
   constructor(
     private pokemonUtils: PokemonUtilsService,
     private languageService: LanguageService
   ) {
-    this.languageSub = this.languageService.watchLanguageChanges().subscribe(() => {
-      this.computeStats();
-    });
+    this.languageService.watchLanguageChanges()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.computeStats());
   }
 
   @Input() set pokemon(value: Pokemon | undefined) {
@@ -83,7 +84,7 @@ export class PokemonStatsComponent {
     }
   }
 
-  trackStat(index: number, stat: any) {
+  trackStat(_index: number, stat: any) {
     return stat.name;
   }
 }

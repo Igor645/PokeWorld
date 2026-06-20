@@ -81,6 +81,8 @@
     margin: 0 auto;
     display: flex;
     justify-content: center;
+    align-items: center;
+    align-self: stretch;
     container-type: inline-size;
 }
 
@@ -131,6 +133,22 @@
 .pokemonCard__text__container {
     margin-top: auto;
     border-radius: 0.75em 0.75em 0 0;
+}
+
+.pokemonCard__region {
+    position: absolute;
+    top: 4%;
+    right: 3%;
+    z-index: 30;
+    pointer-events: none;
+    font-size: 0.7em;
+    font-weight: 600;
+    color: var(--primary-color);
+    border: 0.1em solid var(--primary-color);
+    border-radius: 99em;
+    padding: 0.1em 0.5em;
+    background: color-mix(in srgb, var(--background-color) 90%, transparent);
+    backdrop-filter: blur(0.3em);
 }
 
 .pokemonCard__image.pop-in {
