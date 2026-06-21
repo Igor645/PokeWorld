@@ -52,7 +52,7 @@ export class LanguageSelectorComponent implements OnInit, OnDestroy {
             .map((l: any) => ({ id: l.id, name: this.languageMap[l.name] || l.name }))
             .sort((a: Lang, b: Lang) => a.name.localeCompare(b.name));
 
-          this.cdr.markForCheck(); // <-- trigger re-render
+          this.cdr.detectChanges(); // <-- trigger re-render
         },
         error: (e) => console.error('Error fetching languages:', e),
       })
@@ -64,7 +64,7 @@ export class LanguageSelectorComponent implements OnInit, OnDestroy {
         if (id == null) this.settings.setSetting('selectedLanguageId', value);
         this.selectedLanguageId = value;
 
-        this.cdr.markForCheck(); // <-- ensure select reflects the value
+        this.cdr.detectChanges(); // <-- ensure select reflects the value
       })
     );
   }
@@ -72,7 +72,7 @@ export class LanguageSelectorComponent implements OnInit, OnDestroy {
   onChange(langId: number) {
     this.selectedLanguageId = langId;
     this.settings.setSetting('selectedLanguageId', langId);
-    this.cdr.markForCheck();
+    this.cdr.detectChanges();
   }
 
   ngOnDestroy(): void {

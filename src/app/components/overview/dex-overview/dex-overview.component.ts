@@ -3,8 +3,8 @@ import {
   Inject, OnDestroy, OnInit, PLATFORM_ID, ViewChild
 } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { Router } from '@angular/router';
-import { BehaviorSubject, Observable, of } from 'rxjs';
+import { Router, RouterLink } from '@angular/router';
+import { BehaviorSubject, Observable, Subscription, of } from 'rxjs';
 import { catchError, finalize, map } from 'rxjs/operators';
 import { CdkVirtualScrollViewport, ScrollingModule } from '@angular/cdk/scrolling';
 import { MatIcon } from '@angular/material/icon';
@@ -21,6 +21,7 @@ import { LoadingSpinnerComponent } from '../../shared/loading-spinner/loading-sp
 import { Type } from '../../../models/type.model';
 import { TypeService } from '../../../services/type.service';
 import { RecentlyViewedService, RecentEntry } from '../../../services/recently-viewed.service';
+import { SettingsService } from '../../../services/settings.service';
 
 interface DisplayEntry {
   species: PokemonSpecies;
@@ -52,7 +53,7 @@ const FORM_FILTER_OPTIONS = [
   { value: 'mega'   as const, label: 'Mega',       test: (n: string) => n.includes('-mega') },
   { value: 'gmax'   as const, label: 'Gigantamax', test: (n: string) => n.endsWith('-gmax') },
   { value: 'alola'  as const, label: 'Alolan',     test: (n: string) => n.includes('-alola') && !n.endsWith('-totem') },
-  { value: 'galar'  as const, label: 'Galarian',   test: (n: string) => n.includes('-galar') },
+  { value: 'galar'  as const, label: 'Galarian',   test: (n: string) => n.includes('-galar') && !n.endsWith('-zen') },
   { value: 'hisui'  as const, label: 'Hisuian',    test: (n: string) => n.includes('-hisui') },
   { value: 'paldea' as const, label: 'Paldean',    test: (n: string) => n.includes('-paldea') },
 ];
@@ -102,6 +103,7 @@ const GENERATION_INFO: Array<Omit<GenTileConfig, 'count' | 'spriteUrl'>> = [
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
+    RouterLink,
     MatIcon,
     PokemonCardComponent,
     PokemonTypeComponent,
@@ -164,12 +166,15 @@ export class DexOverviewComponent implements OnInit, AfterViewInit, OnDestroy {
     return entry.species.id;
   }
 
+  private spriteStyleSub?: Subscription;
+
   constructor(
     private router: Router,
     private pokemonService: PokemonService,
     private typeService: TypeService,
     private recentlyViewedService: RecentlyViewedService,
     public pokemonUtils: PokemonUtilsService,
+    private settingsService: SettingsService,
     private cdr: ChangeDetectorRef,
     @Inject(PLATFORM_ID) private platformId: object
   ) { }
@@ -182,7 +187,11 @@ export class DexOverviewComponent implements OnInit, AfterViewInit, OnDestroy {
       map(res => res.type.filter(t => t.id >= 1 && t.id <= 18))
     ).subscribe(types => {
       this.allTypes = types;
-      this.cdr.markForCheck();
+      this.cdr.detectChanges();
+    });
+    this.spriteStyleSub = this.settingsService.watchSetting<string>('spriteStyle').subscribe(() => {
+      this.initGenTiles();
+      this.cdr.detectChanges();
     });
   }
 
@@ -201,6 +210,7 @@ export class DexOverviewComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.spriteStyleSub?.unsubscribe();
     if (!isPlatformBrowser(this.platformId)) return;
     if (this.rafId) this.safeCancel(this.rafId);
     this.ro?.disconnect();
@@ -278,7 +288,11 @@ export class DexOverviewComponent implements OnInit, AfterViewInit, OnDestroy {
   // ── Showcase helpers ───────────────────────────────────────────────────────
 
   getSprite(species: PokemonSpecies): string {
-    return species.pokemons[0]?.pokemonsprites?.[0]?.sprites?.front_default ?? '';
+    const sprites = species.pokemons[0]?.pokemonsprites?.[0]?.sprites;
+    const style = this.settingsService.getSetting<string>('spriteStyle');
+    if (style === 'home')  return sprites?.other?.home?.front_default || sprites?.other?.['official-artwork']?.front_default || '';
+    if (style === 'pixel') return sprites?.front_default || '';
+    return sprites?.other?.['official-artwork']?.front_default || sprites?.other?.home?.front_default || '';
   }
 
   private initShowcases(): void {
@@ -337,9 +351,12 @@ export class DexOverviewComponent implements OnInit, AfterViewInit, OnDestroy {
       .map(info => {
         const sp = this.allSpecies.find(s => s.id === info.legendaryId);
         const sprites = sp?.pokemons?.[0]?.pokemonsprites?.[0]?.sprites;
-        const spriteUrl =
-          sprites?.other?.['official-artwork']?.front_default ||
-          sprites?.front_default || '';
+        const style = this.settingsService.getSetting<string>('spriteStyle');
+        const spriteUrl = style === 'home'
+          ? (sprites?.other?.home?.front_default || sprites?.other?.['official-artwork']?.front_default || '')
+          : style === 'pixel'
+            ? (sprites?.front_default || '')
+            : (sprites?.other?.['official-artwork']?.front_default || sprites?.other?.home?.front_default || '');
         return { ...info, count: countByGen.get(info.id) ?? 0, spriteUrl };
       });
   }
@@ -359,6 +376,14 @@ export class DexOverviewComponent implements OnInit, AfterViewInit, OnDestroy {
       let candidates: Pokemon[];
       if (formDef) {
         candidates = s.pokemons.filter(p => formDef.test(p.name) && this.hasSprite(p));
+        // For regional filters (alola/galar/hisui/paldea), prefer the exact base form
+        // (darmanitan-galar) over battle sub-forms (darmanitan-galar-zen).
+        // If no exact base exists, keep all sub-forms — handles Paldean Tauros which
+        // has no plain tauros-paldea but has combat/blaze/aqua variants.
+        if (['alola', 'galar', 'hisui', 'paldea'].includes(formDef.value) && candidates.length > 1) {
+          const base = candidates.filter(p => p.name === `${s.name}-${formDef.value}`);
+          if (base.length > 0) candidates = base;
+        }
       } else {
         candidates = s.pokemons[0] ? [s.pokemons[0]] : [];
       }

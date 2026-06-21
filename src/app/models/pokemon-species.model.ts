@@ -11,6 +11,11 @@ import { PokemonHabitat } from './pokemon-habitat.model';
 import { PokemonShape } from './pokemon-shape.model';
 import { PokemonSprites } from './sprite.model';
 
+export interface PokemonDexEntry {
+  pokedex_id: number;
+  pokedex_number: number;
+}
+
 export interface PokemonSpecies {
   id: number;
   name: string;
@@ -25,6 +30,7 @@ export interface PokemonSpecies {
   evolves_from_species_id: number | null;
   pokemons: Pokemon[];
   pokemonspeciesnames: Name[];
+  pokemondexnumbers?: PokemonDexEntry[];
   generation: Generation;
   pokemonsprites?: PokemonSprites;
   pokemonspeciesflavortexts: FlavorText[];

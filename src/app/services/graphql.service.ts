@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Observable, from, of, shareReplay, tap } from 'rxjs';
+import { Observable, asyncScheduler, from, of, shareReplay, tap } from 'rxjs';
+import { observeOn } from 'rxjs/operators';
 import { request } from 'graphql-request';
 import { DocumentNode, print } from 'graphql';
 import { environment } from '../../environments/environment';
@@ -22,7 +23,10 @@ export class GraphQLService {
     }
 
     const hit = this.cache.get(key);
-    if (hit && Date.now() - hit.ts < TTL_MS) return of(hit.data as T);
+    // Deliver cache hits asynchronously so OnPush components always get a proper
+    // change-detection cycle — synchronous of() fires before Angular's first CD
+    // pass and markForCheck() then has nothing to trigger until the next user event.
+    if (hit && Date.now() - hit.ts < TTL_MS) return of(hit.data as T).pipe(observeOn(asyncScheduler));
 
     return this.fetchAndCache<T>(key, query, variables);
   }

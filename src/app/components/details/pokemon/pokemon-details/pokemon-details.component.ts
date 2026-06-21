@@ -116,6 +116,9 @@ export class PokemonDetailsComponent implements OnInit {
     this.settingsService.watchSetting<number>('selectedLanguageId')
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.rebuildVm());
+    this.settingsService.watchSetting<string>('spriteStyle')
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.updateSelectedPokemonImage());
   }
 
   private rebuildVm(): void {
@@ -296,9 +299,17 @@ export class PokemonDetailsComponent implements OnInit {
       return;
     }
     const spritesData = this.selectedPokemon.pokemonsprites[0].sprites;
-    const officialArtwork = spritesData.other["official-artwork"];
-    let spriteKey: keyof Sprite = this.isShiny ? 'front_shiny' : 'front_default';
-    this.selectedPokemonImage = officialArtwork[spriteKey] || officialArtwork['front_default'];
+    const spriteKey: keyof Sprite = this.isShiny ? 'front_shiny' : 'front_default';
+    const style = this.settingsService.getSetting<string>('spriteStyle');
+    const home = spritesData.other?.home;
+    const artwork = spritesData.other?.['official-artwork'];
+    if (style === 'home') {
+      this.selectedPokemonImage = home?.[spriteKey] || home?.['front_default'] || artwork?.[spriteKey] || artwork?.['front_default'];
+    } else if (style === 'pixel') {
+      this.selectedPokemonImage = spritesData[spriteKey] || spritesData['front_default'] || artwork?.['front_default'];
+    } else {
+      this.selectedPokemonImage = artwork?.[spriteKey] || artwork?.['front_default'] || home?.[spriteKey] || home?.['front_default'];
+    }
   }
 
   onImageLoad(): void {

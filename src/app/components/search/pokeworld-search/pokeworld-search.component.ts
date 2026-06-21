@@ -2,7 +2,7 @@ import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, E
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { NavigationEnd, Router } from '@angular/router';
 import { Subject, Subscription, asyncScheduler } from 'rxjs';
-import { debounceTime, distinctUntilChanged, filter, map, observeOn, startWith, switchMap, takeUntil, tap } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, filter, map, observeOn, switchMap, takeUntil, tap } from 'rxjs/operators';
 
 import { CommonModule } from '@angular/common';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
@@ -47,13 +47,22 @@ export class PokeworldSearchComponent implements AfterViewInit, OnDestroy {
       .subscribe(() => this.clearSearch());
 
     this.searchControl.valueChanges.pipe(
-      startWith(this.searchControl.value),
       map(v => (v ?? '').toString().trim().toLowerCase()),
       distinctUntilChanged(),
+      // Clear results immediately when the input is emptied — before debounce so
+      // the dropdown collapses instantly rather than waiting 250 ms.
+      tap(q => {
+        if (!q) {
+          this.filteredPokemonSpecies = [];
+          this.isLoading = false;
+          this.cdr.detectChanges();
+        }
+      }),
+      filter(q => q.length > 0),
       debounceTime(250),
-      tap(() => { this.isLoading = true; this.cdr.markForCheck(); }),
+      tap(() => { this.isLoading = true; this.cdr.detectChanges(); }),
       switchMap(q => this.pokemonService.getPokemonSpeciesByPrefix(q).pipe(
-        observeOn(asyncScheduler) // ensures cached results also pass through async, giving Angular a tick to render isLoading=true
+        observeOn(asyncScheduler)
       )),
       takeUntil(this.destroy$)
     ).subscribe({
@@ -61,7 +70,7 @@ export class PokeworldSearchComponent implements AfterViewInit, OnDestroy {
         const speciesList = response?.pokemonspecies ?? [];
         this.filteredPokemonSpecies = speciesList;
         this.isLoading = false;
-        this.cdr.markForCheck();
+        this.cdr.detectChanges();
 
         queueMicrotask(() => {
           for (const s of speciesList) {
@@ -74,7 +83,7 @@ export class PokeworldSearchComponent implements AfterViewInit, OnDestroy {
       error: (err) => {
         console.error('Error searching Pokémon:', err);
         this.isLoading = false;
-        this.cdr.markForCheck();
+        this.cdr.detectChanges();
       }
     });
   }

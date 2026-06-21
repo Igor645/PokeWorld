@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { LanguageService } from '../services/language.service';
+import { SettingsService } from '../services/settings.service';
 import { Name } from '../models/name.model';
 import { Observable } from 'rxjs';
 import { Pokemon } from '../models/pokemon.model';
@@ -10,7 +11,7 @@ import { PokemonSpecies } from '../models/pokemon-species.model';
   providedIn: 'root'
 })
 export class PokemonUtilsService {
-  constructor(private languageService: LanguageService) { }
+  constructor(private languageService: LanguageService, private settingsService: SettingsService) { }
 
   /**
    * Get the selected language ID.
@@ -34,10 +35,13 @@ export class PokemonUtilsService {
    * @returns The URL of the Pokémon's official artwork.
    */
   getPokemonOfficialImage(pokemon: Pokemon | undefined): string {
-    return (
-      pokemon?.pokemonsprites?.[0]?.sprites.other?.["official-artwork"]?.front_default ||
-      '/invalid/image.png'
-    );
+    const sprites = pokemon?.pokemonsprites?.[0]?.sprites;
+    const style = this.settingsService.getSetting<string>('spriteStyle');
+    if (style === 'home')
+      return sprites?.other?.home?.front_default || sprites?.other?.['official-artwork']?.front_default || '/invalid/image.png';
+    if (style === 'pixel')
+      return sprites?.front_default || sprites?.other?.['official-artwork']?.front_default || '/invalid/image.png';
+    return sprites?.other?.['official-artwork']?.front_default || sprites?.other?.home?.front_default || '/invalid/image.png';
   }
 
   /**

@@ -1,10 +1,22 @@
-<!-- Pure content; no popover wrapper, no *ngIf -->
-<div class="settings-card">
-    <div class="settings-values">
-        <app-language-selector></app-language-selector>
+<div class="settings-panel">
 
-        <mat-slide-toggle [(ngModel)]="isDarkMode" (change)="toggleDarkMode()">
-            Dark Mode
-        </mat-slide-toggle>
+  <app-language-selector></app-language-selector>
+
+  <div class="settings-rows">
+
+    <div class="settings-row">
+      <span class="settings-label">Dark Mode</span>
+      <mat-slide-toggle [(ngModel)]="isDarkMode" (change)="toggleDarkMode()"></mat-slide-toggle>
     </div>
+
+    <div class="settings-row">
+      <span class="settings-label">Sprites</span>
+      <div class="seg-ctrl">
+        <button class="seg-btn" [class.active]="spriteStyle === 'sugimori'" (click)="setSpriteStyle('sugimori')">Sugimori</button>
+        <button class="seg-btn" [class.active]="spriteStyle === 'home'" (click)="setSpriteStyle('home')">HOME</button>
+        <button class="seg-btn" [class.active]="spriteStyle === 'pixel'" (click)="setSpriteStyle('pixel')">Pixel</button>
+      </div>
+    </div>
+
+  </div>
 </div>

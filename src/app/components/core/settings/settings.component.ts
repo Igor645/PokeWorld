@@ -26,6 +26,7 @@ import { SettingsService } from '../../../services/settings.service';
 })
 export class SettingsComponent implements OnInit {
   isDarkMode = false;
+  spriteStyle: 'sugimori' | 'home' | 'pixel' = 'sugimori';
 
   constructor(
     private settingsService: SettingsService,
@@ -35,6 +36,7 @@ export class SettingsComponent implements OnInit {
 
   ngOnInit() {
     this.isDarkMode = this.settingsService.getSetting<boolean>('darkMode') ?? false;
+    this.spriteStyle = (this.settingsService.getSetting<string>('spriteStyle') as any) || 'sugimori';
 
     if (isPlatformBrowser(this.platformId)) {
       this.applyTheme(this.isDarkMode);
@@ -44,6 +46,11 @@ export class SettingsComponent implements OnInit {
   toggleDarkMode() {
     this.settingsService.setSetting('darkMode', this.isDarkMode);
     document.documentElement.classList.toggle('dark-theme', this.isDarkMode);
+  }
+
+  setSpriteStyle(style: 'sugimori' | 'home' | 'pixel') {
+    this.spriteStyle = style;
+    this.settingsService.setSetting('spriteStyle', style);
   }
 
   private applyTheme(enabled: boolean): void {

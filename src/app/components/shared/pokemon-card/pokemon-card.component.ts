@@ -46,6 +46,7 @@ export class PokemonCardComponent implements OnInit, OnDestroy, AfterViewInit {
   eggGone = false;
   eggSwooping = false;
   private languageSubscription!: Subscription;
+  private spriteSubscription!: Subscription;
 
   get regionLabel(): string | null {
     if (!this.showRegion || !this.pokemon || this.pokemon.is_default) return null;
@@ -74,12 +75,20 @@ export class PokemonCardComponent implements OnInit, OnDestroy, AfterViewInit {
         this.updateViewModel();
         this.cdr.detectChanges();
       });
+
+    this.spriteSubscription = this.settingsService
+      .watchSetting<string>('spriteStyle')
+      .subscribe(() => {
+        this.updateViewModel();
+        this.cdr.detectChanges();
+      });
   }
 
   ngAfterViewInit(): void { }
 
   ngOnDestroy(): void {
     this.languageSubscription.unsubscribe();
+    this.spriteSubscription?.unsubscribe();
   }
 
   private updateViewModel(): void {

@@ -24,9 +24,7 @@ export class MainLayoutComponent {
     {
       type: 'group', label: 'Games', icon: 'videogame_asset',
       children: [
-        { label: 'Memory Match', route: '/games/memory' },
-        { label: 'Trivia', route: '/games/trivia' },
-        { label: 'Battle Sim', route: '/games/battle' },
+        { label: 'Name \'em All', route: '/quiz', icon: 'quiz' },
       ]
     },
   ];

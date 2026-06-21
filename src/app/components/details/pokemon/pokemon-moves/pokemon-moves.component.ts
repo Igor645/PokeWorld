@@ -120,7 +120,7 @@ export class PokemonMovesComponent implements OnInit, OnChanges, OnDestroy {
     this.selectedVgId = id;
     this.setMethodOptionsForVg(id);
     this.loadMovesForSelection();
-    this.cdr.markForCheck();
+    this.cdr.detectChanges();
   }
 
   onMethodChange(idStr: string): void {
@@ -128,7 +128,7 @@ export class PokemonMovesComponent implements OnInit, OnChanges, OnDestroy {
     this.selectedMethodId = id;
     this.selectedMethodId$.next(id);
     this.loadMovesForSelection();
-    this.cdr.markForCheck();
+    this.cdr.detectChanges();
   }
 
   onRowClick(r: Row): void {
@@ -142,7 +142,7 @@ export class PokemonMovesComponent implements OnInit, OnChanges, OnDestroy {
     }
     this.isLoadingOptions = true;
     this.allRows$.next([]);
-    this.cdr.markForCheck();
+    this.cdr.detectChanges();
 
     this.pokemonService.getPokemonMoveOptions(pokemonId).pipe(takeUntil(this.destroy$)).subscribe({
       next: (options) => {
@@ -150,13 +150,13 @@ export class PokemonMovesComponent implements OnInit, OnChanges, OnDestroy {
         this.processOptions(options);
         this.isLoadingOptions = false;
         this.loadMovesForSelection();
-        this.cdr.markForCheck();
+        this.cdr.detectChanges();
       },
       error: () => {
         if (pokemonId !== this.pokemonId) return;
         this.clearAll();
         this.isLoadingOptions = false;
-        this.cdr.markForCheck();
+        this.cdr.detectChanges();
       }
     });
   }
@@ -166,7 +166,7 @@ export class PokemonMovesComponent implements OnInit, OnChanges, OnDestroy {
     if (!pokemonId || !selectedVgId || !selectedMethodId) return;
 
     this.isLoadingMoves = true;
-    this.cdr.markForCheck();
+    this.cdr.detectChanges();
 
     this.pokemonService.getPokemonMovesByFilter(pokemonId, selectedVgId, selectedMethodId)
       .pipe(takeUntil(this.destroy$))
@@ -175,13 +175,13 @@ export class PokemonMovesComponent implements OnInit, OnChanges, OnDestroy {
           if (pokemonId !== this.pokemonId || selectedVgId !== this.selectedVgId || selectedMethodId !== this.selectedMethodId) return;
           this.buildRows(moves);
           this.isLoadingMoves = false;
-          this.cdr.markForCheck();
+          this.cdr.detectChanges();
         },
         error: () => {
           if (pokemonId !== this.pokemonId) return;
           this.allRows$.next([]);
           this.isLoadingMoves = false;
-          this.cdr.markForCheck();
+          this.cdr.detectChanges();
         }
       });
   }
@@ -283,7 +283,7 @@ export class PokemonMovesComponent implements OnInit, OnChanges, OnDestroy {
     this.refreshMachineLabelsForVg(this.selectedVgId, this.allRows);
     this.refreshFlavorTextsForVg(this.selectedVgId, this.allRows);
     this.allRows$.next([...this.allRows]);
-    this.cdr.markForCheck();
+    this.cdr.detectChanges();
   }
 
   private refreshMachineLabelsForVg(vgId: number, rows: Row[]): void {

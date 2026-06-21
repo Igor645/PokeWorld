@@ -226,6 +226,12 @@ export const GraphQLQueries = {
           id name
           generationnames { name language_id language { ...LangFields } }
         }
+        pokemondexnumbers(
+          where: { pokedex_id: { _in: [2, 6, 7, 9, 15, 21, 27, 30, 31, 32] } }
+        ) {
+          pokedex_id
+          pokedex_number
+        }
       }
       pokemonspecies_aggregate { aggregate { count } }
     }
