@@ -148,7 +148,7 @@ const PokemonSpeciesDetailFields = gql`
       }
     }
     generation {
-      name
+      id name
       generationnames { language_id name language { ...LangFields } }
     }
     pokemoncolor {

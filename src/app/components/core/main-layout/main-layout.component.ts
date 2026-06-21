@@ -25,6 +25,7 @@ export class MainLayoutComponent {
       type: 'group', label: 'Games', icon: 'videogame_asset',
       children: [
         { label: 'Name \'em All', route: '/quiz', icon: 'quiz' },
+        { label: 'Pokéle', route: '/pokele', icon: 'help_outline' },
       ]
     },
   ];

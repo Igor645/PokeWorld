@@ -1,0 +1,567 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1.25rem 1rem 3rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* ── Pool row (above card) ───────────────────────────────────────────────── */
+
+.pokele-pool-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 0.75rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  animation: fadeIn 1s ease-in-out;
+  width: 100%;
+  max-width: 680px;
+  background: var(--background-color);
+  border: 1px solid var(--separator-color);
+  border-radius: 10px;
+  padding: 0.55rem 1rem;
+  box-sizing: border-box;
+  box-shadow: 0 2px 8px var(--shadow-color);
+}
+
+.pool-row-label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--accent-text-color);
+  flex-shrink: 0;
+}
+
+.pool-row-pills {
+  display: flex;
+  gap: 0.3rem;
+  flex-wrap: wrap;
+}
+
+.pool-pill {
+  padding: 0.22rem 0.6rem;
+  border: 1px solid var(--separator-color);
+  border-radius: 5px;
+  background: transparent;
+  color: var(--accent-text-color);
+  font-size: 0.7rem;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s, border-color 0.12s;
+}
+
+.pool-pill.active {
+  background: var(--primary-color);
+  color: var(--adjusted-white);
+  border-color: var(--primary-color);
+}
+
+.pool-pill:not(.active):hover {
+  background: var(--interactive-bg-color);
+  color: var(--text-color);
+}
+
+/* ── Main card ───────────────────────────────────────────────────────────── */
+
+.pokele-card {
+  width: 100%;
+  max-width: 680px;
+  background: var(--background-color);
+  border: 1px solid var(--separator-color);
+  border-radius: 16px;
+  box-shadow: 0 4px 24px var(--shadow-color);
+  animation: fadeIn 1s ease-in-out;
+}
+
+.card-divider {
+  height: 1px;
+  background: var(--separator-color);
+}
+
+/* ── Card header ─────────────────────────────────────────────────────────── */
+
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.25rem;
+  gap: 1rem;
+}
+
+.card-title-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 0.05rem;
+}
+
+.card-title {
+  font-size: 1.35rem;
+  font-weight: 900;
+  color: var(--primary-color);
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+
+.card-subtitle {
+  font-size: 0.7rem;
+  color: var(--accent-text-color);
+}
+
+.lives-row {
+  display: flex;
+  gap: 0.4rem;
+  align-items: center;
+}
+
+.life-pip {
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: var(--primary-color);
+  flex-shrink: 0;
+  transition: background 0.25s, opacity 0.25s;
+}
+
+.life-pip.used {
+  background: var(--separator-color);
+  opacity: 0.35;
+}
+
+.life-pip.just-used {
+  animation: pipLose 0.35s ease;
+}
+
+@keyframes pipLose {
+  0%,100% { transform: scale(1); }
+  50%      { transform: scale(1.5); background: #e53935; }
+}
+
+/* ── Loading ─────────────────────────────────────────────────────────────── */
+
+.card-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 280px;
+}
+
+/* ── Pokémon display area ────────────────────────────────────────────────── */
+
+.pokemon-display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1.5rem 1rem 1rem;
+  gap: 0.6rem;
+  background: color-mix(in srgb, var(--interactive-bg-color) 50%, transparent);
+}
+
+.pokemon-mystery {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  background: var(--interactive-bg-color);
+  border: 3px dashed var(--separator-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mystery-icon {
+  font-size: 4.5rem;
+  width: 4.5rem;
+  height: 4.5rem;
+  color: var(--accent-text-color);
+  opacity: 0.2;
+}
+
+.pokemon-img {
+  width: 220px;
+  height: 220px;
+  object-fit: contain;
+}
+
+.pokemon-sil {
+  filter: brightness(0);
+}
+
+.reveal-pop {
+  animation: revealPop 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@keyframes revealPop {
+  from { transform: scale(0.5); opacity: 0; }
+  to   { transform: scale(1);   opacity: 1; }
+}
+
+.pokemon-name-display {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-color);
+  letter-spacing: 0.03em;
+}
+
+/* ── Result banner ───────────────────────────────────────────────────────── */
+
+.result-banner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  padding: 0.65rem 1rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-align: center;
+  flex-wrap: wrap;
+  animation: fadeIn 0.3s ease;
+}
+
+.result-win  { background: color-mix(in srgb, #4CAF50 14%, transparent); color: #2E7D32; }
+.result-lose { background: color-mix(in srgb, #F44336 12%, transparent); color: #C62828; }
+
+/* ── Hints area ──────────────────────────────────────────────────────────── */
+
+.hints-area {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  padding: 1rem 1.25rem;
+  align-items: flex-start;
+  justify-content: center;
+  min-height: 40px;
+}
+
+.no-hints-note {
+  font-size: 0.75rem;
+  color: var(--accent-text-color);
+  opacity: 0.5;
+  font-style: italic;
+  text-align: center;
+  width: 100%;
+  margin: 0;
+  padding: 0.5rem 0;
+}
+
+/* Shared hint chip */
+.hint-chip {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+  background: var(--interactive-bg-color);
+  border: 1px solid var(--separator-color);
+  border-radius: 10px;
+  padding: 0.6rem 0.8rem;
+  animation: chipIn 0.3s cubic-bezier(0.22, 1, 0.36, 1) both;
+  min-width: 80px;
+}
+
+@keyframes chipIn {
+  from { opacity: 0; transform: translateY(10px) scale(0.92); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.hint-chip-label {
+  font-size: 0.58rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--accent-text-color);
+  white-space: nowrap;
+}
+
+.hint-chip-loading {
+  font-size: 0.8rem;
+  color: var(--accent-text-color);
+  opacity: 0.45;
+  padding: 0.3rem 0;
+}
+
+/* Generation chip */
+.hint-gen-chip {
+  border-top: 3px solid var(--gen-c, var(--primary-color));
+  min-width: 100px;
+}
+
+.hint-gen-roman {
+  font-size: 1.75rem;
+  font-weight: 900;
+  color: var(--gen-c, var(--primary-color));
+  line-height: 1;
+}
+
+.hint-gen-region {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--accent-text-color);
+}
+
+/* Types chip */
+.hint-types-chip { min-width: 90px; }
+
+.hint-types-row {
+  display: flex;
+  gap: 0.3rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+/* Evolution stage chip (abstract dots) */
+.hint-evo-chip { min-width: 100px; }
+
+.evo-dots {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.evo-dot {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--separator-color);
+  border: 2px solid color-mix(in srgb, var(--separator-color) 60%, transparent);
+}
+
+.evo-dot.evo-dot-me {
+  background: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+.evo-dot-sep {
+  font-size: 0.7rem;
+  color: var(--accent-text-color);
+  opacity: 0.4;
+}
+
+.evo-stage-label {
+  font-size: 0.72rem;
+  color: var(--accent-text-color);
+  font-weight: 600;
+}
+
+/* Size chip (hint 1) */
+.hint-size-chip { min-width: 140px; }
+
+.size-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.size-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.1rem;
+}
+
+.size-icon {
+  font-size: 1rem;
+  width: 1rem;
+  height: 1rem;
+  color: var(--accent-text-color);
+  opacity: 0.55;
+}
+
+.size-val {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--text-color);
+  white-space: nowrap;
+}
+
+.size-sep {
+  width: 1px;
+  height: 30px;
+  background: var(--separator-color);
+  flex-shrink: 0;
+}
+
+/* Stats chip (hint 5) */
+.hint-stats-chip {
+  min-width: 260px;
+  max-width: 360px;
+  align-items: stretch;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.5rem 0.75rem;
+  width: 100%;
+}
+
+.stat-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.stat-name {
+  font-size: 0.58rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--accent-text-color);
+}
+
+.stat-val {
+  font-size: 0.9rem;
+  font-weight: 800;
+  color: var(--text-color);
+  line-height: 1;
+}
+
+.stat-bar {
+  height: 4px;
+  background: var(--separator-color);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.stat-bar-fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 0.5s ease;
+}
+
+.stat-bar-low  { background: #F44336; }
+.stat-bar-mid  { background: #F5C400; }
+.stat-bar-high { background: #4CAF50; }
+
+/* ── Card bottom: input + guesses ────────────────────────────────────────── */
+
+.card-bottom {
+  padding: 1rem 1.25rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+/* New game button */
+.new-game-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.55rem 1.4rem;
+  border-radius: 8px;
+  border: 2px solid var(--primary-color);
+  background: transparent;
+  color: var(--primary-color);
+  font-size: 0.88rem;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.new-game-btn:hover {
+  background: var(--primary-color);
+  color: var(--adjusted-white);
+}
+
+/* Input */
+.input-wrap {
+  position: relative;
+  width: 100%;
+  max-width: 500px;
+}
+
+.pokele-input {
+  width: 100%;
+  padding: 0.65rem 1rem;
+  border: 1.5px solid var(--separator-color);
+  border-radius: 8px;
+  background: var(--interactive-bg-color);
+  color: var(--text-color);
+  font-size: 0.9rem;
+  font-family: inherit;
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color 0.15s;
+}
+
+.pokele-input:focus { border-color: var(--primary-color); }
+
+/* Autocomplete */
+.suggestions-drop {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0; right: 0;
+  background: var(--background-color);
+  border: 1px solid var(--separator-color);
+  border-radius: 8px;
+  box-shadow: 0 8px 24px var(--shadow-color);
+  z-index: 100;
+  overflow: hidden;
+}
+
+.sug-item {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  width: 100%;
+  padding: 0.4rem 0.85rem;
+  border: none;
+  background: transparent;
+  color: var(--text-color);
+  font-size: 0.85rem;
+  font-family: inherit;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.1s;
+}
+
+.sug-item:hover { background: var(--interactive-bg-color); }
+
+.sug-spr {
+  width: 34px;
+  height: 34px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+/* Guess history */
+.guesses-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  width: 100%;
+  max-width: 500px;
+}
+
+.guess-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.85rem;
+  border-radius: 7px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  animation: fadeIn 0.2s ease;
+}
+
+.g-win  { background: color-mix(in srgb, #4CAF50 12%, transparent); color: #2E7D32; }
+.g-miss { background: color-mix(in srgb, #F44336 10%, transparent); color: #C62828; }
+
+.g-icon {
+  font-size: 1rem;
+  width: 1rem;
+  height: 1rem;
+}
+
+/* ── Responsive ───────────────────────────────────────────────────────────── */
+
+@media (max-width: 600px) {
+  :host { padding: 0.75rem 0.5rem 2rem; }
+  .pokele-card { border-radius: 12px; }
+  .pokemon-img, .pokemon-mystery { width: 160px; height: 160px; }
+  .mystery-icon { font-size: 3.5rem; width: 3.5rem; height: 3.5rem; }
+}
