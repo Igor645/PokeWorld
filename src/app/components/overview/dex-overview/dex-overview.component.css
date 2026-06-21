@@ -597,6 +597,7 @@ app-pokeworld-search,
     padding-bottom: 0.5rem;
     scrollbar-width: thin;
     scrollbar-color: var(--primary-color) transparent;
+    overflow-y: visible;
 }
 
 .recent-card-wrap {

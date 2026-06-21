@@ -151,23 +151,13 @@
     backdrop-filter: blur(0.3em);
 }
 
-/*
- * While the pop-in animation is running, suppress all hover effects so the
- * card doesn't abruptly snap to hover state mid-animation.
- * .popping is set via @HostBinding for the 700ms duration of the image animation.
- */
-:host(.popping):hover,
-:host(.popping):focus-visible {
-    transform: perspective(75em) rotateX(0) rotateY(0);
-    box-shadow: 0 0.3em 0.6em var(--shadow-color), 0 0.45em 1.5em var(--shadow-color);
-    transition: none;
-}
-
-:host(.popping):hover::before,
-:host(.popping):focus-visible::before {
-    transform: rotate(25deg) translateX(-100%);
-    opacity: var(--card-sheen-opacity);
-    transition: none;
+/* Base state: explicit values for clean transition start.
+   `scale` is a separate CSS property (Transforms L2) — transitions independently
+   from `transform`, so the floatUpDown animation on `transform` can't kill it. */
+.pokemonCard__image:not(.shaking_egg):not(.initial-load) {
+    scale: 1;
+    transform: translateY(0);
+    transition: scale 0.3s ease;
 }
 
 .pokemonCard__image.pop-in {
@@ -213,23 +203,17 @@
 }
 
 :host:hover .pokemonCard__image:not(.shaking_egg):not(.initial-load) {
-    transform: translateY(0.375em) scale(1.1);
-    transition: transform 0.5s ease;
+    scale: 1.1;
+    /* float starts after scale-up completes — delay matches the scale transition */
     animation: floatUpDown 3s ease-in-out infinite;
-    animation-delay: 0.5s;
+    animation-delay: 0.3s;
     z-index: 999;
 }
 
 @keyframes floatUpDown {
-
-    0%,
-    100% {
-        transform: translateY(0.375em) scale(1.1);
-    }
-
-    50% {
-        transform: translateY(-0.375em) scale(1.1);
-    }
+    /* no scale here — scale is handled separately so transition can animate it */
+    0%, 100% { transform: translateY(0); }
+    50%       { transform: translateY(-0.75em); }
 }
 
 @keyframes shake {

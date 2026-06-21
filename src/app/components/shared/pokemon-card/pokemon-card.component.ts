@@ -8,7 +8,6 @@ import {
   OnDestroy,
   ChangeDetectorRef,
   ChangeDetectionStrategy,
-  HostBinding,
   Optional,
   Self
 } from '@angular/core';
@@ -46,7 +45,6 @@ export class PokemonCardComponent implements OnInit, OnDestroy, AfterViewInit {
   imageLoaded = false;
   eggGone = false;
   eggSwooping = false;
-  @HostBinding('class.popping') isPopping = false;
   private languageSubscription!: Subscription;
 
   get regionLabel(): string | null {
@@ -99,13 +97,11 @@ export class PokemonCardComponent implements OnInit, OnDestroy, AfterViewInit {
 
   onImageLoad(): void {
     this.imageLoaded = true;
-    this.isPopping = true;
     this.eggSwooping = true;
     this.cdr.detectChanges();
+    // 600ms pop-in animation + 100ms buffer before hover float is allowed
     setTimeout(() => {
       this.pokemonImage.nativeElement.classList.remove('initial-load');
-      this.isPopping = false;
-      this.cdr.detectChanges();
     }, 700);
   }
 
