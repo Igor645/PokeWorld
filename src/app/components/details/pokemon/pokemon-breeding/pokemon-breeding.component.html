@@ -1,16 +1,25 @@
 <app-expandable-section title="Breeding" [(expanded)]="isExpanded">
 
     <!-- Gender Distribution -->
-    <div class="breeding-row">
+    <div class="breeding-row gender-row">
         <span class="label">Gender Distribution</span>
         <ng-container *ngIf="pokemonSpecies && !getGenderDisplay().genderless; else genderlessBlock">
-            <span class="breeding-gender-icons">
-                {{ getGenderDisplay().male }}%
-                <img class="male-icon" src="/images/male.png" alt="Male" />
-                /
-                {{ getGenderDisplay().female }}%
-                <img class="female-icon" src="/images/female.png" alt="Female" />
-            </span>
+            <div class="gender-bar-wrap">
+                <div class="gender-bar">
+                    <div class="gender-bar__male"  [style.width.%]="getGenderDisplay().male"></div>
+                    <div class="gender-bar__female" [style.width.%]="getGenderDisplay().female"></div>
+                </div>
+                <div class="gender-bar-labels">
+                    <span class="gender-label gender-label--male">
+                        <img src="/images/male.png" alt="Male" class="gender-icon" />
+                        {{ getGenderDisplay().male }}%
+                    </span>
+                    <span class="gender-label gender-label--female">
+                        {{ getGenderDisplay().female }}%
+                        <img src="/images/female.png" alt="Female" class="gender-icon" />
+                    </span>
+                </div>
+            </div>
         </ng-container>
         <ng-template #genderlessBlock>
             <span>Genderless</span>

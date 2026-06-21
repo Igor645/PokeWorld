@@ -116,6 +116,8 @@ app-pokeworld-search {
 /* ── Categorical filter bar (gen + form) ─────────────────────── */
 
 .filters-bar {
+    width: var(--general-width);
+    box-sizing: border-box;
     display: flex;
     flex-direction: column;
     gap: 0.4rem;
@@ -392,6 +394,7 @@ app-pokeworld-search,
     margin: 0.6rem 0;
     -webkit-mask-image: linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%);
     mask-image: linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%);
+    width: 100vw;
 }
 
 /* Explicit height required — track is position:absolute (out of flow) */
@@ -466,7 +469,8 @@ app-pokeworld-search,
 .gen-tiles-scroll {
     display: flex;
     gap: 0.65rem;
-    padding-bottom: 0.4rem;
+    padding-bottom: 0.5rem;
+    overflow-x: auto;
     scrollbar-width: thin;
     scrollbar-color: var(--primary-color) transparent;
     justify-content: center;
@@ -601,29 +605,145 @@ app-pokeworld-search,
 
 /* -------- Responsive adjustments -------- */
 
-@media (max-width: 480px) {
+/* ── Tablet landscape (≤ 1024px) ──────────────────────────────── */
+@media (max-width: 1024px) {
     .dexTitle {
-        font-size: 3rem;
+        font-size: 5rem;
+    }
+
+    app-pokeworld-search {
+        width: 65%;
+    }
+
+    .gen-tiles-scroll {
+        justify-content: flex-start;
+    }
+}
+
+/* ── Tablet portrait (≤ 768px) ────────────────────────────────── */
+@media (max-width: 768px) {
+    .dexTitle {
+        font-size: clamp(2rem, 6vw, 3.5rem);
+    }
+
+    app-pokeworld-search {
+        width: 85%;
+        height: 40px;
     }
 
     .pokemonCount {
         font-size: 1rem;
-        padding: 0.5rem;
+        padding: 0.5rem 0.75rem;
     }
 
-    .dex-subheader {
+    .filters-bar {
+        padding: 0.4rem 0.6rem;
+    }
+
+    /* Pills wrap on tablet */
+    .filter-pills {
+        flex-wrap: wrap;
+        overflow-x: visible;
+    }
+
+    /* 3-column grid on tablet — no horizontal scroll needed */
+    .gen-tiles-scroll {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        overflow-x: visible;
+        justify-content: initial;
+    }
+
+    .gen-tile {
+        flex: none;
+        width: 100%;
+        padding: 0.4rem 0.3rem;
+    }
+
+    .gen-tile-roman {
+        font-size: 1rem;
+    }
+
+    .gen-tile-region {
+        font-size: 0.52rem;
+    }
+
+    .gen-tile-sprite {
+        width: 44px;
+        height: 44px;
+    }
+
+    .gen-tile-count {
+        font-size: 0.52rem;
+    }
+
+    .gen-tile-games {
+        display: none;
+    }
+
+    .recent-card-wrap {
+        flex: 0 0 100px;
+    }
+
+    .marquee-sprite {
+        width: 56px;
+        height: 56px;
+    }
+
+    .marquee-row {
+        height: 64px;
+    }
+}
+
+/* ── Mobile (≤ 480px) ─────────────────────────────────────────── */
+@media (max-width: 480px) {
+    .dexTitle {
+        font-size: clamp(1.6rem, 8vw, 2.5rem);
+    }
+
+    .dexSearch-container {
+        padding: 0.75rem;
+        margin: 1vh auto;
+    }
+
+    app-pokeworld-search {
+        width: 92%;
+        height: 36px;
+    }
+
+    /* wrap so stats don't overflow the header container on narrow screens */
+    .header-stats {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 0.3rem 0.5rem;
+        font-size: 0.66rem;
+    }
+
+    /* Stack count above the filter bar, both full width */
+    .dex-filter-row {
         flex-direction: column;
-        align-items: flex-start;
+        align-items: stretch;
+        gap: 0.4rem;
+    }
+
+    /* fit-content in base style beats align-items:stretch — must override */
+    .pokemonCount {
+        font-size: 0.9rem;
+        padding: 0.4rem 0.6rem;
+        width: 100%;
+        box-sizing: border-box;
+        text-align: center;
     }
 
     .filters-bar {
         width: 100%;
-        padding: 0.4rem 0.6rem;
+        padding: 0.3rem 0.5rem;
     }
 
-    app-pokeworld-search {
-        width: 80%;
-        height: 40px;
+    /* Pills wrap to multiple lines instead of scrolling horizontally */
+    .filter-pills {
+        flex-wrap: wrap;
+        overflow-x: visible;
     }
 
     .row {
@@ -638,35 +758,49 @@ app-pokeworld-search,
         display: none;
     }
 
-    .gen-tiles-container,
-    .recent-viewed {
-        width: 95%;
+    /* Tighter gen tiles on small phones */
+    .gen-tile {
+        padding: 0.3rem 0.2rem;
+        gap: 2px;
     }
 
-    .gen-tile {
-        flex: 0 0 120px;
+    .gen-tile-roman {
+        font-size: 0.85rem;
+    }
+
+    .gen-tile-region {
+        display: none;
+    }
+
+    .gen-tile-sprite {
+        width: 34px;
+        height: 34px;
+    }
+
+    .gen-tile-count {
+        font-size: 0.46rem;
+    }
+
+    /* Smaller recently-viewed cards */
+    .recent-card-wrap {
+        flex: 0 0 85px;
     }
 
     .marquee-sprite {
-        width: 60px;
-        height: 60px;
+        width: 44px;
+        height: 44px;
+    }
+
+    .marquee-row {
+        height: 52px;
+    }
+
+    .showcase-marquee {
+        margin: 0.4rem 0;
     }
 }
 
 @media (min-width: 481px) and (max-width: 768px) {
-    .dexTitle {
-        font-size: 5rem;
-    }
-
-    .pokemonCount {
-        font-size: 1rem;
-    }
-
-    app-pokeworld-search {
-        width: 50%;
-        height: 40px;
-    }
-
     .row {
         margin-block: 0 1rem;
     }
@@ -677,19 +811,6 @@ app-pokeworld-search,
 }
 
 @media (min-width: 769px) and (max-width: 1024px) {
-    .dexTitle {
-        font-size: 6rem;
-    }
-
-    .pokemonCount {
-        font-size: 1rem;
-    }
-
-    app-pokeworld-search {
-        width: 40%;
-        height: 40px;
-    }
-
     .row {
         margin-block: 0 1.25rem;
     }
@@ -700,19 +821,6 @@ app-pokeworld-search,
 }
 
 @media (min-width: 1024px) and (max-width: 1280px) {
-    .dexTitle {
-        font-size: 6rem;
-    }
-
-    .pokemonCount {
-        font-size: 1rem;
-    }
-
-    app-pokeworld-search {
-        width: 40%;
-        height: 40px;
-    }
-
     .row {
         margin-block: 0 1.5rem;
     }

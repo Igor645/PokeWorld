@@ -151,6 +151,25 @@
     backdrop-filter: blur(0.3em);
 }
 
+/*
+ * While the pop-in animation is running, suppress all hover effects so the
+ * card doesn't abruptly snap to hover state mid-animation.
+ * .popping is set via @HostBinding for the 700ms duration of the image animation.
+ */
+:host(.popping):hover,
+:host(.popping):focus-visible {
+    transform: perspective(75em) rotateX(0) rotateY(0);
+    box-shadow: 0 0.3em 0.6em var(--shadow-color), 0 0.45em 1.5em var(--shadow-color);
+    transition: none;
+}
+
+:host(.popping):hover::before,
+:host(.popping):focus-visible::before {
+    transform: rotate(25deg) translateX(-100%);
+    opacity: var(--card-sheen-opacity);
+    transition: none;
+}
+
 .pokemonCard__image.pop-in {
     animation: popIn 0.4s ease-out;
 }
@@ -262,8 +281,9 @@
     }
 }
 
+/* cqi = % of card width — proportional at every size, no stepped jumps */
 :host>* {
-    font-size: 0.8rem;
+    font-size: clamp(0.5rem, 10cqi, 1.6rem);
 }
 
 .pokemonCard__typesWrapper {
@@ -328,50 +348,12 @@
     flex: 0 0 var(--type-simple-size);
 }
 
-@container (width < 120px) {
-    :host>* {
-        font-size: 0.7rem;
-    }
+/* ID badge: slightly smaller than the name */
+.pokemonCard__id {
+    font-size: clamp(0.42rem, 7.5cqi, 1.2rem);
 }
 
-@container (120px <=width < 140px) {
-    :host>* {
-        font-size: 0.8rem;
-    }
-}
-
-@container (140px <=width < 200px) {
-    :host>* {
-        font-size: 1rem;
-    }
-}
-
-@container (200px <=width < 240px) {
-    :host>* {
-        font-size: 1.2rem;
-    }
-}
-
-@container (240px <=width < 280px) {
-    :host>* {
-        font-size: 1.3rem;
-    }
-}
-
-@container (280px <=width < 320px) {
-    :host>* {
-        font-size: 1.4rem;
-    }
-}
-
-@container (320px <=width < 380px) {
-    :host>* {
-        font-size: 1.5rem;
-    }
-}
-
-@container (width >=380px) {
-    :host>* {
-        font-size: 1.6rem;
-    }
+/* Generation text: proportionally smaller than the pokemon name */
+.pokemonCard__text.pokemonCard__generation {
+    font-size: 0.8em;
 }

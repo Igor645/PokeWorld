@@ -1,4 +1,4 @@
-import { Component, HostBinding, Input, OnChanges } from '@angular/core';
+import { AfterViewChecked, Component, ElementRef, HostBinding, Input, OnChanges, QueryList, ViewChildren } from '@angular/core';
 import { EvolutionCondition, EvolutionConditionDisplayComponent } from './evolution-condition-display/evolution-condition-display.component';
 
 import { CommonModule } from '@angular/common';
@@ -39,13 +39,16 @@ export interface EvoGroup {
   templateUrl: './pokemon-evolutions.component.html',
   styleUrl: './pokemon-evolutions.component.css'
 })
-export class PokemonEvolutionsComponent implements OnChanges {
+export class PokemonEvolutionsComponent implements OnChanges, AfterViewChecked {
   @Input() evolutionChain: EvolutionChain | undefined = undefined;
   @Input() pokemonEvolutions: PokemonEvolution[] = [];
 
   evolutionPaths: EvolutionEntry[][] = [];
   evoGroups: EvoGroup[] = [];
   isExpanded = true;
+
+  @ViewChildren('evoChain') evoChainRefs!: QueryList<ElementRef<HTMLElement>>;
+  private needsCenterScroll = false;
 
   @HostBinding('class.expanded')
   get hostExpanded() { return this.isExpanded; }
@@ -56,7 +59,17 @@ export class PokemonEvolutionsComponent implements OnChanges {
     if (this.evolutionChain) {
       this.evolutionPaths = this.buildFullEvolutionPaths();
       this.evoGroups = this.buildEvoGroups();
+      this.needsCenterScroll = true;
     }
+  }
+
+  ngAfterViewChecked(): void {
+    if (!this.needsCenterScroll || !this.evoChainRefs) return;
+    this.needsCenterScroll = false;
+    this.evoChainRefs.forEach(ref => {
+      const el = ref.nativeElement;
+      el.scrollLeft = (el.scrollWidth - el.clientWidth) / 2;
+    });
   }
 
   toggleExpanded(): void {
@@ -153,6 +166,39 @@ export class PokemonEvolutionsComponent implements OnChanges {
           : undefined;
       }
       baseSpeciesPaths.push(path);
+    }
+
+    // Some non-leaf species are dead-ends for their DEFAULT form even though a
+    // REGIONAL form can evolve further (e.g. regular Linoone never evolves, but
+    // Galarian Linoone → Obstagoon). Detect them: if every full path that passes
+    // through the species is inferred as regional, add a sub-path ending there
+    // so the default-form branch is shown alongside the regional chain.
+    for (const [, species] of speciesMap) {
+      const hasChildren = Array.from(speciesMap.values()).some(
+        s => s.evolves_from_species_id === species.id
+      );
+      if (!hasChildren) continue;
+
+      const subPath: PokemonSpecies[] = [];
+      let cur: PokemonSpecies | undefined = species;
+      while (cur) {
+        subPath.unshift(cur);
+        cur = cur.evolves_from_species_id
+          ? speciesMap.get(cur.evolves_from_species_id)
+          : undefined;
+      }
+
+      const pathsThroughHere = baseSpeciesPaths.filter(
+        p => p.some(s => s.id === species.id) && p[p.length - 1].id !== species.id
+      );
+      if (pathsThroughHere.length === 0) continue;
+
+      const allRegional = pathsThroughHere.every(
+        p => this.inferRegionForPath(p) !== null
+      );
+      if (allRegional) {
+        baseSpeciesPaths.push(subPath);
+      }
     }
 
     const result: EvolutionEntry[][] = [];

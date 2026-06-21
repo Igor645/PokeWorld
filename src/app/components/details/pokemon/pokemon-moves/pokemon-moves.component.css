@@ -4,10 +4,6 @@
     min-width: 0;
 }
 
-:host ::ng-deep .thead * {
-    color: var(--adjusted-white) !important;
-}
-
 .moves-toolbar {
     display: flex;
     align-items: center;
@@ -30,191 +26,144 @@
     overflow: hidden;
 }
 
-/* horizontal scroll wrapper */
+/*
+ * Single scroll container for both axes.
+ * <tr> backgrounds in the real <table> extend to the full table width
+ * regardless of the scrollbar — no gap appears between alternating rows
+ * and the scrollbar track, because the scrollbar lives here, outside the table.
+ */
 .moves-scroll {
     display: block;
     width: 100%;
-    overflow-x: auto;
-    overflow-y: hidden;
+    overflow: auto;
+    max-height: 66vh;
     -webkit-overflow-scrolling: touch;
     background-color: var(--background-color);
+    scrollbar-width: thin;
+    scrollbar-color: var(--scrollbar-thumb-color) var(--background-color);
 }
 
-/* table body now scrolls inside horizontally */
+.moves-scroll::-webkit-scrollbar { height: 6px; width: 6px; }
+.moves-scroll::-webkit-scrollbar-track { background-color: var(--background-color); }
+.moves-scroll::-webkit-scrollbar-thumb { background-color: var(--scrollbar-thumb-color); border-radius: 3px; }
+.moves-scroll::-webkit-scrollbar-corner { background-color: var(--background-color); }
+
+/* TABLE */
 .moves-table {
-    --col-first: 6ch;
-    --col-name: minmax(18ch, 1fr);
-    --col-desc: minmax(30ch, 1.6fr);
-    --col-type: 12ch;
-    --col-class: 12ch;
-    --col-power: 6ch;
-    --col-acc: 6ch;
-    --col-pp: 6ch;
-    --col-prio: 5ch;
-    --col-gen: 13ch;
-    --moves-grid: var(--col-first) var(--col-name) var(--col-desc) var(--col-type) var(--col-class) var(--col-power) var(--col-acc) var(--col-pp) var(--col-prio) var(--col-gen);
-
-    --header-height: 2rem;
-    --footer-height: 10px;
-
-    display: block;
     width: 100%;
     min-width: 980px;
-    max-height: 66vh;
-    overflow-y: auto;
+    border-collapse: separate; /* required — border-collapse: collapse breaks sticky thead in Chrome */
+    border-spacing: 0;
     background-color: var(--background-color);
+    table-layout: auto;
 }
 
-.thead,
-.tbody .row {
-    display: grid;
-    grid-template-columns: var(--moves-grid);
-    align-items: start;
-    padding: 0 0.5rem;
-    column-gap: 0.5rem;
-}
-
-.thead {
+/* Sticky header — sticks to .moves-scroll's viewport */
+thead {
     position: sticky;
     top: 0;
     z-index: 2;
-    min-height: var(--header-height);
-    background: var(--primary-color);
-    color: var(--adjusted-white) !important;
 }
 
-.thead>* {
-    display: flex;
-    align-items: center;
-    padding: 0.5rem 0.35rem;
-    min-height: calc(var(--header-height) - 0.5rem);
-    line-height: 1.15;
-    min-width: 0;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: normal;
-    word-break: break-word;
-    color: var(--adjusted-white) !important;
+thead th {
+    background: var(--primary-color);
+    color: var(--adjusted-white);
     font-weight: 700;
     font-size: 0.95rem;
     text-transform: uppercase;
     letter-spacing: 0.03em;
-}
-
-.tbody {
-    display: block;
-}
-
-.tbody .row {
-    background-color: var(--background-color);
-    border-bottom: 1px solid var(--separator-color);
-    transition: background-color 0.2s ease, transform 0.12s ease, box-shadow 0.12s ease;
-}
-
-.tbody .row>* {
-    display: flex;
-    align-items: flex-start;
     padding: 0.5rem 0.35rem;
-    min-height: 2.25rem;
+    white-space: normal;
+    word-break: break-word;
+    line-height: 1.15;
+    overflow: hidden;
+}
+
+/* Row colours — extend to full table width by nature of <tr> */
+tbody tr {
+    background-color: var(--background-color);
+    transition: background-color 0.2s ease;
+}
+
+tbody tr:nth-child(even) {
+    background-color: var(--interactive-bg-color);
+}
+
+tbody tr:hover {
+    background-color: var(--row-hover-bg);
+    cursor: pointer;
+}
+
+/* Cells */
+tbody td {
+    padding: 0.5rem 0.35rem;
     line-height: 1.2;
-    min-width: 0;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
     color: var(--text-color);
+    border-bottom: 1px solid var(--separator-color);
+    vertical-align: middle;
 }
 
-.tbody .row:nth-child(even) {
-    background-color: var(--interactive-bg-color);
-}
+/* ── Column widths & alignment ───────────────────────────── */
 
-.tbody .row:hover {
-    background-color: var(--row-hover-bg);
-    box-shadow: var(--row-hover-shadow);
-    transform: translateY(-0.5px);
-    cursor: pointer;
-}
-
-.thead :nth-child(1),
-.tbody .row :nth-child(1),
-.thead :nth-child(6),
-.tbody .row :nth-child(6),
-.thead :nth-child(7),
-.tbody .row :nth-child(7),
-.thead :nth-child(8),
-.tbody .row :nth-child(8),
-.thead :nth-child(9),
-.tbody .row :nth-child(9) {
-    justify-content: flex-end;
+.col-first {
+    width: 5ch;
+    min-width: 5ch;
     text-align: right;
+    padding-right: 0.6rem;
 }
 
-.thead :nth-child(2),
-.tbody .row :nth-child(2),
-.thead :nth-child(3),
-.tbody .row :nth-child(3),
-.thead :nth-child(4),
-.tbody .row :nth-child(4),
-.thead :nth-child(5),
-.tbody .row :nth-child(5),
-.thead :nth-child(10),
-.tbody .row :nth-child(10) {
-    justify-content: flex-start;
+.col-name {
+    min-width: 14ch;
     text-align: left;
 }
 
-.tbody .row>*>img,
-.thead>*>img {
-    width: 1.1rem;
-    height: 1.1rem;
-    margin-right: 0.35rem;
-    flex: 0 0 auto;
-}
-
-.name {
-    white-space: nowrap;
-}
-
-.tbody .row .desc {
+.col-desc {
+    min-width: 24ch;
+    text-align: left;
     white-space: normal;
     overflow: visible;
-    display: block;
-    line-height: 1.3;
     text-overflow: clip;
+    line-height: 1.3;
+    vertical-align: top;
+    padding-top: 0.6rem;
 }
 
-.thead .desc {
-    white-space: normal;
+.col-type {
+    min-width: 10ch;
+    text-align: left;
 }
 
-/* responsiveness */
-@media (max-width: 1200px) {
-    .moves-table {
-        --col-name: minmax(16ch, 1fr);
-        --col-desc: minmax(24ch, 1.4fr);
-    }
+.col-class {
+    min-width: 10ch;
+    text-align: left;
 }
 
-@media (max-width: 1080px) {
-    .moves-table {
-        --col-first: 6ch;
-        --col-name: minmax(14ch, 1fr);
-        --col-desc: minmax(20ch, 1.2fr);
-    }
+.col-num {
+    min-width: 5ch;
+    text-align: right;
+    padding-right: 0.5rem;
 }
+
+.col-gen {
+    min-width: 11ch;
+    text-align: left;
+}
+
+/* ── Responsive ──────────────────────────────────────────── */
 
 @media (max-width: 820px) {
     .moves-table {
         min-width: 1080px;
-        /* ensure full horizontal scroll width */
     }
 
-    .thead>*,
-    .tbody .row>* {
+    thead th,
+    tbody td {
         font-size: 0.9rem;
     }
 }
-
 
 .moves-loading-overlay {
     display: flex;
@@ -222,4 +171,12 @@
     justify-content: center;
     min-height: 280px;
     width: 100%;
+}
+
+.no-moves {
+    padding: 1rem;
+    text-align: center;
+    color: var(--accent-text-color);
+    opacity: 0.65;
+    font-size: 0.85rem;
 }

@@ -26,21 +26,56 @@ span {
     border-bottom: 1px solid var(--separator-color);
 }
 
-.breeding-gender-icons {
+/* Gender bar */
+.gender-bar-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    width: 40%;
+}
+
+.gender-bar {
+    display: flex;
+    height: 6px;
+    border-radius: 999px;
+    overflow: hidden;
+    width: 100%;
+}
+
+.gender-bar__male {
+    background: #6ab4f5;
+    height: 100%;
+}
+
+.gender-bar__female {
+    background: #f589b0;
+    height: 100%;
+}
+
+.gender-bar-labels {
+    display: flex;
+    justify-content: space-between;
+}
+
+.gender-label {
     display: flex;
     align-items: center;
-    gap: 8px;
-    justify-content: flex-end;
-    flex-wrap: wrap;
+    gap: 3px;
+    font-size: 0.78rem;
+    white-space: nowrap;
 }
 
-.breeding-gender-icons img {
-    width: 16px;
-    height: 16px;
+.gender-label--male {
+    color: #6ab4f5;
 }
 
-.female-icon {
-    margin: 0 -0.2rem;
+.gender-label--female {
+    color: #f589b0;
+}
+
+.gender-icon {
+    width: 11px;
+    height: 11px;
 }
 
 .breeding-muted {
@@ -137,5 +172,9 @@ span {
 
     .breeding-egg-cycles {
         align-items: flex-start;
+    }
+
+    .gender-bar-wrap {
+        width: 100%;
     }
 }

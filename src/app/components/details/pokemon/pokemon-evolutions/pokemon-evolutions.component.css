@@ -21,7 +21,6 @@ app-expandable-section {
   width: fit-content;
   max-width: 100%;
   margin: 0 auto;
-  overflow-x: auto;
 }
 
 /* ── One chain block ─────────────────────────────────────────── */
@@ -29,13 +28,25 @@ app-expandable-section {
 .evo-chain {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  /* align-items: flex-start anchors the tree at x=0 so the scroll container
+     never pushes content into negative x (which is inaccessible via scrollLeft) */
+  align-items: flex-start;
   justify-content: center;
-  padding: 0 1.75rem;
-  gap: 0;
   border: var(--primary-color) 3px solid;
   padding: 1rem;
   border-radius: 1rem;
+  overflow-x: auto;
+}
+
+/* Inner tree fills at least the chain's visible width so Eevee stays centered
+   above branches, and JS can set scrollLeft to the midpoint to show it on load */
+.evo-chain-tree {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: max-content;
+  min-width: 100%;
 }
 
 .evo-chain--div {
@@ -272,17 +283,18 @@ app-expandable-section {
     width: 100%;
   }
 
-  /* Each chain fills full width; its own align-items: center keeps children centered */
   .evo-chain {
-    padding: 0 0.5rem;
     width: 100%;
-    align-items: center;
+    box-sizing: border-box;
+    scrollbar-width: none;
+  }
+
+  .evo-chain::-webkit-scrollbar {
+    display: none;
   }
 
   /* Separator between alternate chains */
   .evo-chain--div {
-    border-left: none;
-    border-top: 1px solid color-mix(in srgb, var(--primary-color) 25%, transparent);
     padding-top: 1.25rem;
     margin-top: 0.5rem;
     margin-left: 0;

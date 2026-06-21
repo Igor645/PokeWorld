@@ -1,6 +1,6 @@
 :root {
     /* ====== GENERAL LAYOUT ====== */
-    --general-width: min(85%, 1920px);
+    --general-width: min(85vw, 1920px);
 
     /* ====== PRIMARY COLORS ====== */
     --primary-color: #1b6ec2;

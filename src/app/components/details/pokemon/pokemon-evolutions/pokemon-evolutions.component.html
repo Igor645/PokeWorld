@@ -5,8 +5,11 @@
   <div class="evo-chart" *ngIf="!isSingleStage">
 
     <div class="evo-chain"
+         #evoChain
          *ngFor="let group of evoGroups; let groupFirst = first"
          [class.evo-chain--div]="!groupFirst">
+
+      <div class="evo-chain-tree">
 
       <!-- ══ LINEAR: single branch → horizontal left-to-right row ══ -->
       <ng-container *ngIf="group.branches.length === 1">
@@ -136,6 +139,8 @@
         </div>
 
       </ng-container>
+
+      </div><!-- /.evo-chain-tree -->
 
     </div>
 
