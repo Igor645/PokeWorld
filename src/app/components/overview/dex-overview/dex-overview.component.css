@@ -67,12 +67,9 @@ app-pokeworld-search {
     margin-bottom: 1rem;
     line-height: 1;
     -webkit-font-smoothing: antialiased;
-    background: linear-gradient(135deg, var(--primary-color) 0%, #a78bfa 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    filter: drop-shadow(0 0 24px color-mix(in srgb, var(--primary-color) 40%, transparent));
+    color: var(--primary-color);
 }
+
 
 .pokeball {
     filter: drop-shadow(0 0 5px rgba(0, 0, 0, 0.4));

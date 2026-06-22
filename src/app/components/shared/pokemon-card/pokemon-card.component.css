@@ -38,6 +38,7 @@
     z-index: 9999;
 }
 
+
 :host::before {
     content: "";
     position: absolute;

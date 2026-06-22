@@ -1,0 +1,16 @@
+<div class="toast-stack">
+  @for (toast of toasts; track trackById($index, toast)) {
+    <div class="toast" [class]="'toast-' + toast.type">
+      <mat-icon class="toast-icon">{{ icon(toast.type) }}</mat-icon>
+      <div class="toast-body">
+        <span class="toast-title">{{ toast.title }}</span>
+        @if (toast.detail) {
+          <span class="toast-detail">{{ toast.detail }}</span>
+        }
+      </div>
+      <button class="toast-close" (click)="dismiss(toast.id)" aria-label="Dismiss">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+  }
+</div>

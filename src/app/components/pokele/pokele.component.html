@@ -4,7 +4,7 @@
   <div class="pool-row-pills">
     <button class="pool-pill" [class.active]="genFilter === null" (click)="setGenFilter(null)">All</button>
     @for (g of availableGenerations; track g) {
-      <button class="pool-pill" [class.active]="genFilter === g" (click)="setGenFilter(g)">{{ genRomanMap[g] }}</button>
+    <button class="pool-pill" [class.active]="genFilter === g" (click)="setGenFilter(g)">{{ genRomanMap[g] }}</button>
     }
   </div>
 </div>
@@ -20,7 +20,7 @@
     </div>
     <div class="lives-row">
       @for (i of livesArray; track i) {
-        <div class="life-pip" [class.used]="i < wrongCount" [class.just-used]="i === wrongCount - 1 && !solved"></div>
+      <div class="life-pip" [class.used]="i < wrongCount" [class.just-used]="i === wrongCount - 1 && !solved"></div>
       }
     </div>
   </div>
@@ -29,44 +29,44 @@
 
   <!-- Loading -->
   @if (isLoading) {
-    <div class="card-loading">
-      <app-loading-spinner message="Loading Pokédex…" />
-    </div>
+  <div class="card-loading">
+    <app-loading-spinner [inline]="true" message="Loading Pokédex…" />
+  </div>
   } @else {
 
   <!-- Pokémon display -->
   <div class="pokemon-display">
     @if (solved || gameOver) {
-      @if (targetSpriteUrl()) {
-        <img class="pokemon-img reveal-pop" [src]="targetSpriteUrl()" [alt]="targetName()" />
-      }
+    @if (targetSpriteUrl()) {
+    <img class="pokemon-img reveal-pop" [src]="targetSpriteUrl()" [alt]="targetName()" />
+    }
     } @else if (showHint6) {
-      <!-- Hint 6 unlocked: center becomes a silhouette -->
-      @if (targetSpriteUrl()) {
-        <img class="pokemon-img pokemon-sil" [src]="targetSpriteUrl()" alt="???" />
-      }
+    <!-- Hint 6 unlocked: center becomes a silhouette -->
+    @if (targetSpriteUrl()) {
+    <img class="pokemon-img pokemon-sil" [src]="targetSpriteUrl()" alt="???" />
+    }
     } @else {
-      <div class="pokemon-mystery">
-        <mat-icon class="mystery-icon">help_outline</mat-icon>
-      </div>
+    <div class="pokemon-mystery">
+      <mat-icon class="mystery-icon">help_outline</mat-icon>
+    </div>
     }
     <div class="pokemon-name-display">{{ solved || gameOver ? targetName() : '???' }}</div>
   </div>
 
   <!-- Result banner -->
   @if (solved) {
-    <div class="result-banner result-win">
-      <mat-icon>emoji_events</mat-icon>
-      <span>
-        It's <strong>{{ targetName() }}</strong>! —
-        {{ wrongCount === 0 ? 'First try!' : wrongCount + ' wrong guess' + (wrongCount !== 1 ? 'es' : '') }}
-      </span>
-    </div>
+  <div class="result-banner result-win">
+    <mat-icon>emoji_events</mat-icon>
+    <span>
+      It's <strong>{{ targetName() }}</strong>! —
+      {{ wrongCount === 0 ? 'First try!' : wrongCount + ' wrong guess' + (wrongCount !== 1 ? 'es' : '') }}
+    </span>
+  </div>
   } @else if (gameOver) {
-    <div class="result-banner result-lose">
-      <mat-icon>sentiment_very_dissatisfied</mat-icon>
-      <span>It was <strong>{{ targetName() }}</strong></span>
-    </div>
+  <div class="result-banner result-lose">
+    <mat-icon>sentiment_very_dissatisfied</mat-icon>
+    <span>It was <strong>{{ targetName() }}</strong></span>
+  </div>
   }
 
   <div class="card-divider"></div>
@@ -75,97 +75,96 @@
   <div class="hints-area">
 
     @if (!showHint1 && active) {
-      <p class="no-hints-note">Make a wrong guess to start unlocking hints</p>
+    <p class="no-hints-note">Make a wrong guess to start unlocking hints</p>
     }
 
     <!-- Hint 1: Size + Weight — vague physical info, gets you thinking without revealing identity -->
     @if (showHint1) {
-      <div class="hint-chip hint-size-chip">
-        <span class="hint-chip-label">Size &amp; Weight</span>
-        @if (detailsLoading) {
-          <span class="hint-chip-loading">…</span>
-        } @else {
-          <div class="size-row">
-            <div class="size-cell">
-              <mat-icon class="size-icon">height</mat-icon>
-              <span class="size-val">{{ targetHeight() }}</span>
-            </div>
-            <div class="size-sep"></div>
-            <div class="size-cell">
-              <mat-icon class="size-icon">scale</mat-icon>
-              <span class="size-val">{{ targetWeight() }}</span>
-            </div>
-          </div>
-        }
+    <div class="hint-chip hint-size-chip">
+      <span class="hint-chip-label">Size &amp; Weight</span>
+      @if (detailsLoading) {
+      <span class="hint-chip-loading">…</span>
+      } @else {
+      <div class="size-row">
+        <div class="size-cell">
+          <mat-icon class="size-icon">height</mat-icon>
+          <span class="size-val">{{ targetHeight() }}</span>
+        </div>
+        <div class="size-sep"></div>
+        <div class="size-cell">
+          <mat-icon class="size-icon">scale</mat-icon>
+          <span class="size-val">{{ targetWeight() }}</span>
+        </div>
       </div>
+      }
+    </div>
     }
 
     <!-- Hint 2: Evolution stage — structural info, no images, no identity -->
     @if (showHint2) {
-      <div class="hint-chip hint-evo-chip">
-        <span class="hint-chip-label">Evolution</span>
-        @if (detailsLoading) {
-          <span class="hint-chip-loading">…</span>
-        } @else {
-          <div class="evo-dots">
-            @for (i of evoRange(); track i) {
-              @if (i > 0) { <span class="evo-dot-sep">→</span> }
-              <div class="evo-dot" [class.evo-dot-me]="i === evoPosition() - 1"></div>
-            }
-          </div>
-          <span class="evo-stage-label">Stage {{ evoPosition() }} of {{ evoTotal() }}</span>
+    <div class="hint-chip hint-evo-chip">
+      <span class="hint-chip-label">Evolution</span>
+      @if (detailsLoading) {
+      <span class="hint-chip-loading">…</span>
+      } @else {
+      <div class="evo-dots">
+        @for (i of evoRange(); track i) {
+        @if (i > 0) { <span class="evo-dot-sep">→</span> }
+        <div class="evo-dot" [class.evo-dot-me]="i === evoPosition() - 1"></div>
         }
       </div>
+      <span class="evo-stage-label">Stage {{ evoPosition() }} of {{ evoTotal() }}</span>
+      }
+    </div>
     }
 
     <!-- Hint 3: Base stats — power tier + stat spread, rewards Pokémon knowledge -->
     @if (showHint3) {
-      <div class="hint-chip hint-stats-chip">
-        <span class="hint-chip-label">Base stats · BST {{ detailsLoading ? '' : bst() }}</span>
-        @if (detailsLoading || sortedStats().length === 0) {
-          <span class="hint-chip-loading">…</span>
-        } @else {
-          <div class="stats-grid">
-            @for (st of sortedStats(); track st.stat.id) {
-              <div class="stat-cell">
-                <span class="stat-name">{{ statAbbr(st.stat.name) }}</span>
-                <span class="stat-val">{{ st.base_stat }}</span>
-                <div class="stat-bar">
-                  <div class="stat-bar-fill" [style.width.%]="(st.base_stat / 255) * 100"
-                    [class.stat-bar-low]="st.base_stat < 60"
-                    [class.stat-bar-mid]="st.base_stat >= 60 && st.base_stat < 100"
-                    [class.stat-bar-high]="st.base_stat >= 100"></div>
-                </div>
-              </div>
-            }
+    <div class="hint-chip hint-stats-chip">
+      <span class="hint-chip-label">Base stats · BST {{ detailsLoading ? '' : bst() }}</span>
+      @if (detailsLoading || sortedStats().length === 0) {
+      <span class="hint-chip-loading">…</span>
+      } @else {
+      <div class="stats-grid">
+        @for (st of sortedStats(); track st.stat.id) {
+        <div class="stat-cell">
+          <span class="stat-name">{{ statAbbr(st.stat.name) }}</span>
+          <span class="stat-val">{{ st.base_stat }}</span>
+          <div class="stat-bar">
+            <div class="stat-bar-fill" [style.width.%]="(st.base_stat / 255) * 100"
+              [class.stat-bar-low]="st.base_stat < 60" [class.stat-bar-mid]="st.base_stat >= 60 && st.base_stat < 100"
+              [class.stat-bar-high]="st.base_stat >= 100"></div>
           </div>
+        </div>
         }
       </div>
+      }
+    </div>
     }
 
     <!-- Hint 4: Generation — now earned; size+evo+stats gives enough context to use this well -->
     @if (showHint4) {
-      <div class="hint-chip hint-gen-chip" [style.--gen-c]="genAccent()">
-        <span class="hint-chip-label">Generation</span>
-        <span class="hint-gen-roman">{{ genRoman() }}</span>
-        <span class="hint-gen-region">{{ genRegion() }}</span>
-      </div>
+    <div class="hint-chip hint-gen-chip" [style.--gen-c]="genAccent()">
+      <span class="hint-chip-label">Generation</span>
+      <span class="hint-gen-roman">{{ genRoman() }}</span>
+      <span class="hint-gen-region">{{ genRegion() }}</span>
+    </div>
     }
 
     <!-- Hint 5: Types — the sharpest narrowing clue, saved for late game -->
     @if (showHint5) {
-      <div class="hint-chip hint-types-chip">
-        <span class="hint-chip-label">Types</span>
-        @if (detailsLoading || types().length === 0) {
-          <span class="hint-chip-loading">…</span>
-        } @else {
-          <div class="hint-types-row">
-            @for (type of types(); track type.id) {
-              <app-pokemon-type [pokemonType]="type" [navigation]="false" />
-            }
-          </div>
+    <div class="hint-chip hint-types-chip">
+      <span class="hint-chip-label">Types</span>
+      @if (detailsLoading || types().length === 0) {
+      <span class="hint-chip-loading">…</span>
+      } @else {
+      <div class="hint-types-row">
+        @for (type of types(); track type.id) {
+        <app-pokemon-type [pokemonType]="type" [navigation]="false" />
         }
       </div>
+      }
+    </div>
     }
 
     <!-- Hint 6: Silhouette — handled by center image transform, not a card -->
@@ -177,41 +176,37 @@
   <!-- Input / result action -->
   <div class="card-bottom">
     @if (solved || gameOver) {
-      <button class="new-game-btn" (click)="newGame()">
-        <mat-icon>refresh</mat-icon>
-        {{ solved ? 'New game' : 'Try again' }}
-      </button>
+    <button class="new-game-btn" (click)="newGame()">
+      <mat-icon>refresh</mat-icon>
+      {{ solved ? 'New game' : 'Try again' }}
+    </button>
     } @else {
-      <div class="input-wrap">
-        <input #inputEl class="pokele-input" type="text"
-          [(ngModel)]="inputValue"
-          (ngModelChange)="onInput()"
-          (keydown)="onKeydown($event)"
-          (blur)="onBlur()"
-          placeholder="Type a Pokémon name and press Enter…"
-          autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
-        @if (showSuggestions) {
-          <div class="suggestions-drop">
-            @for (sp of suggestions; track sp.id; let i = $index) {
-              <button class="sug-item" [class.sug-active]="i === activeIndex" (mousedown)="selectSuggestion(sp)">
-                <img class="sug-spr" [src]="spriteUrl(sp)" alt="" loading="lazy" />
-                <span>{{ spName(sp) }}</span>
-              </button>
-            }
-          </div>
+    <div class="input-wrap">
+      <input #inputEl class="pokele-input" type="text" [(ngModel)]="inputValue" (ngModelChange)="onInput()"
+        (keydown)="onKeydown($event)" (blur)="onBlur()" placeholder="Type a Pokémon name and press Enter…"
+        autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+      @if (showSuggestions) {
+      <div class="suggestions-drop">
+        @for (sp of suggestions; track sp.id; let i = $index) {
+        <button class="sug-item" [class.sug-active]="i === activeIndex" (mousedown)="selectSuggestion(sp)">
+          <img class="sug-spr" [src]="spriteUrl(sp)" alt="" loading="lazy" />
+          <span>{{ spName(sp) }}</span>
+        </button>
         }
       </div>
+      }
+    </div>
     }
 
     @if (guesses.length) {
-      <div class="guesses-list">
-        @for (g of guesses; track $index) {
-          <div class="guess-row" [class.g-win]="g.correct" [class.g-miss]="!g.correct">
-            <mat-icon class="g-icon">{{ g.correct ? 'check_circle' : 'cancel' }}</mat-icon>
-            <span>{{ g.displayName }}</span>
-          </div>
-        }
+    <div class="guesses-list">
+      @for (g of guesses; track $index) {
+      <div class="guess-row" [class.g-win]="g.correct" [class.g-miss]="!g.correct">
+        <mat-icon class="g-icon">{{ g.correct ? 'check_circle' : 'cancel' }}</mat-icon>
+        <span>{{ g.displayName }}</span>
       </div>
+      }
+    </div>
     }
   </div>
 

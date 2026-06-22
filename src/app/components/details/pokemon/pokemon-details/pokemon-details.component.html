@@ -13,6 +13,24 @@
     </div>
   </div>
 
+  <!-- Master Game Version Selector -->
+  <div class="version-bar-row">
+  <div class="version-bar" [class.version-bar--loading]="!vgOptions.length">
+    <mat-icon class="version-bar-icon">sports_esports</mat-icon>
+    <span class="version-bar-label">Game Version</span>
+    <select class="version-select" [disabled]="!vgOptions.length" (change)="onVersionChange($event)">
+      <option *ngIf="!vgOptions.length" value="">—</option>
+      <ng-container *ngFor="let gen of groupedVersionOptions">
+        <optgroup [label]="gen.generationName">
+          <option *ngFor="let v of gen.versions" [value]="v.versionId" [selected]="v.versionId === selectedVersionId">
+            {{ v.label }}
+          </option>
+        </optgroup>
+      </ng-container>
+    </select>
+  </div>
+  </div>
+
   <!-- Main Content -->
   <div class="pokemon-main-view-container">
     <div class="pokemon-main-view">
@@ -27,7 +45,7 @@
 
         <!-- Pokémon Types -->
         <div class="types-container">
-          <app-pokemon-type *ngFor="let type of selectedPokemon?.pokemontypes" [pokemonType]="type.type"
+          <app-pokemon-type *ngFor="let type of displayedTypes" [pokemonType]="type.type"
             [simpleView]="false">
           </app-pokemon-type>
         </div>
@@ -132,7 +150,7 @@
 
   <div class="pokemon-other-details">
     <app-pokemon-stats class="pokemon-stats" [pokemon]="selectedPokemon" />
-    <app-pokemon-relations class="pokemon-relations" [pokemonTypes]="selectedPokemon?.pokemontypes"
+    <app-pokemon-relations class="pokemon-relations" [pokemonTypes]="displayedTypes"
       [allTypes]="allTypes" />
     <app-pokemon-training class="pokemon-training" [pokemon]="selectedPokemon" [species]="pokemonSpeciesDetails" />
     <app-pokemon-breeding class="pokemon-breeding" [pokemonSpecies]="pokemonSpeciesDetails" />

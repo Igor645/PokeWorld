@@ -105,11 +105,9 @@
   letter-spacing: -0.02em;
   line-height: 1;
   font-family: "Exo 2", serif;
-  background: linear-gradient(135deg, var(--primary-color) 0%, #a78bfa 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: var(--primary-color);
 }
+
 
 .card-subtitle {
   font-size: 0.7rem;

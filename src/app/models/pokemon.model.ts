@@ -4,7 +4,7 @@ import { PokemonForms } from './pokemon-forms.model';
 import { PokemonItem } from './pokemon-item.model';
 import { PokemonSprites } from './sprite.model';
 import { PokemonStat } from './stat.model';
-import { PokemonType } from './pokemon-type.model';
+import { PokemonType, PokemonTypePast } from './pokemon-type.model';
 import { SpriteWrapper } from './sprite-wrapper.model';
 
 export interface Pokemon {
@@ -21,4 +21,5 @@ export interface Pokemon {
   pokemonsprites: SpriteWrapper<PokemonSprites>[];
   pokemonstats: PokemonStat[];
   pokemontypes: PokemonType[];
+  pokemontypepasts?: PokemonTypePast[];
 }

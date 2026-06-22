@@ -5,6 +5,12 @@ export interface PokemonType {
   type: Type;
 }
 
+export interface PokemonTypePast {
+  generation_id: number;
+  slot: number;
+  type: Type;
+}
+
 export interface PokemonTypeResponse {
   type: Type[];
   type_aggregate: { aggregate: Aggregate };

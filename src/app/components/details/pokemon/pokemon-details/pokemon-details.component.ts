@@ -5,6 +5,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { PokemonSpecies, PokemonSpeciesResponse } from '../../../../models/pokemon-species.model';
 
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { EvolutionService } from '../../../../services/evolution.service';
 import { LoadingSpinnerComponent } from '../../../shared/loading-spinner/loading-spinner.component';
 import { MatIcon } from '@angular/material/icon';
@@ -27,7 +28,8 @@ import { SettingsService } from '../../../../services/settings.service';
 import { Sprite } from '../../../../models/sprite.model';
 import { Type } from '../../../../models/type.model';
 import { TypeService } from '../../../../services/type.service';
-import { Version } from '../../../../models/version.model';
+import { IndividualVersion, VgOption, VersionStateService } from '../../../../services/version-state.service';
+import { PokemonType } from '../../../../models/pokemon-type.model';
 import { catchError } from 'rxjs/operators';
 
 interface DetailsVm {
@@ -59,6 +61,7 @@ const EMPTY_VM: DetailsVm = {
   standalone: true,
   imports: [
     CommonModule,
+    FormsModule,
     PokemonBgSvgComponent,
     PokemonNavigatorComponent,
     LoadingSpinnerComponent,
@@ -84,8 +87,10 @@ export class PokemonDetailsComponent implements OnInit {
   isShiny: boolean = false;
   previousPokemonSpecies?: PokemonSpecies;
   nextPokemonSpecies?: PokemonSpecies;
-  versions: Version[] = [];
-  selectedVersion: Version | null = null;
+  vgOptions: VgOption[] = [];
+  selectedVersionId = 0;
+  displayedTypes: PokemonType[] = [];
+  groupedVersionOptions: { generationName: string; generationId: number; versions: IndividualVersion[] }[] = [];
   allTypes: Type[] = [];
   isTypesLoading = true;
   isMainLoading = true;
@@ -109,6 +114,7 @@ export class PokemonDetailsComponent implements OnInit {
     private settingsService: SettingsService,
     private recentlyViewedService: RecentlyViewedService,
     public pokemonUtils: PokemonUtilsService,
+    private versionState: VersionStateService,
   ) { }
 
   ngOnInit() {
@@ -119,6 +125,51 @@ export class PokemonDetailsComponent implements OnInit {
     this.settingsService.watchSetting<string>('spriteStyle')
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.updateSelectedPokemonImage());
+    this.versionState.vgOptions$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(opts => {
+        this.vgOptions = opts;
+        this.groupedVersionOptions = this.buildGroupedVersions(opts);
+      });
+    this.versionState.versionId$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(id => {
+        this.selectedVersionId = id;
+        this.rebuildVm();
+      });
+  }
+
+  private getGenerationIdForVersion(versionId: number): number {
+    for (const vg of this.vgOptions) {
+      const v = vg.versions.find(x => x.versionId === versionId);
+      if (v) return v.generationId;
+    }
+    // Fall back to vgOptions directly if individual versions aren't populated
+    return this.vgOptions.find(vg => vg.versions.some(v => v.versionId === versionId))?.generationId ?? 0;
+  }
+
+  private computeDisplayedTypes(pk: Pokemon | undefined): PokemonType[] {
+    if (!pk) return [];
+    const pastTypes = pk.pokemontypepasts ?? [];
+    if (!pastTypes.length) return pk.pokemontypes ?? [];
+
+    const genId = this.getGenerationIdForVersion(this.selectedVersionId);
+    if (!genId) return pk.pokemontypes ?? [];
+
+    // Sort unique past-type generation IDs ascending
+    const ptGenIds = [...new Set(pastTypes.map(pt => pt.generation_id))].sort((a, b) => a - b);
+
+    // Find the first past-type generation that is >= selectedGenerationId
+    // e.g. Magneton: ptGenIds = [1], genId=1 → use past types (Electric only)
+    //              genId=2 → none match (1 < 2) → use current types (Electric/Steel)
+    const matchGen = ptGenIds.find(g => genId <= g);
+    if (matchGen !== undefined) {
+      return pastTypes
+        .filter(pt => pt.generation_id === matchGen)
+        .sort((a, b) => a.slot - b.slot)
+        .map(pt => ({ type: pt.type }));
+    }
+    return pk.pokemontypes ?? [];
   }
 
   private rebuildVm(): void {
@@ -126,13 +177,15 @@ export class PokemonDetailsComponent implements OnInit {
     const pk = this.selectedPokemon;
     if (!sp) return;
 
+    this.displayedTypes = this.computeDisplayedTypes(pk);
+
     const hasMultiple = (sp.pokemons?.length ?? 0) > 1;
 
     this.vm = {
       speciesName: this.pokemonUtils.getLocalizedNameFromEntity(sp, 'pokemonspeciesnames'),
       status: sp.is_mythical ? 'Mythical' : sp.is_legendary ? 'Legendary' : sp.is_baby ? 'Baby' : '',
       isSpecial: !!(sp.is_legendary || sp.is_mythical || sp.is_baby),
-      dexEntry: this.pokemonUtils.getLocalizedFlavorTextFromEntity(sp, 'pokemonspeciesflavortexts', this.selectedVersion?.id ?? null),
+      dexEntry: this.pokemonUtils.getLocalizedFlavorTextFromEntity(sp, 'pokemonspeciesflavortexts', this.selectedVersionId || null),
       generationName: this.pokemonUtils.getLocalizedNameFromEntity(sp.generation, 'generationnames'),
       formattedHeight: this.formatHeight(pk?.height),
       formattedWeight: this.formatWeight(pk?.weight),
@@ -159,8 +212,26 @@ export class PokemonDetailsComponent implements OnInit {
     return formName === 'Unknown' ? speciesName : formName;
   }
 
+  onVersionChange(event: Event): void {
+    this.versionState.selectVersion(Number((event.target as HTMLSelectElement).value));
+  }
+
+  private buildGroupedVersions(opts: VgOption[]): { generationName: string; generationId: number; versions: IndividualVersion[] }[] {
+    const genMap = new Map<number, { generationName: string; generationId: number; versions: IndividualVersion[] }>();
+    for (const vg of opts) {
+      for (const v of vg.versions) {
+        let gen = genMap.get(v.generationId);
+        if (!gen) genMap.set(v.generationId, gen = { generationName: v.generationName, generationId: v.generationId, versions: [] });
+        gen.versions.push(v);
+      }
+    }
+    return Array.from(genMap.values()).sort((a, b) => b.generationId - a.generationId);
+  }
+
+
   private subscribeToRouteChanges(): void {
     this.route.paramMap.subscribe(params => {
+      this.versionState.reset();
       this.pokemonSpeciesDetails = undefined;
       this.previousPokemonSpecies = undefined;
       this.nextPokemonSpecies = undefined;

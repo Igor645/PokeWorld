@@ -57,8 +57,9 @@ export class PokemonService {
   }
 
   getAllPokemonSpecies(): Observable<PokemonSpeciesResponse> {
+    const languageId = this.settingsService.getSetting<number>('selectedLanguageId') || 9;
     return this.graphQLService
-      .executeQuery<PokemonSpeciesResponse>(GraphQLQueries.GetPokemonSpeciesAll, {})
+      .executeQuery<PokemonSpeciesResponse>(GraphQLQueries.GetPokemonSpeciesAll, { languageId })
       .pipe(map(res => res ?? EMPTY_POKEMON_SPECIES_RESPONSE), catchError(() => of(EMPTY_POKEMON_SPECIES_RESPONSE)));
   }
 

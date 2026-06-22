@@ -7,12 +7,16 @@
 
     <ng-template #movesContent>
         <div class="moves-toolbar">
-            <label for="vgSelect">Version:</label>
-            <select id="vgSelect" [ngModel]="selectedVgId" (ngModelChange)="onVgChange($event)">
-                <option *ngFor="let vg of vgOptions" [value]="vg.id">{{ vg.label }}</option>
+            <mat-icon class="toolbar-vg-icon">sports_esports</mat-icon>
+            <select id="vgSelect" class="version-select" [ngModel]="selectedVgId" (ngModelChange)="onVgChange($event)">
+                <ng-container *ngFor="let gen of groupedVgOptions">
+                    <optgroup [label]="gen.generationName">
+                        <option *ngFor="let vg of gen.options" [value]="vg.id">{{ vg.label }}</option>
+                    </optgroup>
+                </ng-container>
             </select>
 
-            <label for="methodSelect">Learn method:</label>
+            <label for="methodSelect" class="toolbar-label">Learn method</label>
             <select id="methodSelect" [ngModel]="selectedMethodId" (ngModelChange)="onMethodChange($event)">
                 <option *ngFor="let m of methodOptions" [value]="m.id">{{ m.label }}</option>
             </select>

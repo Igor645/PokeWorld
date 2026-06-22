@@ -1,7 +1,8 @@
-import { BehaviorSubject, Subject, combineLatest, debounceTime, distinctUntilChanged, map, shareReplay, takeUntil } from 'rxjs';
+import { BehaviorSubject, Subject, combineLatest, debounceTime, distinctUntilChanged, filter, map, shareReplay, takeUntil } from 'rxjs';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges } from '@angular/core';
 
 import { CommonModule } from '@angular/common';
+import { MatIcon } from '@angular/material/icon';
 import { ExpandableSectionComponent } from '../../../shared/expandable-section/expandable-section.component';
 import { FormsModule } from '@angular/forms';
 import { LoadingSpinnerComponent } from '../../../shared/loading-spinner/loading-spinner.component';
@@ -12,6 +13,7 @@ import { PokemonTypeComponent } from '../../../shared/pokemon-type/pokemon-type.
 import { PokemonUtilsService } from '../../../../utils/pokemon-utils';
 import { Router } from '@angular/router';
 import { Type } from '../../../../models/type.model';
+import { IndividualVersion, VgOption, VersionStateService } from '../../../../services/version-state.service';
 
 type Row = {
   id: number;
@@ -32,14 +34,13 @@ type Row = {
   flavorText: string;
 };
 
-type VgOption = { id: number; label: string };
 type MethodOption = { id: number; label: string; key: 'level-up' | 'machine' | 'tutor' | 'egg' | 'other' };
 
 @Component({
   selector: 'app-pokemon-moves',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, FormsModule, ExpandableSectionComponent, PokemonTypeComponent, LoadingSpinnerComponent],
+  imports: [CommonModule, FormsModule, MatIcon, ExpandableSectionComponent, PokemonTypeComponent, LoadingSpinnerComponent],
   templateUrl: './pokemon-moves.component.html',
   styleUrls: ['./pokemon-moves.component.css']
 })
@@ -90,11 +91,22 @@ export class PokemonMovesComponent implements OnInit, OnChanges, OnDestroy {
 
   trackById = (_: number, r: Row) => r.id;
 
+  get groupedVgOptions(): { generationName: string; generationId: number; options: VgOption[] }[] {
+    const genMap = new Map<number, { generationName: string; generationId: number; options: VgOption[] }>();
+    for (const vg of this.vgOptions) {
+      let gen = genMap.get(vg.generationId);
+      if (!gen) genMap.set(vg.generationId, gen = { generationName: vg.generationName, generationId: vg.generationId, options: [] });
+      gen.options.push(vg);
+    }
+    return Array.from(genMap.values()).sort((a, b) => b.generationId - a.generationId);
+  }
+
   constructor(
     public pokemonUtils: PokemonUtilsService,
     private cdr: ChangeDetectorRef,
     private router: Router,
-    private pokemonService: PokemonService
+    private pokemonService: PokemonService,
+    private versionState: VersionStateService,
   ) { }
 
   ngOnInit(): void {
@@ -102,6 +114,22 @@ export class PokemonMovesComponent implements OnInit, OnChanges, OnDestroy {
       .watchLanguageChanges()
       .pipe(takeUntil(this.destroy$), distinctUntilChanged(), debounceTime(50))
       .subscribe(() => this.relabelForLanguage());
+
+    // Keep toolbar dropdown in sync with service's sorted order
+    this.versionState.vgOptions$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(opts => { this.vgOptions = opts; this.cdr.detectChanges(); });
+
+    // React to master version selector or any external vg change
+    this.versionState.vgId$
+      .pipe(takeUntil(this.destroy$), filter(id => !!id))
+      .subscribe(vgId => {
+        if (vgId === this.selectedVgId || !this.vgOptions.some(v => v.id === vgId)) return;
+        this.selectedVgId = vgId;
+        this.setMethodOptionsForVg(vgId);
+        if (this.pokemonId) this.loadMovesForSelection();
+        this.cdr.detectChanges();
+      });
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -115,12 +143,8 @@ export class PokemonMovesComponent implements OnInit, OnChanges, OnDestroy {
     this.destroy$.complete();
   }
 
-  onVgChange(idStr: string): void {
-    const id = Number(idStr);
-    this.selectedVgId = id;
-    this.setMethodOptionsForVg(id);
-    this.loadMovesForSelection();
-    this.cdr.detectChanges();
+  onVgChange(idStr: string | number): void {
+    this.versionState.selectVersionGroup(Number(idStr));
   }
 
   onMethodChange(idStr: string): void {
@@ -207,10 +231,20 @@ export class PokemonMovesComponent implements OnInit, OnChanges, OnDestroy {
     this.methodDataById = methodMap;
     this.methodsByVg = methodsByVg;
 
-    this.vgOptions = Array.from(vgMap.values()).map(vg => ({
-      id: vg.id,
-      label: this.buildVgLabel(vg)
-    }));
+    const rawOpts = Array.from(vgMap.values()).map(vg => this.toVgOption(vg));
+
+    // Compute the vgId the service will pick after setOptions (newest-first sort)
+    const sorted = [...rawOpts].sort((a, b) =>
+      b.generationId !== a.generationId ? b.generationId - a.generationId : b.id - a.id
+    );
+    const curVgId = this.versionState.currentVgId;
+    const nextVgId = sorted.some(v => v.id === curVgId) ? curVgId : (sorted[0]?.id ?? 0);
+
+    // Pre-set so the vgId$ subscription guard fires and doesn't trigger a redundant load
+    this.selectedVgId = nextVgId;
+
+    // Publish — vgOptions$ subscription updates this.vgOptions with sorted list
+    this.versionState.setOptions(rawOpts);
 
     this.allMethodOptions = Array.from(methodMap.values()).map(m => ({
       id: m.id,
@@ -218,10 +252,29 @@ export class PokemonMovesComponent implements OnInit, OnChanges, OnDestroy {
       key: this.normalizeMethodKey(m.name)
     }));
 
-    if (!this.vgOptions.some(v => v.id === this.selectedVgId)) {
-      this.selectedVgId = this.vgOptions[0]?.id ?? 0;
-    }
     this.setMethodOptionsForVg(this.selectedVgId);
+  }
+
+  private toVgOption(vg: any): VgOption {
+    const generationId   = vg.generation?.id ?? 0;
+    const generationName = this.pokemonUtils.getLocalizedNameFromEntity(vg.generation, 'generationnames');
+    const versions: IndividualVersion[] = (vg.versions ?? [])
+      .filter((v: any) => !!v.id)
+      .map((v: any) => ({
+        versionId:      v.id,
+        versionGroupId: vg.id,
+        label:          this.pokemonUtils.getLocalizedNameFromEntity(v, 'versionnames'),
+        generationId,
+        generationName,
+      }));
+    return {
+      id: vg.id,
+      label: this.buildVgLabel(vg),
+      versionIds: versions.map(v => v.versionId),
+      versions,
+      generationId,
+      generationName,
+    };
   }
 
   private setMethodOptionsForVg(vgId: number): void {
@@ -270,8 +323,9 @@ export class PokemonMovesComponent implements OnInit, OnChanges, OnDestroy {
 
     this.vgOptions = this.vgOptions.map(v => {
       const vg = this.vgDataById.get(v.id);
-      return { id: v.id, label: vg ? this.buildVgLabel(vg) : v.label };
+      return vg ? this.toVgOption(vg) : v;
     });
+    this.versionState.setOptions(this.vgOptions);
 
     this.allMethodOptions = this.allMethodOptions.map(o => {
       const m = this.methodDataById.get(o.id);

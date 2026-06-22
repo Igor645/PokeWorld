@@ -28,8 +28,19 @@ a:hover {
   left: 0;
   right: 0;
   height: 2px;
-  background: linear-gradient(90deg, var(--primary-color) 0%, #a78bfa 60%, transparent 100%);
+  background: var(--primary-color);
   opacity: 0.85;
+  transition: opacity 0.3s;
+}
+
+@keyframes loading-bar-pulse {
+  0%, 100% { opacity: 0.3; }
+  50%       { opacity: 1; }
+}
+
+.main-header.loading::after {
+  animation: loading-bar-pulse 1.2s ease-in-out infinite;
+  opacity: 1;
 }
 
 .main-header h1 {
@@ -47,10 +58,7 @@ a:hover {
 }
 
 .main-header h1 a {
-  background: linear-gradient(135deg, var(--primary-color) 0%, #a78bfa 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: var(--primary-color);
 }
 
 /* ────────────── Footer ────────────── */
@@ -70,10 +78,7 @@ a:hover {
   font-size: 0.85rem;
   font-weight: 900;
   font-family: "Exo 2", serif;
-  background: linear-gradient(135deg, var(--primary-color) 0%, #a78bfa 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: var(--accent-text-color);
   opacity: 0.7;
   letter-spacing: -0.01em;
 }

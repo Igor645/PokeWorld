@@ -1,8 +1,6 @@
 import { gql } from 'graphql-request';
 
 // ── Shared Fragments ──────────────────────────────────────────────────────────
-// Each fragment is self-contained (no nested ${} deps) so queries include only
-// what they actually need — no duplicate definition risk.
 
 const LangFields = gql`
   fragment LangFields on language { id name }
@@ -71,10 +69,7 @@ const PokemonSpeciesDetailFields = gql`
           id name is_default
           pokemonsprites { sprites }
         }
-        pokemonspeciesnames {
-          name language_id
-          language { ...LangFields }
-        }
+        pokemonspeciesnames { name language_id language { ...LangFields } }
         generation {
           id name
           generationnames { name language_id language { ...LangFields } }
@@ -116,6 +111,14 @@ const PokemonSpeciesDetailFields = gql`
         pokemonformnames { language_id name language { ...LangFields } }
       }
       pokemontypes {
+        type {
+          id name
+          typenames { language_id name language { ...LangFields } }
+        }
+      }
+      pokemontypepasts {
+        generation_id
+        slot
         type {
           id name
           typenames { language_id name language { ...LangFields } }
@@ -166,7 +169,7 @@ const PokemonSpeciesDetailFields = gql`
 
 export const GraphQLQueries = {
 
-  // Pokemon Species Detail — three variants with proper typed variables
+  // Pokemon Species Detail — three variants
   GetPokemonDetailsById: gql`
     ${LangFields} ${ItemFields} ${PokemonSpeciesDetailFields}
     query GetPokemonDetailsById($id: Int!) {
@@ -190,20 +193,17 @@ export const GraphQLQueries = {
     }
   `,
 
-  // Pokemon Species list / search
+  // Paginated list — English names only, default sprite only, no language sub-object
   GetPokemonSpeciesPaginated: gql`
-    ${LangFields}
     query PokemonSpeciesOverview($limit: Int, $offset: Int) {
       pokemonspecies(limit: $limit, offset: $offset, order_by: { id: asc }) {
-        name
+        name id
         pokemons(where: { is_default: { _eq: true } }) {
           id
           pokemonsprites { sprites }
         }
-        id
-        pokemonspeciesnames(where: { language: { name: { _eq: "en" } } }) {
+        pokemonspeciesnames(where: { language_id: { _eq: 9 } }) {
           name language_id
-          language { ...LangFields }
         }
         generation { id name }
       }
@@ -211,9 +211,11 @@ export const GraphQLQueries = {
     }
   `,
 
+  // Full species list — used by Quiz & Pokéle.
+  // $languageId filters names to [current, English] — ~85% fewer name rows vs fetching all 13 langs.
+  // Removed: generationnames (9 gens × 13 langs repeated 1025×), pokemondexnumbers, language sub-objects.
   GetPokemonSpeciesAll: gql`
-    ${LangFields}
-    query GetAllPokemonSpecies {
+    query GetAllPokemonSpecies($languageId: Int!) {
       pokemonspecies(order_by: { id: asc }) {
         name id is_legendary is_mythical is_baby
         pokemons(order_by: { is_default: desc }) {
@@ -221,24 +223,20 @@ export const GraphQLQueries = {
           pokemonsprites { sprites }
           pokemontypes { type { id name } }
         }
-        pokemonspeciesnames { name language_id language { ...LangFields } }
-        generation {
-          id name
-          generationnames { name language_id language { ...LangFields } }
-        }
-        pokemondexnumbers(
-          where: { pokedex_id: { _in: [2, 6, 7, 9, 15, 21, 27, 30, 31, 32] } }
+        pokemonspeciesnames(
+          where: { language_id: { _in: [$languageId, 9] } }
         ) {
-          pokedex_id
-          pokedex_number
+          name language_id
         }
+        generation { id name }
+        evolves_from_species_id
       }
       pokemonspecies_aggregate { aggregate { count } }
     }
   `,
 
+  // Search autocomplete — default form only, no language sub-object
   GetPokemonSpeciesByPrefix: gql`
-    ${LangFields}
     query GetPokemonSpeciesByPrefix($search: String!, $languageId: Int!) {
       pokemonspecies(
         where: {
@@ -247,37 +245,39 @@ export const GraphQLQueries = {
         order_by: { id: asc }
       ) {
         id name
-        pokemons { pokemonsprites { sprites } }
+        pokemons(where: { is_default: { _eq: true } }) {
+          id
+          pokemonsprites { sprites }
+        }
         pokemonspeciesnames(where: { language_id: { _eq: $languageId } }) {
           name language_id
-          language { ...LangFields }
         }
       }
     }
   `,
 
   GetPokemonSpeciesWithoutPrefix: gql`
-    ${LangFields}
     query GetPokemonSpeciesWithoutPrefix {
       pokemonspecies(order_by: { id: asc }, limit: 15) {
         id name
-        pokemons { pokemonsprites { sprites } }
-        pokemonspeciesnames { name language_id language { ...LangFields } }
+        pokemons(where: { is_default: { _eq: true } }) {
+          id
+          pokemonsprites { sprites }
+        }
+        pokemonspeciesnames { name language_id }
       }
     }
   `,
 
   GetPokemonSpeciesById: gql`
-    ${LangFields}
     query GetPokemonSpeciesById($id: Int!) {
       pokemonspecies(order_by: { id: asc }, where: { id: { _eq: $id } }) {
-        name
+        name id
         pokemons(where: { is_default: { _eq: true } }) {
           id
           pokemonsprites { sprites }
         }
-        id
-        pokemonspeciesnames { name language_id language { ...LangFields } }
+        pokemonspeciesnames { name language_id }
       }
     }
   `,
@@ -330,7 +330,7 @@ export const GraphQLQueries = {
               id name
               generationnames { name language_id }
             }
-            versions { versionnames { name language_id } }
+            versions { id versionnames { name language_id } }
           }
           movelearnmethod { id name movelearnmethodnames { language_id id name } }
         }
