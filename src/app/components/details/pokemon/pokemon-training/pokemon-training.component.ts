@@ -1,19 +1,20 @@
 import { Component, HostBinding, Input, OnChanges, OnDestroy, OnInit } from '@angular/core';
 
 import { CommonModule } from '@angular/common';
+import { DetailRowComponent } from '../../../shared/detail-row/detail-row.component';
+import { DetailTableComponent } from '../../../shared/detail-table/detail-table.component';
 import { ExpandableSectionComponent } from '../../../shared/expandable-section/expandable-section.component';
 import { HeldItemDisplayComponent } from './held-item-display/held-item-display.component';
-import { MatIconModule } from '@angular/material/icon';
-import { MatTooltipModule } from '@angular/material/tooltip';
 import { Pokemon } from '../../../../models/pokemon.model';
 import { PokemonSpecies } from '../../../../models/pokemon-species.model';
 import { PokemonUtilsService } from '../../../../utils/pokemon-utils';
 import { Subscription } from 'rxjs';
+import { VersionStateService } from '../../../../services/version-state.service';
 
 @Component({
   selector: 'app-pokemon-training',
   standalone: true,
-  imports: [CommonModule, MatIconModule, MatTooltipModule, ExpandableSectionComponent, HeldItemDisplayComponent],
+  imports: [CommonModule, ExpandableSectionComponent, HeldItemDisplayComponent, DetailTableComponent, DetailRowComponent],
   templateUrl: './pokemon-training.component.html',
   styleUrls: ['./pokemon-training.component.css']
 })
@@ -29,17 +30,19 @@ export class PokemonTrainingComponent implements OnInit, OnChanges, OnDestroy {
   heldItemsGrouped: {
     name: string;
     rarity: number;
-    count: number;
-    tooltip: string;
     defaultIcon?: string;
   }[] = [];
 
   private languageSub!: Subscription;
+  private versionSub!: Subscription;
 
-  constructor(public utils: PokemonUtilsService) { }
+  constructor(public utils: PokemonUtilsService, private versionState: VersionStateService) { }
 
   ngOnInit(): void {
     this.languageSub = this.utils.watchLanguageChanges().subscribe(() => {
+      this.groupHeldItems();
+    });
+    this.versionSub = this.versionState.versionId$.subscribe(() => {
       this.groupHeldItems();
     });
   }
@@ -50,40 +53,33 @@ export class PokemonTrainingComponent implements OnInit, OnChanges, OnDestroy {
 
   ngOnDestroy(): void {
     this.languageSub?.unsubscribe();
+    this.versionSub?.unsubscribe();
   }
 
   groupHeldItems(): void {
-    const languageId = this.utils.getSelectedLanguageId();
-    const grouped = new Map<string, { name: string; rarity: number; count: number; tooltip: string; defaultIcon: string }>();
+    const selectedVersionId = this.versionState.currentVersionId;
+    const allItems = this.pokemon?.pokemonitems || [];
 
-    for (const item of this.pokemon?.pokemonitems || []) {
+    const items = selectedVersionId
+      ? allItems.filter(item => item.version?.id === selectedVersionId)
+      : allItems;
+
+    const grouped = new Map<string, { name: string; rarity: number; defaultIcon: string }>();
+
+    for (const item of items) {
       const name = this.utils.getLocalizedNameFromEntity(item.item, "itemnames");
       const key = `${name}_${item.rarity}`;
-      const versionName = item.version?.versionnames?.find(
-        vn => vn.language_id === languageId
-      )?.name ?? 'Unknown Version';
 
       if (!grouped.has(key)) {
         grouped.set(key, {
           name,
           rarity: item.rarity,
-          count: 1,
-          tooltip: `Held in:\n${versionName}`,
           defaultIcon: item.item?.itemsprites[0]?.sprites.default
         });
-      } else {
-        const existing = grouped.get(key)!;
-        existing.count++;
-        if (!existing.tooltip.includes(versionName)) {
-          existing.tooltip += `, ${versionName}`;
-        }
       }
     }
 
-    this.heldItemsGrouped = Array.from(grouped.values()).map(item => ({
-      ...item,
-      tooltip: `(${item.count}×) Held in:\n` + item.tooltip.split('\n')[1]
-    }));
+    this.heldItemsGrouped = Array.from(grouped.values());
   }
 
   get evYield(): string {

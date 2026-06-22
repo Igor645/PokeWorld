@@ -14,6 +14,7 @@ import { PokemonUtilsService } from '../../../../utils/pokemon-utils';
 import { Router } from '@angular/router';
 import { Type } from '../../../../models/type.model';
 import { IndividualVersion, VgOption, VersionStateService } from '../../../../services/version-state.service';
+import { VersionSelectComponent, VersionSelectGroup } from '../../../shared/version-select/version-select.component';
 
 type Row = {
   id: number;
@@ -40,7 +41,7 @@ type MethodOption = { id: number; label: string; key: 'level-up' | 'machine' | '
   selector: 'app-pokemon-moves',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, FormsModule, MatIcon, ExpandableSectionComponent, PokemonTypeComponent, LoadingSpinnerComponent],
+  imports: [CommonModule, FormsModule, MatIcon, ExpandableSectionComponent, PokemonTypeComponent, LoadingSpinnerComponent, VersionSelectComponent],
   templateUrl: './pokemon-moves.component.html',
   styleUrls: ['./pokemon-moves.component.css']
 })
@@ -101,6 +102,13 @@ export class PokemonMovesComponent implements OnInit, OnChanges, OnDestroy {
     return Array.from(genMap.values()).sort((a, b) => b.generationId - a.generationId);
   }
 
+  get versionSelectGroups(): VersionSelectGroup[] {
+    return this.groupedVgOptions.map(g => ({
+      generationName: g.generationName,
+      options: g.options.map(vg => ({ id: vg.id, label: vg.label }))
+    }));
+  }
+
   constructor(
     public pokemonUtils: PokemonUtilsService,
     private cdr: ChangeDetectorRef,
@@ -143,8 +151,8 @@ export class PokemonMovesComponent implements OnInit, OnChanges, OnDestroy {
     this.destroy$.complete();
   }
 
-  onVgChange(idStr: string | number): void {
-    this.versionState.selectVersionGroup(Number(idStr));
+  onVgChange(id: number): void {
+    this.versionState.selectVersionGroup(id);
   }
 
   onMethodChange(idStr: string): void {

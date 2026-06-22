@@ -31,6 +31,9 @@ import { TypeService } from '../../../../services/type.service';
 import { IndividualVersion, VgOption, VersionStateService } from '../../../../services/version-state.service';
 import { PokemonType } from '../../../../models/pokemon-type.model';
 import { catchError } from 'rxjs/operators';
+import { VersionSelectComponent, VersionSelectGroup } from '../../../shared/version-select/version-select.component';
+import { DetailTableComponent } from '../../../shared/detail-table/detail-table.component';
+import { DetailRowComponent } from '../../../shared/detail-row/detail-row.component';
 
 interface DetailsVm {
   speciesName: string;
@@ -73,7 +76,10 @@ const EMPTY_VM: DetailsVm = {
     PokemonBreedingComponent,
     PokemonRelationsComponent,
     PokemonFormsComponent,
-    PokemonMovesComponent
+    PokemonMovesComponent,
+    VersionSelectComponent,
+    DetailTableComponent,
+    DetailRowComponent
   ],
   templateUrl: './pokemon-details.component.html',
   styleUrls: ['./pokemon-details.component.css']
@@ -212,8 +218,15 @@ export class PokemonDetailsComponent implements OnInit {
     return formName === 'Unknown' ? speciesName : formName;
   }
 
-  onVersionChange(event: Event): void {
-    this.versionState.selectVersion(Number((event.target as HTMLSelectElement).value));
+  get versionSelectGroups(): VersionSelectGroup[] {
+    return this.groupedVersionOptions.map(g => ({
+      generationName: g.generationName,
+      options: g.versions.map(v => ({ id: v.versionId, label: v.label }))
+    }));
+  }
+
+  onVersionChange(versionId: number): void {
+    this.versionState.selectVersion(versionId);
   }
 
   private buildGroupedVersions(opts: VgOption[]): { generationName: string; generationId: number; versions: IndividualVersion[] }[] {
@@ -222,7 +235,9 @@ export class PokemonDetailsComponent implements OnInit {
       for (const v of vg.versions) {
         let gen = genMap.get(v.generationId);
         if (!gen) genMap.set(v.generationId, gen = { generationName: v.generationName, generationId: v.generationId, versions: [] });
-        gen.versions.push(v);
+        if (!gen.versions.some(existing => existing.label === v.label)) {
+          gen.versions.push(v);
+        }
       }
     }
     return Array.from(genMap.values()).sort((a, b) => b.generationId - a.generationId);

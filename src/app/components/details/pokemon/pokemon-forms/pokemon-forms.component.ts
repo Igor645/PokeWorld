@@ -1,6 +1,8 @@
 import { Component, HostBinding, Input, OnInit } from '@angular/core';
 
 import { CommonModule } from '@angular/common';
+import { DetailRowComponent } from '../../../shared/detail-row/detail-row.component';
+import { DetailTableComponent } from '../../../shared/detail-table/detail-table.component';
 import { ExpandableSectionComponent } from '../../../shared/expandable-section/expandable-section.component';
 import { FormsModule } from '@angular/forms';
 import { PokemonBgSvgComponent } from '../../../shared/pokemon-bg-svg/pokemon-bg-svg.component';
@@ -10,7 +12,7 @@ import { PokemonUtilsService } from '../../../../utils/pokemon-utils';
 @Component({
   selector: 'app-pokemon-forms',
   standalone: true,
-  imports: [CommonModule, FormsModule, ExpandableSectionComponent, PokemonBgSvgComponent],
+  imports: [CommonModule, FormsModule, ExpandableSectionComponent, PokemonBgSvgComponent, DetailTableComponent, DetailRowComponent],
   templateUrl: './pokemon-forms.component.html',
   styleUrls: ['./pokemon-forms.component.css']
 })

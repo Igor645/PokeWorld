@@ -30,23 +30,6 @@
 }
 
 
-@keyframes version-bar-pulse {
-
-  0%,
-  100% {
-    opacity: 0.5;
-  }
-
-  50% {
-    opacity: 1;
-  }
-}
-
-.version-bar--loading .version-select {
-  animation: version-bar-pulse 1.2s ease-in-out infinite;
-  pointer-events: none;
-}
-
 .version-bar-icon {
   color: var(--primary-text-color);
   font-size: 1.3rem;
@@ -64,37 +47,6 @@
   color: var(--accent-text-color);
   white-space: nowrap;
   flex-shrink: 0;
-}
-
-/* ──────────────────── Shared version <select> style ──────────────────── */
-.version-select {
-  appearance: none;
-  -webkit-appearance: none;
-  padding: 0.3rem 1.8rem 0.3rem 0.6rem;
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: var(--primary-text-color);
-  background-color: var(--background-color);
-  border: 2px solid var(--primary-color);
-  border-radius: 6px;
-  cursor: pointer;
-  width: fit-content;
-  min-width: 120px;
-  max-width: 260px;
-  flex-shrink: 0;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%231b6ec2'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 0.5rem center;
-  transition: border-color 0.2s;
-}
-
-.version-select:focus {
-  outline: none;
-  border-color: var(--primary-hover-color);
-}
-
-.version-select:hover {
-  border-color: var(--primary-hover-color);
 }
 
 /* ──────────────────── Main View Container ──────────────────── */
@@ -116,6 +68,7 @@
 .pokemon-main-view {
   display: flex;
   justify-content: space-evenly;
+  align-items: flex-start;
   gap: 2rem;
   width: 100%;
 }
@@ -131,6 +84,8 @@
   color: var(--accent-text-color);
   font-size: 1.2rem;
   gap: 10px;
+  display: flex;
+  flex-direction: column;
 }
 
 /* ──────────────────── Name Card ──────────────────── */
@@ -139,33 +94,36 @@
   border: 3px solid var(--primary-color);
   border-radius: 12px;
   box-shadow: 0 4px 14px var(--shadow-color);
-  padding: 0.85rem 1.2rem 1rem;
+  padding: 0.75rem 1.25rem;
   box-sizing: border-box;
   display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
   background-color: var(--background-color);
 }
 
-.pokemon-main-view-left h1 {
+.pokemon-name-card h1 {
   display: flex;
-  align-items: flex-end;
-  gap: 0.5rem;
+  align-items: center;
+  gap: 0.6rem;
   margin: 0;
-  font-weight: 600;
-  font-size: 4rem;
-  width: 100%;
+  font-weight: 700;
+  font-size: 2.6rem;
   color: var(--primary-text-color);
   box-sizing: border-box;
   line-height: 1;
+  flex-shrink: 0;
+  width: auto;
 }
 
-.pokemon-main-view-left h1 .pokemon-status-badge {
-  margin-top: 0;
-  margin-bottom: 0.4rem;
-}
 
 .pokemon-name-card .types-container {
+  width: auto;
+  flex-shrink: 0;
+  justify-content: flex-end;
   margin-bottom: 0;
 }
 
@@ -177,19 +135,18 @@
 
 /* ──────────────────── Status Badge ──────────────────── */
 .pokemon-status-badge {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  justify-content: center;
-  padding: 5px 10px;
-  margin-top: 1rem;
-  font-size: 0.8rem;
-  height: fit-content;
-  font-weight: bold;
+  padding: 4px 10px;
+  font-size: 0.7rem;
+  font-weight: 700;
   text-transform: uppercase;
-  border-radius: 8px;
+  letter-spacing: 0.08em;
+  border-radius: 6px;
   background-color: var(--background-hover-color);
   color: var(--accent-text-color);
-  box-shadow: 0px 2px 4px var(--shadow-hover-color);
+  box-shadow: 0 1px 3px var(--shadow-color);
+  white-space: nowrap;
   user-select: none;
 }
 
@@ -326,38 +283,45 @@ app-pokemon-navigator {
   cursor: pointer;
 }
 
-/* ──────────────────── Details List ──────────────────── */
+/* ──────────────────── Dex Entry Quote ──────────────────── */
 .pokemon-dex-entry {
-  font-size: 1.5rem;
-  border-radius: 10px;
   width: 100%;
-}
-
-.general-detail-list {
-  list-style: none;
-  width: 100%;
-  margin: 1rem 0;
-  padding: 0;
-  overflow: hidden;
-  background-color: var(--background-color);
+  padding: 0.7rem 1rem;
+  background-color: var(--interactive-bg-color);
+  border-left: 4px solid var(--primary-color);
+  border-radius: 0 8px 8px 0;
+  font-size: 1.1rem;
+  font-style: italic;
+  line-height: 1.6;
+  color: var(--accent-text-color);
   box-sizing: border-box;
 }
 
-.general-detail-list li {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  align-items: center;
-  padding: 8px 3px;
-  border-bottom: 1px solid var(--separator-color);
-  transition: background-color 0.3s ease, transform 0.2s ease;
+/* ──────────────────── Details List ──────────────────── */
+
+.varieties-select {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 100%;
+  border: none;
+  background-color: transparent;
+  box-shadow: none;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-color);
+  outline: none;
+  padding: 0;
+  padding-right: 1.6rem;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%231b6ec2'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0 center;
 }
 
-.general-detail-list li:last-child {
-  border-bottom: none;
-}
-
-.general-detail-label {
-  font-weight: 800;
+.varieties-select:hover,
+.varieties-select:focus {
+  box-shadow: none;
+  border: none;
 }
 
 .shape-container {
@@ -400,24 +364,30 @@ app-pokemon-navigator {
 /* ──────────────────── Cries ──────────────────── */
 .cry-buttons {
   display: flex;
-  gap: 10px;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
 }
 
 .cry-button {
-  box-shadow: 0 2px 4px var(--shadow-color);
-  padding: 4px 10px;
-  font-weight: bold;
-  border: 2px solid var(--primary-color);
-  border-radius: 4px;
-  background-color: var(--background-color);
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 5px;
+  gap: 4px;
+  padding: 4px 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  border-radius: 20px;
   cursor: pointer;
+  border: 2px solid var(--primary-color);
+  transition: background-color 0.15s, border-color 0.15s, transform 0.1s;
+  line-height: 1;
 }
 
-.cry-button.legacy {
-  color: var(--accent-text-color);
+.cry-button mat-icon {
+  font-size: 0.9rem;
+  width: 0.9rem;
+  height: 0.9rem;
+  line-height: 0.9rem;
 }
 
 .cry-button.latest {
@@ -425,14 +395,20 @@ app-pokemon-navigator {
   color: white;
 }
 
-.cry-button.legacy:hover {
-  transform: scale(1.05);
-  background-color: var(--background-hover-color);
+.cry-button.legacy {
+  background-color: transparent;
+  color: var(--primary-color);
 }
 
 .cry-button.latest:hover {
-  transform: scale(1.05);
   background-color: var(--primary-hover-color);
+  border-color: var(--primary-hover-color);
+  transform: scale(1.04);
+}
+
+.cry-button.legacy:hover {
+  background-color: var(--interactive-bg-color);
+  transform: scale(1.04);
 }
 
 .pokemon-other-details {
@@ -502,16 +478,23 @@ app-pokemon-navigator {
   }
 
   .pokemon-name-card {
-    padding: 0.6rem 0.85rem 0.8rem;
-    text-align: center;
-  }
-
-  .pokemon-main-view-left h1 {
-    font-size: 3rem;
+    padding: 0.65rem 0.9rem;
     flex-direction: column;
     align-items: center;
+    gap: 0.5rem;
+  }
+
+  .pokemon-name-card h1 {
+    font-size: 2.2rem;
     justify-content: center;
-    gap: 0;
+  }
+
+  .pokemon-name-card .types-container {
+    justify-content: center;
+  }
+
+  .pokemon-dex-entry {
+    font-size: 1rem;
   }
 
   select {
@@ -592,16 +575,19 @@ app-pokemon-navigator {
   }
 
   .pokemon-name-card {
-    padding: 0.75rem 1rem 0.85rem;
-    text-align: center;
-  }
-
-  .pokemon-main-view-left h1 {
-    font-size: 3rem;
+    padding: 0.7rem 1rem;
     flex-direction: column;
     align-items: center;
+    gap: 0.5rem;
+  }
+
+  .pokemon-name-card h1 {
+    font-size: 2.4rem;
     justify-content: center;
-    gap: 0;
+  }
+
+  .pokemon-name-card .types-container {
+    justify-content: center;
   }
 
   select {
@@ -635,10 +621,6 @@ app-pokemon-navigator {
 
   .types-container {
     justify-content: center;
-  }
-
-  .pokemon-dex-entry {
-    text-align: center;
   }
 
   .pokemon-other-details {

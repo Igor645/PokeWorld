@@ -148,6 +148,11 @@ select:disabled {
     color: var(--accent-text-color);
 }
 
+option {
+    background-color: var(--background-color);
+    color: var(--text-color);
+}
+
 option:checked {
     background-color: var(--primary-color) !important;
     color: white !important;
@@ -164,4 +169,27 @@ option:hover {
         padding: .4rem .8rem;
         background-position: right .8rem center;
     }
+}
+
+/* ──────────────────── Table Pill Button ──────────────────── */
+.table-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 12px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    border-radius: 20px;
+    cursor: pointer;
+    border: 2px solid var(--primary-color);
+    background-color: transparent;
+    color: var(--primary-color);
+    text-decoration: none;
+    line-height: 1.2;
+    transition: background-color 0.15s, transform 0.1s;
+}
+
+.table-btn:hover {
+    background-color: var(--interactive-bg-color);
+    transform: scale(1.04);
 }

@@ -2,43 +2,8 @@
     align-self: stretch;
 }
 
-.relation-row {
-    display: grid;
-    grid-template-columns: minmax(100px, 25%) 1fr;
-    grid-template-areas: "label types";
-    gap: 12px;
-    padding: 8px 0;
-    align-items: center;
-    width: 100%;
-    box-sizing: border-box;
-    border-bottom: 1px solid var(--separator-color);
-    font-size: 1.2rem;
-}
-
-.relation-row:last-child {
-    border-bottom: none;
-}
-
-.relation-label {
-    grid-area: label;
-    font-weight: 800;
-    color: var(--accent-text-color);
-    white-space: normal;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-    text-align: left;
-    font-size: 1.2rem;
-}
-
-.relation-types {
-    grid-area: types;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-}
-
-.relation-types span {
-    color: var(--accent-text-color);
+app-detail-table {
+    margin-bottom: 0.75rem;
 }
 
 .type-chart-button {
@@ -58,42 +23,4 @@
 .type-chart-button:hover {
     background-color: var(--primary-hover-color);
     scale: 1.05;
-}
-
-/* Responsive adjustments */
-@media (max-width: 480px) {
-    .relation-row {
-        grid-template-columns: 1fr;
-        grid-template-areas:
-            "label"
-            "types";
-        gap: 6px;
-        font-size: 1rem;
-    }
-
-    .relation-label {
-        font-size: 1rem;
-    }
-}
-
-@media (min-width: 481px) and (max-width: 768px) {
-    .relation-row {
-        font-size: 1.1rem;
-    }
-
-    .relation-label {
-        font-size: 1rem;
-    }
-}
-
-@media (min-width: 769px) and (max-width: 1024px) {
-    .relation-label {
-        font-size: 1.1rem;
-    }
-}
-
-@media (min-width: 1025px) {
-    .relation-label {
-        font-size: 1.2rem;
-    }
 }

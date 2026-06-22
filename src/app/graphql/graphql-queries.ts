@@ -213,7 +213,7 @@ export const GraphQLQueries = {
 
   // Full species list — used by Quiz & Pokéle.
   // $languageId filters names to [current, English] — ~85% fewer name rows vs fetching all 13 langs.
-  // Removed: generationnames (9 gens × 13 langs repeated 1025×), pokemondexnumbers, language sub-objects.
+  // generationnames filtered to [$languageId, 9] — 9 gens × 2 langs only.
   GetPokemonSpeciesAll: gql`
     query GetAllPokemonSpecies($languageId: Int!) {
       pokemonspecies(order_by: { id: asc }) {
@@ -228,7 +228,10 @@ export const GraphQLQueries = {
         ) {
           name language_id
         }
-        generation { id name }
+        generation {
+          id name
+          generationnames { name language_id }
+        }
         evolves_from_species_id
       }
       pokemonspecies_aggregate { aggregate { count } }

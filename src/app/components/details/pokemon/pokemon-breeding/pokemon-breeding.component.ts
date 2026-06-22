@@ -1,6 +1,8 @@
 import { Component, HostBinding, Input } from '@angular/core';
 
 import { CommonModule } from '@angular/common';
+import { DetailRowComponent } from '../../../shared/detail-row/detail-row.component';
+import { DetailTableComponent } from '../../../shared/detail-table/detail-table.component';
 import { EggGroup } from '../../../../models/egggroup';
 import { ExpandableSectionComponent } from '../../../shared/expandable-section/expandable-section.component';
 import { GrowthRate } from '../../../../models/growthrate.model';
@@ -14,9 +16,10 @@ import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-pokemon-breeding',
+  standalone: true,
   templateUrl: './pokemon-breeding.component.html',
   styleUrls: ['./pokemon-breeding.component.css'],
-  imports: [CommonModule, ExpandableSectionComponent, RouterModule],
+  imports: [CommonModule, ExpandableSectionComponent, RouterModule, DetailTableComponent, DetailRowComponent],
 })
 export class PokemonBreedingComponent {
   @Input() pokemonSpecies: PokemonSpecies | undefined;

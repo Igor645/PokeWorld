@@ -1,28 +1,25 @@
 <app-expandable-section title="Forms" [(expanded)]="isExpanded">
-    <div class="form-section-item">
-        <span class="form-label">Alternative Forms</span>
-        <span class="form-value">{{ hasAlternativeForms() ? 'Yes' : 'No' }}</span>
-    </div>
+<app-detail-table>
+    <app-detail-row label="Alternative Forms">{{ hasAlternativeForms() ? 'Yes' : 'No' }}</app-detail-row>
 
-    <div class="form-section-item dropdown-row">
-        <label for="form-select" class="form-label">Select Form</label>
-        <div class="form-value dropdown-wrapper">
+    <app-detail-row label="Select Form">
+        <div class="dropdown-wrapper">
             <select id="form-select" [(ngModel)]="selectedFormId" [disabled]="!hasAlternativeForms()">
                 <option *ngFor="let form of forms" [ngValue]="form.id">
                     {{ getFormName(form) }}
                 </option>
             </select>
         </div>
-    </div>
+    </app-detail-row>
+</app-detail-table>
 
-    <div class="form-section-item">
-        <div class="form-label">Preview</div>
-        <div class="form-value sprite-preview">
-            <div class="sprite-container">
-                <img class="sprite-img" [src]="spriteUrl" [alt]="getFormName(selectedForm!)"
-                    (error)="onImageError($event)" />
-            </div>
-            <app-pokemon-bg-svg class="sprite-bg"></app-pokemon-bg-svg>
+<div class="form-preview">
+    <div class="sprite-preview">
+        <div class="sprite-container">
+            <img class="sprite-img" [src]="spriteUrl" [alt]="getFormName(selectedForm!)"
+                (error)="onImageError($event)" />
         </div>
+        <app-pokemon-bg-svg class="sprite-bg"></app-pokemon-bg-svg>
     </div>
+</div>
 </app-expandable-section>

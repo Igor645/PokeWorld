@@ -1,55 +1,32 @@
 :host {
-    border-radius: 5px;
-}
-
-.item-details {
-    display: flex;
-    gap: 2rem;
+    display: inline-flex;
     align-items: center;
-    border: var(--primary-color) 2px solid;
-    border-radius: 5px;
-    padding: 0.4rem;
-    box-shadow: 0 2px 4px var(--shadow-color);
-    transition: transform 0.2s ease;
-}
-
-.item-details:hover {
+    gap: 5px;
+    padding: 4px 10px;
+    border: 2px solid var(--primary-color);
+    border-radius: 20px;
     cursor: pointer;
-    scale: 1.05;
+    transition: background-color 0.15s, transform 0.1s;
+    font-size: 0.82rem;
 }
 
-.item-name {
-    font-weight: 800;
+:host:hover {
+    background-color: var(--interactive-bg-color);
+    transform: scale(1.04);
 }
 
 .item-icon {
-    width: 2.5rem;
+    width: 1.4rem;
+    height: 1.4rem;
+    object-fit: contain;
 }
 
-.item-right {
-    display: flex;
-    gap: 0.1rem;
-}
-
-.info-icon {
-    font-size: 1.5rem;
-    cursor: pointer;
+.item-name {
+    font-weight: 700;
     color: var(--primary-color);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    line-height: 1;
-    height: 24px;
-    position: relative;
-    top: 1px;
 }
 
-.tooltipSpan {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-::ng-deep .tooltip-pre {
-    white-space: pre-line;
+.item-rarity {
+    color: var(--accent-text-color);
+    font-size: 0.78rem;
 }

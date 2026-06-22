@@ -2,38 +2,55 @@
     align-self: stretch;
 }
 
+/* ──────────────── Container ──────────────── */
+.stats-table {
+    width: 100%;
+    border: 2px solid var(--border-color);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
 /* ──────────────── Stat Row ──────────────── */
 .stat-row {
     display: grid;
     grid-template-columns: minmax(100px, 25%) 40px 1fr 40px 40px;
     grid-template-areas: "name value bar min max";
-    gap: 12px;
-    padding: 8px 0;
+    gap: 0;
+    padding: 0;
     align-items: center;
     width: 100%;
     box-sizing: border-box;
-
+    border-bottom: 1px solid var(--separator-color);
 }
 
-.stat-row:not(:last-child) {
-    border-bottom: 1px solid var(--separator-color);
+.stat-row:last-child {
+    border-bottom: none;
 }
 
 .stat-name {
     grid-area: name;
-    font-weight: 800;
+    align-self: stretch;
+    display: flex;
+    align-items: center;
+    padding: 10px 14px;
+    font-weight: 700;
+    font-size: 0.85rem;
+    background-color: var(--interactive-bg-color);
+    border-right: 1px solid var(--separator-color);
     color: var(--accent-text-color);
     white-space: normal;
     word-wrap: break-word;
     overflow-wrap: break-word;
-    text-align: left;
-    font-size: 1.2rem;
 }
 
 .stat-value {
     text-align: center;
     color: var(--accent-text-color);
-    font-size: 1.2rem;
+    font-size: 0.9rem;
+    padding: 10px 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .stat-val-base {
@@ -49,7 +66,7 @@
 }
 
 .bottom-row {
-    font-weight: 800;
+    font-weight: 700;
 }
 
 .grid-spacer {
@@ -59,9 +76,9 @@
 /* ──────────────── Progress Bar ──────────────── */
 .progress-bar {
     grid-area: bar;
-    width: 100%;
     min-width: 10px;
     height: 12px;
+    margin: 0 8px;
     background-color: var(--background-hover-color);
     border-radius: 6px;
     overflow: hidden;
@@ -77,72 +94,18 @@
 
 /* ──────────────── Responsive ──────────────── */
 @media (max-width: 480px) {
-    .stat-title {
-        font-size: 1.5rem;
-    }
-
     .stat-row {
-        grid-template-columns: minmax(90px, 30%) 35px 1fr 35px 35px;
-        grid-template-areas:
-            "bar bar bar bar bar"
-            "name value empty min max";
-        gap: 5px;
-    }
-
-    .stat-name,
-    .stat-value {
-        font-size: 1rem;
+        grid-template-columns: minmax(80px, 30%) 35px 1fr 35px 35px;
     }
 
     .progress-bar {
         height: 10px;
+        margin: 0 4px;
     }
 }
 
 @media (min-width: 481px) and (max-width: 768px) {
-    .stat-title {
-        font-size: 1.75rem;
-    }
-
     .stat-row {
-        grid-template-columns: minmax(90px, 25%) 35px 1fr 35px 35px;
-        grid-template-areas: "name value bar min max";
-    }
-
-    .stat-name,
-    .stat-value {
-        font-size: 1rem;
-    }
-}
-
-@media (min-width: 769px) and (max-width: 1024px) {
-    .stat-title {
-        font-size: 1.9rem;
-    }
-
-    .stat-row {
-        grid-template-columns: minmax(100px, 22%) 40px 1fr 40px 40px;
-        grid-template-areas: "name value bar min max";
-    }
-
-    .stat-name,
-    .stat-value {
-        font-size: 1.2rem;
-    }
-}
-
-@media (min-width: 1025px) {
-    .stat-title {
-        font-size: 2rem;
-    }
-
-    .stat-row {
-        grid-template-columns: minmax(110px, 20%) 40px 1fr 40px 40px;
-        grid-template-areas: "name value bar min max";
-    }
-
-    .stat-name,
-    .stat-value {
-        font-size: 1.1rem;
+        grid-template-columns: minmax(90px, 28%) 35px 1fr 35px 35px;
     }
 }

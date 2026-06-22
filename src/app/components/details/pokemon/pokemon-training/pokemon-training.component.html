@@ -1,35 +1,19 @@
 <app-expandable-section [title]="'Training'" [(expanded)]="isExpanded">
-    <ul class="training-list">
-        <li>
-            <label>EV Yield</label>
-            <span>{{ evYield || 'None' }}</span>
-        </li>
-        <li>
-            <label>Catch Rate</label>
-            <span>{{ catchRate }} ({{ catchRatePercent }} with Pokéball, full HP)</span>
-        </li>
-        <li>
-            <label>Base Happiness</label>
-            <span>{{ baseHappiness }} ({{ happinessDescription }})</span>
-        </li>
-        <li>
-            <label>Base XP</label>
-            <span>{{ baseExp }}</span>
-        </li>
-        <li>
-            <label>Held Items</label>
-            <div>
-                <ng-container *ngIf="heldItemsGrouped.length; else noItems">
-                    <div class="held-item-line">
-                        <app-held-item-display *ngFor="let item of heldItemsGrouped" [name]="item.name"
-                            [rarity]="item.rarity" [iconUrl]="item.defaultIcon" [tooltip]="item.tooltip">
-                        </app-held-item-display>
-                    </div>
-                </ng-container>
-                <ng-template #noItems>
-                    <span>None</span>
-                </ng-template>
-            </div>
-        </li>
-    </ul>
+    <app-detail-table>
+        <app-detail-row label="EV Yield">{{ evYield || 'None' }}</app-detail-row>
+        <app-detail-row label="Catch Rate">{{ catchRate }} ({{ catchRatePercent }} with Pokéball, full HP)</app-detail-row>
+        <app-detail-row label="Base Happiness">{{ baseHappiness }} ({{ happinessDescription }})</app-detail-row>
+        <app-detail-row label="Base XP">{{ baseExp }}</app-detail-row>
+        <app-detail-row label="Held Items">
+            <ng-container *ngIf="heldItemsGrouped.length; else noItems">
+                <app-held-item-display
+                    *ngFor="let item of heldItemsGrouped"
+                    [name]="item.name"
+                    [rarity]="item.rarity"
+                    [iconUrl]="item.defaultIcon">
+                </app-held-item-display>
+            </ng-container>
+            <ng-template #noItems><span>None</span></ng-template>
+        </app-detail-row>
+    </app-detail-table>
 </app-expandable-section>

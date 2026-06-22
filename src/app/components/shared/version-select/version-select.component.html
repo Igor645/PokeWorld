@@ -1,0 +1,16 @@
+<select
+  class="version-select"
+  [disabled]="!groups.length"
+  (change)="onChange($event)">
+  <option *ngIf="!groups.length" value="">—</option>
+  <ng-container *ngFor="let gen of groups">
+    <optgroup [label]="gen.generationName">
+      <option
+        *ngFor="let opt of gen.options"
+        [value]="opt.id"
+        [selected]="opt.id === selectedId">
+        {{ opt.label }}
+      </option>
+    </optgroup>
+  </ng-container>
+</select>
