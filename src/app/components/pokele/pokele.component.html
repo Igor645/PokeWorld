@@ -192,8 +192,8 @@
           autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
         @if (showSuggestions) {
           <div class="suggestions-drop">
-            @for (sp of suggestions; track sp.id) {
-              <button class="sug-item" (mousedown)="selectSuggestion(sp)">
+            @for (sp of suggestions; track sp.id; let i = $index) {
+              <button class="sug-item" [class.sug-active]="i === activeIndex" (mousedown)="selectSuggestion(sp)">
                 <img class="sug-spr" [src]="spriteUrl(sp)" alt="" loading="lazy" />
                 <span>{{ spName(sp) }}</span>
               </button>

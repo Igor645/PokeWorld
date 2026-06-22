@@ -102,9 +102,13 @@
 .card-title {
   font-size: 1.35rem;
   font-weight: 900;
-  color: var(--primary-color);
   letter-spacing: -0.02em;
   line-height: 1;
+  font-family: "Exo 2", serif;
+  background: linear-gradient(135deg, var(--primary-color) 0%, #a78bfa 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .card-subtitle {
@@ -519,7 +523,10 @@
   transition: background 0.1s;
 }
 
-.sug-item:hover { background: var(--interactive-bg-color); }
+.sug-item:hover,
+.sug-item.sug-active {
+  background: color-mix(in srgb, var(--primary-color) 16%, var(--interactive-bg-color));
+}
 
 .sug-spr {
   width: 34px;

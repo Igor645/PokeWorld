@@ -41,11 +41,13 @@ export class PokeleComponent implements OnInit, OnDestroy {
   inputValue    = '';
   suggestions: PokemonSpecies[] = [];
   showSuggestions = false;
+  activeIndex = -1;
   genFilter: number | null = null;
 
   basicTarget: PokemonSpecies | null = null;
   fullTarget:  PokemonSpecies | null = null;
   evoChain: PokemonSpecies[] = [];
+  private evoTotal_ = 1;
 
   get target(): PokemonSpecies | null { return this.fullTarget ?? this.basicTarget; }
   get targetPokemon(): Pokemon | null {
@@ -145,42 +147,95 @@ export class PokeleComponent implements OnInit, OnDestroy {
 
   private buildEvoChain(): void {
     const all = this.fullTarget?.evolutionchain?.pokemonspecies;
-    if (!all?.length) { this.evoChain = []; return; }
-    const ids = new Set(all.map(s => s.id));
-    const remaining = [...all];
-    const sorted: PokemonSpecies[] = [];
-    let rootIdx = remaining.findIndex(s => !s.evolves_from_species_id || !ids.has(s.evolves_from_species_id));
-    if (rootIdx === -1) rootIdx = 0;
-    sorted.push(remaining.splice(rootIdx, 1)[0]);
-    while (remaining.length) {
-      const lastId = sorted[sorted.length - 1].id;
-      const nextIdx = remaining.findIndex(s => s.evolves_from_species_id === lastId);
-      if (nextIdx === -1) break;
-      sorted.push(remaining.splice(nextIdx, 1)[0]);
+    if (!all?.length) { this.evoChain = []; this.evoTotal_ = 1; return; }
+    const target = this.basicTarget;
+    if (!target) { this.evoChain = []; this.evoTotal_ = 1; return; }
+
+    const byId = new Map(all.map(s => [s.id, s]));
+
+    // Walk up from target to root to get the direct ancestral path
+    const path: PokemonSpecies[] = [];
+    let curr: PokemonSpecies | undefined = byId.get(target.id);
+    while (curr) {
+      path.unshift(curr);
+      curr = curr.evolves_from_species_id ? byId.get(curr.evolves_from_species_id) : undefined;
     }
-    sorted.push(...remaining);
-    this.evoChain = sorted;
+
+    // Total stages = path to target + max depth of descendants below target
+    this.evoTotal_ = path.length + this.maxDepthBelow(target.id, byId);
+    this.evoChain = path;
+  }
+
+  private maxDepthBelow(id: number, byId: Map<number, PokemonSpecies>): number {
+    const children = Array.from(byId.values()).filter(s => s.evolves_from_species_id === id);
+    if (!children.length) return 0;
+    return 1 + Math.max(...children.map(c => this.maxDepthBelow(c.id, byId)));
   }
 
   onInput(): void {
     const key = this.norm(this.inputValue);
-    if (!key) { this.suggestions = []; this.showSuggestions = false; return; }
+    if (!key) { this.suggestions = []; this.showSuggestions = false; this.activeIndex = -1; return; }
     this.suggestions = this.allSpecies.filter(sp => {
       const loc  = this.norm(this.pokemonUtils.getLocalizedNameFromEntity(sp, 'pokemonspeciesnames'));
       const slug = this.norm(sp.name?.replace(/-/g, ' ') ?? '');
       return loc.startsWith(key) || slug.startsWith(key);
     }).slice(0, 8);
+    this.activeIndex = -1;
     this.showSuggestions = this.suggestions.length > 0;
     this.cdr.markForCheck();
   }
 
-  onKeydown(e: KeyboardEvent): void { if (e.key === 'Enter') this.trySubmit(); }
+  onKeydown(e: KeyboardEvent): void {
+    if (this.showSuggestions && this.suggestions.length) {
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        this.activeIndex = Math.min(this.activeIndex + 1, this.suggestions.length - 1);
+        this.cdr.detectChanges();
+        this.scrollActiveSuggestion();
+        return;
+      }
+      if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        this.activeIndex = Math.max(this.activeIndex - 1, -1);
+        this.cdr.detectChanges();
+        this.scrollActiveSuggestion();
+        return;
+      }
+      if (e.key === 'Enter' && this.activeIndex >= 0) {
+        e.preventDefault();
+        this.selectSuggestion(this.suggestions[this.activeIndex]);
+        return;
+      }
+      if (e.key === 'Tab' && this.activeIndex >= 0) {
+        e.preventDefault();
+        this.selectSuggestion(this.suggestions[this.activeIndex]);
+        return;
+      }
+      if (e.key === 'Escape') {
+        this.showSuggestions = false;
+        this.activeIndex = -1;
+        this.cdr.detectChanges();
+        return;
+      }
+    }
+    if (e.key === 'Enter') this.trySubmit();
+  }
 
-  onBlur(): void { setTimeout(() => { this.showSuggestions = false; this.cdr.markForCheck(); }, 150); }
+  private scrollActiveSuggestion(): void {
+    if (this.activeIndex < 0) return;
+    setTimeout(() => {
+      const drop = document.querySelector('.suggestions-drop');
+      const item = drop?.querySelectorAll('.sug-item')[this.activeIndex] as HTMLElement;
+      item?.scrollIntoView({ block: 'nearest' });
+    }, 0);
+  }
+
+  onBlur(): void { setTimeout(() => { this.showSuggestions = false; this.activeIndex = -1; this.cdr.markForCheck(); }, 150); }
 
   selectSuggestion(sp: PokemonSpecies): void {
     this.inputValue = this.spName(sp);
     this.showSuggestions = false;
+    this.activeIndex = -1;
     this.submitGuess(sp);
   }
 
@@ -241,8 +296,8 @@ export class PokeleComponent implements OnInit, OnDestroy {
 
   types(): any[] { return this.targetPokemon?.pokemontypes?.map(pt => pt.type) ?? []; }
 
-  evoTotal():    number   { return this.evoChain.length || 1; }
-  evoPosition(): number   { return (this.evoChain.findIndex(s => s.id === this.basicTarget?.id) + 1) || 1; }
+  evoTotal():    number   { return this.evoTotal_; }
+  evoPosition(): number   { return this.evoChain.length || 1; }
   evoRange():    number[] { return Array.from({ length: this.evoTotal() }, (_, i) => i); }
 
   sortedStats() {

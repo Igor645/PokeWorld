@@ -5,49 +5,77 @@ a:hover {
   color: unset;
 }
 
-/* ────────────── Header & Footer Base ────────────── */
-.main-header,
-.main-footer {
+/* ────────────── Header ────────────── */
+.main-header {
+  grid-area: header;
   display: flex;
   justify-content: flex-start;
   align-items: center;
   position: relative;
-  z-index: 1;
+  z-index: 10;
   background: var(--background-color);
-  min-height: 7vh;
-  text-align: center;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  min-height: 54px;
+  padding: 0 0.5rem 0 1rem;
+  /* Gradient accent line at the bottom */
+  border-bottom: 1px solid var(--separator-color);
+  box-shadow: 0 1px 0 var(--separator-color), 0 2px 12px rgba(0,0,0,0.18);
 }
 
-/* ────────────── Header Specific ────────────── */
-.main-header {
-  grid-area: header;
-  display: flex;
+.main-header::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--primary-color) 0%, #a78bfa 60%, transparent 100%);
+  opacity: 0.85;
 }
 
 .main-header h1 {
-  margin: 0 0 0 1%;
-  font-size: 2rem;
+  margin: 0;
+  font-size: 1.55rem;
   font-family: "Exo 2", serif;
-  font-weight: 800;
-  color: var(--accent-text-color);
-  transition: transform 0.3s ease;
+  font-weight: 900;
+  line-height: 1;
+  transition: opacity 0.2s;
 }
 
 .main-header h1:hover {
   cursor: pointer;
-  transform: scale(1.05);
+  opacity: 0.82;
 }
 
 .main-header h1 a {
+  background: linear-gradient(135deg, var(--primary-color) 0%, #a78bfa 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ────────────── Footer ────────────── */
+.main-footer {
+  grid-area: footer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.6rem 1.5rem;
+  min-height: 48px;
+  background: var(--background-color);
+  border-top: 1px solid var(--separator-color);
   color: var(--accent-text-color);
 }
 
-/* ────────────── Footer Specific ────────────── */
-.main-footer {
-  grid-area: footer;
-  color: var(--text-color);
-  padding: 0 1%;
+.footer-brand {
+  font-size: 0.85rem;
+  font-weight: 900;
+  font-family: "Exo 2", serif;
+  background: linear-gradient(135deg, var(--primary-color) 0%, #a78bfa 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  opacity: 0.7;
+  letter-spacing: -0.01em;
 }
 
 /* ────────────── Global Grid Layout ────────────── */
@@ -75,18 +103,20 @@ a:hover {
 .pokeapi-reference {
   display: flex;
   align-items: center;
-  height: 100%;
-  gap: 3px;
-  font-weight: 700;
+  gap: 5px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  opacity: 0.6;
 }
 
 .pokeapi-logo {
-  width: 80px;
+  width: 68px;
   z-index: 1;
+  transition: opacity 0.2s;
 }
 
 .pokeapi-logo:hover {
-  transform: scale(1.1);
+  opacity: 0.8;
 }
 
 /* ────────────── Pokeworld Settings ────────────── */
@@ -135,9 +165,10 @@ a:hover {
 
 /* ────────────── Responsive Media Queries ────────────── */
 @media (max-width: 480px) {
-  .main-header h1 {
-    font-size: 1.2rem;
-  }
+  .main-header h1 { font-size: 1.15rem; }
+  .main-footer { padding: 0.5rem 0.85rem; }
+  .footer-brand { font-size: 0.75rem; }
+  .pokeapi-logo { width: 56px; }
 
   .settings-fab {
     width: 40px;
@@ -146,15 +177,11 @@ a:hover {
     padding: 2px 6px;
   }
 
-  .settings-fab .material-icons {
-    font-size: 24px;
-  }
+  .settings-fab .material-icons { font-size: 24px; }
 }
 
 @media (min-width: 481px) and (max-width: 768px) {
-  .main-header h1 {
-    font-size: 1.5rem;
-  }
+  .main-header h1 { font-size: 1.3rem; }
 
   .settings-fab {
     width: 44px;
@@ -163,9 +190,7 @@ a:hover {
     padding: 4px 8px;
   }
 
-  .settings-fab .material-icons {
-    font-size: 26px;
-  }
+  .settings-fab .material-icons { font-size: 26px; }
 }
 
 @media (min-width: 769px) and (max-width: 1024px) {

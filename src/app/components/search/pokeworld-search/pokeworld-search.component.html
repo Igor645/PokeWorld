@@ -1,9 +1,9 @@
 <div class="search-field-wrap">
   <mat-form-field class="search-container">
     <input #searchInput matInput type="text" placeholder="Search through PokeWorld..." [formControl]="searchControl"
-      [matAutocomplete]="auto" />
+      [matAutocomplete]="auto" (keydown)="onKeydown($event)" />
 
-    <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onOptionSelected($event)">
+    <mat-autocomplete #auto="matAutocomplete" autoActiveFirstOption (optionSelected)="onOptionSelected($event)">
       <mat-option *ngIf="isLoading && !filteredPokemonSpecies.length" disabled class="search-loading-option">
         Searching…
       </mat-option>

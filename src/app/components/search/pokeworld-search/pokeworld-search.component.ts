@@ -5,7 +5,7 @@ import { Subject, Subscription, asyncScheduler } from 'rxjs';
 import { debounceTime, distinctUntilChanged, filter, map, observeOn, switchMap, takeUntil, tap } from 'rxjs/operators';
 
 import { CommonModule } from '@angular/common';
-import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatAutocompleteModule, MatAutocompleteTrigger } from '@angular/material/autocomplete';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { PokemonService } from '../../../services/pokemon.service';
@@ -23,6 +23,7 @@ import { PokeworldSearchItemComponent } from '../pokeworld-search-item/pokeworld
 })
 export class PokeworldSearchComponent implements AfterViewInit, OnDestroy {
   @ViewChild('searchInput') private searchInputEl?: ElementRef<HTMLInputElement>;
+  @ViewChild(MatAutocompleteTrigger) private autoTrigger?: MatAutocompleteTrigger;
 
   searchControl = new FormControl<string>('', { nonNullable: true });
   filteredPokemonSpecies: PokemonSpecies[] = [];
@@ -32,6 +33,16 @@ export class PokeworldSearchComponent implements AfterViewInit, OnDestroy {
 
   focusInput(): void {
     setTimeout(() => this.searchInputEl?.nativeElement?.focus(), 180);
+  }
+
+  onKeydown(event: KeyboardEvent): void {
+    if (event.key === 'Tab' && this.autoTrigger?.panelOpen) {
+      const active = this.autoTrigger.activeOption;
+      if (active) {
+        event.preventDefault();
+        (active as any)._selectViaInteraction();
+      }
+    }
   }
 
   constructor(

@@ -9,6 +9,7 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { MatIcon } from '@angular/material/icon';
 import { Subscription } from 'rxjs';
 
 import { PokemonService } from '../../services/pokemon.service';
@@ -31,10 +32,20 @@ interface QuizGroup {
   slots: QuizSlot[];
 }
 
+type QuizPhase = 'select-mode' | 'select-gen' | 'select-type' | 'playing';
+
+const TYPE_COLORS: Record<string, string> = {
+  normal: '#B9B9AA', fire: '#EE8130', water: '#6390F0', electric: '#F7D02C',
+  grass: '#7AC74C', ice: '#96D9D6', fighting: '#C22E28', poison: '#A33EA1',
+  ground: '#E2BF65', flying: '#A98FF3', psychic: '#F95587', bug: '#A6B91A',
+  rock: '#B6A136', ghost: '#735797', dragon: '#6F35FC', dark: '#705746',
+  steel: '#B7B7CE', fairy: '#D685AD',
+};
+
 @Component({
   selector: 'app-quiz',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, MatIcon],
   templateUrl: './quiz.component.html',
   styleUrls: ['./quiz.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -42,6 +53,7 @@ interface QuizGroup {
 export class QuizComponent implements OnInit, OnDestroy {
   @ViewChild('inputEl') inputEl?: ElementRef<HTMLInputElement>;
 
+  quizPhase: QuizPhase = 'select-mode';
   isLoading = true;
   groups: QuizGroup[] = [];
   columns: QuizGroup[][] = [];
@@ -56,7 +68,10 @@ export class QuizComponent implements OnInit, OnDestroy {
   timerStarted = false;
   finished = false;
   cycleIndex = 0;
+  availableTypes: { id: number; name: string }[] = [];
+  currentFilter: { label: string; typeName?: string } | null = null;
 
+  private allGroups: QuizGroup[] = [];
   private nameMap = new Map<string, PokemonSpecies>();
   private timerRef: ReturnType<typeof setInterval> | null = null;
   private cycleRef: ReturnType<typeof setInterval> | null = null;
@@ -64,31 +79,14 @@ export class QuizComponent implements OnInit, OnDestroy {
   private spriteStyleSub?: Subscription;
   private audioCtx: AudioContext | null = null;
 
-  // Maps regional form suffix → generation ID of the card where that form belongs.
-  // 'hisui' is intentionally absent — Hisuian forms go to the dedicated Hisui group.
   private readonly REGIONAL_GEN: Record<string, number> = {
     alola: 7, galar: 8, paldea: 9, kitakami: 9,
   };
 
-  // Canonical regional pokédex ID used for SORT ORDER within each generation's card.
-  // 0 = no single combined dex → fall back to national dex (sp.id).
-  // These dexes start at #001 with the region's starter, giving the correct regional order.
   private readonly GEN_SORT_DEX: Record<number, number> = {
-    1: 2,   // kanto (= national dex for Gen I)
-    2: 7,   // updated-johto  → Chikorita #001
-    3: 15,  // updated-hoenn  → Treecko  #001
-    4: 6,   // extended-sinnoh → Turtwig  #001 (includes Giratina/Arceus etc.)
-    5: 9,   // updated-unova  → Snivy    #001
-    6: 0,   // kalos — no combined dex → national dex order
-    7: 21,  // updated-alola  → Rowlet   #001
-    8: 27,  // galar           → Grookey  #001
-    9: 31,  // paldea          → Sprigatito #001
+    1: 2, 2: 7, 3: 15, 4: 6, 5: 9, 6: 0, 7: 21, 8: 27, 9: 31,
   };
 
-  // Sort dex for REGIONAL FORM slots — the form's own region's dex, for interleaving.
-  // When this matches the target group's GEN_SORT_DEX they interleave with native mons.
-  // When it differs (Hisuian forms in Gen VIII card which uses Galar dex), add a large
-  // offset so they appear after all native + same-region entries.
   private readonly REGIONAL_SORT_DEX: Record<string, number> = {
     alola: 21, galar: 27, hisui: 30, paldea: 31, kitakami: 32,
   };
@@ -99,6 +97,30 @@ export class QuizComponent implements OnInit, OnDestroy {
     private settings: SettingsService,
     private cdr: ChangeDetectorRef,
   ) {}
+
+  // ── Derived data ──────────────────────────────────────────────────────────────
+
+  get genOptions(): Array<{ id: number | 'hisui'; label: string; roman: string; count: number }> {
+    const romanMap: Record<number, string> = {
+      1:'I', 2:'II', 3:'III', 4:'IV', 5:'V', 6:'VI', 7:'VII', 8:'VIII', 9:'IX',
+    };
+    return this.allGroups
+      .filter(g => g.id.startsWith('gen-') || g.id === 'hisui')
+      .map(g => {
+        if (g.id === 'hisui') return { id: 'hisui' as const, label: 'Hisui', roman: '✦', count: g.slots.length };
+        const genId = parseInt(g.id.replace('gen-', ''));
+        return { id: genId, label: g.label, roman: romanMap[genId] ?? String(genId), count: g.slots.length };
+      });
+  }
+
+  get allSpeciesCount(): number {
+    return new Set(this.allGroups.flatMap(g => g.slots.map(s => s.speciesId))).size;
+  }
+
+  get megaCount(): number { return this.allGroups.find(g => g.id === 'mega')?.slots.length ?? 0; }
+  get gmaxCount(): number { return this.allGroups.find(g => g.id === 'gmax')?.slots.length ?? 0; }
+
+  // ── Lifecycle ─────────────────────────────────────────────────────────────────
 
   ngOnInit(): void {
     this.loadSpecies();
@@ -119,20 +141,19 @@ export class QuizComponent implements OnInit, OnDestroy {
     this.audioCtx?.close();
   }
 
+  // ── Data loading ──────────────────────────────────────────────────────────────
+
   private loadSpecies(): void {
     this.pokemonService.getAllPokemonSpecies().subscribe(res => {
       const all = res.pokemonspecies;
       this.buildGroups(all);
-      this.buildNameMap();
-      this.totalCount = all.length;
+      this.extractTypes(all);
       this.isLoading = false;
       this.cdr.detectChanges();
-      setTimeout(() => this.inputEl?.nativeElement.focus(), 0);
     });
   }
 
   private buildGroups(all: PokemonSpecies[]): void {
-    // Build per-species dex lookup: speciesId → Map<pokedex_id, pokedex_number>
     const dexLookup = new Map<number, Map<number, number>>();
     for (const sp of all) {
       const byDex = new Map<number, number>();
@@ -148,12 +169,9 @@ export class QuizComponent implements OnInit, OnDestroy {
       return genGroupMap.get(genId)!;
     };
 
-    // Hisui gets its own card between Gen VIII (Galar) and Gen IX (Paldea).
-    // Native Hisuian species (Wyrdeer etc.) and Hisuian regional forms both land here,
-    // ordered by their position in the Hisui regional dex (pokedex id 30).
     const hisuiGroup: QuizGroup = { id: 'hisui', label: 'Hisui', slots: [] };
-    const megaGroup: QuizGroup = { id: 'mega', label: 'Mega Evolutions', slots: [] };
-    const gmaxGroup: QuizGroup = { id: 'gmax', label: 'Gigantamax', slots: [] };
+    const megaGroup: QuizGroup  = { id: 'mega',  label: 'Mega Evolutions', slots: [] };
+    const gmaxGroup: QuizGroup  = { id: 'gmax',  label: 'Gigantamax', slots: [] };
     const seenPokemonIds = new Set<number>();
 
     for (const sp of all) {
@@ -164,8 +182,6 @@ export class QuizComponent implements OnInit, OnDestroy {
       const genSortDex = this.GEN_SORT_DEX[genId] ?? 0;
 
       if (c.defaultPokemon) {
-        // Native Gen VIII species that live in the Hisui dex (Wyrdeer, Kleavor, etc.)
-        // belong in the Hisui group rather than the Galar group.
         if (genId === 8 && spDex.has(30)) {
           hisuiGroup.slots.push({
             speciesId: sp.id, species: sp, pokemon: c.defaultPokemon,
@@ -182,13 +198,11 @@ export class QuizComponent implements OnInit, OnDestroy {
       }
 
       for (const [suffix, forms] of c.regionals) {
-        // Hisuian forms go to the dedicated Hisui group, sorted by Hisui dex position.
         if (suffix === 'hisui') {
           if (!forms.length) continue;
           hisuiGroup.slots.push({
             speciesId: sp.id, species: sp, pokemon: forms[0],
-            cycleableForms: forms,
-            sortKey: spDex.get(30) ?? sp.id,
+            cycleableForms: forms, sortKey: spDex.get(30) ?? sp.id,
           });
           continue;
         }
@@ -196,7 +210,6 @@ export class QuizComponent implements OnInit, OnDestroy {
         if (!targetGenId || !forms.length) continue;
         const targetSortDex = this.GEN_SORT_DEX[targetGenId] ?? 0;
         const regionalDexId = this.REGIONAL_SORT_DEX[suffix];
-        // If the regional form's own dex matches the group's sort dex, interleave normally.
         const sortKey = regionalDexId === targetSortDex
           ? (spDex.get(regionalDexId) ?? sp.id * 100000)
           : (spDex.get(regionalDexId) ?? sp.id) + 10000;
@@ -219,17 +232,28 @@ export class QuizComponent implements OnInit, OnDestroy {
 
     const genGroups = [...genGroupMap.values()].sort((a, b) =>
       parseInt(a.id.replace('gen-', '')) - parseInt(b.id.replace('gen-', '')));
-
-    // Insert Hisui group between Gen VIII (Galar) and Gen IX (Paldea).
     const gen8Idx = genGroups.findIndex(g => g.id === 'gen-8');
-    this.groups = [
+
+    this.allGroups = [
       ...genGroups.slice(0, gen8Idx + 1),
       ...(hisuiGroup.slots.length ? [hisuiGroup] : []),
       ...genGroups.slice(gen8Idx + 1),
       ...(megaGroup.slots.length ? [megaGroup] : []),
       ...(gmaxGroup.slots.length ? [gmaxGroup] : []),
     ];
-    this.columns = this.distributeToColumns(4);
+  }
+
+  private extractTypes(all: PokemonSpecies[]): void {
+    const seen = new Map<string, { id: number; name: string }>();
+    for (const sp of all) {
+      const dp = sp.pokemons?.find(p => p.is_default) ?? sp.pokemons?.[0];
+      for (const pt of (dp as any)?.pokemontypes ?? []) {
+        if (pt.type?.name && !seen.has(pt.type.name)) {
+          seen.set(pt.type.name, { id: pt.type.id, name: pt.type.name });
+        }
+      }
+    }
+    this.availableTypes = [...seen.values()].sort((a, b) => a.id - b.id);
   }
 
   private genLabel(genId: number): string {
@@ -240,107 +264,83 @@ export class QuizComponent implements OnInit, OnDestroy {
     return labels[genId] ?? `Gen ${genId}`;
   }
 
-  private classifyPokemons(sp: PokemonSpecies, seenIds: Set<number>): {
-    defaultPokemon: Pokemon | null;
-    cosmeticForms: Pokemon[];
-    regionals: Map<string, Pokemon[]>;
-    megas: Pokemon[];
-    gmaxs: Pokemon[];
-  } {
-    const result = {
-      defaultPokemon: null as Pokemon | null,
-      cosmeticForms: [] as Pokemon[],
-      regionals: new Map<string, Pokemon[]>(),
-      megas: [] as Pokemon[],
-      gmaxs: [] as Pokemon[],
-    };
+  // ── Mode selection ────────────────────────────────────────────────────────────
 
-    const hasSprite = (p: Pokemon): boolean => {
-      const s = p.pokemonsprites?.[0]?.sprites;
-      return !!(s?.other?.home?.front_default || s?.front_default);
-    };
+  selectAll(): void    { this.applyFilter('all'); }
+  selectMega(): void   { this.applyFilter('mega'); }
+  selectGmax(): void   { this.applyFilter('gmax'); }
+  openGenPicker(): void  { this.quizPhase = 'select-gen';  this.cdr.detectChanges(); }
+  openTypePicker(): void { this.quizPhase = 'select-type'; this.cdr.detectChanges(); }
+  selectGen(id: number | 'hisui'): void { this.applyFilter('gen', id); }
+  selectType(name: string): void        { this.applyFilter('type', name); }
+  goBack(): void     { this.quizPhase = 'select-mode'; this.cdr.detectChanges(); }
+  changeMode(): void { this.clearTimer(); this.clearCycle(); this.quizPhase = 'select-mode'; this.cdr.detectChanges(); }
 
-    for (const p of sp.pokemons ?? []) {
-      if (seenIds.has(p.id)) continue;
-      seenIds.add(p.id);
-
-      const n = p.name;
-
-      if (p.is_default) {
-        result.defaultPokemon = p;
-      } else if (n.includes('-mega')) {
-        if (hasSprite(p)) result.megas.push(p);
-      } else if (n.includes('-gmax')) {
-        if (hasSprite(p)) result.gmaxs.push(p);
-      } else {
-        // Exact match prevents composite names like "raticate-totem-alola" from being
-        // misclassified as a regional variant — must be exactly "speciesname-suffix"
-        const suffix = this.cleanRegionalSuffix(n, sp.name);
-        if (suffix) {
-          if (!result.regionals.has(suffix)) result.regionals.set(suffix, []);
-          if (hasSprite(p)) result.regionals.get(suffix)!.push(p);
-        } else if (!n.includes('-totem')) {
-          // Cycle relevant alternate forms (Rotom, Deoxys, Unown, etc.) — skip totem forms
-          if (hasSprite(p)) result.cosmeticForms.push(p);
-        }
+  private applyFilter(kind: string, arg?: any): void {
+    let filtered: QuizGroup[];
+    switch (kind) {
+      case 'all':  filtered = this.allGroups; break;
+      case 'mega': filtered = this.allGroups.filter(g => g.id === 'mega'); break;
+      case 'gmax': filtered = this.allGroups.filter(g => g.id === 'gmax'); break;
+      case 'gen': {
+        const gid = arg === 'hisui' ? 'hisui' : `gen-${arg}`;
+        filtered = this.allGroups.filter(g => g.id === gid);
+        break;
       }
-    }
-
-    return result;
-  }
-
-  private cleanRegionalSuffix(pokemonName: string, speciesName: string): string | null {
-    for (const r of ['alola', 'galar', 'hisui', 'paldea', 'kitakami']) {
-      const base = `${speciesName}-${r}`;
-      // Exact match covers single-form regionals (rattata-alola).
-      // StartsWith covers multi-form regionals (tauros-paldea-combat, -blaze, -aqua).
-      // Does NOT match composite names like raticate-totem-alola since that doesn't
-      // equal "raticate-alola" nor start with "raticate-alola-".
-      if (pokemonName === base || pokemonName.startsWith(`${base}-`)) return r;
-    }
-    return null;
-  }
-
-  private distributeToColumns(n: number): QuizGroup[][] {
-    const cols: QuizGroup[][] = Array.from({ length: n }, () => []);
-    const total = this.groups.reduce((sum, g) => sum + g.slots.length, 0);
-    const target = total / n;
-    let colIdx = 0;
-    let accumulated = 0;
-    for (const g of this.groups) {
-      // Move to the next column once the current one has reached its share,
-      // keeping all groups in generation order so I→II→III read down col 0,
-      // IV→V→VI down col 1, etc. instead of the "shortest first" scramble.
-      if (colIdx < n - 1 && accumulated >= target) {
-        colIdx++;
-        accumulated = 0;
+      case 'type': {
+        const typeName = arg as string;
+        filtered = this.allGroups
+          .map(g => ({
+            ...g,
+            slots: g.slots.filter(s =>
+              (s.pokemon as any).pokemontypes?.some((pt: any) => pt.type.name === typeName)
+            ),
+          }))
+          .filter(g => g.slots.length > 0);
+        break;
       }
-      cols[colIdx].push(g);
-      accumulated += g.slots.length;
+      default: filtered = this.allGroups;
     }
-    return cols;
-  }
 
-  private buildNameMap(): void {
-    this.nameMap.clear();
-    const seen = new Set<number>();
-    for (const g of this.groups) {
-      for (const s of g.slots) {
-        if (seen.has(s.speciesId)) continue;
-        seen.add(s.speciesId);
-        const sp = s.species;
-        const loc = this.pokemonUtils.getLocalizedNameFromEntity(sp, 'pokemonspeciesnames');
-        if (loc && loc !== 'Unknown') this.nameMap.set(this.norm(loc), sp);
-        if (sp.name) this.nameMap.set(this.norm(sp.name.replace(/-/g, ' ')), sp);
+    switch (kind) {
+      case 'all':  this.currentFilter = { label: 'All Pokémon' }; break;
+      case 'mega': this.currentFilter = { label: 'Mega Evolutions' }; break;
+      case 'gmax': this.currentFilter = { label: 'Gigantamax' }; break;
+      case 'gen': {
+        const gid = arg === 'hisui' ? 'hisui' : `gen-${arg}`;
+        const lbl = this.allGroups.find(g => g.id === gid)?.label ?? String(arg);
+        this.currentFilter = { label: lbl };
+        break;
       }
+      case 'type':
+        this.currentFilter = { label: this.typeCap(arg as string), typeName: arg as string };
+        break;
     }
+
+    this.groups     = filtered;
+    this.totalCount = new Set(filtered.flatMap(g => g.slots.map(s => s.speciesId))).size;
+    const colCount  = Math.min(4, Math.max(1, filtered.length));
+    this.columns    = this.distributeToColumns(colCount);
+    this.buildNameMap();
+
+    this.guessedIds      = new Set();
+    this.inputValue      = '';
+    this.lastGuessedUrl  = '';
+    this.timerSeconds    = 0;
+    this.timerStarted    = false;
+    this.finished        = false;
+    this.showSilhouettes = false;
+    this.revealed        = false;
+    this.recentlyGuessedId = null;
+    this.cycleIndex      = 0;
+    this.clearTimer();
+    this.clearCycle();
+    this.quizPhase = 'playing';
+    this.cdr.detectChanges();
+    setTimeout(() => this.inputEl?.nativeElement.focus(), 0);
   }
 
-  private norm(s: string): string {
-    return s.toLowerCase().normalize('NFD')
-      .replace(/[̀-ͯ]/g, '')
-      .replace(/[^a-z0-9]/g, '');
-  }
+  // ── Quiz actions ──────────────────────────────────────────────────────────────
 
   onInput(): void {
     const key = this.norm(this.inputValue);
@@ -370,10 +370,7 @@ export class QuizComponent implements OnInit, OnDestroy {
     }, 700);
   }
 
-  enableSilhouettes(): void {
-    this.showSilhouettes = true;
-    this.cdr.detectChanges();
-  }
+  enableSilhouettes(): void { this.showSilhouettes = true; this.cdr.detectChanges(); }
 
   revealAll(): void {
     this.revealed = true;
@@ -383,24 +380,112 @@ export class QuizComponent implements OnInit, OnDestroy {
   }
 
   reset(): void {
-    this.guessedIds = new Set();
-    this.inputValue = '';
-    this.lastGuessedUrl = '';
-    this.timerSeconds = 0;
-    this.timerStarted = false;
-    this.finished = false;
+    this.guessedIds      = new Set();
+    this.inputValue      = '';
+    this.lastGuessedUrl  = '';
+    this.timerSeconds    = 0;
+    this.timerStarted    = false;
+    this.finished        = false;
     this.showSilhouettes = false;
-    this.revealed = false;
+    this.revealed        = false;
     this.recentlyGuessedId = null;
-    this.cycleIndex = 0;
+    this.cycleIndex      = 0;
     this.clearTimer();
     this.clearCycle();
     this.cdr.detectChanges();
     setTimeout(() => this.inputEl?.nativeElement.focus(), 0);
   }
 
-  // Returns the current cycling form to display (changes every 2s once guessing starts).
-  // Offset by speciesId so slots are on different phases — not all switching simultaneously.
+  // ── Classify helpers ──────────────────────────────────────────────────────────
+
+  private classifyPokemons(sp: PokemonSpecies, seenIds: Set<number>): {
+    defaultPokemon: Pokemon | null;
+    cosmeticForms: Pokemon[];
+    regionals: Map<string, Pokemon[]>;
+    megas: Pokemon[];
+    gmaxs: Pokemon[];
+  } {
+    const result = {
+      defaultPokemon: null as Pokemon | null,
+      cosmeticForms: [] as Pokemon[],
+      regionals: new Map<string, Pokemon[]>(),
+      megas: [] as Pokemon[],
+      gmaxs: [] as Pokemon[],
+    };
+
+    const hasSprite = (p: Pokemon): boolean => {
+      const s = p.pokemonsprites?.[0]?.sprites;
+      return !!(s?.other?.home?.front_default || s?.front_default);
+    };
+
+    for (const p of sp.pokemons ?? []) {
+      if (seenIds.has(p.id)) continue;
+      seenIds.add(p.id);
+      const n = p.name;
+      if (p.is_default) {
+        result.defaultPokemon = p;
+      } else if (n.includes('-mega')) {
+        if (hasSprite(p)) result.megas.push(p);
+      } else if (n.includes('-gmax')) {
+        if (hasSprite(p)) result.gmaxs.push(p);
+      } else {
+        const suffix = this.cleanRegionalSuffix(n, sp.name);
+        if (suffix) {
+          if (!result.regionals.has(suffix)) result.regionals.set(suffix, []);
+          if (hasSprite(p)) result.regionals.get(suffix)!.push(p);
+        } else if (!n.includes('-totem')) {
+          if (hasSprite(p)) result.cosmeticForms.push(p);
+        }
+      }
+    }
+    return result;
+  }
+
+  private cleanRegionalSuffix(pokemonName: string, speciesName: string): string | null {
+    for (const r of ['alola', 'galar', 'hisui', 'paldea', 'kitakami']) {
+      const base = `${speciesName}-${r}`;
+      if (pokemonName === base || pokemonName.startsWith(`${base}-`)) return r;
+    }
+    return null;
+  }
+
+  private distributeToColumns(n: number): QuizGroup[][] {
+    const cols: QuizGroup[][] = Array.from({ length: n }, () => []);
+    const total = this.groups.reduce((sum, g) => sum + g.slots.length, 0);
+    const target = total / n;
+    let colIdx = 0;
+    let accumulated = 0;
+    for (const g of this.groups) {
+      if (colIdx < n - 1 && accumulated >= target) { colIdx++; accumulated = 0; }
+      cols[colIdx].push(g);
+      accumulated += g.slots.length;
+    }
+    return cols;
+  }
+
+  private buildNameMap(): void {
+    this.nameMap.clear();
+    const seen = new Set<number>();
+    for (const g of this.groups) {
+      for (const s of g.slots) {
+        if (seen.has(s.speciesId)) continue;
+        seen.add(s.speciesId);
+        const sp = s.species;
+        const loc = this.pokemonUtils.getLocalizedNameFromEntity(sp, 'pokemonspeciesnames');
+        if (loc && loc !== 'Unknown') this.nameMap.set(this.norm(loc), sp);
+        if (sp.name) this.nameMap.set(this.norm(sp.name.replace(/-/g, ' ')), sp);
+      }
+    }
+  }
+
+  private norm(s: string): string {
+    return s.toLowerCase().normalize('NFD')
+      .replace(/[̀-ͯ]/g, '')
+      .replace(/[^a-z0-9]/g, '');
+  }
+
+  // ── Display helpers ───────────────────────────────────────────────────────────
+
   currentCycleForm(slot: QuizSlot): Pokemon {
     if (slot.cycleableForms.length <= 1) return slot.pokemon;
     return slot.cycleableForms[(this.cycleIndex + slot.speciesId) % slot.cycleableForms.length];
@@ -409,14 +494,12 @@ export class QuizComponent implements OnInit, OnDestroy {
   imageUrl(pokemon: Pokemon): string {
     const sprites = pokemon.pokemonsprites?.[0]?.sprites;
     const style = this.settings.getSetting<string>('spriteStyle');
-    if (style === 'home')   return sprites?.other?.home?.front_default || sprites?.other?.['official-artwork']?.front_default || '';
-    if (style === 'pixel')  return sprites?.front_default || '';
+    if (style === 'home')  return sprites?.other?.home?.front_default || sprites?.other?.['official-artwork']?.front_default || '';
+    if (style === 'pixel') return sprites?.front_default || '';
     return sprites?.other?.['official-artwork']?.front_default || sprites?.other?.home?.front_default || '';
   }
 
-  groupLabel(g: QuizGroup): string {
-    return g.label;
-  }
+  groupLabel(g: QuizGroup): string { return g.label; }
 
   formName(slot: QuizSlot): string {
     const base = this.spName(slot.species);
@@ -442,12 +525,15 @@ export class QuizComponent implements OnInit, OnDestroy {
     return [h, m, s].map(v => String(v).padStart(2, '0')).join(':');
   }
 
+  typeColor(name: string): string { return TYPE_COLORS[name] || '#888'; }
+  typeIcon(name: string): string  { return `/images/type-icons/${name}.svg`; }
+  typeCap(name: string): string   { return name.charAt(0).toUpperCase() + name.slice(1); }
+
+  // ── Timer / cycle ─────────────────────────────────────────────────────────────
+
   private startTimer(): void {
     this.timerStarted = true;
-    this.timerRef = setInterval(() => {
-      this.timerSeconds++;
-      this.cdr.detectChanges();
-    }, 1000);
+    this.timerRef = setInterval(() => { this.timerSeconds++; this.cdr.detectChanges(); }, 1000);
   }
 
   private clearTimer(): void {
@@ -455,10 +541,7 @@ export class QuizComponent implements OnInit, OnDestroy {
   }
 
   private startCycle(): void {
-    this.cycleRef = setInterval(() => {
-      this.cycleIndex++;
-      this.cdr.detectChanges();
-    }, 3000);
+    this.cycleRef = setInterval(() => { this.cycleIndex++; this.cdr.detectChanges(); }, 3000);
   }
 
   private clearCycle(): void {
@@ -471,26 +554,21 @@ export class QuizComponent implements OnInit, OnDestroy {
       if (this.audioCtx.state === 'suspended') this.audioCtx.resume();
       const ctx = this.audioCtx;
       const t = ctx.currentTime;
-
-      // Soft E5 "ding" — triangle wave (warm) + quiet sine overtone (shimmer).
-      // 4 ms attack avoids click; 200 ms exponential decay feels like a small bell.
       const env = ctx.createGain();
       env.connect(ctx.destination);
       env.gain.setValueAtTime(0, t);
       env.gain.linearRampToValueAtTime(0.07, t + 0.004);
       env.gain.exponentialRampToValueAtTime(0.001, t + 0.2);
-
       const fund = ctx.createOscillator();
       fund.type = 'triangle';
-      fund.frequency.setValueAtTime(659.25, t); // E5
+      fund.frequency.setValueAtTime(659.25, t);
       fund.connect(env);
       fund.start(t);
       fund.stop(t + 0.21);
-
       const harm = ctx.createOscillator();
       const hg = ctx.createGain();
       harm.type = 'sine';
-      harm.frequency.setValueAtTime(1318.5, t); // E6 overtone
+      harm.frequency.setValueAtTime(1318.5, t);
       hg.gain.setValueAtTime(0.18, t);
       harm.connect(hg);
       hg.connect(env);

@@ -1,49 +1,165 @@
 <div class="quiz-page">
 
-  <!-- ── Sticky header ─────────────────────────────────────────── -->
-  <div class="quiz-header">
-    <div class="quiz-input-wrap" [class.has-sprite]="lastGuessedUrl">
-      @if (lastGuessedUrl) {
-        <img class="last-guess-sprite" [src]="lastGuessedUrl" alt="" aria-hidden="true" />
-      }
-      <input #inputEl class="quiz-input" type="text" [(ngModel)]="inputValue" (ngModelChange)="onInput()"
-        placeholder="Type a Pokémon name…" [disabled]="finished" autocomplete="off" autocorrect="off"
-        autocapitalize="off" spellcheck="false" />
-    </div>
-
-    <div class="quiz-counter">{{ guessedIds.size }}&thinsp;/&thinsp;{{ totalCount }}</div>
-
-    <div class="quiz-timer" [class.running]="timerStarted && !finished">
-      {{ formatTime() }}
-    </div>
-
-    <button class="quiz-btn btn-hint" (click)="enableSilhouettes()" [disabled]="showSilhouettes || revealed"
-      [title]="showSilhouettes ? 'Silhouettes are visible' : 'Reveal silhouettes as a one-time hint'">
-      {{ showSilhouettes ? 'Silhouettes on' : 'Show silhouettes' }}
-    </button>
-
-    <button class="quiz-btn btn-reveal" (click)="revealAll()" [disabled]="revealed || finished"
-      title="Show all Pokémon you missed">
-      {{ revealed ? 'Revealed' : 'Reveal all' }}
-    </button>
-
-    <button class="quiz-btn btn-reset" (click)="reset()">Reset</button>
-  </div>
-
   <!-- ── Loading ───────────────────────────────────────────────── -->
   @if (isLoading) {
-  <div class="quiz-loading">Loading…</div>
+  <div class="quiz-loading">Loading Pokédex…</div>
   }
 
-  <!-- ── Finished banner ───────────────────────────────────────── -->
+  <!-- ── Mode selection ────────────────────────────────────────── -->
+  @if (!isLoading && quizPhase === 'select-mode') {
+  <div class="mode-select">
+    <div class="mode-select-hero">
+      <div class="mode-select-eyebrow">Pokémon Quiz</div>
+      <h2 class="mode-select-title">Name 'em All</h2>
+      <p class="mode-select-sub">How well do you know your Pokédex?</p>
+    </div>
+
+    <div class="mode-cards">
+
+      <button class="mode-card" style="--mc:#6366f1" (click)="selectAll()">
+        <div class="mode-card-icon-wrap">
+          <mat-icon class="mode-card-icon">grid_view</mat-icon>
+        </div>
+        <span class="mode-card-title">All Pokémon</span>
+        <span class="mode-card-desc">Every species across all generations</span>
+        <span class="mode-card-count">{{ allSpeciesCount }} Pokémon</span>
+      </button>
+
+      <button class="mode-card" style="--mc:#7038F8" (click)="openGenPicker()">
+        <div class="mode-card-icon-wrap">
+          <mat-icon class="mode-card-icon">map</mat-icon>
+        </div>
+        <span class="mode-card-title">Generation</span>
+        <span class="mode-card-desc">Focus on one region at a time</span>
+        <span class="mode-card-count">I · II · III · IV · V · VI · VII · VIII · IX</span>
+      </button>
+
+      <button class="mode-card" style="--mc:#EE8130" (click)="openTypePicker()">
+        <div class="mode-card-icon-wrap">
+          <mat-icon class="mode-card-icon">local_fire_department</mat-icon>
+        </div>
+        <span class="mode-card-title">Type</span>
+        <span class="mode-card-desc">Filter by a single type</span>
+        <span class="mode-card-count">18 types to choose from</span>
+      </button>
+
+      <button class="mode-card" style="--mc:#4080FF" (click)="selectMega()" [disabled]="megaCount === 0">
+        <div class="mode-card-icon-wrap">
+          <mat-icon class="mode-card-icon">auto_awesome</mat-icon>
+        </div>
+        <span class="mode-card-title">Mega Evolutions</span>
+        <span class="mode-card-desc">Only Mega-evolved forms</span>
+        <span class="mode-card-count">{{ megaCount }} Mega forms</span>
+      </button>
+
+      <button class="mode-card" style="--mc:#C02000" (click)="selectGmax()" [disabled]="gmaxCount === 0">
+        <div class="mode-card-icon-wrap">
+          <mat-icon class="mode-card-icon">open_in_full</mat-icon>
+        </div>
+        <span class="mode-card-title">Gigantamax</span>
+        <span class="mode-card-desc">Only Gigantamax forms</span>
+        <span class="mode-card-count">{{ gmaxCount }} G-Max forms</span>
+      </button>
+
+    </div>
+  </div>
+  }
+
+  <!-- ── Generation picker ─────────────────────────────────────── -->
+  @if (!isLoading && quizPhase === 'select-gen') {
+  <div class="sub-select">
+    <div class="sub-select-header">
+      <button class="back-btn" (click)="goBack()">
+        <mat-icon>arrow_back</mat-icon>
+        Back
+      </button>
+      <span class="sub-select-title">Choose a Generation</span>
+    </div>
+    <div class="gen-pick-grid">
+      @for (g of genOptions; track g.id) {
+      <button class="gen-pick-btn" (click)="selectGen(g.id)">
+        <span class="gen-pick-roman">{{ g.roman }}</span>
+        <span class="gen-pick-label">{{ g.label }}</span>
+        <span class="gen-pick-count">{{ g.count }}</span>
+      </button>
+      }
+    </div>
+  </div>
+  }
+
+  <!-- ── Type picker ────────────────────────────────────────────── -->
+  @if (!isLoading && quizPhase === 'select-type') {
+  <div class="sub-select">
+    <div class="sub-select-header">
+      <button class="back-btn" (click)="goBack()">
+        <mat-icon>arrow_back</mat-icon>
+        Back
+      </button>
+      <span class="sub-select-title">Choose a Type</span>
+    </div>
+    <div class="type-pick-grid">
+      @for (t of availableTypes; track t.id) {
+      <button class="type-pick-btn" [style.background]="typeColor(t.name)" (click)="selectType(t.name)">
+        <img class="type-pick-icon" [src]="typeIcon(t.name)" [alt]="t.name" />
+        <span class="type-pick-name">{{ typeCap(t.name) }}</span>
+      </button>
+      }
+    </div>
+  </div>
+  }
+
+  <!-- ── Playing ───────────────────────────────────────────────── -->
+  @if (!isLoading && quizPhase === 'playing') {
+
+  <!-- Sticky header -->
+  <div class="quiz-header">
+    <div class="qh-main">
+      <button class="mode-back-btn" (click)="changeMode()" title="Change mode">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      @if (currentFilter) {
+        <div class="filter-badge"
+          [class.filter-badge-type]="!!currentFilter.typeName"
+          [style.background]="currentFilter.typeName ? typeColor(currentFilter.typeName) : null">
+          @if (currentFilter.typeName) {
+            <img class="filter-badge-icon" [src]="typeIcon(currentFilter.typeName)" [alt]="currentFilter.label" />
+          }
+          <span class="filter-badge-label">{{ currentFilter.label }}</span>
+        </div>
+      }
+      <div class="quiz-input-wrap" [class.has-sprite]="lastGuessedUrl">
+        @if (lastGuessedUrl) {
+          <img class="last-guess-sprite" [src]="lastGuessedUrl" alt="" aria-hidden="true" />
+        }
+        <input #inputEl class="quiz-input" type="text" [(ngModel)]="inputValue" (ngModelChange)="onInput()"
+          placeholder="Type a Pokémon name…" [disabled]="finished" autocomplete="off" autocorrect="off"
+          autocapitalize="off" spellcheck="false" />
+      </div>
+      <div class="quiz-counter">{{ guessedIds.size }}&thinsp;/&thinsp;{{ totalCount }}</div>
+    </div>
+
+    <div class="qh-controls">
+      <div class="quiz-timer" [class.running]="timerStarted && !finished">{{ formatTime() }}</div>
+      <button class="quiz-btn btn-hint" (click)="enableSilhouettes()" [disabled]="showSilhouettes || revealed"
+        [title]="showSilhouettes ? 'Silhouettes are visible' : 'Reveal silhouettes as a one-time hint'">
+        {{ showSilhouettes ? 'Sil on' : 'Silhouettes' }}
+      </button>
+      <button class="quiz-btn btn-reveal" (click)="revealAll()" [disabled]="revealed || finished"
+        title="Show all Pokémon you missed">
+        {{ revealed ? 'Revealed' : 'Reveal all' }}
+      </button>
+      <button class="quiz-btn btn-reset" (click)="reset()">Reset</button>
+    </div>
+  </div>
+
+  <!-- Finished banner -->
   @if (finished) {
   <div class="quiz-finished">
     You named all {{ totalCount }} Pokémon! &nbsp;—&nbsp; {{ formatTime() }}
   </div>
   }
 
-  <!-- ── Groups (one card per generation + Mega Evolutions + Gigantamax) ── -->
-  @if (!isLoading) {
+  <!-- Groups grid -->
   <div class="quiz-body">
     @for (col of columns; track $index) {
     <div class="quiz-col">
@@ -82,6 +198,7 @@
     </div>
     }
   </div>
-  }
+
+  } <!-- end playing -->
 
 </div>
