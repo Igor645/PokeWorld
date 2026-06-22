@@ -95,6 +95,10 @@ app-expandable-section {
   text-align: center;
   line-height: 1.45;
   max-width: 8rem;
+  border: var(--primary-color) 2px solid;
+  padding: 0.5rem 0.5rem;
+  border-radius: 1rem;
+  overflow-wrap: anywhere;
 }
 
 .evo-link-h-label app-evolution-condition-display {
@@ -109,7 +113,7 @@ app-expandable-section {
 
 .evo-link-h-line {
   width: 3rem;
-  height: 1.5px;
+  height: 3px;
   background: var(--primary-color);
   border-radius: 1px;
 }
@@ -117,9 +121,9 @@ app-expandable-section {
 .evo-link-h-tip {
   width: 0;
   height: 0;
-  border-top: 5px solid transparent;
-  border-bottom: 5px solid transparent;
-  border-left: 8px solid var(--primary-color);
+  border-top: 6px solid transparent;
+  border-bottom: 6px solid transparent;
+  border-left: 10px solid var(--primary-color);
 }
 
 /* ── Branching: trunk + branch row ──────────────────────────── */
@@ -318,15 +322,15 @@ app-expandable-section {
   }
 
   .evo-link-h-line {
-    width: 1.5px;
+    width: 3px;
     height: 1.8rem;
   }
 
   /* Rightward arrow → downward arrow */
   .evo-link-h-tip {
-    border-top: 8px solid var(--primary-color);
-    border-left: 5px solid transparent;
-    border-right: 5px solid transparent;
+    border-top: 10px solid var(--primary-color);
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
     border-bottom: 0;
   }
 

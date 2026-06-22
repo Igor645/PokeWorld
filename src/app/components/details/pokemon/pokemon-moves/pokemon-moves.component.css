@@ -133,6 +133,11 @@ tbody td {
 
 thead .col-first {
     color: var(--adjusted-white);
+    white-space: nowrap;
+}
+
+thead .col-first span {
+    color: inherit;
 }
 
 .col-name {

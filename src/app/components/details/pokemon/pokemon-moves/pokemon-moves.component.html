@@ -8,9 +8,7 @@
     <ng-template #movesContent>
         <div class="moves-toolbar">
             <mat-icon class="toolbar-vg-icon">sports_esports</mat-icon>
-            <app-version-select
-                [groups]="versionSelectGroups"
-                [selectedId]="selectedVgId"
+            <app-version-select [groups]="versionSelectGroups" [selectedId]="selectedVgId"
                 (selectionChange)="onVgChange($event)">
             </app-version-select>
 
@@ -53,8 +51,8 @@
                             </thead>
 
                             <tbody>
-                                <tr class="row" *ngFor="let r of rows; trackBy: trackById"
-                                    (click)="onRowClick(r)" tabindex="0" role="button">
+                                <tr class="row" *ngFor="let r of rows; trackBy: trackById" (click)="onRowClick(r)"
+                                    tabindex="0" role="button">
                                     <td class="col-first">
                                         <ng-container [ngSwitch]="selectedMethodKeyFromId(selectedMethodId)">
                                             <span *ngSwitchCase="'level-up'">{{ r.level ?? '—' }}</span>
