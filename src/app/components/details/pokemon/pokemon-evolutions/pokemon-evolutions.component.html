@@ -4,111 +4,26 @@
 
   <div class="evo-chart" *ngIf="!isSingleStage">
 
-    <div class="evo-chain"
-         #evoChain
-         *ngFor="let group of evoGroups; let groupFirst = first"
-         [class.evo-chain--div]="!groupFirst">
+    <div class="evo-chain" #evoChain *ngFor="let group of evoGroups; let groupFirst = first"
+      [class.evo-chain--div]="!groupFirst">
 
       <div class="evo-chain-tree">
 
-      <!-- ══ LINEAR: single branch → horizontal left-to-right row ══ -->
-      <ng-container *ngIf="group.branches.length === 1">
-        <div class="evo-row">
-
-          <div class="evo-card-wrap">
-            <app-pokemon-card
-              [pokemon]="group.ancestor.form"
-              [pokemonSpecies]="group.ancestor.species"
-              [showTypes]="true"
-              [showRegion]="true">
-            </app-pokemon-card>
-          </div>
-
-          <ng-container *ngFor="let entry of group.branches[0].stages">
-
-            <div class="evo-link-h">
-              <ng-container *ngIf="getConnectorEvolutions(entry) as evos">
-                <p class="evo-link-h-label" *ngIf="hasConditions(evos)">
-                  <ng-container *ngFor="let evo of evos; let evoLast = last">
-                    <ng-container *ngFor="let c of getEvolutionConditions(evo)">
-                      <app-evolution-condition-display [condition]="c"></app-evolution-condition-display>
-                    </ng-container>
-                    <span class="evo-evo-sep" *ngIf="!evoLast">or</span>
-                  </ng-container>
-                </p>
-              </ng-container>
-              <div class="evo-link-h-track">
-                <div class="evo-link-h-line"></div>
-                <div class="evo-link-h-tip"></div>
-              </div>
-            </div>
+        <!-- ══ LINEAR: single branch → horizontal left-to-right row ══ -->
+        <ng-container *ngIf="group.branches.length === 1">
+          <div class="evo-row">
 
             <div class="evo-card-wrap">
-              <app-pokemon-card
-                [pokemon]="entry.form"
-                [pokemonSpecies]="entry.species"
-                [showTypes]="true"
-                [showRegion]="true">
+              <app-pokemon-card [pokemon]="group.ancestor.form" [pokemonSpecies]="group.ancestor.species"
+                [showTypes]="true" [showRegion]="true">
               </app-pokemon-card>
             </div>
 
-          </ng-container>
+            <ng-container *ngFor="let entry of group.branches[0].stages">
 
-        </div>
-      </ng-container>
-
-      <!-- ══ BRANCHING: multiple branches → vertical top-down tree ══ -->
-      <ng-container *ngIf="group.branches.length > 1">
-
-        <div class="evo-card-wrap">
-          <app-pokemon-card
-            [pokemon]="group.ancestor.form"
-            [pokemonSpecies]="group.ancestor.species"
-            [showTypes]="true"
-            [showRegion]="true">
-          </app-pokemon-card>
-        </div>
-
-        <!-- Shared linear stages before the branch split (e.g. Quilava in Cyndaquil chain) -->
-        <ng-container *ngFor="let sharedEntry of group.sharedStages">
-          <div class="evo-shared-link">
-            <ng-container *ngIf="getConnectorEvolutions(sharedEntry) as evos">
-              <p class="evo-link-label" *ngIf="hasConditions(evos)">
-                <ng-container *ngFor="let evo of evos; let evoLast = last">
-                  <ng-container *ngFor="let c of getEvolutionConditions(evo)">
-                    <app-evolution-condition-display [condition]="c"></app-evolution-condition-display>
-                  </ng-container>
-                  <span class="evo-evo-sep" *ngIf="!evoLast">or</span>
-                </ng-container>
-              </p>
-            </ng-container>
-            <div class="evo-link-track">
-              <div class="evo-link-line"></div>
-              <div class="evo-link-tip"></div>
-            </div>
-          </div>
-          <div class="evo-card-wrap">
-            <app-pokemon-card
-              [pokemon]="sharedEntry.form"
-              [pokemonSpecies]="sharedEntry.species"
-              [showTypes]="true"
-              [showRegion]="true">
-            </app-pokemon-card>
-          </div>
-        </ng-container>
-
-        <div class="evo-trunk"></div>
-
-        <div class="evo-branches evo-branches--multi">
-          <div class="evo-col" *ngFor="let branch of group.branches; let bIdx = index">
-            <ng-container *ngFor="let entry of branch.stages; let sIdx = index">
-
-              <div class="evo-link"
-                   [class.evo-link--head]="sIdx === 0"
-                   [style.grid-column]="bIdx + 1"
-                   [style.grid-row]="sIdx * 2 + 1">
+              <div class="evo-link-h">
                 <ng-container *ngIf="getConnectorEvolutions(entry) as evos">
-                  <p class="evo-link-label" *ngIf="hasConditions(evos)">
+                  <p class="evo-link-h-label" *ngIf="hasConditions(evos)">
                     <ng-container *ngFor="let evo of evos; let evoLast = last">
                       <ng-container *ngFor="let c of getEvolutionConditions(evo)">
                         <app-evolution-condition-display [condition]="c"></app-evolution-condition-display>
@@ -117,28 +32,92 @@
                     </ng-container>
                   </p>
                 </ng-container>
-                <div class="evo-link-track">
-                  <div class="evo-link-line"></div>
-                  <div class="evo-link-tip"></div>
+                <div class="evo-link-h-track">
+                  <div class="evo-link-h-line"></div>
+                  <div class="evo-link-h-tip"></div>
                 </div>
               </div>
 
-              <div class="evo-card-wrap"
-                   [style.grid-column]="bIdx + 1"
-                   [style.grid-row]="sIdx * 2 + 2">
-                <app-pokemon-card
-                  [pokemon]="entry.form"
-                  [pokemonSpecies]="entry.species"
-                  [showTypes]="true"
+              <div class="evo-card-wrap">
+                <app-pokemon-card [pokemon]="entry.form" [pokemonSpecies]="entry.species" [showTypes]="true"
                   [showRegion]="true">
                 </app-pokemon-card>
               </div>
 
             </ng-container>
-          </div>
-        </div>
 
-      </ng-container>
+          </div>
+        </ng-container>
+
+        <!-- ══ BRANCHING: multiple branches → vertical top-down tree ══ -->
+        <ng-container *ngIf="group.branches.length > 1">
+
+          <div class="evo-card-wrap">
+            <app-pokemon-card [pokemon]="group.ancestor.form" [pokemonSpecies]="group.ancestor.species"
+              [showTypes]="true" [showRegion]="true">
+            </app-pokemon-card>
+          </div>
+
+          <!-- Shared linear stages before the branch split (e.g. Quilava in Cyndaquil chain) -->
+          <ng-container *ngFor="let sharedEntry of group.sharedStages">
+            <div class="evo-shared-link">
+              <ng-container *ngIf="getConnectorEvolutions(sharedEntry) as evos">
+                <p class="evo-link-label" *ngIf="hasConditions(evos)">
+                  <ng-container *ngFor="let evo of evos; let evoLast = last">
+                    <ng-container *ngFor="let c of getEvolutionConditions(evo)">
+                      <app-evolution-condition-display [condition]="c"></app-evolution-condition-display>
+                    </ng-container>
+                    <span class="evo-evo-sep" *ngIf="!evoLast">or</span>
+                  </ng-container>
+                </p>
+              </ng-container>
+              <div class="evo-link-track">
+                <div class="evo-link-line"></div>
+                <div class="evo-link-tip"></div>
+              </div>
+            </div>
+            <div class="evo-card-wrap">
+              <app-pokemon-card [pokemon]="sharedEntry.form" [pokemonSpecies]="sharedEntry.species" [showTypes]="true"
+                [showRegion]="true">
+              </app-pokemon-card>
+            </div>
+          </ng-container>
+
+          <div class="evo-trunk"></div>
+
+          <div class="evo-branches evo-branches--multi">
+            <div class="evo-col" *ngFor="let branch of group.branches; let bIdx = index">
+              <ng-container *ngFor="let entry of branch.stages; let sIdx = index">
+
+                <div class="evo-link" [class.evo-link--head]="sIdx === 0" [style.grid-column]="bIdx + 1"
+                  [style.grid-row]="sIdx * 2 + 1">
+                  <ng-container *ngIf="getConnectorEvolutions(entry) as evos">
+                    <p class="evo-link-label" *ngIf="hasConditions(evos)">
+                      <ng-container *ngFor="let evo of evos; let evoLast = last">
+                        <ng-container *ngFor="let c of getEvolutionConditions(evo)">
+                          <app-evolution-condition-display [condition]="c"></app-evolution-condition-display>
+                        </ng-container>
+                        <span class="evo-evo-sep" *ngIf="!evoLast">or</span>
+                      </ng-container>
+                    </p>
+                  </ng-container>
+                  <div class="evo-link-track">
+                    <div class="evo-link-line"></div>
+                    <div class="evo-link-tip"></div>
+                  </div>
+                </div>
+
+                <div class="evo-card-wrap" [style.grid-column]="bIdx + 1" [style.grid-row]="sIdx * 2 + 2">
+                  <app-pokemon-card [pokemon]="entry.form" [pokemonSpecies]="entry.species" [showTypes]="true"
+                    [showRegion]="true">
+                  </app-pokemon-card>
+                </div>
+
+              </ng-container>
+            </div>
+          </div>
+
+        </ng-container>
 
       </div><!-- /.evo-chain-tree -->
 
@@ -149,17 +128,14 @@
 
   <!-- ══ MEGA & SPECIAL FORMS ══ -->
   <ng-container *ngIf="megaFormNodes.length > 0">
-    <div class="evo-mega-section-label">Mega &amp; Special Forms</div>
+    <div class="evo-mega-section-label">Special Forms</div>
     <div class="evo-chart evo-chart--mega">
 
       <div class="evo-chain" *ngFor="let node of megaFormNodes">
         <div class="evo-mega-row">
 
           <div class="evo-card-wrap">
-            <app-pokemon-card
-              [pokemon]="node.baseForm"
-              [pokemonSpecies]="node.species"
-              [showTypes]="true"
+            <app-pokemon-card [pokemon]="node.baseForm" [pokemonSpecies]="node.species" [showTypes]="true"
               [showRegion]="false">
             </app-pokemon-card>
           </div>
@@ -178,10 +154,7 @@
           </div>
 
           <div class="evo-card-wrap">
-            <app-pokemon-card
-              [pokemon]="node.form"
-              [pokemonSpecies]="node.species"
-              [showTypes]="true"
+            <app-pokemon-card [pokemon]="node.form" [pokemonSpecies]="node.species" [showTypes]="true"
               [showRegion]="false">
             </app-pokemon-card>
           </div>

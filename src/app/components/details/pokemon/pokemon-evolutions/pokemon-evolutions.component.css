@@ -305,8 +305,11 @@ app-expandable-section {
 .evo-link-mega-line {
   width: 3rem;
   height: 3px;
-  border-top: 3px dashed var(--primary-color);
-  background: none;
+  background: repeating-linear-gradient(
+    to right,
+    var(--primary-color) 0, var(--primary-color) 6px,
+    transparent 6px, transparent 12px
+  );
   opacity: 0.65;
 }
 
@@ -404,9 +407,14 @@ app-expandable-section {
   }
 
   /* Mega rows go vertical on narrow screens, matching the main chain */
+  .evo-chart--mega .evo-chain {
+    align-items: center;
+  }
+
   .evo-mega-row {
     flex-direction: column;
     align-items: center;
+    width: 100%;
   }
 
   .evo-link-mega-track {
@@ -424,9 +432,11 @@ app-expandable-section {
   .evo-link-mega-line {
     width: 3px;
     height: 1.8rem;
-    border-top: none;
-    border-left: 3px dashed var(--primary-color);
-    background: none;
+    background: repeating-linear-gradient(
+      to bottom,
+      var(--primary-color) 0, var(--primary-color) 6px,
+      transparent 6px, transparent 12px
+    );
   }
 
   .evo-link-mega-tip-r {
