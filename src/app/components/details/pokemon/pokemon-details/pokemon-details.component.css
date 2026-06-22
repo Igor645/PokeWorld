@@ -31,8 +31,15 @@
 
 
 @keyframes version-bar-pulse {
-  0%, 100% { opacity: 0.5; }
-  50%       { opacity: 1; }
+
+  0%,
+  100% {
+    opacity: 0.5;
+  }
+
+  50% {
+    opacity: 1;
+  }
 }
 
 .version-bar--loading .version-select {
@@ -126,18 +133,40 @@
   gap: 10px;
 }
 
+/* ──────────────────── Name Card ──────────────────── */
+.pokemon-name-card {
+  width: 100%;
+  border: 3px solid var(--primary-color);
+  border-radius: 12px;
+  box-shadow: 0 4px 14px var(--shadow-color);
+  padding: 0.85rem 1.2rem 1rem;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  background-color: var(--background-color);
+}
+
 .pokemon-main-view-left h1 {
   display: flex;
+  align-items: flex-end;
   gap: 0.5rem;
-  height: fit-content;
-  margin: 0 0 0.5%;
+  margin: 0;
   font-weight: 600;
   font-size: 4rem;
-  position: relative;
-  width: fit-content;
+  width: 100%;
   color: var(--primary-text-color);
-  border-radius: 10px;
   box-sizing: border-box;
+  line-height: 1;
+}
+
+.pokemon-main-view-left h1 .pokemon-status-badge {
+  margin-top: 0;
+  margin-bottom: 0.4rem;
+}
+
+.pokemon-name-card .types-container {
+  margin-bottom: 0;
 }
 
 .pokemon-main-view-right {
@@ -462,9 +491,23 @@ app-pokemon-navigator {
     font-size: 1rem;
   }
 
+  .version-bar {
+    flex-wrap: wrap;
+    width: 100%;
+  }
+
+  .version-bar .version-select {
+    flex: 1 1 100%;
+    max-width: 100%;
+  }
+
+  .pokemon-name-card {
+    padding: 0.6rem 0.85rem 0.8rem;
+    text-align: center;
+  }
+
   .pokemon-main-view-left h1 {
     font-size: 3rem;
-    display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
@@ -503,13 +546,6 @@ app-pokemon-navigator {
 
   .types-container {
     justify-content: center;
-  }
-
-  .pokemon-status-badge {
-    position: relative;
-    right: unset;
-    top: unset;
-    margin-bottom: 0.5rem;
   }
 
   .pokemon-dex-entry {
@@ -555,9 +591,13 @@ app-pokemon-navigator {
     font-size: 1rem;
   }
 
+  .pokemon-name-card {
+    padding: 0.75rem 1rem 0.85rem;
+    text-align: center;
+  }
+
   .pokemon-main-view-left h1 {
     font-size: 3rem;
-    display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
@@ -595,13 +635,6 @@ app-pokemon-navigator {
 
   .types-container {
     justify-content: center;
-  }
-
-  .pokemon-status-badge {
-    position: relative;
-    right: unset;
-    top: unset;
-    margin-bottom: 0.5rem;
   }
 
   .pokemon-dex-entry {

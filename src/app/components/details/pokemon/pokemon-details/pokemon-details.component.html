@@ -36,18 +36,18 @@
     <div class="pokemon-main-view">
       <!-- Left Side (Details) -->
       <div class="pokemon-main-view-left">
-        <h1 class="pokemon-name">
-          {{ vm.speciesName }}
-          <div *ngIf="vm.isSpecial" class="pokemon-status-badge" [attr.data-status]="vm.status">
-            {{ vm.status }}
+        <div class="pokemon-name-card">
+          <h1 class="pokemon-name">
+            {{ vm.speciesName }}
+            <div *ngIf="vm.isSpecial" class="pokemon-status-badge" [attr.data-status]="vm.status">
+              {{ vm.status }}
+            </div>
+          </h1>
+          <div class="types-container">
+            <app-pokemon-type *ngFor="let type of displayedTypes" [pokemonType]="type.type"
+              [simpleView]="false">
+            </app-pokemon-type>
           </div>
-        </h1>
-
-        <!-- Pokémon Types -->
-        <div class="types-container">
-          <app-pokemon-type *ngFor="let type of displayedTypes" [pokemonType]="type.type"
-            [simpleView]="false">
-          </app-pokemon-type>
         </div>
 
         <div class="pokemon-dex-entry">
