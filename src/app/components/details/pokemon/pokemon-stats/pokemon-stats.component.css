@@ -39,8 +39,7 @@
     border-right: 1px solid var(--separator-color);
     color: var(--accent-text-color);
     white-space: normal;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
+    overflow-wrap: anywhere;
 }
 
 .stat-value {
