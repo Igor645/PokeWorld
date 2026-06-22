@@ -123,7 +123,7 @@
     <app-pokemon-forms class="pokemon-forms" [forms]="selectedPokemon?.pokemonforms" />
 
     <app-pokemon-evolutions class="pokemon-evolutions" [evolutionChain]="pokemonSpeciesDetails?.evolutionchain"
-      [pokemonEvolutions]="pokemonEvolutions" />
+      [pokemonEvolutions]="pokemonEvolutions" [currentSpecies]="pokemonSpeciesDetails" />
 
     <app-pokemon-moves class="pokemon-moves" [pokemonId]="selectedPokemon?.id" />
 

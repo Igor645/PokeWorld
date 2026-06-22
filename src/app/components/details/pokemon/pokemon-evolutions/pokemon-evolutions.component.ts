@@ -5,6 +5,7 @@ import { CommonModule } from '@angular/common';
 import { EvolutionChain } from '../../../../models/evolution-chain.model';
 import { EvolutionTrigger } from '../../../../models/evolution-trigger.model';
 import { ExpandableSectionComponent } from '../../../shared/expandable-section/expandable-section.component';
+import { Item } from '../../../../models/item.model';
 import { Pokemon } from '../../../../models/pokemon.model';
 import { PokemonCardComponent } from '../../../shared/pokemon-card/pokemon-card.component';
 import { PokemonEvolution } from '../../../../models/pokemon-evolution.model';
@@ -26,6 +27,14 @@ export interface EvoGroup {
   branches: EvoBranch[];
 }
 
+export interface MegaNode {
+  species: PokemonSpecies;
+  form: Pokemon;
+  baseForm: Pokemon;
+  megaType: 'mega' | 'gmax' | 'eternamax';
+  megaStoneItem: Item | null;
+}
+
 
 @Component({
   selector: 'app-pokemon-evolutions',
@@ -42,9 +51,11 @@ export interface EvoGroup {
 export class PokemonEvolutionsComponent implements OnChanges, AfterViewChecked {
   @Input() evolutionChain: EvolutionChain | undefined = undefined;
   @Input() pokemonEvolutions: PokemonEvolution[] = [];
+  @Input() currentSpecies: PokemonSpecies | undefined = undefined;
 
   evolutionPaths: EvolutionEntry[][] = [];
   evoGroups: EvoGroup[] = [];
+  megaFormNodes: MegaNode[] = [];
   isExpanded = true;
 
   @ViewChildren('evoChain') evoChainRefs!: QueryList<ElementRef<HTMLElement>>;
@@ -59,6 +70,7 @@ export class PokemonEvolutionsComponent implements OnChanges, AfterViewChecked {
     if (this.evolutionChain) {
       this.evolutionPaths = this.buildFullEvolutionPaths();
       this.evoGroups = this.buildEvoGroups();
+      this.megaFormNodes = this.buildMegaFormNodes();
       this.needsCenterScroll = true;
     }
   }
@@ -391,6 +403,64 @@ export class PokemonEvolutionsComponent implements OnChanges, AfterViewChecked {
     }
     if (genName === 'generation-ix' && availableVariants.has('paldea')) return 'paldea';
     return null;
+  }
+
+  // ── Mega / Special form helpers ──────────────────────────────────────────────
+
+  private buildMegaFormNodes(): MegaNode[] {
+    if (!this.evolutionChain) return [];
+    const nodes: MegaNode[] = [];
+    for (const chainSpecies of this.evolutionChain.pokemonspecies) {
+      // Use the full species data (with sprites, form names, held items) when available
+      const richPokemons = this.currentSpecies?.id === chainSpecies.id
+        ? (this.currentSpecies!.pokemons ?? chainSpecies.pokemons)
+        : chainSpecies.pokemons;
+
+      const baseForm = richPokemons?.find(p => p.is_default);
+      if (!baseForm) continue;
+
+      for (const chainForm of chainSpecies.pokemons ?? []) {
+        if (chainForm.is_default) continue;
+        const n = chainForm.name;
+        let megaType: 'mega' | 'gmax' | 'eternamax' | null = null;
+        if (n.endsWith('-eternamax')) megaType = 'eternamax';
+        else if (n.endsWith('-gmax')) megaType = 'gmax';
+        else if (n.includes('-mega')) megaType = 'mega';
+        if (!megaType) continue;
+
+        const richForm = richPokemons?.find(p => p.name === chainForm.name) ?? chainForm;
+        const megaStoneItem: Item | null = (richForm as any).pokemonitems?.[0]?.item ?? null;
+        nodes.push({ species: chainSpecies, form: richForm, baseForm, megaType, megaStoneItem });
+      }
+    }
+    return nodes;
+  }
+
+getMegaFormDisplayName(node: MegaNode): string {
+    const formData = (node.form as any).pokemonforms?.[0];
+    if (formData?.pokemonformnames?.length > 0) {
+      const name = this.pokemonUtils.getLocalizedNameFromEntity(formData, 'pokemonformnames');
+      const slug: string = formData.name ?? '';
+      const capitalizedSlug = slug ? slug.charAt(0).toUpperCase() + slug.slice(1) : '';
+      if (name && name !== 'Unknown' && name !== capitalizedSlug) return name;
+    }
+    const speciesName = this.pokemonUtils.getLocalizedNameFromEntity(node.species, 'pokemonspeciesnames');
+    if (node.megaType === 'gmax') return `Gigantamax ${speciesName}`;
+    if (node.megaType === 'eternamax') return `Eternamax ${speciesName}`;
+    const variant = node.form.name.match(/-mega-([xy])$/)?.[1]?.toUpperCase();
+    return variant ? `Mega ${speciesName} ${variant}` : `Mega ${speciesName}`;
+  }
+
+  getMegaConditions(node: MegaNode): EvolutionCondition[] {
+    const conditions: EvolutionCondition[] = [];
+    if (node.megaType === 'mega' && node.megaStoneItem) {
+      const name = this.pokemonUtils.getLocalizedNameFromEntity(node.megaStoneItem, 'itemnames');
+      const sprite = node.megaStoneItem.itemsprites?.[0]?.sprites?.default;
+      conditions.push({ prefix: 'hold', entity: name, spriteUrl: sprite });
+    }
+    const label = node.megaType === 'gmax' ? 'Gigantamax' : node.megaType === 'eternamax' ? 'Eternamax' : 'Mega Evolution';
+    conditions.push({ prefix: label });
+    return conditions;
   }
 
   private evolutionFingerprint(evo: PokemonEvolution): string {

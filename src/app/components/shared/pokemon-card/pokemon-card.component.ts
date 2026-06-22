@@ -38,6 +38,7 @@ export class PokemonCardComponent implements OnInit, OnDestroy, AfterViewInit {
   @Input() pokemonSpecies!: PokemonSpecies;
   @Input() showTypes = false;
   @Input() showRegion = false;
+  @Input() imageOverride?: string;
 
   @ViewChild('pokemonImage', { static: false }) pokemonImage!: ElementRef<HTMLImageElement>;
 
@@ -95,7 +96,7 @@ export class PokemonCardComponent implements OnInit, OnDestroy, AfterViewInit {
     this.pokemonViewModel = {
       id: this.pokemon?.id || this.pokemonSpecies?.id || 0,
       name: this.pokemonUtils.getLocalizedNameFromEntity(this.pokemonSpecies, 'pokemonspeciesnames') || 'Unknown',
-      image: this.pokemonUtils.getPokemonOfficialImage(this.pokemon),
+      image: this.imageOverride || this.pokemonUtils.getPokemonOfficialImage(this.pokemon),
       generation: this.pokemonUtils.getLocalizedNameFromEntity(this.pokemonSpecies.generation, 'generationnames') || 'Unknown',
     };
   }

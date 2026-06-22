@@ -1,6 +1,6 @@
 <app-expandable-section title="Evolutions" [(expanded)]="isExpanded">
 
-  <p class="no-evo-msg" *ngIf="isSingleStage">This Pokémon does not evolve.</p>
+  <p class="no-evo-msg" *ngIf="isSingleStage && megaFormNodes.length === 0">This Pokémon does not evolve.</p>
 
   <div class="evo-chart" *ngIf="!isSingleStage">
 
@@ -145,5 +145,51 @@
     </div>
 
   </div>
+
+
+  <!-- ══ MEGA & SPECIAL FORMS ══ -->
+  <ng-container *ngIf="megaFormNodes.length > 0">
+    <div class="evo-mega-section-label">Mega &amp; Special Forms</div>
+    <div class="evo-chart evo-chart--mega">
+
+      <div class="evo-chain" *ngFor="let node of megaFormNodes">
+        <div class="evo-mega-row">
+
+          <div class="evo-card-wrap">
+            <app-pokemon-card
+              [pokemon]="node.baseForm"
+              [pokemonSpecies]="node.species"
+              [showTypes]="true"
+              [showRegion]="false">
+            </app-pokemon-card>
+          </div>
+
+          <div class="evo-link-h evo-link-mega-h">
+            <p class="evo-link-h-label evo-link-mega-label">
+              <ng-container *ngFor="let c of getMegaConditions(node)">
+                <app-evolution-condition-display [condition]="c"></app-evolution-condition-display>
+              </ng-container>
+            </p>
+            <div class="evo-link-mega-track">
+              <div class="evo-link-mega-tip-l"></div>
+              <div class="evo-link-mega-line"></div>
+              <div class="evo-link-mega-tip-r"></div>
+            </div>
+          </div>
+
+          <div class="evo-card-wrap">
+            <app-pokemon-card
+              [pokemon]="node.form"
+              [pokemonSpecies]="node.species"
+              [showTypes]="true"
+              [showRegion]="false">
+            </app-pokemon-card>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </ng-container>
 
 </app-expandable-section>

@@ -254,6 +254,71 @@ app-expandable-section {
   margin: 0.05rem 0;
 }
 
+/* ── Mega / Special Forms ────────────────────────────────────── */
+
+.evo-mega-section-label {
+  font-size: 0.63rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent-text-color);
+  opacity: 0.5;
+  margin: 0.75rem 0 0.5rem;
+  text-align: center;
+}
+
+.evo-chart--mega {
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: center;
+  width: 100%;
+  gap: 0.75rem;
+}
+
+.evo-mega-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+/* Dashed border on mega condition label to signal reversibility */
+.evo-link-mega-label {
+  border-style: dashed;
+}
+
+.evo-link-mega-track {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.evo-link-mega-tip-l {
+  width: 0;
+  height: 0;
+  border-top: 6px solid transparent;
+  border-bottom: 6px solid transparent;
+  border-right: 10px solid var(--primary-color);
+  opacity: 0.65;
+}
+
+.evo-link-mega-line {
+  width: 3rem;
+  height: 3px;
+  border-top: 3px dashed var(--primary-color);
+  background: none;
+  opacity: 0.65;
+}
+
+.evo-link-mega-tip-r {
+  width: 0;
+  height: 0;
+  border-top: 6px solid transparent;
+  border-bottom: 6px solid transparent;
+  border-left: 10px solid var(--primary-color);
+  opacity: 0.65;
+}
+
 /* ── No-evolution message ────────────────────────────────────── */
 
 .no-evo-msg {
@@ -336,6 +401,39 @@ app-expandable-section {
 
   .evo-link-h-label {
     max-width: var(--col-w);
+  }
+
+  /* Mega rows go vertical on narrow screens, matching the main chain */
+  .evo-mega-row {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .evo-link-mega-track {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .evo-link-mega-tip-l {
+    border-right: 6px solid transparent;
+    border-left: 6px solid transparent;
+    border-bottom: 10px solid var(--primary-color);
+    border-top: 0;
+  }
+
+  .evo-link-mega-line {
+    width: 3px;
+    height: 1.8rem;
+    border-top: none;
+    border-left: 3px dashed var(--primary-color);
+    background: none;
+  }
+
+  .evo-link-mega-tip-r {
+    border-right: 6px solid transparent;
+    border-left: 6px solid transparent;
+    border-top: 10px solid var(--primary-color);
+    border-bottom: 0;
   }
 }
 
