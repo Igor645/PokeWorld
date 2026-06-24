@@ -63,6 +63,20 @@ export class PokemonService {
       .pipe(map(res => res ?? EMPTY_POKEMON_SPECIES_RESPONSE), catchError(() => of(EMPTY_POKEMON_SPECIES_RESPONSE)));
   }
 
+  getQuizPokemonSpecies(): Observable<PokemonSpeciesResponse> {
+    return this.graphQLService
+      .executeQuery<PokemonSpeciesResponse>(GraphQLQueries.GetPokemonSpeciesForQuiz)
+      .pipe(map(res => res ?? EMPTY_POKEMON_SPECIES_RESPONSE), catchError(() => of(EMPTY_POKEMON_SPECIES_RESPONSE)));
+  }
+
+  getVersionNames(): Observable<Array<{ versionnames: Array<{ name: string; language_id: number }> }>> {
+    return this.graphQLService
+      .executeQuery<{ version: Array<{ id: number; versionnames: Array<{ name: string; language_id: number }> }> }>(
+        GraphQLQueries.GetVersions
+      )
+      .pipe(map(res => res?.version ?? []), catchError(() => of([])));
+  }
+
   getPokemonSpeciesById(id: number): Observable<PokemonSpeciesResponse> {
     return this.graphQLService
       .executeQuery<PokemonSpeciesResponse>(GraphQLQueries.GetPokemonSpeciesById, { id })

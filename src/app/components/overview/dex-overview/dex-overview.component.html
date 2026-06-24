@@ -45,7 +45,7 @@
     <div class="games-scroll">
         <a class="game-tile" routerLink="/quiz" style="--game-accent:#E3350D">
             <mat-icon class="game-tile-icon">quiz</mat-icon>
-            <span class="game-tile-title">Name 'em All</span>
+            <span class="game-tile-title">Pokémon Quiz</span>
             <span class="game-tile-desc">Type as many Pokémon names as you can from memory.</span>
         </a>
         <a class="game-tile" routerLink="/pokele" style="--game-accent:#7038F8">
@@ -71,7 +71,7 @@
             <div class="gen-tile-count">{{ tile.count }} Pokémon</div>
             <div class="gen-tile-games">
                 <span class="gen-game-chip" *ngFor="let game of tile.games" [style.--game-color]="getGameColor(game)">{{
-                    game }}</span>
+                    getLocalizedGameName(game) }}</span>
             </div>
         </div>
     </div>

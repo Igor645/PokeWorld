@@ -34,6 +34,13 @@ interface QuizGroup {
 
 type QuizPhase = 'select-mode' | 'select-gen' | 'select-type' | 'playing';
 
+const LANG_DISPLAY: Record<number, string> = {
+  3: '한국어', 4: '繁中', 5: 'Français', 6: 'Deutsch',
+  7: 'Español', 8: 'Italiano', 9: 'English', 10: 'Čeština',
+  11: '日本語', 12: '简中',
+};
+const LANG_ORDER = [9, 5, 6, 7, 8, 11, 3, 12, 4, 10];
+
 const TYPE_COLORS: Record<string, string> = {
   normal: '#B9B9AA', fire: '#EE8130', water: '#6390F0', electric: '#F7D02C',
   grass: '#7AC74C', ice: '#96D9D6', fighting: '#C22E28', poison: '#A33EA1',
@@ -70,6 +77,8 @@ export class QuizComponent implements OnInit, OnDestroy {
   cycleIndex = 0;
   availableTypes: { id: number; name: string }[] = [];
   currentFilter: { label: string; typeName?: string } | null = null;
+  guessLangIds = new Set<number>();
+  availableLangs: { id: number; name: string }[] = [];
 
   private allGroups: QuizGroup[] = [];
   private nameMap = new Map<string, PokemonSpecies>();
@@ -124,7 +133,8 @@ export class QuizComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.loadSpecies();
-    this.langSub = this.pokemonUtils.watchLanguageChanges().subscribe(() => {
+    this.langSub = this.pokemonUtils.watchLanguageChanges().subscribe(langId => {
+      this.guessLangIds = new Set([langId]);
       this.buildNameMap();
       this.cdr.detectChanges();
     });
@@ -144,10 +154,11 @@ export class QuizComponent implements OnInit, OnDestroy {
   // ── Data loading ──────────────────────────────────────────────────────────────
 
   private loadSpecies(): void {
-    this.pokemonService.getAllPokemonSpecies().subscribe(res => {
+    this.pokemonService.getQuizPokemonSpecies().subscribe(res => {
       const all = res.pokemonspecies;
       this.buildGroups(all);
       this.extractTypes(all);
+      this.deriveAvailableLangs(all);
       this.isLoading = false;
       this.cdr.detectChanges();
     });
@@ -471,11 +482,36 @@ export class QuizComponent implements OnInit, OnDestroy {
         if (seen.has(s.speciesId)) continue;
         seen.add(s.speciesId);
         const sp = s.species;
-        const loc = this.pokemonUtils.getLocalizedNameFromEntity(sp, 'pokemonspeciesnames');
-        if (loc && loc !== 'Unknown') this.nameMap.set(this.norm(loc), sp);
-        if (sp.name) this.nameMap.set(this.norm(sp.name.replace(/-/g, ' ')), sp);
+        for (const n of sp.pokemonspeciesnames ?? []) {
+          if (this.guessLangIds.has(n.language_id) && n.name) {
+            this.nameMap.set(this.norm(n.name), sp);
+          }
+        }
       }
     }
+  }
+
+  toggleLang(id: number): void {
+    const next = new Set(this.guessLangIds);
+    if (next.has(id) && next.size > 1) next.delete(id);
+    else next.add(id);
+    this.guessLangIds = next;
+    this.buildNameMap();
+    this.cdr.detectChanges();
+  }
+
+  private deriveAvailableLangs(all: PokemonSpecies[]): void {
+    const found = new Set<number>();
+    for (const sp of all) {
+      for (const n of sp.pokemonspeciesnames ?? []) found.add(n.language_id);
+    }
+    this.availableLangs = [...found]
+      .filter(id => !!LANG_DISPLAY[id])
+      .sort((a, b) => {
+        const ai = LANG_ORDER.indexOf(a); const bi = LANG_ORDER.indexOf(b);
+        return (ai < 0 ? 99 : ai) - (bi < 0 ? 99 : bi);
+      })
+      .map(id => ({ id, name: LANG_DISPLAY[id] }));
   }
 
   private norm(s: string): string {
@@ -551,29 +587,29 @@ export class QuizComponent implements OnInit, OnDestroy {
   private playCorrectSound(): void {
     try {
       if (!this.audioCtx) this.audioCtx = new AudioContext();
-      if (this.audioCtx.state === 'suspended') this.audioCtx.resume();
       const ctx = this.audioCtx;
-      const t = ctx.currentTime;
-      const env = ctx.createGain();
-      env.connect(ctx.destination);
-      env.gain.setValueAtTime(0, t);
-      env.gain.linearRampToValueAtTime(0.07, t + 0.004);
-      env.gain.exponentialRampToValueAtTime(0.001, t + 0.2);
-      const fund = ctx.createOscillator();
-      fund.type = 'triangle';
-      fund.frequency.setValueAtTime(659.25, t);
-      fund.connect(env);
-      fund.start(t);
-      fund.stop(t + 0.21);
-      const harm = ctx.createOscillator();
-      const hg = ctx.createGain();
-      harm.type = 'sine';
-      harm.frequency.setValueAtTime(1318.5, t);
-      hg.gain.setValueAtTime(0.18, t);
-      harm.connect(hg);
-      hg.connect(env);
-      harm.start(t);
-      harm.stop(t + 0.21);
+      const play = () => {
+        const t = ctx.currentTime;
+        const bufLen = Math.floor(ctx.sampleRate * 0.03);
+        const buf = ctx.createBuffer(1, bufLen, ctx.sampleRate);
+        const data = buf.getChannelData(0);
+        for (let i = 0; i < bufLen; i++) data[i] = Math.random() * 2 - 1;
+        const src = ctx.createBufferSource();
+        src.buffer = buf;
+        const filter = ctx.createBiquadFilter();
+        filter.type = 'bandpass';
+        filter.frequency.value = 2800;
+        filter.Q.value = 0.8;
+        const gain = ctx.createGain();
+        gain.gain.setValueAtTime(0.28, t);
+        gain.gain.exponentialRampToValueAtTime(0.001, t + 0.028);
+        src.connect(filter);
+        filter.connect(gain);
+        gain.connect(ctx.destination);
+        src.start(t);
+      };
+      if (ctx.state === 'suspended') ctx.resume().then(play);
+      else play();
     } catch { /* AudioContext unavailable */ }
   }
 }

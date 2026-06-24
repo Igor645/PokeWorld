@@ -9,8 +9,8 @@
   @if (!isLoading && quizPhase === 'select-mode') {
   <div class="mode-select">
     <div class="mode-select-hero">
-      <div class="mode-select-eyebrow">Pokémon Quiz</div>
-      <h2 class="mode-select-title">Name 'em All</h2>
+      <div class="mode-select-eyebrow">Quiz</div>
+      <h2 class="mode-select-title">Pokémon Quiz</h2>
       <p class="mode-select-sub">How well do you know your Pokédex?</p>
     </div>
 
@@ -136,6 +136,14 @@
           autocapitalize="off" spellcheck="false" />
       </div>
       <div class="quiz-counter">{{ guessedIds.size }}&thinsp;/&thinsp;{{ totalCount }}</div>
+    </div>
+
+    <div class="qh-langs">
+      @for (lang of availableLangs; track lang.id) {
+      <button class="lang-chip" [class.active]="guessLangIds.has(lang.id)" (click)="toggleLang(lang.id)">
+        {{ lang.name }}
+      </button>
+      }
     </div>
 
     <div class="qh-controls">

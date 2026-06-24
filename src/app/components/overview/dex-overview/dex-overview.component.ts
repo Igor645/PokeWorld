@@ -141,6 +141,9 @@ export class DexOverviewComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private allSpecies: PokemonSpecies[] = [];
   private _filteredEntries: DisplayEntry[] = [];
+  private versionNameMap = new Map<string, string>();
+  private cachedVersionData: Array<{ versionnames: Array<{ name: string; language_id: number }> }> = [];
+  private langSub?: Subscription;
 
   private speciesRowsSubject = new BehaviorSubject<DisplayRow[]>([]);
   speciesRows$: Observable<DisplayRow[]> = this.speciesRowsSubject.asObservable();
@@ -183,6 +186,15 @@ export class DexOverviewComponent implements OnInit, AfterViewInit, OnDestroy {
     this.recentlyViewed = this.recentlyViewedService.getAll();
     this.updateLayout();
     this.fetchAllPokemon();
+    this.pokemonService.getVersionNames().subscribe(versions => {
+      this.cachedVersionData = versions;
+      this.buildVersionNameMap();
+      this.cdr.detectChanges();
+    });
+    this.langSub = this.pokemonUtils.watchLanguageChanges().subscribe(() => {
+      this.buildVersionNameMap();
+      this.cdr.detectChanges();
+    });
     this.typeService.getAllTypes().pipe(
       map(res => res.type.filter(t => t.id >= 1 && t.id <= 18))
     ).subscribe(types => {
@@ -210,6 +222,7 @@ export class DexOverviewComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.langSub?.unsubscribe();
     this.spriteStyleSub?.unsubscribe();
     if (!isPlatformBrowser(this.platformId)) return;
     if (this.rafId) this.safeCancel(this.rafId);
@@ -295,10 +308,37 @@ export class DexOverviewComponent implements OnInit, AfterViewInit, OnDestroy {
     return sprites?.other?.['official-artwork']?.front_default || sprites?.other?.home?.front_default || '';
   }
 
+  getShowcaseSprite(species: PokemonSpecies): string {
+    const sprites = species.pokemons[0]?.pokemonsprites?.[0]?.sprites;
+    return sprites?.other?.['official-artwork']?.front_default
+      || sprites?.other?.home?.front_default
+      || sprites?.front_default
+      || '';
+  }
+
+  getLocalizedGameName(name: string): string {
+    return this.versionNameMap.get(this.normStr(name)) ?? name;
+  }
+
+  private buildVersionNameMap(): void {
+    const langId = this.pokemonUtils.getSelectedLanguageId();
+    this.versionNameMap.clear();
+    for (const v of this.cachedVersionData) {
+      const enName = v.versionnames?.find(n => n.language_id === 9)?.name;
+      const locName = v.versionnames?.find(n => n.language_id === langId)?.name;
+      if (enName && locName) this.versionNameMap.set(this.normStr(enName), locName);
+    }
+  }
+
+  private normStr(s: string): string {
+    return s.toLowerCase().replace(/[^a-z0-9]/g, '');
+  }
+
   private initShowcases(): void {
-    const withSprites = this.allSpecies.filter(s =>
-      !!(s.pokemons[0]?.pokemonsprites?.[0]?.sprites?.front_default)
-    );
+    const withSprites = this.allSpecies.filter(s => {
+      const sp = s.pokemons[0]?.pokemonsprites?.[0]?.sprites;
+      return !!(sp?.other?.['official-artwork']?.front_default || sp?.other?.home?.front_default);
+    });
 
     const dayOffset = new Date().getDate() * 17 + new Date().getMonth() * 53;
     const shuffled = [...withSprites].sort(

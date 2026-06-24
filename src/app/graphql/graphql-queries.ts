@@ -211,7 +211,7 @@ export const GraphQLQueries = {
     }
   `,
 
-  // Full species list — used by Quiz & Pokéle.
+  // Full species list — used by Pokéle.
   // $languageId filters names to [current, English] — ~85% fewer name rows vs fetching all 13 langs.
   // generationnames filtered to [$languageId, 9] — 9 gens × 2 langs only.
   GetPokemonSpeciesAll: gql`
@@ -232,6 +232,25 @@ export const GraphQLQueries = {
           id name
           generationnames { name language_id }
         }
+        evolves_from_species_id
+      }
+      pokemonspecies_aggregate { aggregate { count } }
+    }
+  `,
+
+  // Quiz — fetches ALL language names so the in-game language picker works.
+  // No language filter on pokemonspeciesnames; generation names not needed (quiz uses hardcoded labels).
+  GetPokemonSpeciesForQuiz: gql`
+    query GetPokemonSpeciesForQuiz {
+      pokemonspecies(order_by: { id: asc }) {
+        name id is_legendary is_mythical is_baby
+        pokemons(order_by: { is_default: desc }) {
+          id name is_default
+          pokemonsprites { sprites }
+          pokemontypes { type { id name } }
+        }
+        pokemonspeciesnames { name language_id }
+        generation { id name }
         evolves_from_species_id
       }
       pokemonspecies_aggregate { aggregate { count } }
