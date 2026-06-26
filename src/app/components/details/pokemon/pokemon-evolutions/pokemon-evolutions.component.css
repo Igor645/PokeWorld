@@ -17,10 +17,9 @@ app-expandable-section {
   flex-direction: row;
   align-items: stretch;
   flex-wrap: wrap;
-  gap: 0;
-  width: fit-content;
-  max-width: 100%;
-  margin: 0 auto;
+  justify-content: center;
+  gap: 0.8rem;
+  width: 100%;
 }
 
 /* ── One chain block ─────────────────────────────────────────── */
@@ -49,9 +48,6 @@ app-expandable-section {
   min-width: 100%;
 }
 
-.evo-chain--div {
-  margin-left: 0.8rem;
-}
 
 /* ── Card wrapper: controls card size, stacks region badge below ─ */
 
@@ -96,7 +92,7 @@ app-expandable-section {
   line-height: 1.45;
   max-width: 8rem;
   border: var(--primary-color) 2px solid;
-  padding: 0.5rem 0.5rem;
+  padding: 0.3rem 0.4rem;
   border-radius: 1rem;
   overflow-wrap: anywhere;
 }
@@ -239,8 +235,9 @@ app-expandable-section {
   line-height: 1.45;
   max-width: calc(var(--col-w) - 0.5rem);
   border: var(--primary-color) 2px solid;
-  padding: 0.5rem 0.5rem;
+  padding: 0.3rem 0.4rem;
   border-radius: 1rem;
+  overflow-wrap: anywhere;
 }
 
 .evo-link-label app-evolution-condition-display {
@@ -352,6 +349,8 @@ app-expandable-section {
   .evo-chart {
     flex-direction: column;
     align-items: stretch;
+    justify-content: flex-start;
+    gap: 0;
     width: 100%;
   }
 
@@ -369,7 +368,6 @@ app-expandable-section {
   .evo-chain--div {
     padding-top: 1.25rem;
     margin-top: 0.5rem;
-    margin-left: 0;
   }
 
   /* Linear chain: go vertical instead of horizontal */
