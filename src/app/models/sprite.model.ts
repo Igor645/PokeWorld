@@ -9,13 +9,7 @@ export interface Sprite {
   back_shiny_female?: string;
 }
 
-export interface OtherSprites {
-  ['official-artwork']: Sprite;
-  dream_world: Sprite;
-  home: Sprite;
-}
-
 export interface PokemonSprites extends Sprite {
-  other: OtherSprites;
+  other?: Record<string, Sprite>;
+  versions?: Record<string, Record<string, Sprite>>;
 }
-

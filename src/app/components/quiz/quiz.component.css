@@ -612,7 +612,7 @@
   border-radius: 10px;
   box-shadow: 0 1px 6px var(--shadow-color);
   box-sizing: border-box;
-  overflow: hidden;
+  position: relative;
 }
 
 :host-context(.dark-theme) .gen-section {
@@ -633,6 +633,18 @@
   color: var(--adjusted-white);
   font-weight: 700;
   font-size: 0.8rem;
+  border-radius: 9px 9px 0 0;
+}
+
+.gen-progress-bar {
+  height: 3px;
+  background: color-mix(in srgb, var(--primary-color) 18%, transparent);
+}
+
+.gen-progress-fill {
+  height: 100%;
+  background: color-mix(in srgb, var(--primary-color) 55%, #22c55e);
+  transition: width 0.35s ease;
 }
 
 .gen-header span {
@@ -649,7 +661,7 @@
 /* ── Grid ─────────────────────────────────────────────── */
 .quiz-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(28px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(48px, 1fr));
   gap: 2px;
   padding: 0.35rem;
 }
@@ -662,12 +674,41 @@
   gap: 1px;
   border-radius: 4px;
   cursor: default;
+  position: relative;
+}
+
+.quiz-slot:hover {
+  z-index: 10;
+}
+
+/* CSS tooltip — only appears when [title] is non-empty (i.e. guessed/revealed) */
+.quiz-slot[title]:not([title=''])::after {
+  content: attr(title);
+  position: absolute;
+  bottom: calc(100% + 5px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.88);
+  color: #fff;
+  font-size: 0.65rem;
+  font-weight: 600;
+  padding: 0.18rem 0.45rem;
+  border-radius: 5px;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.1s;
+  z-index: 200;
+}
+
+.quiz-slot[title]:not([title='']):hover::after {
+  opacity: 1;
 }
 
 /* Pokéball SVG — same size as .slot-img so switching never shifts the row */
 .slot-ball {
-  width: 30px;
-  height: 30px;
+  width: 48px;
+  height: 48px;
   fill: var(--accent-text-color);
   opacity: 0.25;
   flex-shrink: 0;
@@ -675,11 +716,12 @@
 
 /* Image */
 .slot-img {
-  width: 30px;
-  height: 30px;
+  width: 48px;
+  height: 48px;
   object-fit: contain;
   display: block;
 }
+
 
 .slot-img.silhouette {
   filter: brightness(0);
@@ -687,7 +729,7 @@
 }
 
 .slot-img.reveal {
-  animation: quizReveal 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  animation: quizReveal 0.38s ease both;
 }
 
 .slot-img.missed-img {
@@ -695,28 +737,13 @@
   opacity: 0.55;
 }
 
-.slot-missed-name {
-  font-size: 0.48rem;
-  color: var(--accent-text-color);
-  text-align: center;
-  line-height: 1.2;
-  max-width: 100%;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
 
 
 @keyframes quizReveal {
-  from {
-    transform: scale(0) rotate(-15deg);
-    opacity: 0;
-  }
-
-  to {
-    transform: scale(1) rotate(0deg);
-    opacity: 1;
-  }
+  0%   { transform: scale(0.2) rotate(-20deg); opacity: 0; }
+  50%  { transform: scale(1.25) rotate(4deg);  opacity: 1; }
+  75%  { transform: scale(0.9) rotate(-1deg);  opacity: 1; }
+  100% { transform: scale(1) rotate(0deg);     opacity: 1; }
 }
 
 /* ── Responsive ───────────────────────────────────────── */

@@ -303,15 +303,15 @@ export class DexOverviewComponent implements OnInit, AfterViewInit, OnDestroy {
   getSprite(species: PokemonSpecies): string {
     const sprites = species.pokemons[0]?.pokemonsprites?.[0]?.sprites;
     const style = this.settingsService.getSetting<string>('spriteStyle');
-    if (style === 'home')  return sprites?.other?.home?.front_default || sprites?.other?.['official-artwork']?.front_default || '';
+    if (style === 'home')  return sprites?.other?.['home']?.front_default || sprites?.other?.['official-artwork']?.front_default || '';
     if (style === 'pixel') return sprites?.front_default || '';
-    return sprites?.other?.['official-artwork']?.front_default || sprites?.other?.home?.front_default || '';
+    return sprites?.other?.['official-artwork']?.front_default || sprites?.other?.['home']?.front_default || '';
   }
 
   getShowcaseSprite(species: PokemonSpecies): string {
     const sprites = species.pokemons[0]?.pokemonsprites?.[0]?.sprites;
     return sprites?.other?.['official-artwork']?.front_default
-      || sprites?.other?.home?.front_default
+      || sprites?.other?.['home']?.front_default
       || sprites?.front_default
       || '';
   }
@@ -337,7 +337,7 @@ export class DexOverviewComponent implements OnInit, AfterViewInit, OnDestroy {
   private initShowcases(): void {
     const withSprites = this.allSpecies.filter(s => {
       const sp = s.pokemons[0]?.pokemonsprites?.[0]?.sprites;
-      return !!(sp?.other?.['official-artwork']?.front_default || sp?.other?.home?.front_default);
+      return !!(sp?.other?.['official-artwork']?.front_default || sp?.other?.['home']?.front_default);
     });
 
     const dayOffset = new Date().getDate() * 17 + new Date().getMonth() * 53;
@@ -393,10 +393,10 @@ export class DexOverviewComponent implements OnInit, AfterViewInit, OnDestroy {
         const sprites = sp?.pokemons?.[0]?.pokemonsprites?.[0]?.sprites;
         const style = this.settingsService.getSetting<string>('spriteStyle');
         const spriteUrl = style === 'home'
-          ? (sprites?.other?.home?.front_default || sprites?.other?.['official-artwork']?.front_default || '')
+          ? (sprites?.other?.['home']?.front_default || sprites?.other?.['official-artwork']?.front_default || '')
           : style === 'pixel'
             ? (sprites?.front_default || '')
-            : (sprites?.other?.['official-artwork']?.front_default || sprites?.other?.home?.front_default || '');
+            : (sprites?.other?.['official-artwork']?.front_default || sprites?.other?.['home']?.front_default || '');
         return { ...info, count: countByGen.get(info.id) ?? 0, spriteUrl };
       });
   }

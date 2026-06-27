@@ -178,6 +178,9 @@
           <span class="gen-name">{{ groupLabel(group) }}</span>
           <span class="gen-progress">{{ guessedInGroup(group) }}&thinsp;/&thinsp;{{ group.slots.length }}</span>
         </div>
+        <div class="gen-progress-bar">
+          <div class="gen-progress-fill" [style.width.%]="group.slots.length ? guessedInGroup(group) / group.slots.length * 100 : 0"></div>
+        </div>
 
         <div class="quiz-grid">
           @for (slot of group.slots; track slot.pokemon.id) {
@@ -193,9 +196,6 @@
               [class.reveal]="recentlyGuessedId === slot.speciesId"
               [class.missed-img]="revealed && !guessedIds.has(slot.speciesId)"
               [src]="imageUrl(currentCycleForm(slot))" loading="lazy" />
-            @if (revealed && !guessedIds.has(slot.speciesId)) {
-            <span class="slot-missed-name">{{ formName(slot) }}</span>
-            }
             }
           </div>
           }

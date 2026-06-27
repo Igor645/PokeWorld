@@ -333,8 +333,8 @@ export class PokeleComponent implements OnInit, OnDestroy {
     const s = p.pokemonsprites?.[0]?.sprites;
     const style = this.settings.getSetting<string>('spriteStyle');
     if (style === 'pixel') return s?.front_default || '';
-    if (style === 'home')  return s?.other?.home?.front_default || s?.other?.['official-artwork']?.front_default || '';
-    return s?.other?.['official-artwork']?.front_default || s?.other?.home?.front_default || '';
+    if (style === 'home')  return s?.other?.['home']?.front_default || s?.other?.['official-artwork']?.front_default || '';
+    return s?.other?.['official-artwork']?.front_default || s?.other?.['home']?.front_default || '';
   }
 
   private norm(s: string): string {

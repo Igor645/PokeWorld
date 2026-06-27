@@ -3,6 +3,7 @@ import {
   ChangeDetectorRef,
   Component,
   ElementRef,
+  HostListener,
   OnDestroy,
   OnInit,
   ViewChild,
@@ -138,7 +139,7 @@ export class QuizComponent implements OnInit, OnDestroy {
       this.buildNameMap();
       this.cdr.detectChanges();
     });
-    this.spriteStyleSub = this.settings.watchSetting<string>('spriteStyle').subscribe(() => {
+    this.spriteStyleSub = this.settings.watchSetting<string>('quizSpriteStyle').subscribe(() => {
       this.cdr.detectChanges();
     });
   }
@@ -426,7 +427,7 @@ export class QuizComponent implements OnInit, OnDestroy {
 
     const hasSprite = (p: Pokemon): boolean => {
       const s = p.pokemonsprites?.[0]?.sprites;
-      return !!(s?.other?.home?.front_default || s?.front_default);
+      return !!(s?.other?.['home']?.front_default || s?.front_default);
     };
 
     for (const p of sp.pokemons ?? []) {
@@ -529,10 +530,28 @@ export class QuizComponent implements OnInit, OnDestroy {
 
   imageUrl(pokemon: Pokemon): string {
     const sprites = pokemon.pokemonsprites?.[0]?.sprites;
-    const style = this.settings.getSetting<string>('spriteStyle');
-    if (style === 'home')  return sprites?.other?.home?.front_default || sprites?.other?.['official-artwork']?.front_default || '';
+    const style = this.settings.getSetting<string>('quizSpriteStyle');
+    if (style === 'home')  return sprites?.other?.['home']?.front_default || sprites?.other?.['official-artwork']?.front_default || '';
     if (style === 'pixel') return sprites?.front_default || '';
-    return sprites?.other?.['official-artwork']?.front_default || sprites?.other?.home?.front_default || '';
+    if (style === 'icons') {
+      const v = sprites?.versions;
+      return v?.['generation-ix']?.['scarlet-violet']?.front_default
+        || v?.['generation-viii']?.['brilliant-diamond-shining-pearl']?.front_default
+        || v?.['generation-viii']?.['icons']?.front_default
+        || v?.['generation-vii']?.['icons']?.front_default
+        || sprites?.front_default
+        || '';
+    }
+    return sprites?.other?.['official-artwork']?.front_default || sprites?.other?.['home']?.front_default || '';
+  }
+
+  @HostListener('document:keydown', ['$event'])
+  onDocumentKeydown(e: KeyboardEvent): void {
+    if (this.quizPhase !== 'playing' || this.finished) return;
+    if (e.ctrlKey || e.metaKey || e.altKey) return;
+    const input = this.inputEl?.nativeElement;
+    if (!input || document.activeElement === input) return;
+    if (e.key.length === 1) input.focus();
   }
 
   groupLabel(g: QuizGroup): string { return g.label; }
@@ -590,23 +609,24 @@ export class QuizComponent implements OnInit, OnDestroy {
       const ctx = this.audioCtx;
       const play = () => {
         const t = ctx.currentTime;
-        const bufLen = Math.floor(ctx.sampleRate * 0.03);
-        const buf = ctx.createBuffer(1, bufLen, ctx.sampleRate);
-        const data = buf.getChannelData(0);
-        for (let i = 0; i < bufLen; i++) data[i] = Math.random() * 2 - 1;
-        const src = ctx.createBufferSource();
-        src.buffer = buf;
-        const filter = ctx.createBiquadFilter();
-        filter.type = 'bandpass';
-        filter.frequency.value = 2800;
-        filter.Q.value = 0.8;
-        const gain = ctx.createGain();
-        gain.gain.setValueAtTime(0.28, t);
-        gain.gain.exponentialRampToValueAtTime(0.001, t + 0.028);
-        src.connect(filter);
-        filter.connect(gain);
-        gain.connect(ctx.destination);
-        src.start(t);
+        // Two-note ascending "da-ding" — A5 → E6 (perfect fifth)
+        const notes = [
+          { freq: 880,  delay: 0,     dur: 0.14 },
+          { freq: 1320, delay: 0.07,  dur: 0.22 },
+        ];
+        for (const { freq, delay, dur } of notes) {
+          const osc  = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.value = freq;
+          gain.gain.setValueAtTime(0, t + delay);
+          gain.gain.linearRampToValueAtTime(0.22, t + delay + 0.008);
+          gain.gain.exponentialRampToValueAtTime(0.001, t + delay + dur);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(t + delay);
+          osc.stop(t + delay + dur + 0.02);
+        }
       };
       if (ctx.state === 'suspended') ctx.resume().then(play);
       else play();

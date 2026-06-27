@@ -18,5 +18,15 @@
       </div>
     </div>
 
+    <div class="settings-row">
+      <span class="settings-label">Name Quiz Sprites</span>
+      <div class="seg-ctrl">
+        <button class="seg-btn" [class.active]="quizSpriteStyle === 'sugimori'" (click)="setQuizSpriteStyle('sugimori')">Sugimori</button>
+        <button class="seg-btn" [class.active]="quizSpriteStyle === 'home'" (click)="setQuizSpriteStyle('home')">HOME</button>
+        <button class="seg-btn" [class.active]="quizSpriteStyle === 'pixel'" (click)="setQuizSpriteStyle('pixel')">Pixel</button>
+        <button class="seg-btn" [class.active]="quizSpriteStyle === 'icons'" (click)="setQuizSpriteStyle('icons')">Icons</button>
+      </div>
+    </div>
+
   </div>
 </div>

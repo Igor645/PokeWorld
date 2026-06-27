@@ -15,6 +15,7 @@ import { PokemonBreedingComponent } from '../pokemon-breeding/pokemon-breeding.c
 import { PokemonEvolution } from '../../../../models/pokemon-evolution.model';
 import { PokemonEvolutionsComponent } from "../pokemon-evolutions/pokemon-evolutions.component";
 import { PokemonFormsComponent } from '../pokemon-forms/pokemon-forms.component';
+import { PokemonSpritesComponent } from '../pokemon-sprites/pokemon-sprites.component';
 import { PokemonMovesComponent } from '../pokemon-moves/pokemon-moves.component';
 import { PokemonNavigatorComponent } from '../pokemon-navigator/pokemon-navigator.component';
 import { PokemonRelationsComponent } from '../pokemon-relations/pokemon-relations.component';
@@ -76,6 +77,7 @@ const EMPTY_VM: DetailsVm = {
     PokemonBreedingComponent,
     PokemonRelationsComponent,
     PokemonFormsComponent,
+    PokemonSpritesComponent,
     PokemonMovesComponent,
     VersionSelectComponent,
     DetailTableComponent,
@@ -387,7 +389,7 @@ export class PokemonDetailsComponent implements OnInit {
     const spritesData = this.selectedPokemon.pokemonsprites[0].sprites;
     const spriteKey: keyof Sprite = this.isShiny ? 'front_shiny' : 'front_default';
     const style = this.settingsService.getSetting<string>('spriteStyle');
-    const home = spritesData.other?.home;
+    const home = spritesData.other?.['home'];
     const artwork = spritesData.other?.['official-artwork'];
     if (style === 'home') {
       this.selectedPokemonImage = home?.[spriteKey] || home?.['front_default'] || artwork?.[spriteKey] || artwork?.['front_default'];

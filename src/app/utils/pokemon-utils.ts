@@ -4,8 +4,6 @@ import { SettingsService } from '../services/settings.service';
 import { Name } from '../models/name.model';
 import { Observable } from 'rxjs';
 import { Pokemon } from '../models/pokemon.model';
-import { PokemonAbility } from '../models/pokemon-ability.model';
-import { PokemonSpecies } from '../models/pokemon-species.model';
 
 @Injectable({
   providedIn: 'root'
@@ -38,10 +36,10 @@ export class PokemonUtilsService {
     const sprites = pokemon?.pokemonsprites?.[0]?.sprites;
     const style = this.settingsService.getSetting<string>('spriteStyle');
     if (style === 'home')
-      return sprites?.other?.home?.front_default || sprites?.other?.['official-artwork']?.front_default || '/invalid/image.png';
+      return sprites?.other?.['home']?.front_default || sprites?.other?.['official-artwork']?.front_default || '/invalid/image.png';
     if (style === 'pixel')
       return sprites?.front_default || sprites?.other?.['official-artwork']?.front_default || '/invalid/image.png';
-    return sprites?.other?.['official-artwork']?.front_default || sprites?.other?.home?.front_default || '/invalid/image.png';
+    return sprites?.other?.['official-artwork']?.front_default || sprites?.other?.['home']?.front_default || '/invalid/image.png';
   }
 
   /**
