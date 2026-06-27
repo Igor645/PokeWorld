@@ -455,7 +455,7 @@ export class QuizComponent implements OnInit, OnDestroy {
   private cleanRegionalSuffix(pokemonName: string, speciesName: string): string | null {
     for (const r of ['alola', 'galar', 'hisui', 'paldea', 'kitakami']) {
       const base = `${speciesName}-${r}`;
-      if (pokemonName === base || pokemonName.startsWith(`${base}-`)) return r;
+      if ((pokemonName === base || pokemonName.startsWith(`${base}-`)) && !pokemonName.includes('-cap')) return r;
     }
     return null;
   }

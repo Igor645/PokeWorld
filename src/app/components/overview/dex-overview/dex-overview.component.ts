@@ -52,7 +52,7 @@ interface GenTileConfig {
 const FORM_FILTER_OPTIONS = [
   { value: 'mega'   as const, label: 'Mega',       test: (n: string) => n.includes('-mega') },
   { value: 'gmax'   as const, label: 'Gigantamax', test: (n: string) => n.endsWith('-gmax') },
-  { value: 'alola'  as const, label: 'Alolan',     test: (n: string) => n.includes('-alola') && !n.endsWith('-totem') },
+  { value: 'alola'  as const, label: 'Alolan',     test: (n: string) => n.includes('-alola') && !n.endsWith('-totem') && !n.endsWith('-cap') },
   { value: 'galar'  as const, label: 'Galarian',   test: (n: string) => n.includes('-galar') && !n.endsWith('-zen') },
   { value: 'hisui'  as const, label: 'Hisuian',    test: (n: string) => n.includes('-hisui') },
   { value: 'paldea' as const, label: 'Paldean',    test: (n: string) => n.includes('-paldea') },
