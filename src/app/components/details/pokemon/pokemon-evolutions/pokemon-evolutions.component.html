@@ -28,7 +28,7 @@
                       <ng-container *ngFor="let c of getEvolutionConditions(evo)">
                         <app-evolution-condition-display [condition]="c"></app-evolution-condition-display>
                       </ng-container>
-                      <span class="evo-evo-sep" *ngIf="!evoLast">or</span>
+                      <div class="evo-evo-sep" *ngIf="!evoLast"></div>
                     </ng-container>
                   </p>
                 </ng-container>
@@ -97,7 +97,7 @@
                         <ng-container *ngFor="let c of getEvolutionConditions(evo)">
                           <app-evolution-condition-display [condition]="c"></app-evolution-condition-display>
                         </ng-container>
-                        <span class="evo-evo-sep" *ngIf="!evoLast">or</span>
+                        <div class="evo-evo-sep" *ngIf="!evoLast"></div>
                       </ng-container>
                     </p>
                   </ng-container>

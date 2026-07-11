@@ -10,6 +10,7 @@ import { PokemonType } from "./pokemon-type.model";
 
 export interface PokemonEvolution {
   id: number;
+  version_group_id: number | null;
   time_of_day: string;
   evolved_species_id: number;
   trade_species_id: number;

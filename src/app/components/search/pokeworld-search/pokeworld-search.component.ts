@@ -30,9 +30,37 @@ export class PokeworldSearchComponent implements AfterViewInit, OnDestroy {
   private routeSubscription!: Subscription;
   private destroy$ = new Subject<void>();
   isLoading = false;
+  private isProgrammaticFocus = false;
 
   focusInput(): void {
-    setTimeout(() => this.searchInputEl?.nativeElement?.focus(), 180);
+    this.isProgrammaticFocus = true;
+    setTimeout(() => {
+      this.searchInputEl?.nativeElement?.focus();
+      setTimeout(() => { this.isProgrammaticFocus = false; }, 0);
+    }, 180);
+  }
+
+  onFocus(): void {
+    if (this.isProgrammaticFocus) return;
+    if (!this.searchControl.value && !this.filteredPokemonSpecies.length) {
+      this.fetchDefaults();
+    }
+  }
+
+  private fetchDefaults(): void {
+    this.isLoading = true;
+    this.cdr.detectChanges();
+    this.pokemonService.getPokemonSpeciesByPrefix('').pipe(
+      observeOn(asyncScheduler),
+      takeUntil(this.destroy$)
+    ).subscribe({
+      next: (response) => {
+        this.filteredPokemonSpecies = response?.pokemonspecies ?? [];
+        this.isLoading = false;
+        this.cdr.detectChanges();
+      },
+      error: () => { this.isLoading = false; this.cdr.detectChanges(); }
+    });
   }
 
   onKeydown(event: KeyboardEvent): void {
@@ -60,15 +88,7 @@ export class PokeworldSearchComponent implements AfterViewInit, OnDestroy {
     this.searchControl.valueChanges.pipe(
       map(v => (v ?? '').toString().trim().toLowerCase()),
       distinctUntilChanged(),
-      // Clear results immediately when the input is emptied — before debounce so
-      // the dropdown collapses instantly rather than waiting 250 ms.
-      tap(q => {
-        if (!q) {
-          this.filteredPokemonSpecies = [];
-          this.isLoading = false;
-          this.cdr.detectChanges();
-        }
-      }),
+      tap(q => { if (!q) this.fetchDefaults(); }),
       filter(q => q.length > 0),
       debounceTime(250),
       tap(() => { this.isLoading = true; this.cdr.detectChanges(); }),
@@ -106,9 +126,12 @@ export class PokeworldSearchComponent implements AfterViewInit, OnDestroy {
   }
 
   clearSearch() {
+    this.filteredPokemonSpecies = [];
+    this.isLoading = false;
     if (this.searchControl.value !== '') {
-      this.searchControl.setValue('', { emitEvent: true });
+      this.searchControl.setValue('', { emitEvent: false });
     }
+    this.cdr.detectChanges();
   }
 
   onOptionSelected(event: any) {

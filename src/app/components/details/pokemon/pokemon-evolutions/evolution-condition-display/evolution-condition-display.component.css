@@ -7,6 +7,7 @@
 .condition-content {
     display: inline-flex;
     align-items: center;
+    gap: 0.2rem;
 }
 
 span {
@@ -31,6 +32,14 @@ span {
 
 .female-icon {
     padding: 0 0.1rem;
+}
+
+.condition-mat-icon {
+    font-size: 1rem;
+    width: 1rem;
+    height: 1rem;
+    vertical-align: middle;
+    flex-shrink: 0;
 }
 
 .evolution-link {

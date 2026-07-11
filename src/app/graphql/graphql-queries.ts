@@ -20,7 +20,7 @@ const PokemonEvolutionFields = gql`
     held_item_id id known_move_id known_move_type_id location_id
     min_affection min_beauty min_happiness min_level needs_overworld_rain
     party_species_id party_type_id relative_physical_stats time_of_day
-    trade_species_id turn_upside_down
+    trade_species_id turn_upside_down version_group_id
     evolutiontrigger {
       name
       evolutiontriggernames { name language_id language { ...LangFields } }

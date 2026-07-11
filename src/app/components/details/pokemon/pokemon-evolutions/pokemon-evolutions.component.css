@@ -245,10 +245,10 @@ app-expandable-section {
 }
 
 .evo-evo-sep {
-  display: block;
-  font-size: 0.58rem;
-  opacity: 0.45;
-  margin: 0.05rem 0;
+  height: 1px;
+  margin: 0.25rem 15%;
+  background: currentColor;
+  opacity: 0.2;
 }
 
 /* ── Mega / Special Forms ────────────────────────────────────── */

@@ -1,17 +1,18 @@
-import { AfterViewChecked, Component, ElementRef, HostBinding, Input, OnChanges, QueryList, ViewChildren } from '@angular/core';
+import { AfterViewChecked, Component, ElementRef, HostBinding, Input, OnChanges, OnDestroy, OnInit, QueryList, ViewChildren } from '@angular/core';
+import { Subject, takeUntil } from 'rxjs';
 import { EvolutionCondition, EvolutionConditionDisplayComponent } from './evolution-condition-display/evolution-condition-display.component';
 
 import { CommonModule } from '@angular/common';
 import { EvolutionChain } from '../../../../models/evolution-chain.model';
 import { EvolutionTrigger } from '../../../../models/evolution-trigger.model';
 import { ExpandableSectionComponent } from '../../../shared/expandable-section/expandable-section.component';
-import { Item } from '../../../../models/item.model';
 import { Pokemon } from '../../../../models/pokemon.model';
 import { PokemonCardComponent } from '../../../shared/pokemon-card/pokemon-card.component';
 import { PokemonEvolution } from '../../../../models/pokemon-evolution.model';
 import { PokemonSpecies } from '../../../../models/pokemon-species.model';
 import { PokemonUtilsService } from '../../../../utils/pokemon-utils';
 import { RouterModule } from '@angular/router';
+import { VersionStateService } from '../../../../services/version-state.service';
 
 const REGIONAL_SUFFIXES = ['alola', 'galar', 'hisui', 'paldea'];
 
@@ -32,7 +33,6 @@ export interface MegaNode {
   form: Pokemon;
   baseForm: Pokemon;
   megaType: 'mega' | 'gmax' | 'eternamax';
-  megaStoneItem: Item | null;
 }
 
 
@@ -48,7 +48,7 @@ export interface MegaNode {
   templateUrl: './pokemon-evolutions.component.html',
   styleUrl: './pokemon-evolutions.component.css'
 })
-export class PokemonEvolutionsComponent implements OnChanges, AfterViewChecked {
+export class PokemonEvolutionsComponent implements OnChanges, OnInit, OnDestroy, AfterViewChecked {
   @Input() evolutionChain: EvolutionChain | undefined = undefined;
   @Input() pokemonEvolutions: PokemonEvolution[] = [];
   @Input() currentSpecies: PokemonSpecies | undefined = undefined;
@@ -57,14 +57,32 @@ export class PokemonEvolutionsComponent implements OnChanges, AfterViewChecked {
   evoGroups: EvoGroup[] = [];
   megaFormNodes: MegaNode[] = [];
   isExpanded = true;
+  selectedVgId = 0;
 
   @ViewChildren('evoChain') evoChainRefs!: QueryList<ElementRef<HTMLElement>>;
   private needsCenterScroll = false;
+  private destroy$ = new Subject<void>();
 
   @HostBinding('class.expanded')
   get hostExpanded() { return this.isExpanded; }
 
-  constructor(public pokemonUtils: PokemonUtilsService) { }
+  constructor(public pokemonUtils: PokemonUtilsService, private versionState: VersionStateService) { }
+
+  ngOnInit(): void {
+    this.versionState.vgId$.pipe(takeUntil(this.destroy$)).subscribe(vgId => {
+      this.selectedVgId = vgId;
+      if (this.evolutionChain) {
+        this.evolutionPaths = this.buildFullEvolutionPaths();
+        this.evoGroups = this.buildEvoGroups();
+        this.needsCenterScroll = true;
+      }
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
 
   ngOnChanges(): void {
     if (this.evolutionChain) {
@@ -73,6 +91,12 @@ export class PokemonEvolutionsComponent implements OnChanges, AfterViewChecked {
       this.megaFormNodes = this.buildMegaFormNodes();
       this.needsCenterScroll = true;
     }
+  }
+
+  private versionedEvos(evos: PokemonEvolution[]): PokemonEvolution[] {
+    if (!this.selectedVgId) return evos;
+    const filtered = evos.filter(e => e.version_group_id == null || e.version_group_id === this.selectedVgId);
+    return filtered.length > 0 ? filtered : evos;
   }
 
   ngAfterViewChecked(): void {
@@ -226,8 +250,20 @@ export class PokemonEvolutionsComponent implements OnChanges, AfterViewChecked {
         });
       } else {
         const inferredRegion = this.inferRegionForPath(path);
+        const altForms = this.getNonRegionalFormVariants(leaf);
+        const evoCount = this.getUniqueEvolutionCount(leaf.id);
+
         if (inferredRegion) {
           result.push(path.map(s => ({ species: s, form: this.getVariantForm(s, inferredRegion), formIndex: 0 })));
+        } else if (altForms.length > 0 && evoCount > 1) {
+          // Species with multiple conditional forms (e.g. Lycanroc midday/midnight/dusk)
+          const prefix = path.slice(0, -1).map(s => ({ species: s, form: this.getDefaultForm(s), formIndex: 0 }));
+          [undefined, ...altForms].forEach((formName, i) => {
+            const leafForm = formName
+              ? (leaf.pokemons?.find(p => p.name === formName) ?? this.getDefaultForm(leaf)) as Pokemon
+              : this.getDefaultForm(leaf);
+            result.push([...prefix, { species: leaf, form: leafForm, formIndex: i }]);
+          });
         } else {
           result.push(path.map(s => ({ species: s, form: this.getDefaultForm(s), formIndex: 0 })));
         }
@@ -240,9 +276,9 @@ export class PokemonEvolutionsComponent implements OnChanges, AfterViewChecked {
   // ── Evolution lookup ─────────────────────────────────────────────────────────
 
   getPokemonEvolution(id: number, formIndex?: number): PokemonEvolution[] | undefined {
-    const evos = this.pokemonEvolutions.filter(evo => evo?.evolved_species_id === id);
+    const all = this.pokemonEvolutions.filter(evo => evo?.evolved_species_id === id);
     const seen = new Set<string>();
-    const unique = evos.filter(evo => {
+    const unique = this.versionedEvos(all).filter(evo => {
       const fp = this.evolutionFingerprint(evo);
       if (seen.has(fp)) return false;
       seen.add(fp);
@@ -263,93 +299,108 @@ export class PokemonEvolutionsComponent implements OnChanges, AfterViewChecked {
     const conditions: EvolutionCondition[] = [];
 
     if (typeof evo.min_level === 'number') {
-      conditions.push({ prefix: 'Level ', entity: `${evo.min_level}` });
+      conditions.push({ icon: 'trending_up', entity: `${evo.min_level}` });
     }
 
     if (evo.time_of_day) {
-      conditions.push({ prefix: 'during the ', entity: evo.time_of_day });
+      const icon = evo.time_of_day === 'night' ? 'dark_mode'
+        : evo.time_of_day === 'dusk' ? 'wb_twilight'
+        : 'light_mode';
+      conditions.push({ icon, entity: evo.time_of_day });
     }
 
     if (evo.min_happiness != null) {
-      conditions.push({ prefix: 'with high friendship' });
+      conditions.push({ icon: 'favorite', entity: 'friendship' });
     }
 
     if (evo.min_beauty != null) {
-      conditions.push({ prefix: 'with high beauty' });
+      conditions.push({ icon: 'auto_awesome', entity: 'beauty' });
     }
 
     if (evo.min_affection != null) {
-      conditions.push({ prefix: 'with high affection' });
+      conditions.push({ icon: 'favorite_border', entity: 'affection' });
     }
 
     if (evo.item) {
       const item = evo.item;
       const name = this.pokemonUtils.getLocalizedNameFromEntity(item, 'itemnames');
       const sprite = item.itemsprites?.[0]?.sprites?.default;
-      conditions.push({ prefix: 'use', entity: name, href: `/item/${name}`, spriteUrl: sprite });
+      conditions.push({ entity: name, href: `/item/${name}`, spriteUrl: sprite });
     }
 
     if (evo.ItemByHeldItemId) {
       const item = evo.ItemByHeldItemId;
       const name = this.pokemonUtils.getLocalizedNameFromEntity(item, 'itemnames');
       const sprite = item.itemsprites?.[0]?.sprites?.default;
-      conditions.push({ prefix: 'hold', entity: name, href: `/item/${name}`, spriteUrl: sprite });
+      conditions.push({ icon: 'back_hand', spriteUrl: sprite, entity: name, href: `/item/${name}` });
     }
 
     if (evo.gender?.name) {
       const isFemale = evo.gender.name.toLowerCase() === 'female';
-      conditions.push({ prefix: 'must be', spriteUrl: isFemale ? '/images/female.png' : '/images/male.png' });
+      conditions.push({ spriteUrl: isFemale ? '/images/female.png' : '/images/male.png' });
     }
 
     if (evo.location) {
       const name = this.pokemonUtils.getLocalizedNameFromEntity(evo.location, 'locationnames');
-      conditions.push({ prefix: 'at ', entity: name, href: `/location/${name}` });
+      conditions.push({ icon: 'place', entity: name, href: `/location/${name}` });
     }
 
     if (evo.move) {
       const name = this.pokemonUtils.getLocalizedNameFromEntity(evo.move, 'movenames');
-      conditions.push({ prefix: 'knowing the move ', entity: name, href: `/move/${name}` });
+      conditions.push({ icon: 'bolt', entity: name, href: `/move/${name}` });
     }
 
     if (evo.type) {
       const name = this.pokemonUtils.getLocalizedNameFromEntity(evo.type, 'typenames');
-      conditions.push({ prefix: 'knowing a ', entity: name, suffix: '-type move', href: `/type/${name}` });
+      conditions.push({ icon: 'bolt', entity: name, suffix: '-type', href: `/type/${name}` });
     }
 
     if (evo.needs_overworld_rain) {
-      conditions.push({ prefix: 'while raining' });
+      conditions.push({ icon: 'water_drop', entity: 'rain' });
     }
 
     if (evo.turn_upside_down) {
-      conditions.push({ prefix: 'while turning the device upside down' });
+      conditions.push({ icon: 'screen_rotation', entity: 'upside-down' });
     }
 
     if (evo.PokemonspecyByPartySpeciesId) {
       const name = this.pokemonUtils.getLocalizedNameFromEntity(evo.PokemonspecyByPartySpeciesId, 'pokemonspeciesnames');
-      conditions.push({ prefix: 'with ', entity: name, suffix: ' in party', href: `/pokemon/${name}` });
+      conditions.push({ icon: 'group', entity: name, suffix: ' in party', href: `/pokemon/${name}` });
     }
 
     if (evo.TypeByPartyTypeId) {
       const name = this.pokemonUtils.getLocalizedNameFromEntity(evo.TypeByPartyTypeId, 'typenames');
-      conditions.push({ prefix: 'with a ', entity: name, suffix: '-type Pokémon in party', href: `/type/${name}` });
+      conditions.push({ icon: 'group', entity: name, suffix: '-type in party', href: `/type/${name}` });
     }
 
     if (evo.PokemonspecyByTradeSpeciesId) {
       const name = this.pokemonUtils.getLocalizedNameFromEntity(evo.PokemonspecyByTradeSpeciesId, 'pokemonspeciesnames');
-      conditions.push({ prefix: 'trade with ', entity: name, href: `/pokemon/${name}` });
+      conditions.push({ icon: 'swap_horiz', entity: name, href: `/pokemon/${name}` });
     }
 
     if (typeof evo.relative_physical_stats === 'number') {
-      const statText = evo.relative_physical_stats === 1 ? 'Attack > Defense'
-        : evo.relative_physical_stats === 0 ? 'Attack = Defense'
-        : 'Attack < Defense';
-      conditions.push({ prefix: `when ${statText}` });
+      const label = evo.relative_physical_stats === 1 ? 'ATK>DEF'
+        : evo.relative_physical_stats === 0 ? 'ATK=DEF'
+        : 'ATK<DEF';
+      conditions.push({ icon: 'balance', prefix: label });
     }
 
     if (evo.evolutiontrigger) {
-      const name = this.getEvolutionTriggerName(evo.evolutiontrigger);
-      if (!conditions.some(c => c.prefix === name || c.entity === name)) {
-        conditions.push({ prefix: name });
+      const slug = evo.evolutiontrigger.name;
+      const redundant =
+        (slug === 'level-up' && conditions.length > 0) ||
+        (slug === 'use-item' && !!evo.item) ||
+        (slug === 'trade'    && !!evo.PokemonspecyByTradeSpeciesId);
+
+      if (!redundant) {
+        const name = this.getEvolutionTriggerName(evo.evolutiontrigger);
+        const icon = slug === 'level-up' ? 'trending_up'
+          : slug === 'trade' ? 'swap_horiz'
+          : slug === 'shed' ? 'change_circle'
+          : undefined;
+        if (!conditions.some(c => c.prefix === name || c.entity === name)) {
+          conditions.push({ icon, prefix: name });
+        }
       }
     }
 
@@ -365,6 +416,29 @@ export class PokemonEvolutionsComponent implements OnChanges, AfterViewChecked {
   }
 
   // ── Form helpers ─────────────────────────────────────────────────────────────
+
+  private getNonRegionalFormVariants(species: PokemonSpecies): string[] {
+    return (species.pokemons ?? [])
+      .filter(p => {
+        if (p.is_default) return false;
+        const n = p.name;
+        if (REGIONAL_SUFFIXES.some(s => n === `${species.name}-${s}`)) return false;
+        if (n.includes('-mega') || n.endsWith('-gmax') || n.endsWith('-eternamax')) return false;
+        return true;
+      })
+      .map(p => p.name);
+  }
+
+  private getUniqueEvolutionCount(speciesId: number): number {
+    const all = this.pokemonEvolutions.filter(e => e?.evolved_species_id === speciesId);
+    const seen = new Set<string>();
+    return this.versionedEvos(all).filter(e => {
+      const fp = this.evolutionFingerprint(e);
+      if (seen.has(fp)) return false;
+      seen.add(fp);
+      return true;
+    }).length;
+  }
 
   private getFormVariants(species: PokemonSpecies): string[] {
     return REGIONAL_SUFFIXES.filter(suffix =>
@@ -429,8 +503,7 @@ export class PokemonEvolutionsComponent implements OnChanges, AfterViewChecked {
         if (!megaType) continue;
 
         const richForm = richPokemons?.find(p => p.name === chainForm.name) ?? chainForm;
-        const megaStoneItem: Item | null = (richForm as any).pokemonitems?.[0]?.item ?? null;
-        nodes.push({ species: chainSpecies, form: richForm, baseForm, megaType, megaStoneItem });
+        nodes.push({ species: chainSpecies, form: richForm, baseForm, megaType });
       }
     }
     return nodes;
@@ -452,15 +525,13 @@ getMegaFormDisplayName(node: MegaNode): string {
   }
 
   getMegaConditions(node: MegaNode): EvolutionCondition[] {
-    const conditions: EvolutionCondition[] = [];
-    if (node.megaType === 'mega' && node.megaStoneItem) {
-      const name = this.pokemonUtils.getLocalizedNameFromEntity(node.megaStoneItem, 'itemnames');
-      const sprite = node.megaStoneItem.itemsprites?.[0]?.sprites?.default;
-      conditions.push({ prefix: 'hold', entity: name, spriteUrl: sprite });
-    }
-    const label = node.megaType === 'gmax' ? 'Gigantamax' : node.megaType === 'eternamax' ? 'Eternamax' : 'Mega Evolution';
-    conditions.push({ prefix: label });
-    return conditions;
+    const icon = node.megaType === 'gmax' ? 'aspect_ratio'
+      : node.megaType === 'eternamax' ? 'all_inclusive'
+      : 'auto_awesome';
+    const label = node.megaType === 'gmax' ? 'Gigantamax'
+      : node.megaType === 'eternamax' ? 'Eternamax'
+      : 'Mega Evolution';
+    return [{ prefix: label, icon }];
   }
 
   private evolutionFingerprint(evo: PokemonEvolution): string {
