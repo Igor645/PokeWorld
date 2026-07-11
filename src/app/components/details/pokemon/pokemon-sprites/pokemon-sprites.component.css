@@ -179,6 +179,10 @@
   image-rendering: pixelated;
 }
 
+.sprite-wrap.smooth .sprite-img {
+  image-rendering: smooth;
+}
+
 .sprite-img.shiny-img {
   filter: drop-shadow(0 0 4px rgba(200, 168, 48, 0.65));
 }
@@ -232,6 +236,10 @@
 
 .lightbox-img.pixel {
   image-rendering: pixelated;
+}
+
+.lightbox-img.smooth {
+  image-rendering: smooth;
 }
 
 .lightbox-img.shiny-img {

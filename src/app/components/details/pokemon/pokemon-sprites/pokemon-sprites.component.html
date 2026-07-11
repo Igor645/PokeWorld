@@ -16,8 +16,8 @@
               <div class="mat-cell" [class.alt]="ri % 2 === 1"
                    *ngFor="let cell of row.cells; let ci = index">
                 <ng-container *ngIf="cell">
-                  <div class="sprite-wrap" [class.pixel]="mat.columnIsPixel[ci]" [title]="cell.label"
-                       (click)="openLightbox(cell.url, cell.label, mat.columnIsPixel[ci])">
+                  <div class="sprite-wrap" [class.pixel]="mat.columnIsPixel[ci]" [class.smooth]="mat.columnIsSmooth[ci]" [title]="cell.label"
+                       (click)="openLightbox(cell.url, cell.label, mat.columnIsPixel[ci], mat.columnIsSmooth[ci])">
                     <img class="sprite-img" [src]="cell.url" [alt]="cell.label"
                          loading="lazy" [class.shiny-img]="cell.isShiny" />
                   </div>
@@ -47,8 +47,8 @@
               <div class="mat-cell" [class.alt]="ri % 2 === 1"
                    *ngFor="let cell of row.cells; let ci = index">
                 <ng-container *ngIf="cell">
-                  <div class="sprite-wrap" [class.pixel]="mat.columnIsPixel[ci]" [title]="cell.label"
-                       (click)="openLightbox(cell.url, cell.label, mat.columnIsPixel[ci])">
+                  <div class="sprite-wrap" [class.pixel]="mat.columnIsPixel[ci]" [class.smooth]="mat.columnIsSmooth[ci]" [title]="cell.label"
+                       (click)="openLightbox(cell.url, cell.label, mat.columnIsPixel[ci], mat.columnIsSmooth[ci])">
                     <img class="sprite-img" [src]="cell.url" [alt]="cell.label"
                          loading="lazy" [class.shiny-img]="cell.isShiny" />
                   </div>
@@ -73,7 +73,7 @@
   <div class="lightbox-card" (click)="$event.stopPropagation()">
     <button class="lightbox-close" (click)="closeLightbox()">✕</button>
     <img class="lightbox-img" [src]="lightbox.url" [alt]="lightbox.label"
-         [class.pixel]="lightbox.isPixel" />
+         [class.pixel]="lightbox.isPixel" [class.smooth]="lightbox.isSmooth" />
     <span class="lightbox-label" [class.shiny]="lightbox.label.toLowerCase().includes('shiny')">
       {{ lightbox.label }}
     </span>

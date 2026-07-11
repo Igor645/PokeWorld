@@ -14,6 +14,7 @@ interface SpriteCategory {
   name: string;
   sprites: SpriteEntry[];
   isPixel: boolean;
+  isSmooth?: boolean;
 }
 
 interface SpriteGroup {
@@ -31,6 +32,7 @@ interface SpriteMatrix {
   groupLabel: string | null;
   columnHeaders: string[];
   columnIsPixel: boolean[];
+  columnIsSmooth: boolean[];
   rows: MatrixRow[];
   gridCols: string;
 }
@@ -122,7 +124,7 @@ export class PokemonSpritesComponent implements OnChanges {
   isExpanded = true;
   matrices: SpriteMatrix[] = [];
   expandedGens = new Set<string>();
-  lightbox: { url: string; label: string; isPixel: boolean } | null = null;
+  lightbox: { url: string; label: string; isPixel: boolean; isSmooth: boolean } | null = null;
 
   @HostListener('document:keydown.escape')
   onEscape() { this.lightbox = null; }
@@ -136,8 +138,8 @@ export class PokemonSpritesComponent implements OnChanges {
     this.expandedGens.clear();
   }
 
-  openLightbox(url: string, label: string, isPixel: boolean): void {
-    this.lightbox = { url, label, isPixel };
+  openLightbox(url: string, label: string, isPixel: boolean, isSmooth = false): void {
+    this.lightbox = { url, label, isPixel, isSmooth };
   }
 
   closeLightbox(): void { this.lightbox = null; }
@@ -177,6 +179,7 @@ export class PokemonSpritesComponent implements OnChanges {
       groupLabel: group.label,
       columnHeaders: cats.map(c => c.name),
       columnIsPixel: cats.map(c => c.isPixel),
+      columnIsSmooth: cats.map(c => !!c.isSmooth),
       rows,
       gridCols,
     };
@@ -205,6 +208,7 @@ export class PokemonSpritesComponent implements OnChanges {
           modernCategories.push({
             name: OTHER_CATEGORY_LABELS[key] ?? key,
             isPixel: false,
+            isSmooth: key === 'showdown',
             sprites,
           });
         }

@@ -8,6 +8,7 @@ import { Routes } from '@angular/router';
 export const routes: Routes = [
   { path: '', component: DexOverviewComponent },
   { path: 'pokemon/:speciesIdOrName', component: PokemonDetailsComponent },
+  { path: 'location/:locationIdOrName', component: NotFoundComponent },
   { path: 'quiz', component: QuizComponent },
   { path: 'pokele', component: PokeleComponent },
   { path: '**', component: NotFoundComponent }

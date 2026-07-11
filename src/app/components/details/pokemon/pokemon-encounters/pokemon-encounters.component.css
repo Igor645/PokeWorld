@@ -1,0 +1,189 @@
+/* ── Version bar ─────────────────────────────────────────────────────────────── */
+
+.enc-version-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.enc-version-icon {
+  font-size: 1.1rem;
+  width: 1.1rem;
+  height: 1.1rem;
+  color: var(--primary-color, #6366f1);
+  flex-shrink: 0;
+}
+
+/* ── Loading / empty states ──────────────────────────────────────────────────── */
+
+.enc-loading {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1.5rem;
+  color: var(--text-color, #aaa);
+  font-size: 0.9rem;
+}
+
+.enc-spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid color-mix(in srgb, var(--primary-color, #6366f1) 30%, transparent);
+  border-top-color: var(--primary-color, #6366f1);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.enc-empty {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 1.5rem;
+  color: var(--text-color, #aaa);
+  font-size: 0.875rem;
+  opacity: 0.7;
+}
+
+.enc-empty mat-icon {
+  font-size: 1.2rem;
+  width: 1.2rem;
+  height: 1.2rem;
+  opacity: 0.6;
+}
+
+/* ── Card grid ───────────────────────────────────────────────────────────────── */
+
+.enc-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 0.4rem;
+}
+
+/* ── Card ────────────────────────────────────────────────────────────────────── */
+
+.enc-card {
+  background: var(--interactive-bg-color, #1e1e2e);
+  border: 1px solid color-mix(in srgb, var(--primary-color, #6366f1) 14%, transparent);
+  border-radius: 8px;
+  padding: 0.45rem 0.6rem 0.4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  text-decoration: none;
+  cursor: pointer;
+  transition: border-color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease, background 0.18s ease;
+}
+
+.enc-card:hover {
+  border-color: color-mix(in srgb, var(--primary-color, #6366f1) 55%, transparent);
+  background: color-mix(in srgb, var(--interactive-bg-color, #1e1e2e) 85%, var(--primary-color, #6366f1));
+  box-shadow: 0 4px 16px color-mix(in srgb, var(--primary-color, #6366f1) 20%, transparent);
+  transform: translateY(-2px);
+}
+
+/* ── Card name ───────────────────────────────────────────────────────────────── */
+
+.enc-card-name {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin-bottom: 0.2rem;
+  min-width: 0;
+}
+
+.enc-pin {
+  font-size: 0.8rem;
+  width: 0.8rem;
+  height: 0.8rem;
+  color: var(--primary-color, #6366f1);
+  flex-shrink: 0;
+  opacity: 0.8;
+}
+
+.enc-card-name span {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--text-color, #fff);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+/* ── Method rows ─────────────────────────────────────────────────────────────── */
+
+.enc-method {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.4rem;
+  padding-top: 0.15rem;
+  border-top: 1px solid color-mix(in srgb, var(--primary-color, #6366f1) 8%, transparent);
+  min-width: 0;
+}
+
+.enc-method:first-of-type {
+  /* no top border on the very first method — card-name already separates */
+}
+
+.enc-method-left {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.enc-micon {
+  font-size: 0.75rem;
+  width: 0.75rem;
+  height: 0.75rem;
+  color: var(--primary-color, #6366f1);
+  flex-shrink: 0;
+  opacity: 0.65;
+}
+
+.enc-mlabel {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--text-color, #ccc);
+  white-space: nowrap;
+}
+
+.enc-mcond {
+  font-size: 0.65rem;
+  color: color-mix(in srgb, var(--text-color, #aaa) 45%, transparent);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.enc-method-right {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex-shrink: 0;
+}
+
+.enc-level {
+  font-size: 0.68rem;
+  font-weight: 500;
+  color: color-mix(in srgb, var(--text-color, #ddd) 55%, transparent);
+  white-space: nowrap;
+}
+
+.enc-pct {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--primary-color, #6366f1);
+  white-space: nowrap;
+  min-width: 1.8rem;
+  text-align: right;
+}

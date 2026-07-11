@@ -4,7 +4,7 @@ import {
   isMainModule,
   writeResponseToNodeResponse,
 } from '@angular/ssr/node';
-import { dirname, resolve } from 'node:path';
+import { dirname, resolve, join } from 'node:path';
 
 import express from 'express';
 import { fileURLToPath } from 'node:url';
@@ -26,6 +26,16 @@ const angularApp = new AngularNodeAppEngine();
  * });
  * ```
  */
+
+// Serve public/ from the working directory (project root in dev, /app on Railway).
+// Must come before browserDistFolder so images are found without a build step.
+app.use(
+  express.static(join(process.cwd(), 'public'), {
+    maxAge: '1y',
+    index: false,
+    redirect: false,
+  }),
+);
 
 /**
  * Serve static files from /browser

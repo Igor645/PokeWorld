@@ -1,0 +1,55 @@
+<app-expandable-section title="Encounters" [(expanded)]="isExpanded">
+
+  <!-- Version selector -->
+  <div class="enc-version-bar">
+    <mat-icon class="enc-version-icon">sports_esports</mat-icon>
+    <app-version-select
+      [groups]="versionSelectGroups"
+      [selectedId]="selectedVersionId"
+      (selectionChange)="onVersionChange($event)">
+    </app-version-select>
+  </div>
+
+  <!-- Loading -->
+  <div class="enc-loading" *ngIf="isLoading">
+    <span class="enc-spinner"></span>
+    Loading encounter data…
+  </div>
+
+  <!-- Never found in the wild -->
+  <div class="enc-empty" *ngIf="!isLoading && neverEncountered">
+    <mat-icon>catching_pokemon</mat-icon>
+    <span>This Pokémon cannot be found in the wild.</span>
+  </div>
+
+  <!-- Not available in selected version -->
+  <div class="enc-empty" *ngIf="!isLoading && notInVersion">
+    <mat-icon>search_off</mat-icon>
+    <span>Not available in the wild in this game version.</span>
+  </div>
+
+  <!-- Card grid: one card per location -->
+  <div class="enc-grid" *ngIf="!isLoading && locations.length > 0">
+    <a class="enc-card" *ngFor="let loc of locations" [routerLink]="['/location', loc.slug]">
+
+      <div class="enc-card-name">
+        <mat-icon class="enc-pin">place</mat-icon>
+        <span>{{ loc.name }}</span>
+      </div>
+
+      <div class="enc-method" *ngFor="let m of loc.methods">
+        <div class="enc-method-left">
+          <mat-icon class="enc-micon">{{ m.icon }}</mat-icon>
+          <span class="enc-mlabel">{{ m.label }}</span>
+          <span class="enc-mcond" *ngIf="m.conditions.length">&middot; {{ m.conditions.join(' · ') }}</span>
+        </div>
+        <div class="enc-method-right">
+          <span class="enc-level">Lv.&nbsp;{{ m.minLevel }}{{ m.minLevel !== m.maxLevel ? '–' + m.maxLevel : '' }}</span>
+          <span class="enc-pct">{{ m.chance }}%</span>
+        </div>
+      </div>
+
+    </a>
+  </div>
+
+</app-expandable-section>

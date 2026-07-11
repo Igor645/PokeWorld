@@ -17,6 +17,7 @@ import { PokemonEvolutionsComponent } from "../pokemon-evolutions/pokemon-evolut
 import { PokemonFormsComponent } from '../pokemon-forms/pokemon-forms.component';
 import { PokemonSpritesComponent } from '../pokemon-sprites/pokemon-sprites.component';
 import { PokemonMovesComponent } from '../pokemon-moves/pokemon-moves.component';
+import { PokemonEncountersComponent } from '../pokemon-encounters/pokemon-encounters.component';
 import { PokemonNavigatorComponent } from '../pokemon-navigator/pokemon-navigator.component';
 import { PokemonRelationsComponent } from '../pokemon-relations/pokemon-relations.component';
 import { PokemonService } from '../../../../services/pokemon.service';
@@ -79,6 +80,7 @@ const EMPTY_VM: DetailsVm = {
     PokemonFormsComponent,
     PokemonSpritesComponent,
     PokemonMovesComponent,
+    PokemonEncountersComponent,
     VersionSelectComponent,
     DetailTableComponent,
     DetailRowComponent

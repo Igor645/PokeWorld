@@ -405,6 +405,7 @@ export const GraphQLQueries = {
     query GetVersions {
       version {
         id
+        name
         versionnames { name language_id language { ...LangFields } }
       }
     }

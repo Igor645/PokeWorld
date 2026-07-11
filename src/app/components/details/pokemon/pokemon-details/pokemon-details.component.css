@@ -432,7 +432,8 @@ app-pokemon-navigator {
 
 .pokemon-moves,
 .pokemon-evolutions,
-.pokemon-sprites {
+.pokemon-sprites,
+.pokemon-encounters {
   grid-column: span 3;
 }
 

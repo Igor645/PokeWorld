@@ -2,8 +2,11 @@ const express = require('express');
 const path = require('path');
 const app = express();
 
-const staticPath = path.join(__dirname, 'dist', 'poke-world-angular', 'browser');
+const staticPath  = path.join(__dirname, 'dist', 'poke-world-angular', 'browser');
+const publicPath  = path.join(__dirname, 'public');
 
+// Serve public/ directly so image assets don't require a rebuild
+app.use(express.static(publicPath));
 app.use(express.static(staticPath));
 
 app.get('*', (req, res) => {

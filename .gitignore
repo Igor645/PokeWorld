@@ -234,6 +234,11 @@ Builds/
 Logs/
 
 # ===========================
+# 🖼️ Scraped image assets (managed via Railway volume or CDN)
+# ===========================
+public/images/locations/
+
+# ===========================
 # 🔥 Keep the Git Repository Clean!
 # ===========================
 
