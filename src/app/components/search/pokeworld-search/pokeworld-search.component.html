@@ -4,19 +4,26 @@
       [matAutocomplete]="auto" (keydown)="onKeydown($event)" (focus)="onFocus()" />
 
     <mat-autocomplete #auto="matAutocomplete" autoActiveFirstOption (optionSelected)="onOptionSelected($event)">
-      <mat-option *ngIf="isLoading && !filteredPokemonSpecies.length" disabled class="search-loading-option">
+      @if (isLoading && !filteredPokemonSpecies.length) {
+      <mat-option disabled class="search-loading-option">
         Searching…
       </mat-option>
-      <mat-optgroup *ngIf="filteredPokemonSpecies.length" label="Pokémon">
-        <mat-option *ngFor="let species of filteredPokemonSpecies; trackBy: trackByPokemon" [value]="species">
+      }
+      @if (filteredPokemonSpecies.length) {
+      <mat-optgroup label="Pokémon">
+        @for (species of filteredPokemonSpecies; track trackByPokemon($index, species)) {
+        <mat-option [value]="species">
           <app-pokemon-search-item [species]="species" endpoint="pokemon"
-            [imageSrc]="GetPokemonOfficialImage(species.pokemons[0])">
-          </app-pokemon-search-item>
+            [imageSrc]="getPokemonOfficialImage(species.pokemons[0])">g </app-pokemon-search-item>
         </mat-option>
+        }
       </mat-optgroup>
+      }
     </mat-autocomplete>
   </mat-form-field>
 
   <!-- Spinner overlaid on the right side of the input — avoids Angular Material suffix slot issues -->
-  <span *ngIf="isLoading" class="search-spinner" role="status" aria-label="Loading"></span>
+  @if (isLoading) {
+  <span class="search-spinner" role="status" aria-label="Loading"></span>
+  }
 </div>

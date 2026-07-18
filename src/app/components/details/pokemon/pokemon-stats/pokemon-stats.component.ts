@@ -1,7 +1,7 @@
 import { Component, DestroyRef, HostBinding, Input, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
-import { CommonModule } from '@angular/common';
+
 import { ExpandableSectionComponent } from '../../../shared/expandable-section/expandable-section.component';
 import { LanguageService } from '../../../../services/language.service';
 import { Pokemon } from '../../../../models/pokemon.model';
@@ -11,7 +11,7 @@ import { PokemonUtilsService } from '../../../../utils/pokemon-utils';
   selector: 'app-pokemon-stats',
   templateUrl: './pokemon-stats.component.html',
   styleUrls: ['./pokemon-stats.component.css'],
-  imports: [CommonModule, ExpandableSectionComponent]
+  imports: [ExpandableSectionComponent]
 })
 export class PokemonStatsComponent {
   private _pokemon: Pokemon | undefined;

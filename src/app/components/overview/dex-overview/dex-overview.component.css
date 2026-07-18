@@ -32,8 +32,7 @@ app-pokeworld-search {
     grid-template-columns: repeat(var(--cards-per-row), 1fr);
     gap: 1.5rem;
     padding: 0 1.5rem;
-    height: var(--row-height);
-    align-items: center;
+    align-items: stretch;
     margin-block: 0 1.5rem;
 }
 

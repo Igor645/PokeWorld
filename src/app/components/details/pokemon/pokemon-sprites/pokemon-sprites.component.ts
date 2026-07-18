@@ -1,5 +1,5 @@
 import { Component, HostBinding, HostListener, Input, OnChanges } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { ExpandableSectionComponent } from '../../../shared/expandable-section/expandable-section.component';
 import { Pokemon } from '../../../../models/pokemon.model';
 import { PokemonSprites, Sprite } from '../../../../models/sprite.model';
@@ -114,7 +114,7 @@ const GAME_LABELS: Record<string, string> = {
 @Component({
   selector: 'app-pokemon-sprites',
   standalone: true,
-  imports: [CommonModule, ExpandableSectionComponent],
+  imports: [ExpandableSectionComponent],
   templateUrl: './pokemon-sprites.component.html',
   styleUrls: ['./pokemon-sprites.component.css']
 })

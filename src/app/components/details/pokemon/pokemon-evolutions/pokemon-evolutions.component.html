@@ -1,168 +1,163 @@
 <app-expandable-section title="Evolutions" [(expanded)]="isExpanded">
 
-  <p class="no-evo-msg" *ngIf="isSingleStage && megaFormNodes.length === 0">This Pokémon does not evolve.</p>
+  @if (isSingleStage && megaFormNodes.length === 0) {
+    <p class="no-evo-msg">This Pokémon does not evolve.</p>
+  }
 
-  <div class="evo-chart" *ngIf="!isSingleStage">
-
-    <div class="evo-chain" #evoChain *ngFor="let group of evoGroups; let groupFirst = first"
-      [class.evo-chain--div]="!groupFirst">
-
-      <div class="evo-chain-tree">
-
-        <!-- ══ LINEAR: single branch → horizontal left-to-right row ══ -->
-        <ng-container *ngIf="group.branches.length === 1">
-          <div class="evo-row">
-
-            <div class="evo-card-wrap">
-              <app-pokemon-card [pokemon]="group.ancestor.form" [pokemonSpecies]="group.ancestor.species"
-                [showTypes]="true" [showRegion]="true">
-              </app-pokemon-card>
-            </div>
-
-            <ng-container *ngFor="let entry of group.branches[0].stages">
-
-              <div class="evo-link-h">
-                <ng-container *ngIf="getConnectorEvolutions(entry) as evos">
-                  <p class="evo-link-h-label" *ngIf="hasConditions(evos)">
-                    <ng-container *ngFor="let evo of evos; let evoLast = last">
-                      <ng-container *ngFor="let c of getEvolutionConditions(evo)">
-                        <app-evolution-condition-display [condition]="c"></app-evolution-condition-display>
-                      </ng-container>
-                      <div class="evo-evo-sep" *ngIf="!evoLast"></div>
-                    </ng-container>
-                  </p>
-                </ng-container>
-                <div class="evo-link-h-track">
-                  <div class="evo-link-h-line"></div>
-                  <div class="evo-link-h-tip"></div>
+  @if (!isSingleStage) {
+    <div class="evo-chart">
+      @for (group of evoGroups; track group; let groupFirst = $first) {
+        <div class="evo-chain" #evoChain
+          [class.evo-chain--div]="!groupFirst">
+          <div class="evo-chain-tree">
+            <!-- ══ LINEAR: single branch → horizontal left-to-right row ══ -->
+            @if (group.branches.length === 1) {
+              <div class="evo-row">
+                <div class="evo-card-wrap">
+                  <app-pokemon-card [pokemon]="group.ancestor.form" [pokemonSpecies]="group.ancestor.species"
+                    [showTypes]="true" [showRegion]="true">
+                  </app-pokemon-card>
                 </div>
+                @for (entry of group.branches[0].stages; track entry) {
+                  <div class="evo-link-h">
+                    @if (getConnectorEvolutions(entry); as evos) {
+                      @if (hasConditions(evos)) {
+                        <p class="evo-link-h-label">
+                          @for (evo of evos; track evo; let evoLast = $last) {
+                            @for (c of getEvolutionConditions(evo); track c) {
+                              <app-evolution-condition-display [condition]="c"></app-evolution-condition-display>
+                            }
+                            @if (!evoLast) {
+                              <div class="evo-evo-sep"></div>
+                            }
+                          }
+                        </p>
+                      }
+                    }
+                    <div class="evo-link-h-track">
+                      <div class="evo-link-h-line"></div>
+                      <div class="evo-link-h-tip"></div>
+                    </div>
+                  </div>
+                  <div class="evo-card-wrap">
+                    <app-pokemon-card [pokemon]="entry.form" [pokemonSpecies]="entry.species" [showTypes]="true"
+                      [showRegion]="true">
+                    </app-pokemon-card>
+                  </div>
+                }
               </div>
-
+            }
+            <!-- ══ BRANCHING: multiple branches → vertical top-down tree ══ -->
+            @if (group.branches.length > 1) {
               <div class="evo-card-wrap">
-                <app-pokemon-card [pokemon]="entry.form" [pokemonSpecies]="entry.species" [showTypes]="true"
-                  [showRegion]="true">
+                <app-pokemon-card [pokemon]="group.ancestor.form" [pokemonSpecies]="group.ancestor.species"
+                  [showTypes]="true" [showRegion]="true">
                 </app-pokemon-card>
               </div>
-
-            </ng-container>
-
-          </div>
-        </ng-container>
-
-        <!-- ══ BRANCHING: multiple branches → vertical top-down tree ══ -->
-        <ng-container *ngIf="group.branches.length > 1">
-
-          <div class="evo-card-wrap">
-            <app-pokemon-card [pokemon]="group.ancestor.form" [pokemonSpecies]="group.ancestor.species"
-              [showTypes]="true" [showRegion]="true">
-            </app-pokemon-card>
-          </div>
-
-          <!-- Shared linear stages before the branch split (e.g. Quilava in Cyndaquil chain) -->
-          <ng-container *ngFor="let sharedEntry of group.sharedStages">
-            <div class="evo-shared-link">
-              <ng-container *ngIf="getConnectorEvolutions(sharedEntry) as evos">
-                <p class="evo-link-label" *ngIf="hasConditions(evos)">
-                  <ng-container *ngFor="let evo of evos; let evoLast = last">
-                    <ng-container *ngFor="let c of getEvolutionConditions(evo)">
-                      <app-evolution-condition-display [condition]="c"></app-evolution-condition-display>
-                    </ng-container>
-                    <span class="evo-evo-sep" *ngIf="!evoLast">or</span>
-                  </ng-container>
-                </p>
-              </ng-container>
-              <div class="evo-link-track">
-                <div class="evo-link-line"></div>
-                <div class="evo-link-tip"></div>
-              </div>
-            </div>
-            <div class="evo-card-wrap">
-              <app-pokemon-card [pokemon]="sharedEntry.form" [pokemonSpecies]="sharedEntry.species" [showTypes]="true"
-                [showRegion]="true">
-              </app-pokemon-card>
-            </div>
-          </ng-container>
-
-          <div class="evo-trunk"></div>
-
-          <div class="evo-branches evo-branches--multi">
-            <div class="evo-col" *ngFor="let branch of group.branches; let bIdx = index">
-              <ng-container *ngFor="let entry of branch.stages; let sIdx = index">
-
-                <div class="evo-link" [class.evo-link--head]="sIdx === 0" [style.grid-column]="bIdx + 1"
-                  [style.grid-row]="sIdx * 2 + 1">
-                  <ng-container *ngIf="getConnectorEvolutions(entry) as evos">
-                    <p class="evo-link-label" *ngIf="hasConditions(evos)">
-                      <ng-container *ngFor="let evo of evos; let evoLast = last">
-                        <ng-container *ngFor="let c of getEvolutionConditions(evo)">
-                          <app-evolution-condition-display [condition]="c"></app-evolution-condition-display>
-                        </ng-container>
-                        <div class="evo-evo-sep" *ngIf="!evoLast"></div>
-                      </ng-container>
-                    </p>
-                  </ng-container>
+              <!-- Shared linear stages before the branch split (e.g. Quilava in Cyndaquil chain) -->
+              @for (sharedEntry of group.sharedStages; track sharedEntry) {
+                <div class="evo-shared-link">
+                  @if (getConnectorEvolutions(sharedEntry); as evos) {
+                    @if (hasConditions(evos)) {
+                      <p class="evo-link-label">
+                        @for (evo of evos; track evo; let evoLast = $last) {
+                          @for (c of getEvolutionConditions(evo); track c) {
+                            <app-evolution-condition-display [condition]="c"></app-evolution-condition-display>
+                          }
+                          @if (!evoLast) {
+                            <div class="evo-evo-sep"></div>
+                          }
+                        }
+                      </p>
+                    }
+                  }
                   <div class="evo-link-track">
                     <div class="evo-link-line"></div>
                     <div class="evo-link-tip"></div>
                   </div>
                 </div>
-
-                <div class="evo-card-wrap" [style.grid-column]="bIdx + 1" [style.grid-row]="sIdx * 2 + 2">
-                  <app-pokemon-card [pokemon]="entry.form" [pokemonSpecies]="entry.species" [showTypes]="true"
+                <div class="evo-card-wrap">
+                  <app-pokemon-card [pokemon]="sharedEntry.form" [pokemonSpecies]="sharedEntry.species" [showTypes]="true"
                     [showRegion]="true">
                   </app-pokemon-card>
                 </div>
-
-              </ng-container>
-            </div>
-          </div>
-
-        </ng-container>
-
-      </div><!-- /.evo-chain-tree -->
-
+              }
+              <div class="evo-trunk"></div>
+              <div class="evo-branches evo-branches--multi">
+                @for (branch of group.branches; track branch; let bIdx = $index) {
+                  <div class="evo-col">
+                    @for (entry of branch.stages; track entry; let sIdx = $index) {
+                      <div class="evo-link" [class.evo-link--head]="sIdx === 0" [style.grid-column]="bIdx + 1"
+                        [style.grid-row]="sIdx * 2 + 1">
+                        @if (getConnectorEvolutions(entry); as evos) {
+                          @if (hasConditions(evos)) {
+                            <p class="evo-link-label">
+                              @for (evo of evos; track evo; let evoLast = $last) {
+                                @for (c of getEvolutionConditions(evo); track c) {
+                                  <app-evolution-condition-display [condition]="c"></app-evolution-condition-display>
+                                }
+                                @if (!evoLast) {
+                                  <div class="evo-evo-sep"></div>
+                                }
+                              }
+                            </p>
+                          }
+                        }
+                        <div class="evo-link-track">
+                          <div class="evo-link-line"></div>
+                          <div class="evo-link-tip"></div>
+                        </div>
+                      </div>
+                      <div class="evo-card-wrap" [style.grid-column]="bIdx + 1" [style.grid-row]="sIdx * 2 + 2">
+                        <app-pokemon-card [pokemon]="entry.form" [pokemonSpecies]="entry.species" [showTypes]="true"
+                          [showRegion]="true">
+                        </app-pokemon-card>
+                      </div>
+                    }
+                  </div>
+                }
+              </div>
+            }
+          </div><!-- /.evo-chain-tree -->
+        </div>
+      }
     </div>
-
-  </div>
+  }
 
 
   <!-- ══ MEGA & SPECIAL FORMS ══ -->
-  <ng-container *ngIf="megaFormNodes.length > 0">
+  @if (megaFormNodes.length > 0) {
     <div class="evo-mega-section-label">Special Forms</div>
     <div class="evo-chart evo-chart--mega">
-
-      <div class="evo-chain" *ngFor="let node of megaFormNodes">
-        <div class="evo-mega-row">
-
-          <div class="evo-card-wrap">
-            <app-pokemon-card [pokemon]="node.baseForm" [pokemonSpecies]="node.species" [showTypes]="true"
-              [showRegion]="false">
-            </app-pokemon-card>
-          </div>
-
-          <div class="evo-link-h evo-link-mega-h">
-            <p class="evo-link-h-label evo-link-mega-label">
-              <ng-container *ngFor="let c of getMegaConditions(node)">
-                <app-evolution-condition-display [condition]="c"></app-evolution-condition-display>
-              </ng-container>
-            </p>
-            <div class="evo-link-mega-track">
-              <div class="evo-link-mega-tip-l"></div>
-              <div class="evo-link-mega-line"></div>
-              <div class="evo-link-mega-tip-r"></div>
+      @for (node of megaFormNodes; track node) {
+        <div class="evo-chain">
+          <div class="evo-mega-row">
+            <div class="evo-card-wrap">
+              <app-pokemon-card [pokemon]="node.baseForm" [pokemonSpecies]="node.species" [showTypes]="true"
+                [showRegion]="false">
+              </app-pokemon-card>
+            </div>
+            <div class="evo-link-h evo-link-mega-h">
+              <p class="evo-link-h-label evo-link-mega-label">
+                @for (c of getMegaConditions(node); track c) {
+                  <app-evolution-condition-display [condition]="c"></app-evolution-condition-display>
+                }
+              </p>
+              <div class="evo-link-mega-track">
+                <div class="evo-link-mega-tip-l"></div>
+                <div class="evo-link-mega-line"></div>
+                <div class="evo-link-mega-tip-r"></div>
+              </div>
+            </div>
+            <div class="evo-card-wrap">
+              <app-pokemon-card [pokemon]="node.form" [pokemonSpecies]="node.species" [showTypes]="true"
+                [showRegion]="false">
+              </app-pokemon-card>
             </div>
           </div>
-
-          <div class="evo-card-wrap">
-            <app-pokemon-card [pokemon]="node.form" [pokemonSpecies]="node.species" [showTypes]="true"
-              [showRegion]="false">
-            </app-pokemon-card>
-          </div>
-
         </div>
-      </div>
-
+      }
     </div>
-  </ng-container>
+  }
 
 </app-expandable-section>

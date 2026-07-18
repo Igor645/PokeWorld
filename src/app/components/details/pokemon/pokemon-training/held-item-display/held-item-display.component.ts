@@ -1,11 +1,11 @@
 import { Component, Input, OnInit, Optional, Self } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { InteractiveHostDirective } from '../../../../shared/directives/interactive-host.directive';
 
 @Component({
   selector: 'app-held-item-display',
   standalone: true,
-  imports: [CommonModule],
+  imports: [],
   templateUrl: './held-item-display.component.html',
   styleUrls: ['./held-item-display.component.css'],
   hostDirectives: [InteractiveHostDirective]

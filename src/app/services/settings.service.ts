@@ -59,13 +59,15 @@ export class SettingsService {
   /**
    * Loads settings from localStorage into BehaviorSubjects.
    */
+  private readonly KNOWN_KEYS = ['darkMode', 'language'] as const;
+
   private loadSettingsFromStorage() {
     if (!isPlatformBrowser(this.platformId)) return;
 
-    Object.keys(localStorage).forEach(key => {
+    for (const key of this.KNOWN_KEYS) {
       const value = this.loadSettingFromStorage(key);
       this.settings[key] = new BehaviorSubject(value);
-    });
+    }
   }
 
   /**

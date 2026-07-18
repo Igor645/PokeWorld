@@ -4,7 +4,7 @@ import { Component, DestroyRef, ElementRef, OnInit, ViewChild, inject } from '@a
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { PokemonSpecies, PokemonSpeciesResponse } from '../../../../models/pokemon-species.model';
 
-import { CommonModule } from '@angular/common';
+
 import { FormsModule } from '@angular/forms';
 import { EvolutionService } from '../../../../services/evolution.service';
 import { LoadingSpinnerComponent } from '../../../shared/loading-spinner/loading-spinner.component';
@@ -65,7 +65,6 @@ const EMPTY_VM: DetailsVm = {
   selector: 'app-pokemon-details',
   standalone: true,
   imports: [
-    CommonModule,
     FormsModule,
     PokemonBgSvgComponent,
     PokemonNavigatorComponent,
@@ -84,7 +83,7 @@ const EMPTY_VM: DetailsVm = {
     VersionSelectComponent,
     DetailTableComponent,
     DetailRowComponent
-  ],
+],
   templateUrl: './pokemon-details.component.html',
   styleUrls: ['./pokemon-details.component.css']
 })
@@ -249,7 +248,7 @@ export class PokemonDetailsComponent implements OnInit {
 
 
   private subscribeToRouteChanges(): void {
-    this.route.paramMap.subscribe(params => {
+    this.route.paramMap.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(params => {
       this.versionState.reset();
       this.pokemonSpeciesDetails = undefined;
       this.previousPokemonSpecies = undefined;

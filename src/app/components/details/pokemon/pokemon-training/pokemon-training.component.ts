@@ -1,6 +1,6 @@
 import { Component, HostBinding, Input, OnChanges, OnDestroy, OnInit } from '@angular/core';
 
-import { CommonModule } from '@angular/common';
+
 import { DetailRowComponent } from '../../../shared/detail-row/detail-row.component';
 import { DetailTableComponent } from '../../../shared/detail-table/detail-table.component';
 import { ExpandableSectionComponent } from '../../../shared/expandable-section/expandable-section.component';
@@ -14,7 +14,7 @@ import { VersionStateService } from '../../../../services/version-state.service'
 @Component({
   selector: 'app-pokemon-training',
   standalone: true,
-  imports: [CommonModule, ExpandableSectionComponent, HeldItemDisplayComponent, DetailTableComponent, DetailRowComponent],
+  imports: [ExpandableSectionComponent, HeldItemDisplayComponent, DetailTableComponent, DetailRowComponent],
   templateUrl: './pokemon-training.component.html',
   styleUrls: ['./pokemon-training.component.css']
 })

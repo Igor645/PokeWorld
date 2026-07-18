@@ -1,7 +1,7 @@
 import {
   Component, DestroyRef, HostBinding, Input, OnChanges, OnInit, PLATFORM_ID, SimpleChanges, inject,
 } from '@angular/core';
-import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { isPlatformBrowser } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { catchError, of } from 'rxjs';
 import { MatIcon } from '@angular/material/icon';
@@ -102,7 +102,7 @@ export interface LocationDisplay {
 @Component({
   selector: 'app-pokemon-encounters',
   standalone: true,
-  imports: [CommonModule, MatIcon, RouterLink, ExpandableSectionComponent, VersionSelectComponent],
+  imports: [MatIcon, RouterLink, ExpandableSectionComponent, VersionSelectComponent],
   templateUrl: './pokemon-encounters.component.html',
   styleUrls: ['./pokemon-encounters.component.css'],
 })

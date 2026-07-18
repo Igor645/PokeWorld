@@ -1,86 +1,94 @@
 <app-expandable-section title="Moves" [(expanded)]="isExpanded">
-    <ng-container *ngIf="isLoadingOptions; else movesContent">
+  @if (isLoadingOptions) {
+    <div class="moves-loading-overlay">
+      <app-loading-spinner [inline]="true" message="Loading moves..."></app-loading-spinner>
+    </div>
+  } @else {
+    <div class="moves-toolbar">
+      <mat-icon class="toolbar-vg-icon">sports_esports</mat-icon>
+      <app-version-select [groups]="versionSelectGroups" [selectedId]="selectedVgId"
+        (selectionChange)="onVgChange($event)">
+      </app-version-select>
+      <label for="methodSelect" class="toolbar-label">Learn method</label>
+      <select id="methodSelect" [ngModel]="selectedMethodId" (ngModelChange)="onMethodChange($event)">
+        @for (m of methodOptions; track m) {
+          <option [value]="m.id">{{ m.label }}</option>
+        }
+      </select>
+    </div>
+    <div class="moves-shell">
+      @if (isLoadingMoves) {
         <div class="moves-loading-overlay">
-            <app-loading-spinner [inline]="true" message="Loading moves..."></app-loading-spinner>
+          <app-loading-spinner [inline]="true" message="Loading moves..."></app-loading-spinner>
         </div>
-    </ng-container>
+      } @else {
+        @if ((rows$ | async); as rows) {
+          <div class="moves-scroll">
+            <table class="moves-table">
+              <thead>
+                <tr>
+                  <th class="col-first">
+                    @switch (selectedMethodKeyFromId(selectedMethodId)) {
+                      @case ('level-up') {
+                        <span>Lv.</span>
+                      }
+                      @case ('machine') {
+                        <span>TM/TR</span>
+                      }
+                      @default {
+                        <span>—</span>
+                      }
+                    }
+                  </th>
+                  <th class="col-name">Move</th>
+                  <th class="col-desc">Info</th>
+                  <th class="col-type">Type</th>
+                  <th class="col-class">Class</th>
+                  <th class="col-num">Pow</th>
+                  <th class="col-num">Acc</th>
+                  <th class="col-num">PP</th>
+                  <th class="col-num">Prio</th>
+                  <th class="col-gen">Gen</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (r of rows; track trackById($index, r)) {
+                  <tr class="row" (click)="onRowClick(r)"
+                    tabindex="0" role="button">
+                    <td class="col-first">
+                      @switch (selectedMethodKeyFromId(selectedMethodId)) {
+                        @case ('level-up') {
+                          <span>{{ r.level ?? '—' }}</span>
+                        }
+                        @case ('machine') {
+                          <span>{{ r.machineLabel ?? '—' }}</span>
+                        }
+                        @default {
+                          <span>—</span>
+                        }
+                      }
+                    </td>
+                    <td class="col-name name">{{ r.name }}</td>
+                    <td class="col-desc desc">{{ r.flavorText }}</td>
+                    <td class="col-type">
+                      <app-pokemon-type [pokemonType]="r.type" [simpleView]="true"></app-pokemon-type>
+                    </td>
+                    <td class="col-class">{{ r.damageClassName }}</td>
+                    <td class="col-num">{{ r.power ?? '—' }}</td>
+                    <td class="col-num">{{ r.accuracy ?? '—' }}</td>
+                    <td class="col-num">{{ r.pp ?? '—' }}</td>
+                    <td class="col-num">{{ r.priority ?? '—' }}</td>
+                    <td class="col-gen">{{ r.generationName }}</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        } @else {
+          <div class="no-moves">No moves found.</div>
+        }
+      }
+    </div>
+  }
 
-    <ng-template #movesContent>
-        <div class="moves-toolbar">
-            <mat-icon class="toolbar-vg-icon">sports_esports</mat-icon>
-            <app-version-select [groups]="versionSelectGroups" [selectedId]="selectedVgId"
-                (selectionChange)="onVgChange($event)">
-            </app-version-select>
-
-            <label for="methodSelect" class="toolbar-label">Learn method</label>
-            <select id="methodSelect" [ngModel]="selectedMethodId" (ngModelChange)="onMethodChange($event)">
-                <option *ngFor="let m of methodOptions" [value]="m.id">{{ m.label }}</option>
-            </select>
-        </div>
-
-        <div class="moves-shell">
-            <ng-container *ngIf="isLoadingMoves; else movesTableContent">
-                <div class="moves-loading-overlay">
-                    <app-loading-spinner [inline]="true" message="Loading moves..."></app-loading-spinner>
-                </div>
-            </ng-container>
-
-            <ng-template #movesTableContent>
-                <ng-container *ngIf="(rows$ | async) as rows; else noMoves">
-                    <div class="moves-scroll">
-                        <table class="moves-table">
-                            <thead>
-                                <tr>
-                                    <th class="col-first">
-                                        <ng-container [ngSwitch]="selectedMethodKeyFromId(selectedMethodId)">
-                                            <span *ngSwitchCase="'level-up'">Lv.</span>
-                                            <span *ngSwitchCase="'machine'">TM/TR</span>
-                                            <span *ngSwitchDefault>—</span>
-                                        </ng-container>
-                                    </th>
-                                    <th class="col-name">Move</th>
-                                    <th class="col-desc">Info</th>
-                                    <th class="col-type">Type</th>
-                                    <th class="col-class">Class</th>
-                                    <th class="col-num">Pow</th>
-                                    <th class="col-num">Acc</th>
-                                    <th class="col-num">PP</th>
-                                    <th class="col-num">Prio</th>
-                                    <th class="col-gen">Gen</th>
-                                </tr>
-                            </thead>
-
-                            <tbody>
-                                <tr class="row" *ngFor="let r of rows; trackBy: trackById" (click)="onRowClick(r)"
-                                    tabindex="0" role="button">
-                                    <td class="col-first">
-                                        <ng-container [ngSwitch]="selectedMethodKeyFromId(selectedMethodId)">
-                                            <span *ngSwitchCase="'level-up'">{{ r.level ?? '—' }}</span>
-                                            <span *ngSwitchCase="'machine'">{{ r.machineLabel ?? '—' }}</span>
-                                            <span *ngSwitchDefault>—</span>
-                                        </ng-container>
-                                    </td>
-                                    <td class="col-name name">{{ r.name }}</td>
-                                    <td class="col-desc desc">{{ r.flavorText }}</td>
-                                    <td class="col-type">
-                                        <app-pokemon-type [pokemonType]="r.type" [simpleView]="true"></app-pokemon-type>
-                                    </td>
-                                    <td class="col-class">{{ r.damageClassName }}</td>
-                                    <td class="col-num">{{ r.power ?? '—' }}</td>
-                                    <td class="col-num">{{ r.accuracy ?? '—' }}</td>
-                                    <td class="col-num">{{ r.pp ?? '—' }}</td>
-                                    <td class="col-num">{{ r.priority ?? '—' }}</td>
-                                    <td class="col-gen">{{ r.generationName }}</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </ng-container>
-
-                <ng-template #noMoves>
-                    <div class="no-moves">No moves found.</div>
-                </ng-template>
-            </ng-template>
-        </div>
-    </ng-template>
 </app-expandable-section>

@@ -1,21 +1,20 @@
 <div class="pokemon-navigator">
-  <ng-container *ngIf="facing === 'left'; else rightTemplate">
+  @if (facing === 'left') {
     <mat-icon class="arrow">arrow_left</mat-icon>
     <div class="pokemon-info">
       <span class="pokemon-name">{{ getPokemonName() }}</span>
       <span class="pokemon-dex">#{{ pokemon.id }}</span>
     </div>
     <ng-container [ngTemplateOutlet]="imageTemplate"></ng-container>
-  </ng-container>
-
-  <ng-template #rightTemplate>
+  } @else {
     <ng-container [ngTemplateOutlet]="imageTemplate"></ng-container>
     <div class="pokemon-info">
       <span class="pokemon-name">{{ getPokemonName() }}</span>
       <span class="pokemon-dex">#{{ pokemon.id }}</span>
     </div>
     <mat-icon class="arrow">arrow_right</mat-icon>
-  </ng-template>
+  }
+
 
   <ng-template #imageTemplate>
     <div class="pokemonCard__img__container">

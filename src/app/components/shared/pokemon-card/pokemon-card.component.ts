@@ -11,7 +11,7 @@ import {
   Optional,
   Self
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { Subscription } from 'rxjs';
 
 import { Pokemon } from '../../../models/pokemon.model';
@@ -29,7 +29,7 @@ const REGIONAL_SUFFIXES = ['alola', 'galar', 'hisui', 'paldea'];
   templateUrl: './pokemon-card.component.html',
   styleUrls: ['./pokemon-card.component.css'],
   standalone: true,
-  imports: [CommonModule, PokemonBgSvgComponent, PokemonTypeComponent],
+  imports: [PokemonBgSvgComponent, PokemonTypeComponent],
   hostDirectives: [InteractiveHostDirective],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

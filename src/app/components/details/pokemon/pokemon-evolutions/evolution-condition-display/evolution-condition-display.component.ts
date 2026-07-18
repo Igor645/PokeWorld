@@ -1,8 +1,8 @@
 import { Component, Input } from '@angular/core';
 
-import { CommonModule } from '@angular/common';
+import { NgClass } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
-import { RouterModule } from '@angular/router';
+import { RouterLink } from '@angular/router';
 
 export interface EvolutionCondition {
   prefix?: string;
@@ -16,7 +16,7 @@ export interface EvolutionCondition {
 @Component({
   selector: 'app-evolution-condition-display',
   standalone: true,
-  imports: [CommonModule, RouterModule, MatIcon],
+  imports: [NgClass, RouterLink, MatIcon],
   templateUrl: './evolution-condition-display.component.html',
   styleUrls: ['./evolution-condition-display.component.css']
 })

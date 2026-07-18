@@ -8,7 +8,7 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FormsModule } from '@angular/forms';
 import { MatIcon } from '@angular/material/icon';
 import { Subscription } from 'rxjs';
@@ -53,7 +53,7 @@ const TYPE_COLORS: Record<string, string> = {
 @Component({
   selector: 'app-quiz',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatIcon],
+  imports: [FormsModule, MatIcon],
   templateUrl: './quiz.component.html',
   styleUrls: ['./quiz.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,

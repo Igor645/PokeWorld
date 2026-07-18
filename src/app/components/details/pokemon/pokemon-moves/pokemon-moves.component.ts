@@ -1,7 +1,8 @@
-import { BehaviorSubject, Subject, combineLatest, debounceTime, distinctUntilChanged, filter, map, shareReplay, takeUntil } from 'rxjs';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges } from '@angular/core';
+import { BehaviorSubject, combineLatest, debounceTime, distinctUntilChanged, filter, map, shareReplay } from 'rxjs';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, Input, OnChanges, OnInit, SimpleChanges, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
-import { CommonModule } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
 import { ExpandableSectionComponent } from '../../../shared/expandable-section/expandable-section.component';
 import { FormsModule } from '@angular/forms';
@@ -41,11 +42,11 @@ type MethodOption = { id: number; label: string; key: 'level-up' | 'machine' | '
   selector: 'app-pokemon-moves',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, FormsModule, MatIcon, ExpandableSectionComponent, PokemonTypeComponent, LoadingSpinnerComponent, VersionSelectComponent],
+  imports: [AsyncPipe, FormsModule, MatIcon, ExpandableSectionComponent, PokemonTypeComponent, LoadingSpinnerComponent, VersionSelectComponent],
   templateUrl: './pokemon-moves.component.html',
   styleUrls: ['./pokemon-moves.component.css']
 })
-export class PokemonMovesComponent implements OnInit, OnChanges, OnDestroy {
+export class PokemonMovesComponent implements OnInit, OnChanges {
   @Input() pokemonId: number | undefined;
 
   isExpanded = true;
@@ -57,7 +58,7 @@ export class PokemonMovesComponent implements OnInit, OnChanges, OnDestroy {
   selectedVgId = 0;
   selectedMethodId = 0;
 
-  private destroy$ = new Subject<void>();
+  private readonly destroyRef = inject(DestroyRef);
   private allRows: Row[] = [];
   private moveById = new Map<number, Move>();
   private allMethodOptions: MethodOption[] = [];
@@ -120,17 +121,17 @@ export class PokemonMovesComponent implements OnInit, OnChanges, OnDestroy {
   ngOnInit(): void {
     this.pokemonUtils
       .watchLanguageChanges()
-      .pipe(takeUntil(this.destroy$), distinctUntilChanged(), debounceTime(50))
+      .pipe(takeUntilDestroyed(this.destroyRef), distinctUntilChanged(), debounceTime(50))
       .subscribe(() => this.relabelForLanguage());
 
     // Keep toolbar dropdown in sync with service's sorted order
     this.versionState.vgOptions$
-      .pipe(takeUntil(this.destroy$))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(opts => { this.vgOptions = opts; this.cdr.detectChanges(); });
 
     // React to master version selector or any external vg change
     this.versionState.vgId$
-      .pipe(takeUntil(this.destroy$), filter(id => !!id))
+      .pipe(takeUntilDestroyed(this.destroyRef), filter(id => !!id))
       .subscribe(vgId => {
         if (vgId === this.selectedVgId || !this.vgOptions.some(v => v.id === vgId)) return;
         this.selectedVgId = vgId;
@@ -144,11 +145,6 @@ export class PokemonMovesComponent implements OnInit, OnChanges, OnDestroy {
     if (changes['pokemonId'] && changes['pokemonId'].currentValue !== changes['pokemonId'].previousValue) {
       this.loadOptions(changes['pokemonId'].currentValue);
     }
-  }
-
-  ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
   }
 
   onVgChange(id: number): void {
@@ -176,7 +172,7 @@ export class PokemonMovesComponent implements OnInit, OnChanges, OnDestroy {
     this.allRows$.next([]);
     this.cdr.detectChanges();
 
-    this.pokemonService.getPokemonMoveOptions(pokemonId).pipe(takeUntil(this.destroy$)).subscribe({
+    this.pokemonService.getPokemonMoveOptions(pokemonId).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (options) => {
         if (pokemonId !== this.pokemonId) return;
         this.processOptions(options);
@@ -201,7 +197,7 @@ export class PokemonMovesComponent implements OnInit, OnChanges, OnDestroy {
     this.cdr.detectChanges();
 
     this.pokemonService.getPokemonMovesByFilter(pokemonId, selectedVgId, selectedMethodId)
-      .pipe(takeUntil(this.destroy$))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (moves) => {
           if (pokemonId !== this.pokemonId || selectedVgId !== this.selectedVgId || selectedMethodId !== this.selectedMethodId) return;

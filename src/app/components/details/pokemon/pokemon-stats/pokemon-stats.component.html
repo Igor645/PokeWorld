@@ -1,21 +1,23 @@
 <app-expandable-section title="Base Stats" [(expanded)]="isExpanded">
-<div class="stats-table">
-    <div *ngFor="let stat of stats; trackBy: trackStat" class="stat-row">
+  <div class="stats-table">
+    @for (stat of stats; track trackStat($index, stat)) {
+      <div class="stat-row">
         <div class="stat-name">{{ stat.name }}</div>
         <div class="stat-value stat-val-base">{{ stat.value }}</div>
         <div class="progress-bar">
-            <div class="progress" [style.width.%]="(stat.value / STAT_BAR_MAX) * 100"></div>
+          <div class="progress" [style.width.%]="(stat.value / STAT_BAR_MAX) * 100"></div>
         </div>
         <div class="stat-value stat-val-min">{{ stat.min }}</div>
         <div class="stat-value stat-val-max">{{ stat.max }}</div>
-    </div>
+      </div>
+    }
 
     <div class="stat-row total-row">
-        <div class="stat-name">Total</div>
-        <div class="stat-value stat-val-base bottom-row">{{ statTotal }}</div>
-        <div></div>
-        <div class="stat-value stat-val-min bottom-row">Min</div>
-        <div class="stat-value stat-val-max bottom-row">Max</div>
+      <div class="stat-name">Total</div>
+      <div class="stat-value stat-val-base bottom-row">{{ statTotal }}</div>
+      <div></div>
+      <div class="stat-value stat-val-min bottom-row">Min</div>
+      <div class="stat-value stat-val-max bottom-row">Max</div>
     </div>
-</div>
+  </div>
 </app-expandable-section>

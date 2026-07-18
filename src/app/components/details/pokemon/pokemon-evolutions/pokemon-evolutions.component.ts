@@ -1,8 +1,8 @@
-import { AfterViewChecked, Component, ElementRef, HostBinding, Input, OnChanges, OnDestroy, OnInit, QueryList, ViewChildren } from '@angular/core';
-import { Subject, takeUntil } from 'rxjs';
+import { AfterViewChecked, Component, DestroyRef, ElementRef, HostBinding, Input, OnChanges, OnInit, QueryList, ViewChildren, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { EvolutionCondition, EvolutionConditionDisplayComponent } from './evolution-condition-display/evolution-condition-display.component';
 
-import { CommonModule } from '@angular/common';
+
 import { EvolutionChain } from '../../../../models/evolution-chain.model';
 import { EvolutionTrigger } from '../../../../models/evolution-trigger.model';
 import { ExpandableSectionComponent } from '../../../shared/expandable-section/expandable-section.component';
@@ -11,7 +11,6 @@ import { PokemonCardComponent } from '../../../shared/pokemon-card/pokemon-card.
 import { PokemonEvolution } from '../../../../models/pokemon-evolution.model';
 import { PokemonSpecies } from '../../../../models/pokemon-species.model';
 import { PokemonUtilsService } from '../../../../utils/pokemon-utils';
-import { RouterModule } from '@angular/router';
 import { VersionStateService } from '../../../../services/version-state.service';
 
 const REGIONAL_SUFFIXES = ['alola', 'galar', 'hisui', 'paldea'];
@@ -39,16 +38,14 @@ export interface MegaNode {
 @Component({
   selector: 'app-pokemon-evolutions',
   imports: [
-    CommonModule,
     ExpandableSectionComponent,
     EvolutionConditionDisplayComponent,
     PokemonCardComponent,
-    RouterModule
-  ],
+],
   templateUrl: './pokemon-evolutions.component.html',
   styleUrl: './pokemon-evolutions.component.css'
 })
-export class PokemonEvolutionsComponent implements OnChanges, OnInit, OnDestroy, AfterViewChecked {
+export class PokemonEvolutionsComponent implements OnChanges, OnInit, AfterViewChecked {
   @Input() evolutionChain: EvolutionChain | undefined = undefined;
   @Input() pokemonEvolutions: PokemonEvolution[] = [];
   @Input() currentSpecies: PokemonSpecies | undefined = undefined;
@@ -61,7 +58,7 @@ export class PokemonEvolutionsComponent implements OnChanges, OnInit, OnDestroy,
 
   @ViewChildren('evoChain') evoChainRefs!: QueryList<ElementRef<HTMLElement>>;
   private needsCenterScroll = false;
-  private destroy$ = new Subject<void>();
+  private readonly destroyRef = inject(DestroyRef);
 
   @HostBinding('class.expanded')
   get hostExpanded() { return this.isExpanded; }
@@ -69,7 +66,7 @@ export class PokemonEvolutionsComponent implements OnChanges, OnInit, OnDestroy,
   constructor(public pokemonUtils: PokemonUtilsService, private versionState: VersionStateService) { }
 
   ngOnInit(): void {
-    this.versionState.vgId$.pipe(takeUntil(this.destroy$)).subscribe(vgId => {
+    this.versionState.vgId$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(vgId => {
       this.selectedVgId = vgId;
       if (this.evolutionChain) {
         this.evolutionPaths = this.buildFullEvolutionPaths();
@@ -77,11 +74,6 @@ export class PokemonEvolutionsComponent implements OnChanges, OnInit, OnDestroy,
         this.needsCenterScroll = true;
       }
     });
-  }
-
-  ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
   }
 
   ngOnChanges(): void {

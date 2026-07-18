@@ -1,3 +1,5 @@
-<img *ngIf="iconUrl" [src]="iconUrl" [alt]="name + ' icon'" class="item-icon" />
+@if (iconUrl) {
+  <img [src]="iconUrl" [alt]="name + ' icon'" class="item-icon" />
+}
 <span class="item-name">{{ name }}</span>
 <span class="item-rarity">{{ rarity }}%</span>

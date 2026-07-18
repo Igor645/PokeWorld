@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 
-import { CommonModule } from '@angular/common';
+
 import { Name } from '../../../models/name.model';
 import { PokemonBgSvgComponent } from '../../shared/pokemon-bg-svg/pokemon-bg-svg.component';
 import { PokemonSpecies } from '../../../models/pokemon-species.model';
@@ -11,7 +11,7 @@ import { Router } from '@angular/router';
   selector: 'app-pokemon-search-item',
   templateUrl: './pokeworld-search-item.component.html',
   styleUrls: ['./pokeworld-search-item.component.css'],
-  imports: [CommonModule, PokemonBgSvgComponent]
+  imports: [PokemonBgSvgComponent]
 })
 export class PokeworldSearchItemComponent {
   @Input() species!: PokemonSpecies;

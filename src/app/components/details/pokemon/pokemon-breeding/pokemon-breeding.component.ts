@@ -1,6 +1,6 @@
 import { Component, HostBinding, Input } from '@angular/core';
 
-import { CommonModule } from '@angular/common';
+import { DecimalPipe } from '@angular/common';
 import { DetailRowComponent } from '../../../shared/detail-row/detail-row.component';
 import { DetailTableComponent } from '../../../shared/detail-table/detail-table.component';
 import { EggGroup } from '../../../../models/egggroup';
@@ -12,14 +12,14 @@ import { Pokemon } from '../../../../models/pokemon.model';
 import { PokemonHabitat } from '../../../../models/pokemon-habitat.model';
 import { PokemonSpecies } from '../../../../models/pokemon-species.model';
 import { PokemonUtilsService } from '../../../../utils/pokemon-utils';
-import { RouterModule } from '@angular/router';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-pokemon-breeding',
   standalone: true,
   templateUrl: './pokemon-breeding.component.html',
   styleUrls: ['./pokemon-breeding.component.css'],
-  imports: [CommonModule, ExpandableSectionComponent, RouterModule, DetailTableComponent, DetailRowComponent],
+  imports: [DecimalPipe, RouterLink, ExpandableSectionComponent, DetailTableComponent, DetailRowComponent],
 })
 export class PokemonBreedingComponent {
   @Input() pokemonSpecies: PokemonSpecies | undefined;

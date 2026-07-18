@@ -1,5 +1,5 @@
 import { Component, Input, OnChanges, Optional, Self, SimpleChanges } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { NgTemplateOutlet } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
 import { PokemonBgSvgComponent } from '../../../shared/pokemon-bg-svg/pokemon-bg-svg.component';
 import { PokemonSpecies } from '../../../../models/pokemon-species.model';
@@ -11,7 +11,7 @@ import { InteractiveHostDirective } from '../../../shared/directives/interactive
   standalone: true,
   templateUrl: './pokemon-navigator.component.html',
   styleUrls: ['./pokemon-navigator.component.css'],
-  imports: [PokemonBgSvgComponent, CommonModule, MatIcon],
+  imports: [PokemonBgSvgComponent, NgTemplateOutlet, MatIcon],
   hostDirectives: [InteractiveHostDirective]
 })
 export class PokemonNavigatorComponent implements OnChanges {

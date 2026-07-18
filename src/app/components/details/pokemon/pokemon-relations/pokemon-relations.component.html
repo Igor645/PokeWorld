@@ -1,12 +1,17 @@
 <app-expandable-section title="Defensive Matchups" [(expanded)]="isExpanded">
-<app-detail-table>
-    <app-detail-row *ngFor="let key of getRelationKeys()" [label]="getLabel(key)">
-        <ng-container *ngIf="relations[key]?.length; else none">
-            <app-pokemon-type *ngFor="let type of relations[key]" [pokemonType]="type"
-                [simpleView]="true"></app-pokemon-type>
-        </ng-container>
-        <ng-template #none><span>None</span></ng-template>
-    </app-detail-row>
-</app-detail-table>
-<button class="type-chart-button" (click)="openTypeChart()">Type Relations Chart</button>
+  <app-detail-table>
+    @for (key of getRelationKeys(); track key) {
+      <app-detail-row [label]="getLabel(key)">
+        @if (relations[key]?.length) {
+          @for (type of relations[key]; track type) {
+            <app-pokemon-type [pokemonType]="type"
+            [simpleView]="true"></app-pokemon-type>
+          }
+        } @else {
+          <span>None</span>
+        }
+      </app-detail-row>
+    }
+  </app-detail-table>
+  <button class="type-chart-button" (click)="openTypeChart()">Type Relations Chart</button>
 </app-expandable-section>

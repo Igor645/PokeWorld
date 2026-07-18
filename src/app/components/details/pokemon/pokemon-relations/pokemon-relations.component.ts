@@ -1,6 +1,6 @@
 import { Component, HostBinding, Input, OnChanges } from '@angular/core';
 
-import { CommonModule } from '@angular/common';
+
 import { DetailRowComponent } from '../../../shared/detail-row/detail-row.component';
 import { DetailTableComponent } from '../../../shared/detail-table/detail-table.component';
 import { ExpandableSectionComponent } from '../../../shared/expandable-section/expandable-section.component';
@@ -20,7 +20,7 @@ type EffectivenessMap = Record<EffectivenessCategory, Type[]>;
 @Component({
   selector: 'app-pokemon-relations',
   standalone: true,
-  imports: [CommonModule, PokemonTypeComponent, ExpandableSectionComponent, DetailTableComponent, DetailRowComponent],
+  imports: [PokemonTypeComponent, ExpandableSectionComponent, DetailTableComponent, DetailRowComponent],
   templateUrl: './pokemon-relations.component.html',
   styleUrls: ['./pokemon-relations.component.css']
 })

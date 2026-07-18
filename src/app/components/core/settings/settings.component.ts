@@ -1,6 +1,6 @@
-import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
+import { Component, Inject, OnInit, PLATFORM_ID, DOCUMENT } from '@angular/core';
 
-import { CommonModule, DOCUMENT, isPlatformBrowser } from '@angular/common';
+import { isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { LanguageSelectorComponent } from '../../localization/language-selector/language-selector.component';
 import { MatButtonModule } from '@angular/material/button';
@@ -13,14 +13,13 @@ import { SettingsService } from '../../../services/settings.service';
   standalone: true,
   selector: 'app-settings',
   imports: [
-    CommonModule,
     FormsModule,
     MatIconModule,
     MatCardModule,
     MatButtonModule,
     MatSlideToggleModule,
     LanguageSelectorComponent
-  ],
+],
   templateUrl: './settings.component.html',
   styleUrls: ['./settings.component.css']
 })

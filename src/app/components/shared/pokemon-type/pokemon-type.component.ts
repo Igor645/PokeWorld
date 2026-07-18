@@ -7,7 +7,7 @@ import {
   Self,
 } from '@angular/core';
 
-import { CommonModule } from '@angular/common';
+import { NgStyle } from '@angular/common';
 import { PokemonUtilsService } from '../../../utils/pokemon-utils';
 import { SettingsService } from '../../../services/settings.service';
 import { Subscription } from 'rxjs';
@@ -58,7 +58,7 @@ const TYPE_COLORS_DARK: { [key: string]: string } = {
 @Component({
   selector: 'app-pokemon-type',
   standalone: true,
-  imports: [CommonModule],
+  imports: [NgStyle],
   templateUrl: './pokemon-type.component.html',
   styleUrls: ['./pokemon-type.component.css'],
   hostDirectives: [InteractiveHostDirective],

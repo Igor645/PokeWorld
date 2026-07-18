@@ -2,11 +2,12 @@ import {
   AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef,
   Inject, OnDestroy, OnInit, PLATFORM_ID, ViewChild
 } from '@angular/core';
-import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { AsyncPipe, NgStyle, isPlatformBrowser } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { BehaviorSubject, Observable, Subscription, of } from 'rxjs';
 import { catchError, finalize, map } from 'rxjs/operators';
 import { CdkVirtualScrollViewport, ScrollingModule } from '@angular/cdk/scrolling';
+import { CdkAutoSizeVirtualScroll } from '@angular/cdk-experimental/scrolling';
 import { MatIcon } from '@angular/material/icon';
 
 import { Generation } from '../../../models/generation.model';
@@ -102,12 +103,14 @@ const GENERATION_INFO: Array<Omit<GenTileConfig, 'count' | 'spriteUrl'>> = [
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
+    NgStyle,
+    AsyncPipe,
     RouterLink,
     MatIcon,
     PokemonCardComponent,
     PokemonTypeComponent,
     ScrollingModule,
+    CdkAutoSizeVirtualScroll,
     PokeworldSearchComponent,
     LoadingSpinnerComponent,
   ],
@@ -119,8 +122,6 @@ export class DexOverviewComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('rowContainer', { static: false }) rowContainer?: ElementRef<HTMLElement>;
 
   cardsPerRow = 6;
-  rowVisualHeight = 350;
-  itemSize = 350;
   count = 0;
 
   availableGenerations: Generation[] = [];
@@ -151,7 +152,6 @@ export class DexOverviewComponent implements OnInit, AfterViewInit, OnDestroy {
   private isLoadingSubject = new BehaviorSubject<boolean>(true);
   isLoading$ = this.isLoadingSubject.asObservable();
 
-  private readonly CARD_ASPECT_RATIO = 5 / 7;
   private rafId = 0;
   private ro?: ResizeObserver;
 
@@ -465,24 +465,9 @@ export class DexOverviewComponent implements OnInit, AfterViewInit, OnDestroy {
     if (cols !== this.cardsPerRow) {
       this.cardsPerRow = cols;
       this.updateRows();
-    }
-
-    const { visual, itemSize } = this.calculateHeightsByAspect();
-
-    let dirty = false;
-    if (visual !== this.rowVisualHeight) { this.rowVisualHeight = visual; dirty = true; }
-    if (itemSize !== this.itemSize) { this.itemSize = itemSize; dirty = true; }
-    if (dirty) {
-      this.applyCssVars();
+      document.documentElement.style.setProperty('--cards-per-row', String(cols));
       this.cdr.detectChanges();
-      queueMicrotask(() => this.viewport?.checkViewportSize());
     }
-  }
-
-  private applyCssVars(): void {
-    const root = document.documentElement;
-    root.style.setProperty('--cards-per-row', String(this.cardsPerRow));
-    root.style.setProperty('--row-height', `${this.rowVisualHeight}px`);
   }
 
   private getContainerWidth(): number {
@@ -499,25 +484,6 @@ export class DexOverviewComponent implements OnInit, AfterViewInit, OnDestroy {
     const minCard = 220;
     const cols = Math.floor((w + gap) / (minCard + gap));
     return Math.max(2, Math.min(10, cols));
-  }
-
-  private calculateHeightsByAspect(): { visual: number; itemSize: number } {
-    const row = document.querySelector<HTMLElement>('.row');
-    const rowClient = row?.clientWidth ?? 0;
-    const viewportClient = this.viewport?.elementRef?.nativeElement?.clientWidth ?? 0;
-    const rowWidth = rowClient > 0 ? rowClient : (viewportClient > 0 ? viewportClient : window.innerWidth);
-    const cs = row ? getComputedStyle(row) : null;
-    const gapX = cs ? parseFloat(cs.getPropertyValue('column-gap') || cs.getPropertyValue('gap')) || 0 : 0;
-    const available = rowWidth - gapX * Math.max(0, this.cardsPerRow - 1);
-    const cardWidth = available / this.cardsPerRow;
-    let visual = cardWidth / this.CARD_ASPECT_RATIO;
-    const sampleCard = row?.querySelector<HTMLElement>('app-pokemon-card');
-    const measured = sampleCard?.getBoundingClientRect().height ?? 0;
-    if (measured > 0) visual = measured;
-    const mTop = cs ? parseFloat(cs.getPropertyValue('margin-block-start') || cs.marginTop || '0') : 0;
-    const mBottom = cs ? parseFloat(cs.getPropertyValue('margin-block-end') || cs.marginBottom || '0') : 0;
-    const collapsed = Math.max(mTop, mBottom);
-    return { visual: Math.ceil(visual), itemSize: Math.ceil(visual + collapsed) };
   }
 
   private fetchAllPokemon(): void {

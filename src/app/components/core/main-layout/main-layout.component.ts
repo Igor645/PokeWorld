@@ -3,7 +3,7 @@ import { NavDrawerComponent, NavItem } from '../nav-drawer/nav-drawer.component'
 import { NavigationCancel, NavigationEnd, NavigationError, NavigationStart, Router, RouterModule } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
-import { CommonModule } from '@angular/common';
+
 import { MatIcon } from '@angular/material/icon';
 import { ScrollToTopComponent } from '../scroll-to-top/scroll-to-top.component';
 import { ErrorToastComponent } from '../../shared/error-toast/error-toast.component';
@@ -11,7 +11,7 @@ import { ErrorToastComponent } from '../../shared/error-toast/error-toast.compon
 @Component({
   selector: 'app-main-layout',
   standalone: true,
-  imports: [CommonModule, RouterModule, NavDrawerComponent, ScrollToTopComponent, MatIcon, ErrorToastComponent],
+  imports: [RouterModule, NavDrawerComponent, ScrollToTopComponent, MatIcon, ErrorToastComponent],
   templateUrl: './main-layout.component.html',
   styleUrls: ['./main-layout.component.css'],
 })

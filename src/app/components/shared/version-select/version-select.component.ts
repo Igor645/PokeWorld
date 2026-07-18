@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 
 export interface VersionSelectGroup {
   generationName: string;
@@ -9,7 +9,7 @@ export interface VersionSelectGroup {
 @Component({
   selector: 'app-version-select',
   standalone: true,
-  imports: [CommonModule],
+  imports: [],
   templateUrl: './version-select.component.html',
   styleUrls: ['./version-select.component.css']
 })

@@ -1,4 +1,5 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 
 export interface RecentEntry {
   id: number;
@@ -12,7 +13,10 @@ export class RecentlyViewedService {
   private readonly KEY = 'pokeworld_recent';
   private readonly MAX = 8;
 
+  constructor(@Inject(PLATFORM_ID) private platformId: object) {}
+
   add(entry: RecentEntry): void {
+    if (!isPlatformBrowser(this.platformId)) return;
     const list = this.getAll().filter(e => e.id !== entry.id);
     list.unshift(entry);
     try {
@@ -21,6 +25,7 @@ export class RecentlyViewedService {
   }
 
   getAll(): RecentEntry[] {
+    if (!isPlatformBrowser(this.platformId)) return [];
     try {
       return JSON.parse(localStorage.getItem(this.KEY) ?? '[]') as RecentEntry[];
     } catch {

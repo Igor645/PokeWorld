@@ -1,10 +1,10 @@
-import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnDestroy, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, ElementRef, ViewChild, inject } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { NavigationEnd, Router } from '@angular/router';
-import { Subject, Subscription, asyncScheduler } from 'rxjs';
-import { debounceTime, distinctUntilChanged, filter, map, observeOn, switchMap, takeUntil, tap } from 'rxjs/operators';
+import { asyncScheduler } from 'rxjs';
+import { debounceTime, distinctUntilChanged, filter, map, observeOn, switchMap, tap } from 'rxjs/operators';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
-import { CommonModule } from '@angular/common';
 import { MatAutocompleteModule, MatAutocompleteTrigger } from '@angular/material/autocomplete';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -16,21 +16,20 @@ import { PokeworldSearchItemComponent } from '../pokeworld-search-item/pokeworld
 @Component({
   selector: 'app-pokeworld-search',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, MatAutocompleteModule, MatFormFieldModule, MatInputModule, PokeworldSearchItemComponent],
+  imports: [ReactiveFormsModule, MatAutocompleteModule, MatFormFieldModule, MatInputModule, PokeworldSearchItemComponent],
   templateUrl: './pokeworld-search.component.html',
   styleUrls: ['./pokeworld-search.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class PokeworldSearchComponent implements AfterViewInit, OnDestroy {
+export class PokeworldSearchComponent implements AfterViewInit {
   @ViewChild('searchInput') private searchInputEl?: ElementRef<HTMLInputElement>;
   @ViewChild(MatAutocompleteTrigger) private autoTrigger?: MatAutocompleteTrigger;
 
   searchControl = new FormControl<string>('', { nonNullable: true });
   filteredPokemonSpecies: PokemonSpecies[] = [];
-  private routeSubscription!: Subscription;
-  private destroy$ = new Subject<void>();
   isLoading = false;
   private isProgrammaticFocus = false;
+  private destroyRef = inject(DestroyRef);
 
   focusInput(): void {
     this.isProgrammaticFocus = true;
@@ -52,7 +51,7 @@ export class PokeworldSearchComponent implements AfterViewInit, OnDestroy {
     this.cdr.detectChanges();
     this.pokemonService.getPokemonSpeciesByPrefix('').pipe(
       observeOn(asyncScheduler),
-      takeUntil(this.destroy$)
+      takeUntilDestroyed(this.destroyRef)
     ).subscribe({
       next: (response) => {
         this.filteredPokemonSpecies = response?.pokemonspecies ?? [];
@@ -81,8 +80,8 @@ export class PokeworldSearchComponent implements AfterViewInit, OnDestroy {
   ) { }
 
   ngAfterViewInit() {
-    this.routeSubscription = this.router.events
-      .pipe(takeUntil(this.destroy$), filter(e => e instanceof NavigationEnd))
+    this.router.events
+      .pipe(takeUntilDestroyed(this.destroyRef), filter(e => e instanceof NavigationEnd))
       .subscribe(() => this.clearSearch());
 
     this.searchControl.valueChanges.pipe(
@@ -95,7 +94,7 @@ export class PokeworldSearchComponent implements AfterViewInit, OnDestroy {
       switchMap(q => this.pokemonService.getPokemonSpeciesByPrefix(q).pipe(
         observeOn(asyncScheduler)
       )),
-      takeUntil(this.destroy$)
+      takeUntilDestroyed(this.destroyRef)
     ).subscribe({
       next: (response) => {
         const speciesList = response?.pokemonspecies ?? [];
@@ -117,12 +116,6 @@ export class PokeworldSearchComponent implements AfterViewInit, OnDestroy {
         this.cdr.detectChanges();
       }
     });
-  }
-
-  ngOnDestroy() {
-    this.destroy$.next();
-    this.destroy$.complete();
-    if (this.routeSubscription) this.routeSubscription.unsubscribe();
   }
 
   clearSearch() {
@@ -153,10 +146,6 @@ export class PokeworldSearchComponent implements AfterViewInit, OnDestroy {
   }
 
   trackByPokemon = (_: number, item: PokemonSpecies) => item.id;
-
-  GetPokemonOfficialImage(pokemon: any) {
-    return this.getPokemonOfficialImage(pokemon);
-  }
 
   private preloadImage(url: string): void {
     if (typeof window === 'undefined' || !url) return;

@@ -1,67 +1,73 @@
 <app-expandable-section title="Breeding" [(expanded)]="isExpanded">
-<app-detail-table>
+  <app-detail-table>
 
     <app-detail-row label="Gender Distribution">
-        <ng-container *ngIf="pokemonSpecies && !getGenderDisplay().genderless; else genderlessBlock">
-            <div class="gender-bar-wrap">
-                <div class="gender-bar">
-                    <div class="gender-bar__male"  [style.width.%]="getGenderDisplay().male"></div>
-                    <div class="gender-bar__female" [style.width.%]="getGenderDisplay().female"></div>
-                </div>
-                <div class="gender-bar-labels">
-                    <span class="gender-label gender-label--male">
-                        <img src="/images/male.png" alt="Male" class="gender-icon" />
-                        {{ getGenderDisplay().male }}%
-                    </span>
-                    <span class="gender-label gender-label--female">
-                        {{ getGenderDisplay().female }}%
-                        <img src="/images/female.png" alt="Female" class="gender-icon" />
-                    </span>
-                </div>
-            </div>
-        </ng-container>
-        <ng-template #genderlessBlock>
-            <span>Genderless</span>
-        </ng-template>
+      @if (pokemonSpecies && !getGenderDisplay().genderless) {
+        <div class="gender-bar-wrap">
+          <div class="gender-bar">
+            <div class="gender-bar__male"  [style.width.%]="getGenderDisplay().male"></div>
+            <div class="gender-bar__female" [style.width.%]="getGenderDisplay().female"></div>
+          </div>
+          <div class="gender-bar-labels">
+            <span class="gender-label gender-label--male">
+              <img src="/images/male.png" alt="Male" class="gender-icon" />
+              {{ getGenderDisplay().male }}%
+            </span>
+            <span class="gender-label gender-label--female">
+              {{ getGenderDisplay().female }}%
+              <img src="/images/female.png" alt="Female" class="gender-icon" />
+            </span>
+          </div>
+        </div>
+      } @else {
+        <span>Genderless</span>
+      }
     </app-detail-row>
 
     <app-detail-row label="Growth Rate">
-        <a class="table-btn" [routerLink]="['/growth-rate', getGrowthRateDescriptions(pokemonSpecies?.growthrate)]">
-            {{ getGrowthRateDescriptions(pokemonSpecies?.growthrate) }}
-        </a>
+      <a class="table-btn" [routerLink]="['/growth-rate', getGrowthRateDescriptions(pokemonSpecies?.growthrate)]">
+        {{ getGrowthRateDescriptions(pokemonSpecies?.growthrate) }}
+      </a>
     </app-detail-row>
 
-    <app-detail-row label="Egg Cycles" *ngIf="pokemonSpecies as species">
+    @if (pokemonSpecies; as species) {
+      <app-detail-row label="Egg Cycles">
         <span class="breeding-egg-cycles">
-            {{ getHatchInfo(species.hatch_counter).cycles }} cycles<br />
-            <span class="breeding-muted">
-                ({{ getHatchInfo(species.hatch_counter).steps | number }} steps)
-            </span>
+          {{ getHatchInfo(species.hatch_counter).cycles }} cycles<br />
+          <span class="breeding-muted">
+            ({{ getHatchInfo(species.hatch_counter).steps | number }} steps)
+          </span>
         </span>
-    </app-detail-row>
+      </app-detail-row>
+    }
 
     <app-detail-row label="Egg Groups">
-        <a *ngFor="let group of pokemonSpecies?.pokemonegggroups" class="table-btn"
-            [routerLink]="['/egg-group', getEggGroupNameByLanguage(group.egggroup)]">
-            {{ getEggGroupNameByLanguage(group.egggroup) }}
+      @for (group of pokemonSpecies?.pokemonegggroups; track group) {
+        <a class="table-btn"
+          [routerLink]="['/egg-group', getEggGroupNameByLanguage(group.egggroup)]">
+          {{ getEggGroupNameByLanguage(group.egggroup) }}
         </a>
+      }
     </app-detail-row>
 
     <app-detail-row label="Baby Trigger Item">
-        <a class="table-btn" *ngIf="getBabyTriggerItem() as babyItem; else None"
-            [routerLink]="['/item', babyItem.name]">
-            {{ getItemNameByLanguage(babyItem) }}
-            <img *ngIf="babyItem.itemsprites?.[0]?.sprites?.default" [src]="babyItem.itemsprites[0].sprites.default"
-                [alt]="babyItem.name" class="item-sprite" />
+      @if (getBabyTriggerItem(); as babyItem) {
+        <a class="table-btn"
+          [routerLink]="['/item', babyItem.name]">
+          {{ getItemNameByLanguage(babyItem) }}
+          @if (babyItem.itemsprites[0]?.sprites?.default) {
+            <img [src]="babyItem.itemsprites[0].sprites.default"
+              [alt]="babyItem.name" class="item-sprite" />
+          }
         </a>
-        <ng-template #None>
-            <span>None</span>
-        </ng-template>
+      } @else {
+        <span>None</span>
+      }
     </app-detail-row>
 
     <app-detail-row label="Habitat">
-        {{ getHabitatNameByLanguage(pokemonSpecies?.pokemonhabitat) || 'Unknown' }}
+      {{ getHabitatNameByLanguage(pokemonSpecies?.pokemonhabitat) || 'Unknown' }}
     </app-detail-row>
 
-</app-detail-table>
+  </app-detail-table>
 </app-expandable-section>

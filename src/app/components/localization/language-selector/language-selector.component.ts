@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 
-import { CommonModule } from '@angular/common';
+
 import { FormsModule } from '@angular/forms';
 import { LanguageService } from '../../../services/language.service';
 import { SettingsService } from '../../../services/settings.service';
@@ -11,7 +11,7 @@ type Lang = { id: number; name: string };
 @Component({
   standalone: true,
   selector: 'app-language-selector',
-  imports: [CommonModule, FormsModule],
+  imports: [FormsModule],
   templateUrl: './language-selector.component.html',
   styleUrls: ['./language-selector.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,

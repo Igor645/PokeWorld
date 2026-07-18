@@ -1,19 +1,21 @@
 <app-expandable-section [title]="'Training'" [(expanded)]="isExpanded">
-    <app-detail-table>
-        <app-detail-row label="EV Yield">{{ evYield || 'None' }}</app-detail-row>
-        <app-detail-row label="Catch Rate">{{ catchRate }} ({{ catchRatePercent }} with Pokéball, full HP)</app-detail-row>
-        <app-detail-row label="Base Happiness">{{ baseHappiness }} ({{ happinessDescription }})</app-detail-row>
-        <app-detail-row label="Base XP">{{ baseExp }}</app-detail-row>
-        <app-detail-row label="Held Items">
-            <ng-container *ngIf="heldItemsGrouped.length; else noItems">
-                <app-held-item-display
-                    *ngFor="let item of heldItemsGrouped"
-                    [name]="item.name"
-                    [rarity]="item.rarity"
-                    [iconUrl]="item.defaultIcon">
-                </app-held-item-display>
-            </ng-container>
-            <ng-template #noItems><span>None</span></ng-template>
-        </app-detail-row>
-    </app-detail-table>
+  <app-detail-table>
+    <app-detail-row label="EV Yield">{{ evYield || 'None' }}</app-detail-row>
+    <app-detail-row label="Catch Rate">{{ catchRate }} ({{ catchRatePercent }} with Pokéball, full HP)</app-detail-row>
+    <app-detail-row label="Base Happiness">{{ baseHappiness }} ({{ happinessDescription }})</app-detail-row>
+    <app-detail-row label="Base XP">{{ baseExp }}</app-detail-row>
+    <app-detail-row label="Held Items">
+      @if (heldItemsGrouped.length) {
+        @for (item of heldItemsGrouped; track item) {
+          <app-held-item-display
+            [name]="item.name"
+            [rarity]="item.rarity"
+            [iconUrl]="item.defaultIcon">
+          </app-held-item-display>
+        }
+      } @else {
+        <span>None</span>
+      }
+    </app-detail-row>
+  </app-detail-table>
 </app-expandable-section>

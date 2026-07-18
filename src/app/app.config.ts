@@ -6,7 +6,6 @@ import { QueryClient } from '@tanstack/query-core';
 import { createAsyncStoragePersister } from '@tanstack/query-async-storage-persister';
 import localforage from 'localforage';
 import { persistQueryClient } from '@tanstack/query-persist-client-core';
-import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { provideRouter } from '@angular/router';
 import { provideTanStackQuery } from '@tanstack/angular-query-experimental';
@@ -53,7 +52,6 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes),
     provideClientHydration(withEventReplay()),
-    provideAnimations(),
     provideHttpClient(withFetch()),
     provideTanStackQuery(makeQueryClient()),
     provideAnimationsAsync(),

@@ -1,29 +1,34 @@
 <div class="condition-row">
-    <span class="condition-content">
-        <mat-icon *ngIf="condition.icon" class="condition-mat-icon">{{ condition.icon }}</mat-icon>
+  <span class="condition-content">
+    @if (condition.icon) {
+      <mat-icon class="condition-mat-icon">{{ condition.icon }}</mat-icon>
+    }
 
-        <span *ngIf="condition.prefix">{{ condition.prefix }}</span>
+    @if (condition.prefix) {
+      <span>{{ condition.prefix }}</span>
+    }
 
-        <ng-container *ngIf="condition.spriteUrl; else spriteBreak">
+    @if (condition.spriteUrl) {
             <img [src]="condition.spriteUrl" [ngClass]="{
       'condition-icon': true,
       'gender-icon': condition.spriteUrl!.includes('female.png') || condition.spriteUrl!.includes('male.png'),
       'female-icon': condition.spriteUrl!.includes('female'),
       'male-icon': condition.spriteUrl!.includes('male')
     }" alt="condition sprite" />
-        </ng-container>
+    } @else {
+    }
 
-        <ng-template #spriteBreak></ng-template>
 
-        <ng-container *ngIf="condition.entity">
-            <ng-container *ngIf="condition.href; else plainEntity">
-                <a [routerLink]="condition.href" class="evolution-link">{{ condition.entity }}</a>
-            </ng-container>
-            <ng-template #plainEntity>
-                <span>{{ condition.entity }}</span>
-            </ng-template>
-        </ng-container>
+    @if (condition.entity) {
+      @if (condition.href) {
+        <a [routerLink]="condition.href" class="evolution-link">{{ condition.entity }}</a>
+      } @else {
+        <span>{{ condition.entity }}</span>
+      }
+    }
 
-        <span *ngIf="condition.suffix">{{ condition.suffix }}</span>
-    </span>
+    @if (condition.suffix) {
+      <span>{{ condition.suffix }}</span>
+    }
+  </span>
 </div>

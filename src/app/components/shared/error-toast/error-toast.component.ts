@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { MatIcon } from '@angular/material/icon';
 import { Subscription } from 'rxjs';
 import { ErrorToastService, Toast } from '../../../services/error-toast.service';
@@ -7,7 +7,7 @@ import { ErrorToastService, Toast } from '../../../services/error-toast.service'
 @Component({
   selector: 'app-error-toast',
   standalone: true,
-  imports: [CommonModule, MatIcon],
+  imports: [MatIcon],
   templateUrl: './error-toast.component.html',
   styleUrl: './error-toast.component.css',
 })

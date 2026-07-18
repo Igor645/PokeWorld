@@ -2,7 +2,7 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component,
   ElementRef, OnDestroy, OnInit, ViewChild,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FormsModule } from '@angular/forms';
 import { MatIcon } from '@angular/material/icon';
 import { Subscription } from 'rxjs';
@@ -25,7 +25,7 @@ const COLOR_HEX:  Record<string, string>  = { black:'#1a1a1a', blue:'#4080FF', b
 @Component({
   selector: 'app-pokele',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatIcon, LoadingSpinnerComponent, PokemonTypeComponent],
+  imports: [FormsModule, MatIcon, LoadingSpinnerComponent, PokemonTypeComponent],
   templateUrl: './pokele.component.html',
   styleUrls: ['./pokele.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,

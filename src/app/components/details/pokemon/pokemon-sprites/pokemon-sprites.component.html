@@ -1,81 +1,88 @@
 <app-expandable-section title="Sprites" [(expanded)]="isExpanded">
 
-  <div class="matrices" *ngIf="matrices.length; else noSprites">
-    <ng-container *ngFor="let mat of matrices">
-
-      <!-- Modern sprites: always visible, no header -->
-      <ng-container *ngIf="!mat.groupLabel">
-        <div class="matrix-scroll">
-          <div class="matrix" [style.grid-template-columns]="mat.gridCols">
-            <div class="mat-corner"></div>
-            <div class="mat-col-header"
-                 *ngFor="let h of mat.columnHeaders; let ci = index"
-                 [class.pixel-col]="mat.columnIsPixel[ci]">{{ h }}</div>
-            <ng-container *ngFor="let row of mat.rows; let ri = index">
-              <div class="mat-row-label" [class.shiny]="row.isShiny">{{ row.label }}</div>
-              <div class="mat-cell" [class.alt]="ri % 2 === 1"
-                   *ngFor="let cell of row.cells; let ci = index">
-                <ng-container *ngIf="cell">
-                  <div class="sprite-wrap" [class.pixel]="mat.columnIsPixel[ci]" [class.smooth]="mat.columnIsSmooth[ci]" [title]="cell.label"
-                       (click)="openLightbox(cell.url, cell.label, mat.columnIsPixel[ci], mat.columnIsSmooth[ci])">
-                    <img class="sprite-img" [src]="cell.url" [alt]="cell.label"
-                         loading="lazy" [class.shiny-img]="cell.isShiny" />
+  @if (matrices.length) {
+    <div class="matrices">
+      @for (mat of matrices; track mat) {
+        <!-- Modern sprites: always visible, no header -->
+        @if (!mat.groupLabel) {
+          <div class="matrix-scroll">
+            <div class="matrix" [style.grid-template-columns]="mat.gridCols">
+              <div class="mat-corner"></div>
+              @for (h of mat.columnHeaders; track h; let ci = $index) {
+                <div class="mat-col-header"
+                [class.pixel-col]="mat.columnIsPixel[ci]">{{ h }}</div>
+              }
+              @for (row of mat.rows; track row; let ri = $index) {
+                <div class="mat-row-label" [class.shiny]="row.isShiny">{{ row.label }}</div>
+                @for (cell of row.cells; track cell; let ci = $index) {
+                  <div class="mat-cell" [class.alt]="ri % 2 === 1"
+                    >
+                    @if (cell) {
+                      <div class="sprite-wrap" [class.pixel]="mat.columnIsPixel[ci]" [class.smooth]="mat.columnIsSmooth[ci]" [title]="cell.label"
+                        (click)="openLightbox(cell.url, cell.label, mat.columnIsPixel[ci], mat.columnIsSmooth[ci])">
+                        <img class="sprite-img" [src]="cell.url" [alt]="cell.label"
+                          loading="lazy" [class.shiny-img]="cell.isShiny" />
+                      </div>
+                    }
                   </div>
-                </ng-container>
-              </div>
-            </ng-container>
+                }
+              }
+            </div>
           </div>
-        </div>
-      </ng-container>
-
-      <!-- Generation sprites: collapsible -->
-      <ng-container *ngIf="mat.groupLabel">
-        <button class="gen-toggle" (click)="toggleGen(mat.groupLabel!)"
-                [class.open]="isGenExpanded(mat.groupLabel!)">
-          <span class="gen-toggle-label">{{ mat.groupLabel }}</span>
-          <span class="gen-chevron" [class.open]="isGenExpanded(mat.groupLabel!)"></span>
-        </button>
-
-        <div class="matrix-scroll" *ngIf="isGenExpanded(mat.groupLabel!)">
-          <div class="matrix" [style.grid-template-columns]="mat.gridCols">
-            <div class="mat-corner"></div>
-            <div class="mat-col-header"
-                 *ngFor="let h of mat.columnHeaders; let ci = index"
-                 [class.pixel-col]="mat.columnIsPixel[ci]">{{ h }}</div>
-            <ng-container *ngFor="let row of mat.rows; let ri = index">
-              <div class="mat-row-label" [class.shiny]="row.isShiny">{{ row.label }}</div>
-              <div class="mat-cell" [class.alt]="ri % 2 === 1"
-                   *ngFor="let cell of row.cells; let ci = index">
-                <ng-container *ngIf="cell">
-                  <div class="sprite-wrap" [class.pixel]="mat.columnIsPixel[ci]" [class.smooth]="mat.columnIsSmooth[ci]" [title]="cell.label"
-                       (click)="openLightbox(cell.url, cell.label, mat.columnIsPixel[ci], mat.columnIsSmooth[ci])">
-                    <img class="sprite-img" [src]="cell.url" [alt]="cell.label"
-                         loading="lazy" [class.shiny-img]="cell.isShiny" />
-                  </div>
-                </ng-container>
+        }
+        <!-- Generation sprites: collapsible -->
+        @if (mat.groupLabel) {
+          <button class="gen-toggle" (click)="toggleGen(mat.groupLabel!)"
+            [class.open]="isGenExpanded(mat.groupLabel!)">
+            <span class="gen-toggle-label">{{ mat.groupLabel }}</span>
+            <span class="gen-chevron" [class.open]="isGenExpanded(mat.groupLabel!)"></span>
+          </button>
+          @if (isGenExpanded(mat.groupLabel!)) {
+            <div class="matrix-scroll">
+              <div class="matrix" [style.grid-template-columns]="mat.gridCols">
+                <div class="mat-corner"></div>
+                @for (h of mat.columnHeaders; track h; let ci = $index) {
+                  <div class="mat-col-header"
+                  [class.pixel-col]="mat.columnIsPixel[ci]">{{ h }}</div>
+                }
+                @for (row of mat.rows; track row; let ri = $index) {
+                  <div class="mat-row-label" [class.shiny]="row.isShiny">{{ row.label }}</div>
+                  @for (cell of row.cells; track cell; let ci = $index) {
+                    <div class="mat-cell" [class.alt]="ri % 2 === 1"
+                      >
+                      @if (cell) {
+                        <div class="sprite-wrap" [class.pixel]="mat.columnIsPixel[ci]" [class.smooth]="mat.columnIsSmooth[ci]" [title]="cell.label"
+                          (click)="openLightbox(cell.url, cell.label, mat.columnIsPixel[ci], mat.columnIsSmooth[ci])">
+                          <img class="sprite-img" [src]="cell.url" [alt]="cell.label"
+                            loading="lazy" [class.shiny-img]="cell.isShiny" />
+                        </div>
+                      }
+                    </div>
+                  }
+                }
               </div>
-            </ng-container>
-          </div>
-        </div>
-      </ng-container>
-
-    </ng-container>
-  </div>
-
-  <ng-template #noSprites>
+            </div>
+          }
+        }
+      }
+    </div>
+  } @else {
     <p class="no-sprites-msg">No sprite data available.</p>
-  </ng-template>
+  }
+
 
 </app-expandable-section>
 
 <!-- Lightbox -->
-<div class="lightbox-backdrop" *ngIf="lightbox" (click)="closeLightbox()">
-  <div class="lightbox-card" (click)="$event.stopPropagation()">
-    <button class="lightbox-close" (click)="closeLightbox()">✕</button>
-    <img class="lightbox-img" [src]="lightbox.url" [alt]="lightbox.label"
-         [class.pixel]="lightbox.isPixel" [class.smooth]="lightbox.isSmooth" />
-    <span class="lightbox-label" [class.shiny]="lightbox.label.toLowerCase().includes('shiny')">
-      {{ lightbox.label }}
-    </span>
+@if (lightbox) {
+  <div class="lightbox-backdrop" (click)="closeLightbox()">
+    <div class="lightbox-card" (click)="$event.stopPropagation()">
+      <button class="lightbox-close" (click)="closeLightbox()">✕</button>
+      <img class="lightbox-img" [src]="lightbox.url" [alt]="lightbox.label"
+        [class.pixel]="lightbox.isPixel" [class.smooth]="lightbox.isSmooth" />
+      <span class="lightbox-label" [class.shiny]="lightbox.label.toLowerCase().includes('shiny')">
+        {{ lightbox.label }}
+      </span>
+    </div>
   </div>
-</div>
+}

@@ -1,96 +1,104 @@
-<app-loading-spinner message="Loading Pokémon details..." *ngIf="isLoading; else pokemonContent">
-</app-loading-spinner>
-
-
-<ng-template #pokemonContent>
+@if (isLoading) {
+  <app-loading-spinner message="Loading Pokémon details...">
+  </app-loading-spinner>
+} @else {
   <!-- Navigation Buttons -->
-  <div class="pokemon-nav-buttons" *ngIf="previousPokemonSpecies || nextPokemonSpecies">
-    <div *ngIf="previousPokemonSpecies" class="nav-button">
-      <app-pokemon-navigator [pokemon]="previousPokemonSpecies" facing="left"></app-pokemon-navigator>
+  @if (previousPokemonSpecies || nextPokemonSpecies) {
+    <div class="pokemon-nav-buttons">
+      @if (previousPokemonSpecies) {
+        <div class="nav-button">
+          <app-pokemon-navigator [pokemon]="previousPokemonSpecies" facing="left"></app-pokemon-navigator>
+        </div>
+      }
+      @if (nextPokemonSpecies) {
+        <div class="nav-button left">
+          <app-pokemon-navigator [pokemon]="nextPokemonSpecies" facing="right"></app-pokemon-navigator>
+        </div>
+      }
     </div>
-    <div *ngIf="nextPokemonSpecies" class="nav-button left">
-      <app-pokemon-navigator [pokemon]="nextPokemonSpecies" facing="right"></app-pokemon-navigator>
-    </div>
-  </div>
-
+  }
   <!-- Master Game Version Selector -->
   <div class="version-bar-row">
-  <div class="version-bar">
-    <mat-icon class="version-bar-icon">sports_esports</mat-icon>
-    <span class="version-bar-label">Game Version</span>
-    <app-version-select
-      [groups]="versionSelectGroups"
-      [selectedId]="selectedVersionId"
-      (selectionChange)="onVersionChange($event)">
-    </app-version-select>
+    <div class="version-bar">
+      <mat-icon class="version-bar-icon">sports_esports</mat-icon>
+      <span class="version-bar-label">Game Version</span>
+      <app-version-select
+        [groups]="versionSelectGroups"
+        [selectedId]="selectedVersionId"
+        (selectionChange)="onVersionChange($event)">
+      </app-version-select>
+    </div>
   </div>
-  </div>
-
   <!-- Main Content -->
   <div class="pokemon-main-view-container">
     <!-- Full-width name header -->
     <div class="pokemon-name-card">
       <h1 class="pokemon-name">{{ vm.speciesName }}</h1>
       <div class="types-container">
-        <app-pokemon-type *ngFor="let type of displayedTypes" [pokemonType]="type.type"
-          [simpleView]="false">
-        </app-pokemon-type>
-        <div *ngIf="vm.isSpecial" class="pokemon-status-badge" [attr.data-status]="vm.status">
-          {{ vm.status }}
-        </div>
+        @for (type of displayedTypes; track type) {
+          <app-pokemon-type [pokemonType]="type.type"
+            [simpleView]="false">
+          </app-pokemon-type>
+        }
+        @if (vm.isSpecial) {
+          <div class="pokemon-status-badge" [attr.data-status]="vm.status">
+            {{ vm.status }}
+          </div>
+        }
       </div>
     </div>
-
     <div class="pokemon-main-view">
       <!-- Left Side (Details) -->
       <div class="pokemon-main-view-left">
         <div class="pokemon-dex-entry">
           {{ vm.dexEntry }}
         </div>
-
         <app-detail-table>
           <app-detail-row label="Pokédex №">#{{ pokemonSpeciesDetails?.id }}</app-detail-row>
           <app-detail-row label="Introduced">{{ vm.generationName }}</app-detail-row>
           <app-detail-row label="Height">{{ vm.formattedHeight }}</app-detail-row>
           <app-detail-row label="Weight">{{ vm.formattedWeight }}</app-detail-row>
-
           <app-detail-row label="Varieties">
             <select id="variant-select" class="varieties-select" (change)="onPokemonChange($event)" [disabled]="!vm.hasMultipleVariants">
-              <option *ngFor="let v of vm.variants; trackBy: trackVariantById"
-                      [value]="v.id"
-                      [selected]="v.id === selectedPokemon?.id">
-                {{ v.name }}
-              </option>
+              @for (v of vm.variants; track trackVariantById($index, v)) {
+                <option
+                  [value]="v.id"
+                  [selected]="v.id === selectedPokemon?.id">
+                  {{ v.name }}
+                </option>
+              }
             </select>
           </app-detail-row>
-
           <app-detail-row label="Abilities">
             <div class="ability-list">
-              <div class="ability-container" *ngFor="let a of vm.abilities">
-                <div class="ability-name">{{ a.text }}</div>
-                <div class="ability-description">{{ a.flavorText }}</div>
-              </div>
+              @for (a of vm.abilities; track a) {
+                <div class="ability-container">
+                  <div class="ability-name">{{ a.text }}</div>
+                  <div class="ability-description">{{ a.flavorText }}</div>
+                </div>
+              }
             </div>
           </app-detail-row>
-
           <app-detail-row label="Shape">{{ vm.shapeName }}</app-detail-row>
           <app-detail-row label="Color">{{ vm.colorName }}</app-detail-row>
-
           <app-detail-row label="Pokémon Cries">
             <div class="cry-buttons">
-              <button *ngIf="vm.latestCryUrl" (click)="playCry('latest')" class="cry-button latest">
-                <mat-icon>volume_up</mat-icon>
-                Latest Cry
-              </button>
-              <button *ngIf="vm.legacyCryUrl" (click)="playCry('legacy')" class="cry-button legacy">
-                <mat-icon>volume_down</mat-icon>
-                Legacy Cry
-              </button>
+              @if (vm.latestCryUrl) {
+                <button (click)="playCry('latest')" class="cry-button latest">
+                  <mat-icon>volume_up</mat-icon>
+                  Latest Cry
+                </button>
+              }
+              @if (vm.legacyCryUrl) {
+                <button (click)="playCry('legacy')" class="cry-button legacy">
+                  <mat-icon>volume_down</mat-icon>
+                  Legacy Cry
+                </button>
+              }
             </div>
           </app-detail-row>
         </app-detail-table>
       </div>
-
       <!-- Right Side (Sprite & Images) -->
       <div class="pokemon-main-view-right">
         <div class="pokemon-official-sprite-container">
@@ -100,7 +108,6 @@
           </div>
           <app-pokemon-bg-svg class="pokemonCard__bg detail"></app-pokemon-bg-svg>
         </div>
-
         <!-- Sprite Toggle Buttons -->
         <div class="sprite-buttons">
           <button [class.active]="!isShiny" (click)="onSpriteTypeChange(false)">
@@ -113,7 +120,6 @@
       </div>
     </div>
   </div>
-
   <div class="pokemon-other-details">
     <app-pokemon-stats class="pokemon-stats" [pokemon]="selectedPokemon" />
     <app-pokemon-relations class="pokemon-relations" [pokemonTypes]="displayedTypes"
@@ -121,15 +127,12 @@
     <app-pokemon-training class="pokemon-training" [pokemon]="selectedPokemon" [species]="pokemonSpeciesDetails" />
     <app-pokemon-breeding class="pokemon-breeding" [pokemonSpecies]="pokemonSpeciesDetails" />
     <app-pokemon-forms class="pokemon-forms" [forms]="selectedPokemon?.pokemonforms" />
-
     <app-pokemon-evolutions class="pokemon-evolutions" [evolutionChain]="pokemonSpeciesDetails?.evolutionchain"
       [pokemonEvolutions]="pokemonEvolutions" [currentSpecies]="pokemonSpeciesDetails" />
-
     <app-pokemon-encounters class="pokemon-encounters" [pokemonId]="selectedPokemon?.id" />
-
     <app-pokemon-moves class="pokemon-moves" [pokemonId]="selectedPokemon?.id" />
-
     <app-pokemon-sprites class="pokemon-sprites" [pokemon]="selectedPokemon" />
-
   </div>
-</ng-template>
+}
+
+

@@ -1,10 +1,10 @@
 import { Component, HostListener, Inject, PLATFORM_ID, AfterViewInit, OnDestroy } from '@angular/core';
-import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { isPlatformBrowser } from '@angular/common';
 
 @Component({
   selector: 'app-scroll-to-top',
   standalone: true,
-  imports: [CommonModule],
+  imports: [],
   templateUrl: './scroll-to-top.component.html',
   styleUrls: ['./scroll-to-top.component.css'],
 })
