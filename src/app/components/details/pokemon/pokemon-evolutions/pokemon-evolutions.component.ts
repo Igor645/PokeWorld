@@ -1,11 +1,13 @@
-import { AfterViewChecked, Component, DestroyRef, ElementRef, HostBinding, Input, OnChanges, OnInit, QueryList, ViewChildren, inject } from '@angular/core';
+import { AfterViewChecked, ChangeDetectorRef, Component, DestroyRef, ElementRef, HostBinding, Input, OnChanges, OnInit, QueryList, SimpleChanges, ViewChildren, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { RouterLink } from '@angular/router';
 import { EvolutionCondition, EvolutionConditionDisplayComponent } from './evolution-condition-display/evolution-condition-display.component';
 
-
+import { MatIcon } from '@angular/material/icon';
 import { EvolutionChain } from '../../../../models/evolution-chain.model';
 import { EvolutionTrigger } from '../../../../models/evolution-trigger.model';
 import { ExpandableSectionComponent } from '../../../shared/expandable-section/expandable-section.component';
+import { Item } from '../../../../models/item.model';
 import { Pokemon } from '../../../../models/pokemon.model';
 import { PokemonCardComponent } from '../../../shared/pokemon-card/pokemon-card.component';
 import { PokemonEvolution } from '../../../../models/pokemon-evolution.model';
@@ -32,6 +34,7 @@ export interface MegaNode {
   form: Pokemon;
   baseForm: Pokemon;
   megaType: 'mega' | 'gmax' | 'eternamax';
+  conditions: EvolutionCondition[];
 }
 
 
@@ -41,6 +44,8 @@ export interface MegaNode {
     ExpandableSectionComponent,
     EvolutionConditionDisplayComponent,
     PokemonCardComponent,
+    RouterLink,
+    MatIcon,
 ],
   templateUrl: './pokemon-evolutions.component.html',
   styleUrl: './pokemon-evolutions.component.css'
@@ -63,7 +68,20 @@ export class PokemonEvolutionsComponent implements OnChanges, OnInit, AfterViewC
   @HostBinding('class.expanded')
   get hostExpanded() { return this.isExpanded; }
 
-  constructor(public pokemonUtils: PokemonUtilsService, private versionState: VersionStateService) { }
+  get babyTriggerItem(): Item | null {
+    if (!this.evolutionChain?.baby_trigger_item_id) return null;
+    return this.evolutionChain.item ?? null;
+  }
+
+  getBabyItemName(): string {
+    return this.pokemonUtils.getLocalizedNameFromEntity(this.evolutionChain?.item, 'itemnames');
+  }
+
+  getBabyItemSprite(): string | null {
+    return this.evolutionChain?.item?.itemsprites?.[0]?.sprites?.default ?? null;
+  }
+
+  constructor(public pokemonUtils: PokemonUtilsService, private versionState: VersionStateService, private cdr: ChangeDetectorRef) { }
 
   ngOnInit(): void {
     this.versionState.vgId$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(vgId => {
@@ -76,12 +94,13 @@ export class PokemonEvolutionsComponent implements OnChanges, OnInit, AfterViewC
     });
   }
 
-  ngOnChanges(): void {
-    if (this.evolutionChain) {
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['evolutionChain'] && this.evolutionChain) {
       this.evolutionPaths = this.buildFullEvolutionPaths();
       this.evoGroups = this.buildEvoGroups();
       this.megaFormNodes = this.buildMegaFormNodes();
       this.needsCenterScroll = true;
+      this.cdr.detectChanges();
     }
   }
 
@@ -277,10 +296,35 @@ export class PokemonEvolutionsComponent implements OnChanges, OnInit, AfterViewC
       return true;
     });
     if (unique.length === 0) return undefined;
-    if (formIndex !== undefined && unique.length > 1 && formIndex < unique.length) {
-      return [unique[formIndex]];
+    // Prefer records that carry actual condition data; fall back to all if none do
+    const withData = unique.filter(e => this.hasConditionData(e));
+    const pool = withData.length > 0 ? withData : unique;
+    if (formIndex !== undefined && pool.length > 1 && formIndex < pool.length) {
+      return [pool[formIndex]];
     }
-    return unique;
+    return pool;
+  }
+
+  private hasConditionData(evo: PokemonEvolution): boolean {
+    return (
+      evo.min_level != null ||
+      evo.min_happiness != null ||
+      evo.min_beauty != null ||
+      evo.min_affection != null ||
+      !!evo.time_of_day ||
+      evo.evolution_item_id != null ||
+      evo.held_item_id != null ||
+      evo.gender_id != null ||
+      evo.location_id != null ||
+      evo.known_move_id != null ||
+      evo.known_move_type_id != null ||
+      !!evo.needs_overworld_rain ||
+      !!evo.turn_upside_down ||
+      evo.relative_physical_stats != null ||
+      evo.party_species_id != null ||
+      evo.party_type_id != null ||
+      evo.trade_species_id != null
+    );
   }
 
   getEvolutionTriggerName(evolutionTrigger: EvolutionTrigger): string {
@@ -329,7 +373,7 @@ export class PokemonEvolutionsComponent implements OnChanges, OnInit, AfterViewC
 
     if (evo.gender?.name) {
       const isFemale = evo.gender.name.toLowerCase() === 'female';
-      conditions.push({ spriteUrl: isFemale ? '/images/female.png' : '/images/male.png' });
+      conditions.push({ entity: isFemale ? '♀ Female' : '♂ Male' });
     }
 
     if (evo.location) {
@@ -495,7 +539,13 @@ export class PokemonEvolutionsComponent implements OnChanges, OnInit, AfterViewC
         if (!megaType) continue;
 
         const richForm = richPokemons?.find(p => p.name === chainForm.name) ?? chainForm;
-        nodes.push({ species: chainSpecies, form: richForm, baseForm, megaType });
+        const icon = megaType === 'gmax' ? 'aspect_ratio'
+          : megaType === 'eternamax' ? 'all_inclusive'
+          : 'auto_awesome';
+        const label = megaType === 'gmax' ? 'Gigantamax'
+          : megaType === 'eternamax' ? 'Eternamax'
+          : 'Mega Evolution';
+        nodes.push({ species: chainSpecies, form: richForm, baseForm, megaType, conditions: [{ prefix: label, icon }] });
       }
     }
     return nodes;

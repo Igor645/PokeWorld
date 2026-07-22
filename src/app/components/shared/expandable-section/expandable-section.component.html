@@ -1,4 +1,4 @@
-<div class="expandable-header" (click)="toggle()">
+<div class="expandable-header" [class.is-expanded]="expanded()" (click)="toggle()">
     <div class="expandable-title">{{ title }}</div>
     <button class="toggle-button" aria-label="Toggle Section">
         <span [class.expanded]="expanded()" class="material-icons chevron-icon">

@@ -5,7 +5,7 @@
 svg {
     display: block;
     width: 100%;
-    height: auto;
+    height: 100%;
     transform: translateZ(0);
     fill: var(--svg-color);
     stroke: var(--svg-color);

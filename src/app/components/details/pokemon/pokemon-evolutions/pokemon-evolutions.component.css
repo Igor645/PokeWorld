@@ -64,6 +64,48 @@ app-expandable-section {
   width: 100%;
 }
 
+/* ── Baby breed hint ─────────────────────────────────────────── */
+
+.baby-breed-badge {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  padding: 0.3rem 0.4rem;
+  border-radius: 1rem;
+  border: 2px dashed var(--primary-color);
+  opacity: 0.72;
+  font-size: 0.68rem;
+  line-height: 1.45;
+  text-decoration: none;
+  color: var(--accent-text-color);
+  transition: opacity 0.15s;
+  width: 100%;
+  box-sizing: border-box;
+  overflow-wrap: anywhere;
+}
+
+.baby-breed-badge:hover {
+  opacity: 1;
+}
+
+.baby-breed-icon {
+  font-size: 0.85rem;
+  width: 0.85rem;
+  height: 0.85rem;
+  line-height: 0.85rem;
+  flex-shrink: 0;
+}
+
+.baby-breed-sprite {
+  width: 1.25rem;
+  height: 1.25rem;
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+
 /* ── Linear horizontal row ───────────────────────────────────── */
 
 .evo-row {

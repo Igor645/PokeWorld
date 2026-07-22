@@ -6,7 +6,7 @@
 
   @if (!isSingleStage) {
     <div class="evo-chart">
-      @for (group of evoGroups; track group; let groupFirst = $first) {
+      @for (group of evoGroups; track group.ancestor.form.id; let groupFirst = $first) {
         <div class="evo-chain" #evoChain
           [class.evo-chain--div]="!groupFirst">
           <div class="evo-chain-tree">
@@ -17,14 +17,25 @@
                   <app-pokemon-card [pokemon]="group.ancestor.form" [pokemonSpecies]="group.ancestor.species"
                     [showTypes]="true" [showRegion]="true">
                   </app-pokemon-card>
+                  @if (groupFirst) {
+                    @if (babyTriggerItem; as btItem) {
+                      <a class="baby-breed-badge" [routerLink]="['/item', btItem.name]">
+                        <mat-icon class="baby-breed-icon">arrow_back</mat-icon>
+                        @if (getBabyItemSprite(); as spriteUrl) {
+                          <img [src]="spriteUrl" class="baby-breed-sprite" [alt]="getBabyItemName()" />
+                        }
+                        {{ getBabyItemName() }}
+                      </a>
+                    }
+                  }
                 </div>
-                @for (entry of group.branches[0].stages; track entry) {
+                @for (entry of group.branches[0].stages; track entry.form.id) {
                   <div class="evo-link-h">
                     @if (getConnectorEvolutions(entry); as evos) {
                       @if (hasConditions(evos)) {
                         <p class="evo-link-h-label">
-                          @for (evo of evos; track evo; let evoLast = $last) {
-                            @for (c of getEvolutionConditions(evo); track c) {
+                          @for (evo of evos; track evo.id; let evoLast = $last) {
+                            @for (c of getEvolutionConditions(evo); track $index) {
                               <app-evolution-condition-display [condition]="c"></app-evolution-condition-display>
                             }
                             @if (!evoLast) {
@@ -53,15 +64,26 @@
                 <app-pokemon-card [pokemon]="group.ancestor.form" [pokemonSpecies]="group.ancestor.species"
                   [showTypes]="true" [showRegion]="true">
                 </app-pokemon-card>
+                @if (groupFirst) {
+                  @if (babyTriggerItem; as btItem) {
+                    <a class="baby-breed-badge" [routerLink]="['/item', btItem.name]">
+                      <mat-icon class="baby-breed-icon">arrow_back</mat-icon>
+                      @if (getBabyItemSprite(); as spriteUrl) {
+                        <img [src]="spriteUrl" class="baby-breed-sprite" [alt]="getBabyItemName()" />
+                      }
+                      {{ getBabyItemName() }}
+                    </a>
+                  }
+                }
               </div>
               <!-- Shared linear stages before the branch split (e.g. Quilava in Cyndaquil chain) -->
-              @for (sharedEntry of group.sharedStages; track sharedEntry) {
+              @for (sharedEntry of group.sharedStages; track sharedEntry.form.id) {
                 <div class="evo-shared-link">
                   @if (getConnectorEvolutions(sharedEntry); as evos) {
                     @if (hasConditions(evos)) {
                       <p class="evo-link-label">
-                        @for (evo of evos; track evo; let evoLast = $last) {
-                          @for (c of getEvolutionConditions(evo); track c) {
+                        @for (evo of evos; track evo.id; let evoLast = $last) {
+                          @for (c of getEvolutionConditions(evo); track $index) {
                             <app-evolution-condition-display [condition]="c"></app-evolution-condition-display>
                           }
                           @if (!evoLast) {
@@ -84,16 +106,16 @@
               }
               <div class="evo-trunk"></div>
               <div class="evo-branches evo-branches--multi">
-                @for (branch of group.branches; track branch; let bIdx = $index) {
+                @for (branch of group.branches; track $index; let bIdx = $index) {
                   <div class="evo-col">
-                    @for (entry of branch.stages; track entry; let sIdx = $index) {
+                    @for (entry of branch.stages; track entry.form.id; let sIdx = $index) {
                       <div class="evo-link" [class.evo-link--head]="sIdx === 0" [style.grid-column]="bIdx + 1"
                         [style.grid-row]="sIdx * 2 + 1">
                         @if (getConnectorEvolutions(entry); as evos) {
                           @if (hasConditions(evos)) {
                             <p class="evo-link-label">
-                              @for (evo of evos; track evo; let evoLast = $last) {
-                                @for (c of getEvolutionConditions(evo); track c) {
+                              @for (evo of evos; track evo.id; let evoLast = $last) {
+                                @for (c of getEvolutionConditions(evo); track $index) {
                                   <app-evolution-condition-display [condition]="c"></app-evolution-condition-display>
                                 }
                                 @if (!evoLast) {
@@ -139,7 +161,7 @@
             </div>
             <div class="evo-link-h evo-link-mega-h">
               <p class="evo-link-h-label evo-link-mega-label">
-                @for (c of getMegaConditions(node); track c) {
+                @for (c of node.conditions; track $index) {
                   <app-evolution-condition-display [condition]="c"></app-evolution-condition-display>
                 }
               </p>

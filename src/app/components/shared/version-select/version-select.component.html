@@ -5,9 +5,9 @@
   @if (!groups.length) {
     <option value="">—</option>
   }
-  @for (gen of groups; track gen) {
+  @for (gen of groups; track gen.generationName) {
     <optgroup [label]="gen.generationName">
-      @for (opt of gen.options; track opt) {
+      @for (opt of gen.options; track opt.id) {
         <option
           [value]="opt.id"
           [selected]="opt.id === selectedId">

@@ -2,19 +2,19 @@
 
   @if (matrices.length) {
     <div class="matrices">
-      @for (mat of matrices; track mat) {
+      @for (mat of matrices; track mat.groupLabel ?? $index) {
         <!-- Modern sprites: always visible, no header -->
         @if (!mat.groupLabel) {
           <div class="matrix-scroll">
             <div class="matrix" [style.grid-template-columns]="mat.gridCols">
               <div class="mat-corner"></div>
-              @for (h of mat.columnHeaders; track h; let ci = $index) {
+              @for (h of mat.columnHeaders; track $index; let ci = $index) {
                 <div class="mat-col-header"
                 [class.pixel-col]="mat.columnIsPixel[ci]">{{ h }}</div>
               }
-              @for (row of mat.rows; track row; let ri = $index) {
+              @for (row of mat.rows; track $index; let ri = $index) {
                 <div class="mat-row-label" [class.shiny]="row.isShiny">{{ row.label }}</div>
-                @for (cell of row.cells; track cell; let ci = $index) {
+                @for (cell of row.cells; track $index; let ci = $index) {
                   <div class="mat-cell" [class.alt]="ri % 2 === 1"
                     >
                     @if (cell) {
@@ -41,13 +41,13 @@
             <div class="matrix-scroll">
               <div class="matrix" [style.grid-template-columns]="mat.gridCols">
                 <div class="mat-corner"></div>
-                @for (h of mat.columnHeaders; track h; let ci = $index) {
+                @for (h of mat.columnHeaders; track $index; let ci = $index) {
                   <div class="mat-col-header"
                   [class.pixel-col]="mat.columnIsPixel[ci]">{{ h }}</div>
                 }
-                @for (row of mat.rows; track row; let ri = $index) {
+                @for (row of mat.rows; track $index; let ri = $index) {
                   <div class="mat-row-label" [class.shiny]="row.isShiny">{{ row.label }}</div>
-                  @for (cell of row.cells; track cell; let ci = $index) {
+                  @for (cell of row.cells; track $index; let ci = $index) {
                     <div class="mat-cell" [class.alt]="ri % 2 === 1"
                       >
                       @if (cell) {
