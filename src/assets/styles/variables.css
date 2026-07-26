@@ -91,7 +91,7 @@
     --row-hover-shadow: 0 0 0 1px color-mix(in srgb, var(--primary-color) 55%, transparent);
 
     /* Component-specific */
-    --glass-color: rgba(210, 220, 245, 0.5);
+    --glass-color: rgba(73, 90, 186, 0.1);
     --svg-color: rgba(89, 138, 235, 0.1);
     --adjusted-white: #e0e0e0;
 }
