@@ -1,0 +1,184 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  align-self: flex-start;
+  width: var(--general-width);
+  margin: 0 auto;
+  gap: 1.25rem;
+  padding: 1.5rem 0 2.5rem;
+  animation: typePageFade 0.45s ease-out;
+}
+
+/* ── Guards ──────────────────────────────────────────────────────────────── */
+
+.state-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40vh;
+}
+
+
+.not-found-text {
+  font-family: "Exo 2", serif;
+  font-size: 1.1rem;
+  color: var(--accent-text-color);
+  opacity: 0.6;
+}
+
+/* ── Hero ────────────────────────────────────────────────────────────────── */
+
+.type-hero {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  padding: 2.25rem 2.5rem;
+  min-height: 170px;
+  border-radius: 12px;
+  border: 2px solid var(--border-color);
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--primary-color) 8%, var(--background-color)) 0%,
+    var(--background-color) 60%
+  );
+  box-shadow: 0 4px 24px var(--shadow-color);
+}
+
+.hero-watermark {
+  position: absolute;
+  right: 2rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 210px;
+  height: 210px;
+  filter: grayscale(1) opacity(0.09);
+  pointer-events: none;
+  user-select: none;
+}
+
+.hero-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  z-index: 1;
+}
+
+.hero-badge {
+  align-self: flex-start;
+  --type-font-size: 0.82rem;
+  --type-padding: 4px 11px;
+  --type-icon-size: 14px;
+  --type-gap: 6px;
+}
+
+.hero-name {
+  font-family: "Exo 2", serif;
+  font-size: clamp(2.4rem, 5vw, 4rem);
+  font-weight: 900;
+  color: var(--accent-text-color);
+  margin: 0;
+  line-height: 1;
+  letter-spacing: -0.01em;
+}
+
+.hero-id {
+  font-family: "Exo 2", serif;
+  font-size: 0.82rem;
+  color: var(--accent-text-color);
+  opacity: 0.42;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+/* ── Matchup grid ────────────────────────────────────────────────────────── */
+
+.matchup-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+}
+
+/* ── Tab bar ─────────────────────────────────────────────────────────────── */
+
+.tab-bar {
+  display: flex;
+  gap: 0.5rem;
+  border-bottom: 2px solid var(--border-color);
+  padding-bottom: 0;
+}
+
+.tab-btn {
+  padding: 0.55rem 1.4rem;
+  border-radius: 8px 8px 0 0;
+  border: 2px solid transparent;
+  border-bottom: none;
+  background: transparent;
+  color: var(--accent-text-color);
+  font-size: 0.82rem;
+  font-family: "Exo 2", serif;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  cursor: pointer;
+  opacity: 0.55;
+  transition: opacity 0.15s, background 0.15s, border-color 0.15s;
+  position: relative;
+  bottom: -2px;
+}
+
+.tab-btn:hover:not(.active) { opacity: 0.85; }
+
+.tab-btn.active {
+  opacity: 1;
+  background: color-mix(in srgb, var(--primary-color) 7%, var(--background-color));
+  border-color: var(--border-color);
+  color: var(--primary-color);
+}
+
+/* ── Moves toolbar ───────────────────────────────────────────────────────── */
+
+.moves-toolbar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin: 0.25rem 0 1rem;
+}
+
+.toolbar-vg-icon {
+  color: var(--primary-color);
+  font-size: 1.3rem;
+  width: 1.3rem;
+  height: 1.3rem;
+  flex-shrink: 0;
+}
+
+.moves-loading-overlay {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 280px;
+  width: 100%;
+}
+
+/* ── Animation ───────────────────────────────────────────────────────────── */
+
+@keyframes typePageFade {
+  from { opacity: 0; transform: translateY(5px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Responsive ──────────────────────────────────────────────────────────── */
+
+@media (max-width: 768px) {
+  .matchup-grid { grid-template-columns: 1fr; }
+  .type-hero { padding: 1.5rem; }
+  .hero-watermark { width: 150px; height: 150px; }
+}
+
+@media (max-width: 480px) {
+  :host { padding: 1rem 0 2rem; gap: 1rem; }
+  .type-hero { padding: 1.25rem; min-height: auto; }
+  .hero-watermark { display: none; }
+}

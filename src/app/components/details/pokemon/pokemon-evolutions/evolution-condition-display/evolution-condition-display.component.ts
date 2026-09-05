@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
 
 import { NgClass } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
@@ -18,6 +18,7 @@ export interface EvolutionCondition {
   standalone: true,
   imports: [NgClass, RouterLink, MatIcon],
   templateUrl: './evolution-condition-display.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./evolution-condition-display.component.css']
 })
 export class EvolutionConditionDisplayComponent {

@@ -1,4 +1,4 @@
-import { Component, HostBinding, Input, OnChanges, OnDestroy, OnInit } from '@angular/core';
+import { Component, HostBinding, Input, OnChanges, OnDestroy, OnInit, ChangeDetectionStrategy } from '@angular/core';
 
 
 import { DetailRowComponent } from '../../../shared/detail-row/detail-row.component';
@@ -16,6 +16,7 @@ import { VersionStateService } from '../../../../services/version-state.service'
   standalone: true,
   imports: [ExpandableSectionComponent, HeldItemDisplayComponent, DetailTableComponent, DetailRowComponent],
   templateUrl: './pokemon-training.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./pokemon-training.component.css']
 })
 export class PokemonTrainingComponent implements OnInit, OnChanges, OnDestroy {

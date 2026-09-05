@@ -341,6 +341,29 @@ export const GraphQLQueries = {
     }
   `,
 
+  GetMovesByType: gql`
+    ${LangFields}
+    query GetMovesByType($typeId: Int!) {
+      move(
+        where: { type_id: { _eq: $typeId } }
+        order_by: { id: asc }
+      ) {
+        id name accuracy power pp priority
+        movenames { name language_id }
+        moveflavortexts {
+          flavor_text version_group_id language_id
+          versiongroup {
+            id name
+            generation { id name generationnames { name language_id } }
+            versions { id versionnames { name language_id } }
+          }
+        }
+        movedamageclass { id name movedamageclassnames { language_id name } }
+        generation { id name generationnames { language_id name language { ...LangFields } } }
+      }
+    }
+  `,
+
   // Moves
   GetPokemonMoveOptions: gql`
     query GetPokemonMoveOptions($pokemonId: Int!) {

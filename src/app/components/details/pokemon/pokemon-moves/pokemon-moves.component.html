@@ -16,79 +16,14 @@
         }
       </select>
     </div>
-    <div class="moves-shell">
-      @if (isLoadingMoves) {
-        <div class="moves-loading-overlay">
-          <app-loading-spinner [inline]="true" message="Loading moves..."></app-loading-spinner>
-        </div>
-      } @else {
-        @if ((rows$ | async); as rows) {
-          <div class="moves-scroll">
-            <table class="moves-table">
-              <thead>
-                <tr>
-                  <th class="col-first">
-                    @switch (selectedMethodKeyFromId(selectedMethodId)) {
-                      @case ('level-up') {
-                        <span>Lv.</span>
-                      }
-                      @case ('machine') {
-                        <span>TM/TR</span>
-                      }
-                      @default {
-                        <span>—</span>
-                      }
-                    }
-                  </th>
-                  <th class="col-name">Move</th>
-                  <th class="col-desc">Info</th>
-                  <th class="col-type">Type</th>
-                  <th class="col-class">Class</th>
-                  <th class="col-num">Pow</th>
-                  <th class="col-num">Acc</th>
-                  <th class="col-num">PP</th>
-                  <th class="col-num">Prio</th>
-                  <th class="col-gen">Gen</th>
-                </tr>
-              </thead>
-              <tbody>
-                @for (r of rows; track trackById($index, r)) {
-                  <tr class="row" (click)="onRowClick(r)"
-                    tabindex="0" role="button">
-                    <td class="col-first">
-                      @switch (selectedMethodKeyFromId(selectedMethodId)) {
-                        @case ('level-up') {
-                          <span>{{ r.level ?? '—' }}</span>
-                        }
-                        @case ('machine') {
-                          <span>{{ r.machineLabel ?? '—' }}</span>
-                        }
-                        @default {
-                          <span>—</span>
-                        }
-                      }
-                    </td>
-                    <td class="col-name name">{{ r.name }}</td>
-                    <td class="col-desc desc">{{ r.flavorText }}</td>
-                    <td class="col-type">
-                      <app-pokemon-type [pokemonType]="r.type" [simpleView]="true"></app-pokemon-type>
-                    </td>
-                    <td class="col-class">{{ r.damageClassName }}</td>
-                    <td class="col-num">{{ r.power ?? '—' }}</td>
-                    <td class="col-num">{{ r.accuracy ?? '—' }}</td>
-                    <td class="col-num">{{ r.pp ?? '—' }}</td>
-                    <td class="col-num">{{ r.priority ?? '—' }}</td>
-                    <td class="col-gen">{{ r.generationName }}</td>
-                  </tr>
-                }
-              </tbody>
-            </table>
-          </div>
-        } @else {
-          <div class="no-moves">No moves found.</div>
-        }
-      }
-    </div>
+    <app-moves-table
+      [rows]="(tableRows$ | async) ?? []"
+      [isLoading]="isLoadingMoves"
+      [showLearnCol]="true"
+      [showTypeCol]="true"
+      [learnColHeader]="learnColHeader"
+      (rowClick)="onRowClick($event)">
+    </app-moves-table>
   }
 
 </app-expandable-section>

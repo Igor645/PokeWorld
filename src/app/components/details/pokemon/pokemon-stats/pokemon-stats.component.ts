@@ -1,4 +1,4 @@
-import { Component, DestroyRef, HostBinding, Input, inject } from '@angular/core';
+import { Component, DestroyRef, HostBinding, Input, inject, ChangeDetectionStrategy } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 
@@ -11,6 +11,7 @@ import { PokemonUtilsService } from '../../../../utils/pokemon-utils';
   selector: 'app-pokemon-stats',
   templateUrl: './pokemon-stats.component.html',
   styleUrls: ['./pokemon-stats.component.css'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [ExpandableSectionComponent]
 })
 export class PokemonStatsComponent {

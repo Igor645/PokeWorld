@@ -1,0 +1,306 @@
+/* ── Host container ──────────────────────────────────────────────────────── */
+
+:host {
+    display: block;
+    width: var(--general-width);
+    margin: 0 auto;
+    border-radius: 12px;
+    border: 2px solid var(--border-color);
+    background: linear-gradient(
+        135deg,
+        color-mix(in srgb, var(--primary-color) 8%, var(--background-color)) 0%,
+        var(--background-color) 55%
+    );
+    box-shadow: 0 4px 24px var(--shadow-color);
+    box-sizing: border-box;
+    animation: fadeIn 0.7s ease-in-out;
+}
+
+/* ── Filter panel ────────────────────────────────────────────────────────── */
+
+.dex-filters {
+    padding: 0.6rem 1rem 0;
+    border-bottom: 1px solid color-mix(in srgb, var(--primary-color) 18%, transparent);
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    border-radius: 10px 10px 0 0;
+    background: linear-gradient(
+        135deg,
+        color-mix(in srgb, var(--primary-color) 8%, var(--background-color)) 0%,
+        var(--background-color) 55%
+    );
+}
+
+.dex-header-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.dex-count {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-family: "Exo 2", serif;
+    white-space: nowrap;
+    padding: 0.25rem 0;
+}
+
+.dex-title-label {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--accent-text-color);
+}
+
+.dex-count-num {
+    font-size: 0.82rem;
+    color: var(--accent-text-color);
+    opacity: 0.55;
+}
+
+.filters-bar {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.filter-group {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.filter-divider {
+    height: 1px;
+    background: color-mix(in srgb, var(--primary-color) 22%, transparent);
+    margin: 0 -0.2rem;
+}
+
+.filter-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--accent-text-color);
+    opacity: 0.55;
+    white-space: nowrap;
+    min-width: 28px;
+    flex-shrink: 0;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.filter-pills {
+    display: flex;
+    gap: 4px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    min-width: 0;
+    flex: 1 1 auto;
+    padding-bottom: 1px;
+}
+
+.filter-pills::-webkit-scrollbar { display: none; }
+
+.filter-pill {
+    flex-shrink: 0;
+    padding: 0.18rem 0.5rem;
+    border-radius: 20px;
+    border: 1px solid var(--border-color);
+    background: var(--interactive-bg-color);
+    color: var(--accent-text-color);
+    font-size: 0.72rem;
+    font-family: "Exo 2", serif;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.13s, border-color 0.13s, color 0.13s;
+    white-space: nowrap;
+    line-height: 1.5;
+}
+
+.filter-pill.active {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+    color: #fff;
+}
+
+.filter-pill:hover:not(.active) {
+    border-color: var(--primary-color);
+    background: var(--interactive-bg-hover);
+}
+
+.filter-clear-btn {
+    background: transparent;
+    color: var(--accent-text-color);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 0.18rem 0.5rem;
+    font-size: 0.7rem;
+    font-family: "Exo 2", serif;
+    cursor: pointer;
+    opacity: 0.75;
+    transition: opacity 0.15s, border-color 0.15s;
+    white-space: nowrap;
+    flex-shrink: 0;
+    line-height: 1.5;
+}
+
+.filter-clear-btn:hover { opacity: 1; border-color: var(--primary-color); }
+
+/* ── Type selector ───────────────────────────────────────────────────────── */
+
+.type-selector {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    padding: 0.3rem 0 0.5rem;
+    overflow-x: auto;
+    scrollbar-width: none;
+}
+
+.type-selector::-webkit-scrollbar { display: none; }
+.type-label { flex-shrink: 0; }
+
+.type-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+
+.type-grid app-pokemon-type {
+    --type-width: auto;
+    --type-padding: 3px 7px;
+    --type-font-size: 0.67rem;
+    --type-icon-size: 11px;
+    --type-gap: 4px;
+}
+
+.type-badge-wrap {
+    position: relative;
+    cursor: pointer;
+    border-radius: 10px;
+    border: 2px solid transparent;
+    transition: opacity 0.14s, border-color 0.14s;
+}
+
+.type-grid:has(.sel-1) .type-badge-wrap:not(.sel-1):not(.sel-2) { opacity: 0.3; }
+
+.type-badge-wrap.sel-1,
+.type-badge-wrap.sel-2 {
+    border-color: rgba(255, 255, 255, 0.85);
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.28);
+    opacity: 1;
+}
+
+.type-badge-num {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    width: 13px;
+    height: 13px;
+    border-radius: 50%;
+    background: white;
+    color: #222;
+    font-size: 8px;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    pointer-events: none;
+    line-height: 1;
+}
+
+.type-badge-num--2 { background: var(--primary-color); color: white; }
+
+/* ── CDK Viewport (window-scrolled — no height needed) ───────────────────── */
+
+.dex-viewport {
+    width: 100%;
+}
+
+:host ::ng-deep .dex-viewport .cdk-virtual-scroll-content-wrapper {
+    width: 100% !important;
+    min-width: 0;
+    box-sizing: border-box;
+}
+
+/* ── Grid row ────────────────────────────────────────────────────────────── */
+
+.row {
+    display: grid;
+    grid-template-columns: repeat(var(--cards-per-row, 5), 1fr);
+    gap: 1.5rem;
+    /* top = bottom = 0.75rem so each row contributes equal padding on both sides,
+       matching the 1.5rem total per-row that rowHeight accounts for */
+    padding: 0.75rem 1.5rem;
+    align-items: stretch;
+    box-sizing: border-box;
+}
+
+.pokemon-placeholder {
+    visibility: hidden;
+    aspect-ratio: 5 / 7;
+    width: 100%;
+}
+
+/* ── State wrappers ──────────────────────────────────────────────────────── */
+
+.dex-state-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 320px;
+}
+
+.dex-no-results {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    padding: 4rem 2rem;
+    font-family: "Exo 2", serif;
+}
+
+.no-results-icon {
+    font-size: 3rem;
+    width: 3rem;
+    height: 3rem;
+    color: var(--primary-color);
+    opacity: 0.45;
+}
+
+.no-results-text {
+    font-size: 1rem;
+    color: var(--accent-text-color);
+    opacity: 0.65;
+    margin: 0;
+}
+
+.no-results-clear {
+    margin-top: 0.25rem;
+    padding: 0.35rem 0.9rem;
+    font-size: 0.82rem;
+}
+
+/* ── Responsive ──────────────────────────────────────────────────────────── */
+
+@media (max-width: 768px) {
+    .filter-pills { flex-wrap: wrap; overflow-x: visible; }
+    .type-selector { flex-wrap: wrap; }
+    .type-grid { flex-wrap: wrap; }
+}
+
+@media (max-width: 480px) {
+    :host { border-radius: 8px; }
+    .dex-filters { border-radius: 6px 6px 0 0; }
+    .dex-header-row { flex-direction: column; gap: 0.4rem; }
+    .filter-pills { flex-wrap: wrap; }
+    .row { gap: 1rem; padding: 0 1rem 1rem; }
+}

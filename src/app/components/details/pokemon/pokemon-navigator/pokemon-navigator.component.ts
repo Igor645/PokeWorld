@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, Optional, Self, SimpleChanges } from '@angular/core';
+import { Component, Input, OnChanges, Optional, Self, SimpleChanges, ChangeDetectionStrategy } from '@angular/core';
 import { NgTemplateOutlet } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
 import { PokemonBgSvgComponent } from '../../../shared/pokemon-bg-svg/pokemon-bg-svg.component';
@@ -12,6 +12,7 @@ import { InteractiveHostDirective } from '../../../shared/directives/interactive
   templateUrl: './pokemon-navigator.component.html',
   styleUrls: ['./pokemon-navigator.component.css'],
   imports: [PokemonBgSvgComponent, NgTemplateOutlet, MatIcon],
+  changeDetection: ChangeDetectionStrategy.Eager,
   hostDirectives: [InteractiveHostDirective]
 })
 export class PokemonNavigatorComponent implements OnChanges {

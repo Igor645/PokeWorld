@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit, PLATFORM_ID, DOCUMENT } from '@angular/core';
+import { Component, Inject, OnInit, PLATFORM_ID, DOCUMENT, ChangeDetectionStrategy } from '@angular/core';
 
 import { isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -21,6 +21,7 @@ import { SettingsService } from '../../../services/settings.service';
     LanguageSelectorComponent
 ],
   templateUrl: './settings.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./settings.component.css']
 })
 export class SettingsComponent implements OnInit {

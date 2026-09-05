@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, Optional, Self } from '@angular/core';
+import { Component, Input, OnInit, Optional, Self, ChangeDetectionStrategy } from '@angular/core';
 
 import { InteractiveHostDirective } from '../../../../shared/directives/interactive-host.directive';
 
@@ -8,6 +8,7 @@ import { InteractiveHostDirective } from '../../../../shared/directives/interact
   imports: [],
   templateUrl: './held-item-display.component.html',
   styleUrls: ['./held-item-display.component.css'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   hostDirectives: [InteractiveHostDirective]
 })
 export class HeldItemDisplayComponent implements OnInit {

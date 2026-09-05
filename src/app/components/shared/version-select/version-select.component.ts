@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, ChangeDetectionStrategy } from '@angular/core';
 
 
 export interface VersionSelectGroup {
@@ -11,6 +11,7 @@ export interface VersionSelectGroup {
   standalone: true,
   imports: [],
   templateUrl: './version-select.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./version-select.component.css']
 })
 export class VersionSelectComponent {

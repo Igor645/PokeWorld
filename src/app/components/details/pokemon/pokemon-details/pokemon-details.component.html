@@ -123,11 +123,11 @@
   <app-pokemon-relations class="pokemon-relations" [pokemonTypes]="displayedTypes" [allTypes]="allTypes" />
   <app-pokemon-training class="pokemon-training" [pokemon]="selectedPokemon" [species]="pokemonSpeciesDetails" />
   <app-pokemon-breeding class="pokemon-breeding" [pokemonSpecies]="pokemonSpeciesDetails" />
-  <app-pokemon-forms class="pokemon-forms" [forms]="selectedPokemon?.pokemonforms" />
-  <app-pokemon-evolutions class="pokemon-evolutions" [evolutionChain]="pokemonSpeciesDetails?.evolutionchain"
+  <app-pokemon-forms class="pokemon-forms" [forms]="$safeNavigationMigration(selectedPokemon?.pokemonforms)" />
+  <app-pokemon-evolutions class="pokemon-evolutions" [evolutionChain]="$safeNavigationMigration(pokemonSpeciesDetails?.evolutionchain)"
     [pokemonEvolutions]="pokemonEvolutions" [currentSpecies]="pokemonSpeciesDetails" />
-  <app-pokemon-encounters class="pokemon-encounters" [pokemonId]="selectedPokemon?.id" />
-  <app-pokemon-moves class="pokemon-moves" [pokemonId]="selectedPokemon?.id" />
+  <app-pokemon-encounters class="pokemon-encounters" [pokemonId]="$safeNavigationMigration(selectedPokemon?.id)" />
+  <app-pokemon-moves class="pokemon-moves" [pokemonId]="$safeNavigationMigration(selectedPokemon?.id)" />
   <app-pokemon-sprites class="pokemon-sprites" [pokemon]="selectedPokemon" />
 </div>
 }

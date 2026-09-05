@@ -1,0 +1,50 @@
+<div class="moves-shell">
+  @if (isLoading) {
+    <div class="moves-loading-overlay">
+      <app-loading-spinner [inline]="true" message="Loading moves..." />
+    </div>
+  } @else if (rows.length === 0) {
+    <div class="no-moves">No moves found.</div>
+  } @else {
+    <div class="moves-scroll">
+      <table class="moves-table">
+        <thead>
+          <tr>
+            @if (showLearnCol) { <th class="col-first">{{ learnColHeader }}</th> }
+            <th class="col-name">Move</th>
+            <th class="col-desc">Description</th>
+            @if (showTypeCol) { <th class="col-type">Type</th> }
+            <th class="col-class">Class</th>
+            <th class="col-num">Pow</th>
+            <th class="col-num">Acc</th>
+            <th class="col-num">PP</th>
+            <th class="col-num">Prio</th>
+            <th class="col-gen">Gen</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (row of rows; track trackById($index, row)) {
+            <tr class="move-row" (click)="rowClick.emit(row)" tabindex="0" role="button">
+              @if (showLearnCol) {
+                <td class="col-first">{{ row.learnValue ?? '—' }}</td>
+              }
+              <td class="col-name name">{{ row.name }}</td>
+              <td class="col-desc desc">{{ row.flavorText }}</td>
+              @if (showTypeCol) {
+                <td class="col-type">
+                  <app-pokemon-type [pokemonType]="row.type" [simpleView]="true" />
+                </td>
+              }
+              <td class="col-class">{{ row.damageClass }}</td>
+              <td class="col-num">{{ row.power ?? '—' }}</td>
+              <td class="col-num">{{ row.accuracy ?? '—' }}</td>
+              <td class="col-num">{{ row.pp ?? '—' }}</td>
+              <td class="col-num">{{ row.priority ?? '—' }}</td>
+              <td class="col-gen">{{ row.generationName }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>

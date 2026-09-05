@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, ChangeDetectionStrategy } from '@angular/core';
 
 
 import { Name } from '../../../models/name.model';
@@ -11,6 +11,7 @@ import { Router } from '@angular/router';
   selector: 'app-pokemon-search-item',
   templateUrl: './pokeworld-search-item.component.html',
   styleUrls: ['./pokeworld-search-item.component.css'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [PokemonBgSvgComponent]
 })
 export class PokeworldSearchItemComponent {

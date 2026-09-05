@@ -1,4 +1,4 @@
-import { Component, HostBinding, Input, OnChanges } from '@angular/core';
+import { Component, HostBinding, Input, OnChanges, ChangeDetectionStrategy } from '@angular/core';
 
 
 import { DetailRowComponent } from '../../../shared/detail-row/detail-row.component';
@@ -22,6 +22,7 @@ type EffectivenessMap = Record<EffectivenessCategory, Type[]>;
   standalone: true,
   imports: [PokemonTypeComponent, ExpandableSectionComponent, DetailTableComponent, DetailRowComponent],
   templateUrl: './pokemon-relations.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./pokemon-relations.component.css']
 })
 export class PokemonRelationsComponent implements OnChanges {

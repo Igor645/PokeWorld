@@ -1,5 +1,6 @@
 import {
   Component, DestroyRef, HostBinding, Input, OnChanges, OnInit, PLATFORM_ID, SimpleChanges, inject,
+  ChangeDetectionStrategy
 } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -104,6 +105,7 @@ export interface LocationDisplay {
   standalone: true,
   imports: [MatIcon, RouterLink, ExpandableSectionComponent, VersionSelectComponent],
   templateUrl: './pokemon-encounters.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./pokemon-encounters.component.css'],
 })
 export class PokemonEncountersComponent implements OnInit, OnChanges {

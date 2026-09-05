@@ -1,4 +1,4 @@
-import { Component, HostBinding, Input } from '@angular/core';
+import { Component, HostBinding, Input, ChangeDetectionStrategy } from '@angular/core';
 
 import { DecimalPipe } from '@angular/common';
 import { DetailRowComponent } from '../../../shared/detail-row/detail-row.component';
@@ -19,6 +19,7 @@ import { RouterLink } from '@angular/router';
   standalone: true,
   templateUrl: './pokemon-breeding.component.html',
   styleUrls: ['./pokemon-breeding.component.css'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [DecimalPipe, RouterLink, ExpandableSectionComponent, DetailTableComponent, DetailRowComponent],
 })
 export class PokemonBreedingComponent {

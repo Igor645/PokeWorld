@@ -25,8 +25,8 @@
     </app-detail-row>
 
     <app-detail-row label="Growth Rate">
-      <a class="table-btn" [routerLink]="['/growth-rate', getGrowthRateDescriptions(pokemonSpecies?.growthrate)]">
-        {{ getGrowthRateDescriptions(pokemonSpecies?.growthrate) }}
+      <a class="table-btn" [routerLink]="['/growth-rate', getGrowthRateDescriptions($safeNavigationMigration(pokemonSpecies?.growthrate))]">
+        {{ getGrowthRateDescriptions($safeNavigationMigration(pokemonSpecies?.growthrate)) }}
       </a>
     </app-detail-row>
 
@@ -66,7 +66,7 @@
     </app-detail-row>
 
     <app-detail-row label="Habitat">
-      {{ getHabitatNameByLanguage(pokemonSpecies?.pokemonhabitat) || 'Unknown' }}
+      {{ getHabitatNameByLanguage($safeNavigationMigration(pokemonSpecies?.pokemonhabitat)) || 'Unknown' }}
     </app-detail-row>
 
   </app-detail-table>

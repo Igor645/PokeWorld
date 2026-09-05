@@ -17,4 +17,13 @@ export class TypeService {
             map(res => res ?? EMPTY_POKEMON_TYPE_RESPONSE)
         );
     }
+
+    getMovesByType(typeId: number): Observable<{ move: any[] }> {
+        return this.graphQLService.executeQuery<{ move: any[] }>(
+            GraphQLQueries.GetMovesByType,
+            { typeId }
+        ).pipe(
+            map(res => res ?? { move: [] })
+        );
+    }
 }

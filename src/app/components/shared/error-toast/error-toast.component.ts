@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ChangeDetectionStrategy } from '@angular/core';
 
 import { MatIcon } from '@angular/material/icon';
 import { Subscription } from 'rxjs';
@@ -9,6 +9,7 @@ import { ErrorToastService, Toast } from '../../../services/error-toast.service'
   standalone: true,
   imports: [MatIcon],
   templateUrl: './error-toast.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './error-toast.component.css',
 })
 export class ErrorToastComponent implements OnInit, OnDestroy {

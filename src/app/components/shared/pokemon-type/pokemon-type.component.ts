@@ -5,6 +5,7 @@ import {
   OnInit,
   Optional,
   Self,
+  ChangeDetectionStrategy
 } from '@angular/core';
 
 import { NgStyle } from '@angular/common';
@@ -61,6 +62,7 @@ const TYPE_COLORS_DARK: { [key: string]: string } = {
   imports: [NgStyle],
   templateUrl: './pokemon-type.component.html',
   styleUrls: ['./pokemon-type.component.css'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   hostDirectives: [InteractiveHostDirective],
 })
 export class PokemonTypeComponent implements OnInit, OnDestroy {

@@ -1,6 +1,6 @@
 import { ActivatedRoute, Router } from '@angular/router';
 import { forkJoin, of } from 'rxjs';
-import { Component, DestroyRef, ElementRef, OnInit, ViewChild, inject } from '@angular/core';
+import { Component, DestroyRef, ElementRef, OnInit, ViewChild, inject, ChangeDetectionStrategy } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { PokemonSpecies, PokemonSpeciesResponse } from '../../../../models/pokemon-species.model';
 
@@ -85,6 +85,7 @@ const EMPTY_VM: DetailsVm = {
     DetailRowComponent
 ],
   templateUrl: './pokemon-details.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./pokemon-details.component.css']
 })
 export class PokemonDetailsComponent implements OnInit {

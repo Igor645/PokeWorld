@@ -1,4 +1,4 @@
-import { Component, HostBinding, Input, OnInit } from '@angular/core';
+import { Component, HostBinding, Input, OnInit, ChangeDetectionStrategy } from '@angular/core';
 
 
 import { DetailRowComponent } from '../../../shared/detail-row/detail-row.component';
@@ -14,6 +14,7 @@ import { PokemonUtilsService } from '../../../../utils/pokemon-utils';
   standalone: true,
   imports: [FormsModule, ExpandableSectionComponent, PokemonBgSvgComponent, DetailTableComponent, DetailRowComponent],
   templateUrl: './pokemon-forms.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./pokemon-forms.component.css']
 })
 export class PokemonFormsComponent implements OnInit {

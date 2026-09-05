@@ -1,4 +1,4 @@
-import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
+import { provideClientHydration, withEventReplay, withNoIncrementalHydration } from '@angular/platform-browser';
 import { provideHttpClient, withFetch } from '@angular/common/http';
 
 import { ApplicationConfig } from '@angular/core';
@@ -51,7 +51,7 @@ function makeQueryClient() {
 export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes),
-    provideClientHydration(withEventReplay()),
+    provideClientHydration(withEventReplay(), withNoIncrementalHydration()),
     provideHttpClient(withFetch()),
     provideTanStackQuery(makeQueryClient()),
     provideAnimationsAsync(),

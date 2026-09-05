@@ -1,4 +1,4 @@
-import { Component, EventEmitter, HostListener, Input, Output, ViewChild, inject } from '@angular/core';
+import { Component, EventEmitter, HostListener, Input, Output, ViewChild, inject, ChangeDetectionStrategy } from '@angular/core';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive } from '@angular/router';
 
 import { A11yModule } from '@angular/cdk/a11y';
@@ -18,6 +18,7 @@ export type NavItem =
   standalone: true,
   imports: [RouterLink, RouterLinkActive, A11yModule, MatIconModule, SettingsComponent, PokeworldSearchComponent],
   templateUrl: './nav-drawer.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./nav-drawer.component.css'],
 })
 export class NavDrawerComponent {

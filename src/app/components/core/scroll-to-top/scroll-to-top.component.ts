@@ -1,4 +1,4 @@
-import { Component, HostListener, Inject, PLATFORM_ID, AfterViewInit, OnDestroy } from '@angular/core';
+import { Component, HostListener, Inject, PLATFORM_ID, AfterViewInit, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 
 @Component({
@@ -6,6 +6,7 @@ import { isPlatformBrowser } from '@angular/common';
   standalone: true,
   imports: [],
   templateUrl: './scroll-to-top.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./scroll-to-top.component.css'],
 })
 export class ScrollToTopComponent implements AfterViewInit, OnDestroy {

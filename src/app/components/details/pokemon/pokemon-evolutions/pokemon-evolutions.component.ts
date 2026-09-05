@@ -1,4 +1,4 @@
-import { AfterViewChecked, ChangeDetectorRef, Component, DestroyRef, ElementRef, HostBinding, Input, OnChanges, OnInit, QueryList, SimpleChanges, ViewChildren, inject } from '@angular/core';
+import { AfterViewChecked, ChangeDetectorRef, Component, DestroyRef, ElementRef, HostBinding, Input, OnChanges, OnInit, QueryList, SimpleChanges, ViewChildren, inject, ChangeDetectionStrategy } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
 import { EvolutionCondition, EvolutionConditionDisplayComponent } from './evolution-condition-display/evolution-condition-display.component';
@@ -48,6 +48,7 @@ export interface MegaNode {
     MatIcon,
 ],
   templateUrl: './pokemon-evolutions.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './pokemon-evolutions.component.css'
 })
 export class PokemonEvolutionsComponent implements OnChanges, OnInit, AfterViewChecked {

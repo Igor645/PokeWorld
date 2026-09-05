@@ -1,4 +1,4 @@
-import { Component, DestroyRef, ViewChild, inject } from '@angular/core';
+import { Component, DestroyRef, ViewChild, inject, ChangeDetectionStrategy } from '@angular/core';
 import { NavDrawerComponent, NavItem } from '../nav-drawer/nav-drawer.component';
 import { NavigationCancel, NavigationEnd, NavigationError, NavigationStart, Router, RouterModule } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -13,6 +13,7 @@ import { ErrorToastComponent } from '../../shared/error-toast/error-toast.compon
   standalone: true,
   imports: [RouterModule, NavDrawerComponent, ScrollToTopComponent, MatIcon, ErrorToastComponent],
   templateUrl: './main-layout.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./main-layout.component.css'],
 })
 export class MainLayoutComponent {

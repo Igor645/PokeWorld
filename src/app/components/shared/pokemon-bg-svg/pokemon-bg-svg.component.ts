@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
 
 
 
@@ -7,6 +7,7 @@ import { Component, Input } from '@angular/core';
   selector: 'app-pokemon-bg-svg',
   imports: [],
   templateUrl: './pokemon-bg-svg.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./pokemon-bg-svg.component.css']
 })
 export class PokemonBgSvgComponent {
