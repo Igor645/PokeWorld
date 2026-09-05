@@ -11,7 +11,7 @@
   },
   "private": true,
   "engines": {
-    "node": ">=22.22.3"
+    "node": ">=22.22.3 <24 || >=24.15.0"
   },
   "overrides": {
     "chokidar": "^5.0.0"
