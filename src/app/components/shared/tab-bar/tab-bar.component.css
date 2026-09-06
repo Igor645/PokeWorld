@@ -1,0 +1,75 @@
+/* ── Card container ──────────────────────────────────────────────────────── */
+
+:host {
+  display: flex;
+  flex-direction: column;
+  border: 2px solid var(--primary-color);
+  border-radius: 12px;
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--primary-color) 8%, var(--background-color)) 0%,
+    var(--background-color) 55%
+  );
+  box-shadow: 0 4px 24px var(--shadow-color);
+  box-sizing: border-box;
+  overflow: clip; /* rounds child corners without breaking sticky/scroll */
+
+  /* ── Inherited by any app-pokemon-dex projected inside ─────────────────── */
+  --_dex-border: none;
+  --_dex-radius: 0;
+  --_dex-shadow: none;
+  --_dex-bg: transparent;
+}
+
+/* ── Tab strip ───────────────────────────────────────────────────────────── */
+
+.tabs {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0 1rem;
+  border-bottom: 2px solid var(--primary-color);
+  flex-shrink: 0;
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--primary-color) 8%, var(--background-color)) 0%,
+    var(--background-color) 55%
+  );
+}
+
+/* ── Tab button ──────────────────────────────────────────────────────────── */
+
+.tab {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.55rem 1.4rem;
+  border-radius: 8px 8px 0 0;
+  border: 2px solid transparent;
+  background: transparent;
+  color: var(--accent-text-color);
+  font-family: "Exo 2", serif;
+  font-size: 0.88rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  opacity: 0.55;
+  transition: opacity 0.15s, background 0.15s, border-color 0.15s;
+  position: relative;
+  bottom: -2px;
+}
+
+.tab mat-icon {
+  font-size: 1.05rem;
+  width: 1.05rem;
+  height: 1.05rem;
+}
+
+.tab:hover:not(.active) { opacity: 0.85; }
+
+.tab.active {
+  opacity: 1;
+  background: color-mix(in srgb, var(--primary-color) 8%, var(--background-color));
+  border-color: var(--primary-color);
+  border-bottom-color: color-mix(in srgb, var(--primary-color) 8%, var(--background-color));
+  color: var(--primary-color);
+}

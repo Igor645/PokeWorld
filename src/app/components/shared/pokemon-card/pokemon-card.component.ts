@@ -68,6 +68,9 @@ export class PokemonCardComponent implements OnInit, OnDestroy, AfterViewInit {
     if (this.interactiveHost) {
       const name = this.pokemonViewModel.name || this.pokemonViewModel.id;
       this.interactiveHost.href = ['/pokemon', name];
+      if (!this.pokemon.is_default) {
+        this.interactiveHost.queryParams = { form: this.pokemon.name };
+      }
     }
 
     this.languageSubscription = this.settingsService

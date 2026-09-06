@@ -221,7 +221,7 @@ export const GraphQLQueries = {
         pokemons(order_by: { is_default: desc }) {
           id name is_default
           pokemonsprites { sprites }
-          pokemontypes { type { id name } }
+          pokemontypes(order_by: { slot: asc }) { slot type { id name } }
         }
         pokemonspeciesnames(
           where: { language_id: { _in: [$languageId, 9] } }
@@ -341,6 +341,20 @@ export const GraphQLQueries = {
     }
   `,
 
+  GetTypeCombosForType: gql`
+    query GetTypeCombosForType($typeId: Int!) {
+      pokemon(
+        where: { pokemontypes: { type_id: { _eq: $typeId } } }
+        order_by: { id: asc }
+      ) {
+        name
+        pokemontypes(order_by: { slot: asc }) {
+          type { id name }
+        }
+      }
+    }
+  `,
+
   GetMovesByType: gql`
     ${LangFields}
     query GetMovesByType($typeId: Int!) {
@@ -412,6 +426,37 @@ export const GraphQLQueries = {
           }
           movelearnmethod { id name movelearnmethodnames { language_id id name } }
         }
+      }
+    }
+  `,
+
+  // Items
+  GetAllItems: gql`
+    ${LangFields}
+    query GetAllItems {
+      item(order_by: { id: asc }) {
+        id name
+        itemnames { name language_id language { ...LangFields } }
+        itemsprites { sprites }
+        itemcategory {
+          id name
+          itemcategorynames { name language_id }
+          itempocket { id name itempocketnames { name language_id } }
+        }
+      }
+    }
+  `,
+
+  GetItemsByPrefix: gql`
+    query GetItemsByPrefix($search: String!, $languageId: Int!) {
+      item(
+        where: { itemnames: { name: { _ilike: $search }, language_id: { _eq: $languageId } } }
+        order_by: { id: asc }
+        limit: 10
+      ) {
+        id name
+        itemnames { name language_id }
+        itemsprites { sprites }
       }
     }
   `,

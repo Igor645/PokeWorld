@@ -1,8 +1,8 @@
 import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, ElementRef, ViewChild, inject } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { NavigationEnd, Router } from '@angular/router';
-import { asyncScheduler } from 'rxjs';
-import { debounceTime, distinctUntilChanged, filter, map, observeOn, switchMap, tap } from 'rxjs/operators';
+import { asyncScheduler, combineLatest, of } from 'rxjs';
+import { catchError, debounceTime, distinctUntilChanged, filter, map, observeOn, switchMap, tap } from 'rxjs/operators';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { MatAutocompleteModule, MatAutocompleteTrigger } from '@angular/material/autocomplete';
@@ -12,6 +12,7 @@ import { PokemonService } from '../../../services/pokemon.service';
 import { PokemonSpecies } from '../../../models/pokemon-species.model';
 import { PokemonUtilsService } from '../../../utils/pokemon-utils';
 import { PokeworldSearchItemComponent } from '../pokeworld-search-item/pokeworld-search-item.component';
+import { ItemService } from '../../../services/item.service';
 
 @Component({
   selector: 'app-pokeworld-search',
@@ -27,6 +28,7 @@ export class PokeworldSearchComponent implements AfterViewInit {
 
   searchControl = new FormControl<string>('', { nonNullable: true });
   filteredPokemonSpecies: PokemonSpecies[] = [];
+  filteredItems: any[] = [];
   isLoading = false;
   private isProgrammaticFocus = false;
   private destroyRef = inject(DestroyRef);
@@ -49,12 +51,13 @@ export class PokeworldSearchComponent implements AfterViewInit {
   private fetchDefaults(): void {
     this.isLoading = true;
     this.cdr.detectChanges();
-    this.pokemonService.getPokemonSpeciesByPrefix('').pipe(
-      observeOn(asyncScheduler),
-      takeUntilDestroyed(this.destroyRef)
-    ).subscribe({
-      next: (response) => {
-        this.filteredPokemonSpecies = response?.pokemonspecies ?? [];
+    combineLatest([
+      this.pokemonService.getPokemonSpeciesByPrefix('').pipe(catchError(() => of(null))),
+      this.itemService.getItemsByPrefix('').pipe(catchError(() => of(null))),
+    ]).pipe(observeOn(asyncScheduler), takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: ([pokemonRes, itemRes]) => {
+        this.filteredPokemonSpecies = pokemonRes?.pokemonspecies ?? [];
+        this.filteredItems = itemRes?.item ?? [];
         this.isLoading = false;
         this.cdr.detectChanges();
       },
@@ -74,6 +77,7 @@ export class PokeworldSearchComponent implements AfterViewInit {
 
   constructor(
     private pokemonService: PokemonService,
+    private itemService: ItemService,
     private cdr: ChangeDetectorRef,
     private router: Router,
     private pokemonUtils: PokemonUtilsService
@@ -91,14 +95,16 @@ export class PokeworldSearchComponent implements AfterViewInit {
       filter(q => q.length > 0),
       debounceTime(250),
       tap(() => { this.isLoading = true; this.cdr.detectChanges(); }),
-      switchMap(q => this.pokemonService.getPokemonSpeciesByPrefix(q).pipe(
-        observeOn(asyncScheduler)
-      )),
+      switchMap(q => combineLatest([
+        this.pokemonService.getPokemonSpeciesByPrefix(q).pipe(catchError(() => of(null))),
+        this.itemService.getItemsByPrefix(q).pipe(catchError(() => of(null))),
+      ]).pipe(observeOn(asyncScheduler))),
       takeUntilDestroyed(this.destroyRef)
     ).subscribe({
-      next: (response) => {
-        const speciesList = response?.pokemonspecies ?? [];
+      next: ([pokemonRes, itemRes]) => {
+        const speciesList = pokemonRes?.pokemonspecies ?? [];
         this.filteredPokemonSpecies = speciesList;
+        this.filteredItems = itemRes?.item ?? [];
         this.isLoading = false;
         this.cdr.detectChanges();
 
@@ -111,7 +117,7 @@ export class PokeworldSearchComponent implements AfterViewInit {
         });
       },
       error: (err) => {
-        console.error('Error searching Pokémon:', err);
+        console.error('Error searching:', err);
         this.isLoading = false;
         this.cdr.detectChanges();
       }
@@ -120,6 +126,7 @@ export class PokeworldSearchComponent implements AfterViewInit {
 
   clearSearch() {
     this.filteredPokemonSpecies = [];
+    this.filteredItems = [];
     this.isLoading = false;
     if (this.searchControl.value !== '') {
       this.searchControl.setValue('', { emitEvent: false });
@@ -132,8 +139,8 @@ export class PokeworldSearchComponent implements AfterViewInit {
     if (!selectedItem) return;
     if ('pokemonspeciesnames' in selectedItem) {
       this.router.navigate(['/pokemon', this.getPokemonName(selectedItem)]);
-    } else {
-      console.warn('Unknown selection type:', selectedItem);
+    } else if ('itemnames' in selectedItem) {
+      this.router.navigate(['/item', selectedItem.name]);
     }
   }
 
@@ -141,11 +148,20 @@ export class PokeworldSearchComponent implements AfterViewInit {
     return this.pokemonUtils.getLocalizedNameFromEntity(species, 'pokemonspeciesnames');
   }
 
+  getItemName(item: any): string {
+    return this.pokemonUtils.getLocalizedNameFromEntity(item, 'itemnames');
+  }
+
+  getItemSprite(item: any): string {
+    return item?.itemsprites?.[0]?.sprites?.default ?? '';
+  }
+
   getPokemonOfficialImage(pokemon: any) {
     return this.pokemonUtils.getPokemonOfficialImage(pokemon);
   }
 
   trackByPokemon = (_: number, item: PokemonSpecies) => item.id;
+  trackByItem = (_: number, item: any) => item.id;
 
   private preloadImage(url: string): void {
     if (typeof window === 'undefined' || !url) return;

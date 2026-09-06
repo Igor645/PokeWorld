@@ -12,6 +12,7 @@ export class InteractiveHostDirective {
 
     @Input('appInteractiveHost') href!: string | any[];
     @Input() target: '_blank' | '_self' = '_self';
+    @Input() queryParams?: Record<string, any>;
 
     constructor(private router: Router) { }
 
@@ -35,19 +36,21 @@ export class InteractiveHostDirective {
                 }
             } else {
                 const nav = [this.href];
+                const extras = this.queryParams ? { queryParams: this.queryParams } : undefined;
                 if (openInNewTab) {
-                    const fullUrl = this.router.serializeUrl(this.router.createUrlTree(nav));
+                    const fullUrl = this.router.serializeUrl(this.router.createUrlTree(nav, extras));
                     this.openInNewTab(fullUrl);
                 } else {
-                    this.router.navigate(nav);
+                    this.router.navigate(nav, extras);
                 }
             }
         } else if (Array.isArray(this.href)) {
+            const extras = this.queryParams ? { queryParams: this.queryParams } : undefined;
             if (openInNewTab) {
-                const fullUrl = this.router.serializeUrl(this.router.createUrlTree(this.href));
+                const fullUrl = this.router.serializeUrl(this.router.createUrlTree(this.href, extras));
                 this.openInNewTab(fullUrl);
             } else {
-                this.router.navigate(this.href);
+                this.router.navigate(this.href, extras);
             }
         }
     }

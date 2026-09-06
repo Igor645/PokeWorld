@@ -60,6 +60,18 @@ export class PokemonUtilsService {
    * @param namesKey The key where names are stored (e.g., "pokemon_species_names").
    * @returns The localized and formatted name.
    */
+  /**
+   * Returns false for cosmetic/event-only forms that shouldn't appear in browsing contexts:
+   * totem forms, pikachu cap forms. Add new patterns here — one place for all consumers.
+   */
+  isRelevantForm(pokemonName: string): boolean {
+    if (pokemonName.endsWith('-totem')) return false;
+    if (pokemonName.endsWith('-cap'))   return false;
+    // All pikachu variants are cosmetic/event-only except gmax
+    if (pokemonName.startsWith('pikachu-') && pokemonName !== 'pikachu-gmax') return false;
+    return true;
+  }
+
   getLocalizedNameFromEntity(entity: any, namesKey: string): string {
     const entitynames = entity?.[namesKey];
     const fallbackName = entity?.name || 'Unknown';

@@ -2,6 +2,7 @@ import { Aggregate } from "./aggregate.model";
 import { Type } from "./type.model";
 
 export interface PokemonType {
+  slot: number;
   type: Type;
 }
 

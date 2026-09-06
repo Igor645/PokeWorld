@@ -20,6 +20,7 @@ import { PokemonDexComponent, DexPreset } from '../../../shared/pokemon-dex/poke
 import { LoadingSpinnerComponent } from '../../../shared/loading-spinner/loading-spinner.component';
 import { MoveTableRow, MovesTableComponent } from '../../../shared/moves-table/moves-table.component';
 import { VersionSelectComponent, VersionSelectGroup } from '../../../shared/version-select/version-select.component';
+import { TabBarComponent } from '../../../shared/tab-bar/tab-bar.component';
 
 type ActiveTab = 'pokemon' | 'moves';
 
@@ -27,6 +28,12 @@ interface TypeRelations {
   noDamage: Type[];
   halfDamage: Type[];
   doubleDamage: Type[];
+}
+
+interface TypeCombo {
+  key: string;
+  types: Type[];
+  count: number;
 }
 
 @Component({
@@ -44,6 +51,7 @@ interface TypeRelations {
     LoadingSpinnerComponent,
     MovesTableComponent,
     VersionSelectComponent,
+    TabBarComponent,
   ],
   templateUrl: './type-detail.component.html',
   styleUrls: ['./type-detail.component.css'],
@@ -57,7 +65,14 @@ export class TypeDetailComponent implements OnInit {
   offensive: TypeRelations = { noDamage: [], halfDamage: [], doubleDamage: [] };
   defensive: TypeRelations = { noDamage: [], halfDamage: [], doubleDamage: [] };
 
+  typeCombos: TypeCombo[] = [];
+  isLoadingCombos = false;
+
   activeTab: ActiveTab = 'pokemon';
+  readonly typeTabs = [
+    { id: 'pokemon', label: 'Pokémon' },
+    { id: 'moves',   label: 'Moves' },
+  ];
 
   // Moves
   private rawMoves: any[] = [];
@@ -73,7 +88,7 @@ export class TypeDetailComponent implements OnInit {
   }
 
   get dexPreset(): DexPreset {
-    return { lockedTypeId: this.type?.id, title: this.getLocalizedName() + '-type Pokémon' };
+    return { lockedTypeId: this.type?.id, title: this.getLocalizedName() + '-type Pokémon', defaultFormFilter: 'all' };
   }
 
   private readonly destroyRef = inject(DestroyRef);
@@ -95,6 +110,7 @@ export class TypeDetailComponent implements OnInit {
         this.notFound = false;
         this.rawMoves = [];
         this.movesLoaded = false;
+        this.typeCombos = [];
         this.activeTab = 'pokemon';
         this.selectedVgId = 0;
         this.versionSelectGroups = [];
@@ -110,8 +126,12 @@ export class TypeDetailComponent implements OnInit {
         t.name.toLowerCase() === name ||
         t.typenames.some(tn => tn.name.toLowerCase() === name)
       ) ?? null;
-      if (this.type) this.computeMatchups();
-      else this.notFound = types.length > 0;
+      if (this.type) {
+        this.computeMatchups();
+        this.loadTypeCombos(this.type.id);
+      } else {
+        this.notFound = types.length > 0;
+      }
       this.isLoading = false;
       this.cdr.detectChanges();
     });
@@ -206,6 +226,43 @@ export class TypeDetailComponent implements OnInit {
       priority: m.priority ?? null,
       generationName: this.pokemonUtils.getLocalizedNameFromEntity(m.generation, 'generationnames'),
     };
+  }
+
+  private loadTypeCombos(typeId: number): void {
+    this.isLoadingCombos = true;
+    this.typeService.getTypeCombosForType(typeId).pipe(
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe({
+      next: res => {
+        this.buildTypeCombos(res.pokemon ?? []);
+        this.isLoadingCombos = false;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.isLoadingCombos = false;
+        this.cdr.detectChanges();
+      },
+    });
+  }
+
+  getPartnerType(combo: TypeCombo): Type | null {
+    return combo.types.find(t => t.id !== this.type?.id) ?? null;
+  }
+
+  private buildTypeCombos(pokemon: { name: string; pokemontypes: { type: { id: number; name: string } }[] }[]): void {
+    const map = new Map<string, { types: Type[], count: number }>();
+    for (const p of pokemon.filter(p => this.pokemonUtils.isRelevantForm(p.name))) {
+      const types = p.pokemontypes.map(pt => {
+        return this.allTypes.find(t => t.id === pt.type.id) ?? pt.type as unknown as Type;
+      });
+      const key = types.map(t => t.id).join('-');
+      const entry = map.get(key);
+      if (entry) entry.count++;
+      else map.set(key, { types, count: 1 });
+    }
+    this.typeCombos = [...map.values()]
+      .sort((a, b) => b.count - a.count)
+      .map(({ types, count }) => ({ key: types.map(t => t.id).join('-'), types, count }));
   }
 
   private computeMatchups(): void {

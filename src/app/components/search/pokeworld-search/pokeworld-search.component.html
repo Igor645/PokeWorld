@@ -14,7 +14,17 @@
         @for (species of filteredPokemonSpecies; track trackByPokemon($index, species)) {
         <mat-option [value]="species">
           <app-pokemon-search-item [species]="species" endpoint="pokemon"
-            [imageSrc]="getPokemonOfficialImage(species.pokemons[0])">g </app-pokemon-search-item>
+            [imageSrc]="getPokemonOfficialImage(species.pokemons[0])"></app-pokemon-search-item>
+        </mat-option>
+        }
+      </mat-optgroup>
+      }
+      @if (filteredItems.length) {
+      <mat-optgroup label="Items">
+        @for (item of filteredItems; track trackByItem($index, item)) {
+        <mat-option [value]="item">
+          <app-pokemon-search-item [overrideName]="getItemName(item)" endpoint="item"
+            [imageSrc]="getItemSprite(item)"></app-pokemon-search-item>
         </mat-option>
         }
       </mat-optgroup>

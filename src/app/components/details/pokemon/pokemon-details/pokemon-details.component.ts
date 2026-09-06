@@ -177,7 +177,7 @@ export class PokemonDetailsComponent implements OnInit {
       return pastTypes
         .filter(pt => pt.generation_id === matchGen)
         .sort((a, b) => a.slot - b.slot)
-        .map(pt => ({ type: pt.type }));
+        .map((pt, i) => ({ slot: i + 1, type: pt.type }));
     }
     return pk.pokemontypes ?? [];
   }
@@ -249,6 +249,19 @@ export class PokemonDetailsComponent implements OnInit {
 
 
   private subscribeToRouteChanges(): void {
+    this.route.queryParamMap.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(queryParams => {
+      if (!this.pokemonSpeciesDetails) return;
+      const formParam = queryParams.get('form');
+      const target = formParam
+        ? this.pokemonSpeciesDetails.pokemons?.find(p => p.name === formParam)
+        : this.pokemonSpeciesDetails.pokemons?.find(p => p.is_default);
+      if (target && target.id !== this.selectedPokemon?.id) {
+        this.selectedPokemon = target;
+        this.updateSelectedPokemonImage();
+        this.rebuildVm();
+      }
+    });
+
     this.route.paramMap.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(params => {
       this.versionState.reset();
       this.pokemonSpeciesDetails = undefined;
@@ -293,6 +306,11 @@ export class PokemonDetailsComponent implements OnInit {
 
     this.isShiny = false;
     this.selectedPokemon = this.pokemonSpeciesDetails?.pokemons?.[0];
+    const formParam = this.route.snapshot.queryParamMap.get('form');
+    if (formParam) {
+      const match = this.pokemonSpeciesDetails.pokemons?.find(p => p.name === formParam);
+      if (match) this.selectedPokemon = match;
+    }
     this.updateSelectedPokemonImage();
     this.rebuildVm();
 
@@ -380,6 +398,12 @@ export class PokemonDetailsComponent implements OnInit {
       this.selectedPokemon = selected;
       this.updateSelectedPokemonImage();
       this.rebuildVm();
+      this.router.navigate([], {
+        relativeTo: this.route,
+        queryParams: { form: selected.is_default ? null : selected.name },
+        queryParamsHandling: 'merge',
+        replaceUrl: true,
+      });
     }
   }
 

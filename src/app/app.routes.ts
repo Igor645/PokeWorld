@@ -9,6 +9,7 @@ export const routes: Routes = [
   { path: '', component: DexOverviewComponent },
   { path: 'pokemon/:speciesIdOrName', component: PokemonDetailsComponent },
   { path: 'type/:typeName', loadComponent: () => import('./components/details/type/type-detail/type-detail.component').then(m => m.TypeDetailComponent) },
+  { path: 'item/:itemName', component: NotFoundComponent },
   { path: 'location/:locationIdOrName', component: NotFoundComponent },
   { path: 'quiz', component: QuizComponent },
   { path: 'pokele', component: PokeleComponent },

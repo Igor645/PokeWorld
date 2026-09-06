@@ -18,6 +18,11 @@ export class TypeService {
         );
     }
 
+    getTypeCombosForType(typeId: number): Observable<{ pokemon: { name: string; pokemontypes: { type: { id: number; name: string } }[] }[] }> {
+        return this.graphQLService.executeQuery(GraphQLQueries.GetTypeCombosForType, { typeId })
+            .pipe(map((res: any) => res ?? { pokemon: [] }));
+    }
+
     getMovesByType(typeId: number): Observable<{ move: any[] }> {
         return this.graphQLService.executeQuery<{ move: any[] }>(
             GraphQLQueries.GetMovesByType,

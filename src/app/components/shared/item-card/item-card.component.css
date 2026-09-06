@@ -1,0 +1,169 @@
+/* ── Card shell — identical layout/hover to PokemonCard ──────────────────── */
+
+:host {
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  display: grid;
+  user-select: none;
+  -webkit-user-select: none;
+  will-change: transform;
+  grid-template-rows: auto 1fr auto;
+  align-items: center;
+  aspect-ratio: 5 / 7;
+  width: 100%;
+  height: auto;
+  container-type: inline-size;
+  font-size: 1rem;
+  background-color: var(--glass-color);
+  backdrop-filter: blur(0.075em);
+  box-shadow: 0 0.3em 0.6em var(--shadow-color), 0 0.45em 1.5em var(--shadow-color);
+  position: relative;
+  overflow: hidden;
+  transform: perspective(75em) rotateX(0) rotateY(0);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border-radius: 5% / 3.571%;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:host::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border: max(1px, 1.4cqi) solid var(--border-color);
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: 9999;
+}
+
+:host::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(45deg, var(--card-sheen-start), var(--card-sheen-end));
+  transform: rotate(25deg) translateX(-100%);
+  opacity: var(--card-sheen-opacity);
+  pointer-events: none;
+  transition: transform 0.5s ease;
+  z-index: 1;
+}
+
+:host:focus-visible::before,
+:host:hover::before {
+  transform: rotate(45deg);
+  opacity: var(--card-sheen-hover-opacity);
+}
+
+:host:focus-visible,
+:host:hover {
+  transform: perspective(75em) scale(1.05) rotateX(8deg);
+  cursor: pointer;
+  transition: transform 0.5s ease;
+  box-shadow: 0 0.6em 1.2em var(--shadow-hover-color), 0 0.9em 1.8em var(--shadow-hover-color);
+}
+
+:host:has(:active) {
+  transform: perspective(75em) scale(0.95) rotateX(-2deg);
+  transition: transform 0.1s ease;
+}
+
+:host > * { font-size: clamp(0.5rem, 10cqi, 1.6rem); }
+
+/* ── ID badge ────────────────────────────────────────────────────────────── */
+
+.itemCard__id {
+  text-align: center;
+  font-family: "Exo 2", serif;
+  color: var(--accent-text-color);
+  font-size: clamp(0.42rem, 7.5cqi, 1.2rem);
+  margin-bottom: auto;
+  border-radius: 0 0 0.75em 0.75em;
+  background-color: var(--background-color);
+  width: 100%;
+  position: relative;
+  z-index: 600;
+  display: flex;
+  flex-direction: column;
+  filter: drop-shadow(0 0.075em 0.375em var(--shadow-color));
+  padding: 0.375em 0;
+  box-sizing: content-box;
+}
+
+/* ── Image area ───────────────────────────────────────────────────────────── */
+
+.itemCard__img__container {
+  width: 100%;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  align-self: stretch;
+  container-type: inline-size;
+}
+
+.itemCard__bg {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1;
+  width: 110%;
+  height: auto;
+}
+
+.itemCard__sprite {
+  width: 55%;
+  max-width: 55cqi;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  z-index: 15;
+  position: relative;
+  filter: drop-shadow(0 0.2em 0.4em var(--pokemon-img-shadow-color));
+  transition: transform 0.3s ease;
+}
+
+:host:hover .itemCard__sprite {
+  transform: translateY(-0.5em) scale(1.08);
+}
+
+.itemCard__no-sprite {
+  font-size: 2.5em;
+  z-index: 15;
+  position: relative;
+  opacity: 0.35;
+}
+
+/* ── Text area ───────────────────────────────────────────────────────────── */
+
+.itemCard__text__container {
+  margin-top: auto;
+  border-radius: 0.75em 0.75em 0 0;
+  background-color: var(--background-color);
+  width: 100%;
+  position: relative;
+  z-index: 600;
+  display: flex;
+  flex-direction: column;
+  filter: drop-shadow(0 0.075em 0.375em var(--shadow-color));
+  padding: 0.375em 0;
+  box-sizing: content-box;
+}
+
+.itemCard__name {
+  text-align: center;
+  word-wrap: anywhere;
+  font-family: "Exo 2", serif;
+  color: var(--accent-text-color);
+  font-weight: 700;
+}
+
+.itemCard__pocket {
+  text-align: center;
+  font-family: "Exo 2", serif;
+  color: var(--accent-text-color);
+  font-size: 0.8em;
+}

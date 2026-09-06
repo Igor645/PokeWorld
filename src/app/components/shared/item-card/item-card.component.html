@@ -1,0 +1,17 @@
+<div class="itemCard__id">Nr. {{ item?.id ?? '—' }}</div>
+
+<div class="itemCard__img__container">
+  @if (getSprite()) {
+    <img [src]="getSprite()" [alt]="getLocalizedName()" class="itemCard__sprite" />
+  } @else {
+    <span class="itemCard__no-sprite">?</span>
+  }
+  <app-pokemon-bg-svg class="itemCard__bg"></app-pokemon-bg-svg>
+</div>
+
+<div class="itemCard__text__container">
+  <div class="itemCard__name">{{ getLocalizedName() }}</div>
+  @if (getPocketName()) {
+    <div class="itemCard__pocket">{{ getPocketName() }}</div>
+  }
+</div>

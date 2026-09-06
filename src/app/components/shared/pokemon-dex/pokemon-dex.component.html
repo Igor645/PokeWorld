@@ -1,105 +1,185 @@
 <!-- ── Filter bar ──────────────────────────────────────────────────────────── -->
 @if (showFilters) {
-  <div class="dex-filters">
 
-    <div class="dex-header-row">
-      <div class="dex-count">
-        @if (preset?.title) { <span class="dex-title-label">{{ preset!.title }}</span> }
+@if (mode === 'pokemon') {
+<div class="dex-filters">
+  <div class="dex-header-row">
+    <div class="dex-count">
+      @if (preset?.title) { <span class="dex-title-label">{{ preset!.title }}</span> }
+      @if (preset?.lockedTypeId) {
         @if (hasActiveFilters) {
-          <span class="dex-count-num">({{ filteredCount }} / {{ count }})</span>
+        <span class="dex-count-num">({{ filteredCount }} / {{ lockedTypeBaseCount }})</span>
         } @else {
-          <span class="dex-count-num">({{ count }})</span>
+        <span class="dex-count-num">({{ filteredCount }})</span>
         }
-      </div>
-
-      <div class="filters-bar">
-        @if (!preset?.lockedGenId) {
-          <div class="filter-group">
-            <span class="filter-label">Gen</span>
-            <div class="filter-pills">
-              <button class="filter-pill" [class.active]="activeGenFilter === null" (click)="setGenFilter(null)">All</button>
-              @for (gen of availableGenerations; track gen.id) {
-                <button class="filter-pill"
-                  [class.active]="activeGenFilter === gen.id"
-                  (click)="setGenFilter(gen.id)">
-                  {{ getRomanForGenId(gen.id) }}
-                </button>
-              }
-            </div>
-          </div>
-          <div class="filter-divider"></div>
+      } @else {
+        @if (hasActiveFilters) {
+        <span class="dex-count-num">({{ filteredCount }} / {{ count }})</span>
+        } @else {
+        <span class="dex-count-num">({{ count }})</span>
         }
-
-        <div class="filter-group">
-          <span class="filter-label">Form</span>
-          <div class="filter-pills">
-            <button class="filter-pill" [class.active]="formFilter === null" (click)="setFormFilter(null)">Standard</button>
-            @for (f of formFilterOptions; track f.value) {
-              <button class="filter-pill"
-                [class.active]="formFilter === f.value"
-                (click)="setFormFilter(f.value)">
-                {{ f.label }}
-              </button>
-            }
-          </div>
-          <button class="filter-clear-btn"
-            [style.visibility]="hasActiveFilters ? 'visible' : 'hidden'"
-            (click)="clearFilters()">
-            ✕ Clear
-          </button>
-        </div>
-      </div>
+      }
     </div>
 
-    @if (!preset?.lockedTypeId && allTypes.length) {
-      <div class="type-selector">
-        <span class="filter-label type-label">Type</span>
-        <div class="type-grid">
-          @for (t of allTypes; track t.id) {
-            <div class="type-badge-wrap"
-              [class.sel-1]="type1Filter === t.id"
-              [class.sel-2]="type2Filter === t.id"
-              [title]="pokemonUtils.getLocalizedNameFromEntity(t, 'typenames')"
-              (click)="onTypeClick(t.id)">
-              <app-pokemon-type [pokemonType]="t" [simpleView]="false" [navigation]="false" />
-              @if (type1Filter === t.id) { <span class="type-badge-num">1</span> }
-              @if (type2Filter === t.id) { <span class="type-badge-num type-badge-num--2">2</span> }
-            </div>
+    <div class="filters-bar">
+      @if (!preset?.lockedGenId) {
+      <div class="filter-group">
+        <span class="filter-label">Gen</span>
+        <div class="filter-pills">
+          <button class="filter-pill" [class.active]="activeGenFilter === null"
+            (click)="setGenFilter(null)">All</button>
+          @for (gen of availableGenerations; track gen.id) {
+          <button class="filter-pill" [class.active]="activeGenFilter === gen.id" (click)="setGenFilter(gen.id)">
+            {{ getRomanForGenId(gen.id) }}
+          </button>
           }
         </div>
       </div>
-    }
+      <div class="filter-divider"></div>
+      }
 
+      <div class="filter-group">
+        <span class="filter-label">Form</span>
+        <div class="filter-pills">
+          <button class="filter-pill" [class.active]="formFilter === 'all'"
+            (click)="setFormFilter('all')">All</button>
+          <button class="filter-pill" [class.active]="formFilter === null"
+            (click)="setFormFilter(null)">Standard</button>
+          @for (f of formFilterOptions; track f.value) {
+          <button class="filter-pill" [class.active]="formFilter === f.value" (click)="setFormFilter(f.value)">
+            {{ f.label }}
+          </button>
+          }
+        </div>
+        <button class="filter-clear-btn" [style.visibility]="hasActiveFilters ? 'visible' : 'hidden'"
+          (click)="clearFilters()">
+          ✕ Clear
+        </button>
+      </div>
+
+      @if (preset?.lockedTypeId) {
+      <div class="filter-divider"></div>
+      <div class="filter-group">
+        <span class="filter-label">Slot</span>
+        <div class="filter-pills">
+          <button class="filter-pill" [class.active]="activeSlotFilter === null"
+            (click)="setSlotFilter(null)">All</button>
+          <button class="filter-pill" [class.active]="activeSlotFilter === 'mono'"
+            (click)="setSlotFilter('mono')">Mono</button>
+          <button class="filter-pill" [class.active]="activeSlotFilter === 'primary'"
+            (click)="setSlotFilter('primary')">Primary</button>
+          <button class="filter-pill" [class.active]="activeSlotFilter === 'secondary'"
+            (click)="setSlotFilter('secondary')">Secondary</button>
+        </div>
+      </div>
+      }
+    </div>
   </div>
+
+  @if (!preset?.lockedTypeId && allTypes.length) {
+  <div class="type-selector">
+    <span class="filter-label type-label">Type</span>
+    <div class="type-grid">
+      @for (t of allTypes; track t.id) {
+      <div class="type-badge-wrap" [class.sel-1]="type1Filter === t.id" [class.sel-2]="type2Filter === t.id"
+        [title]="pokemonUtils.getLocalizedNameFromEntity(t, 'typenames')" (click)="onTypeClick(t.id)">
+        <app-pokemon-type [pokemonType]="t" [simpleView]="false" [navigation]="false" />
+        @if (type1Filter === t.id) { <span class="type-badge-num">1</span> }
+        @if (type2Filter === t.id) { <span class="type-badge-num type-badge-num--2">2</span> }
+      </div>
+      }
+    </div>
+  </div>
+  }
+</div>
+
+} @else {
+
+<!-- Item mode filter bar -->
+<div class="dex-filters">
+  <div class="dex-header-row">
+    <div class="dex-count">
+      @if (hasActivePocketFilter) {
+      <span class="dex-count-num">({{ filteredItemCount }} / {{ allItems.length }})</span>
+      } @else {
+      <span class="dex-count-num">({{ allItems.length }})</span>
+      }
+    </div>
+    <div class="filters-bar">
+      <div class="filter-group">
+        <span class="filter-label">Pocket</span>
+        <div class="filter-pills">
+          <button class="filter-pill" [class.active]="activePocketFilter === null"
+            (click)="setPocketFilter(null)">All</button>
+          @for (pocket of availablePockets; track pocket.id) {
+          <button class="filter-pill" [class.active]="activePocketFilter === pocket.id"
+            (click)="setPocketFilter(pocket.id)">
+            {{ getPocketLabel(pocket) }}
+          </button>
+          }
+        </div>
+        <button class="filter-clear-btn" [style.visibility]="hasActivePocketFilter ? 'visible' : 'hidden'"
+          (click)="setPocketFilter(null)">
+          ✕ Clear
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+}
 }
 
 <!-- ── Content area ────────────────────────────────────────────────────────── -->
 @if ((isLoading$ | async) ?? false) {
-  <div class="dex-state-wrap">
-    <app-loading-spinner message="Loading Pokémon..." />
-  </div>
-} @else {
-  @if (filteredCount === 0) {
-    <div class="dex-no-results">
-      <mat-icon class="no-results-icon">search_off</mat-icon>
-      <p class="no-results-text">No Pokémon match the current filters.</p>
-      @if (hasActiveFilters) {
-        <button class="filter-clear-btn no-results-clear" (click)="clearFilters()">✕ Clear filters</button>
-      }
-    </div>
-  } @else {
-    <cdk-virtual-scroll-viewport scrollWindow class="dex-viewport" [itemSize]="rowHeight">
-      <div *cdkVirtualFor="let row of speciesRows$; trackBy: trackRow" class="row">
-        @for (entry of row.entries; track entry.species.id) {
-          <app-pokemon-card
-            [pokemon]="entry.pokemon"
-            [pokemonSpecies]="entry.species"
-            [showTypes]="true" />
-        }
-        @for (i of getPlaceholderArray(cardsPerRow - row.entries.length); track i) {
-          <div class="pokemon-placeholder"></div>
-        }
-      </div>
-    </cdk-virtual-scroll-viewport>
+<div class="dex-state-wrap">
+  <app-loading-spinner [message]="mode === 'item' ? 'Loading Items…' : 'Loading Pokémon…'" />
+</div>
+
+} @else if (mode === 'pokemon') {
+
+@if (filteredCount === 0) {
+<div class="dex-no-results">
+  <mat-icon class="no-results-icon">search_off</mat-icon>
+  <p class="no-results-text">No Pokémon match the current filters.</p>
+  @if (hasActiveFilters) {
+  <button class="filter-clear-btn no-results-clear" (click)="clearFilters()">✕ Clear filters</button>
   }
+</div>
+} @else {
+<cdk-virtual-scroll-viewport scrollWindow class="dex-viewport" [itemSize]="rowHeight">
+  <div *cdkVirtualFor="let row of speciesRows$; trackBy: trackRow" class="row">
+    @for (entry of row.entries; track entry.species.id) {
+    <app-pokemon-card [pokemon]="entry.pokemon" [pokemonSpecies]="entry.species" [showTypes]="true" />
+    }
+    @for (i of getPlaceholderArray(cardsPerRow - row.entries.length); track i) {
+    <div class="pokemon-placeholder"></div>
+    }
+  </div>
+</cdk-virtual-scroll-viewport>
+}
+
+} @else {
+
+@if (filteredItemCount === 0) {
+<div class="dex-no-results">
+  <mat-icon class="no-results-icon">search_off</mat-icon>
+  <p class="no-results-text">No items in this category.</p>
+  @if (hasActivePocketFilter) {
+  <button class="filter-clear-btn no-results-clear" (click)="setPocketFilter(null)">✕ Clear filter</button>
+  }
+</div>
+} @else {
+<cdk-virtual-scroll-viewport scrollWindow class="dex-viewport" [itemSize]="rowHeight">
+  <div *cdkVirtualFor="let row of itemRows$; trackBy: trackRow" class="row">
+    @for (entry of row.entries; track entry.item.id) {
+    <app-item-card [item]="entry.item" />
+    }
+    @for (i of getPlaceholderArray(cardsPerRow - row.entries.length); track i) {
+    <div class="pokemon-placeholder"></div>
+    }
+  </div>
+</cdk-virtual-scroll-viewport>
+}
+
 }

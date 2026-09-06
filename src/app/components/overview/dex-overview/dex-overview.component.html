@@ -113,7 +113,13 @@
 }
 
 <!-- ── Pokédex ────────────────────────────────────────────────────────────── -->
-<app-pokemon-dex
+<app-tab-bar
   class="main-dex"
-  [(genFilter)]="selectedGen"
-  [showFilters]="true" />
+  [tabs]="dexTabs"
+  [activeTab]="dexMode"
+  (tabChange)="dexMode = $any($event)">
+  <app-pokemon-dex
+    [mode]="dexMode"
+    [(genFilter)]="selectedGen"
+    [showFilters]="true" />
+</app-tab-bar>

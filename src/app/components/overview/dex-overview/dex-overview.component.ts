@@ -19,6 +19,7 @@ import { SettingsService } from '../../../services/settings.service';
 import { PokeworldSearchComponent } from '../../search/pokeworld-search/pokeworld-search.component';
 import { PokemonCardComponent } from '../../shared/pokemon-card/pokemon-card.component';
 import { PokemonDexComponent } from '../../shared/pokemon-dex/pokemon-dex.component';
+import { TabBarComponent } from '../../shared/tab-bar/tab-bar.component';
 import { Type } from '../../../models/type.model';
 
 interface DisplayEntry { species: PokemonSpecies; pokemon: Pokemon; }
@@ -78,6 +79,7 @@ const GENERATION_INFO: Array<Omit<GenTileConfig, 'count' | 'spriteUrl'>> = [
     PokeworldSearchComponent,
     PokemonCardComponent,
     PokemonDexComponent,
+    TabBarComponent,
   ],
   templateUrl: './dex-overview.component.html',
   styleUrls: ['./dex-overview.component.css'],
@@ -96,6 +98,12 @@ export class DexOverviewComponent implements OnInit, OnDestroy {
 
   /** Two-way bound with app-pokemon-dex — gen tiles click sets this. */
   selectedGen: number | null = null;
+  dexMode: 'pokemon' | 'item' = 'pokemon';
+
+  readonly dexTabs = [
+    { id: 'pokemon', label: 'Pokémon', icon: 'catching_pokemon' },
+    { id: 'item',    label: 'Items',   icon: 'inventory_2' },
+  ];
 
   private allSpecies: PokemonSpecies[] = [];
   private recentlyViewed: RecentEntry[] = [];

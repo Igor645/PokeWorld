@@ -74,47 +74,64 @@
       </app-detail-table>
     </app-expandable-section>
 
-  </div>
-
-  <!-- ── Tab bar ────────────────────────────────────────────────────────────── -->
-  <div class="tab-bar">
-    <button class="tab-btn" [class.active]="activeTab === 'pokemon'" (click)="setTab('pokemon')">
-      Pokémon
-    </button>
-    <button class="tab-btn" [class.active]="activeTab === 'moves'" (click)="setTab('moves')">
-      Moves
-    </button>
-  </div>
-
-  <!-- ── Tab: Pokémon ───────────────────────────────────────────────────────── -->
-  @if (activeTab === 'pokemon') {
-    <app-pokemon-dex [preset]="dexPreset" [showFilters]="true" />
-  }
-
-  <!-- ── Tab: Moves ─────────────────────────────────────────────────────────── -->
-  @if (activeTab === 'moves') {
-    <app-expandable-section title="Moves" [expanded]="true">
-      @if (isLoadingMoves) {
-        <div class="moves-loading-overlay">
-          <app-loading-spinner [inline]="true" message="Loading moves..." />
-        </div>
+    <app-expandable-section title="Combinations">
+      @if (isLoadingCombos) {
+        <div class="combo-loading"><app-loading-spinner [inline]="true" /></div>
       } @else {
-        <div class="moves-toolbar">
-          <mat-icon class="toolbar-vg-icon">sports_esports</mat-icon>
-          <app-version-select
-            [groups]="versionSelectGroups"
-            [selectedId]="selectedVgId"
-            (selectionChange)="onVgChange($event)">
-          </app-version-select>
+        <div class="combo-grid">
+          @for (combo of typeCombos; track combo.key) {
+            <div class="combo-row">
+              <div class="combo-badge-cell">
+                @if (getPartnerType(combo); as partner) {
+                  <app-pokemon-type [pokemonType]="partner" [simpleView]="false" [navigation]="true" />
+                } @else {
+                  <span class="mono-chip">Mono</span>
+                }
+              </div>
+              <span class="combo-count-cell">{{ combo.count }}</span>
+            </div>
+          }
         </div>
-        <app-moves-table
-          [rows]="filteredMoves"
-          [isLoading]="false"
-          [showLearnCol]="false"
-          [showTypeCol]="false">
-        </app-moves-table>
       }
     </app-expandable-section>
-  }
+
+  </div>
+
+  <!-- ── Tabs ──────────────────────────────────────────────────────────────── -->
+  <app-tab-bar
+    [tabs]="typeTabs"
+    [activeTab]="activeTab"
+    (tabChange)="setTab($any($event))">
+
+    @if (activeTab === 'pokemon') {
+      <app-pokemon-dex [preset]="dexPreset" [showFilters]="true" />
+    }
+
+    @if (activeTab === 'moves') {
+      <div class="moves-content">
+        @if (isLoadingMoves) {
+          <div class="moves-loading-overlay">
+            <app-loading-spinner [inline]="true" message="Loading moves..." />
+          </div>
+        } @else {
+          <div class="moves-toolbar">
+            <mat-icon class="toolbar-vg-icon">sports_esports</mat-icon>
+            <app-version-select
+              [groups]="versionSelectGroups"
+              [selectedId]="selectedVgId"
+              (selectionChange)="onVgChange($event)">
+            </app-version-select>
+          </div>
+          <app-moves-table
+            [rows]="filteredMoves"
+            [isLoading]="false"
+            [showLearnCol]="false"
+            [showTypeCol]="false">
+          </app-moves-table>
+        }
+      </div>
+    }
+
+  </app-tab-bar>
 
 }
