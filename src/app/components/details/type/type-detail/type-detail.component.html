@@ -78,17 +78,15 @@
       @if (isLoadingCombos) {
         <div class="combo-loading"><app-loading-spinner [inline]="true" /></div>
       } @else {
-        <div class="combo-grid">
+        <div class="combo-list">
           @for (combo of typeCombos; track combo.key) {
-            <div class="combo-row">
-              <div class="combo-badge-cell">
-                @if (getPartnerType(combo); as partner) {
-                  <app-pokemon-type [pokemonType]="partner" [simpleView]="false" [navigation]="true" />
-                } @else {
-                  <span class="mono-chip">Mono</span>
-                }
-              </div>
-              <span class="combo-count-cell">{{ combo.count }}</span>
+            <div class="combo-entry">
+              <span class="combo-n">{{ combo.count }}</span>
+              @if (getPartnerType(combo); as partner) {
+                <app-pokemon-type [pokemonType]="partner" [simpleView]="false" [navigation]="true" />
+              } @else {
+                <span class="mono-chip">Mono</span>
+              }
             </div>
           }
         </div>

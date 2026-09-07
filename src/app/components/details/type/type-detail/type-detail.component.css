@@ -99,6 +99,10 @@
   gap: 1.25rem;
 }
 
+.matchup-grid app-expandable-section:not(.expanded) {
+  align-self: start;
+}
+
 /* ── Combinations card ───────────────────────────────────────────────────── */
 
 .combo-loading {
@@ -108,33 +112,28 @@
   min-height: 80px;
 }
 
-.combo-grid {
+.combo-list {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 0.18rem 0.6rem;
-  padding: 0.45rem 0.85rem 0.6rem;
+  gap: 3px 10px;
 }
 
-.combo-row {
+.combo-entry {
   display: flex;
   align-items: center;
-  gap: 0.35rem;
-}
-
-.combo-badge-cell {
-  flex-shrink: 0;
-  --type-font-size: 0.64rem;
-  --type-padding: 2px 7px;
-  --type-icon-size: 10px;
+  gap: 5px;
+  --type-font-size: 0.62rem;
+  --type-padding: 2px 6px;
+  --type-icon-size: 9px;
   --type-gap: 3px;
 }
 
-.combo-count-cell {
-  margin-left: auto;
+.combo-n {
   font-family: "Exo 2", serif;
-  font-size: 0.68rem;
+  font-size: 0.65rem;
   font-weight: 700;
-  color: var(--accent-text-color);
+  min-width: 18px;
+  text-align: right;
   opacity: 0.5;
   flex-shrink: 0;
 }
@@ -142,11 +141,11 @@
 .mono-chip {
   display: inline-flex;
   align-items: center;
-  padding: 2px 8px;
+  padding: 2px 7px;
   border-radius: 20px;
   background: var(--primary-color);
   color: #fff;
-  font-size: 0.64rem;
+  font-size: 0.68rem;
   font-weight: 700;
   font-family: "Exo 2", serif;
 }
