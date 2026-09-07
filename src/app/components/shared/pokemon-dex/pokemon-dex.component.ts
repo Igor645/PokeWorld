@@ -88,6 +88,7 @@ export class PokemonDexComponent implements OnInit, OnChanges, AfterViewInit, On
   type2Filter: number | null = null;
   formFilter: FormFilter = null;
   activeSlotFilter: null | 'mono' | 'primary' | 'secondary' = null;
+  filtersOpen = false;
 
   get filteredCount(): number { return this._filteredEntries.length; }
   private get defaultForm(): FormFilter { return this.preset?.defaultFormFilter ?? null; }
@@ -95,6 +96,16 @@ export class PokemonDexComponent implements OnInit, OnChanges, AfterViewInit, On
     return !!(this.activeGenFilter || this.type1Filter || this.type2Filter ||
               (this.formFilter !== this.defaultForm ? this.formFilter : null) ||
               this.activeSlotFilter);
+  }
+
+  get activeFilterCount(): number {
+    let n = 0;
+    if (this.activeGenFilter) n++;
+    if (this.formFilter !== this.defaultForm && this.formFilter !== null) n++;
+    if (this.type1Filter) n++;
+    if (this.type2Filter) n++;
+    if (this.activeSlotFilter) n++;
+    return n;
   }
 
   private allSpecies: PokemonSpecies[] = [];

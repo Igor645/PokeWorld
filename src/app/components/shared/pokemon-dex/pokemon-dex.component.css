@@ -37,9 +37,20 @@
 
 .dex-header-row {
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     gap: 0.75rem;
-    flex-wrap: wrap;
+}
+
+/* ── Mobile filters toggle ───────────────────────────────────────────────── */
+
+.filters-toggle-btn {
+    display: none;
+}
+
+.filters-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
 }
 
 .dex-count {
@@ -67,8 +78,6 @@
     display: flex;
     flex-direction: column;
     gap: 0.3rem;
-    flex: 1 1 auto;
-    min-width: 0;
 }
 
 .filter-group {
@@ -324,6 +333,55 @@
 /* ── Responsive ──────────────────────────────────────────────────────────── */
 
 @media (max-width: 768px) {
+    .filters-toggle-btn {
+        display: flex;
+        align-items: center;
+        gap: 0.35rem;
+        margin-left: auto;
+        padding: 0.22rem 0.65rem;
+        border-radius: 20px;
+        border: 1px solid var(--border-color);
+        background: var(--interactive-bg-color);
+        color: var(--accent-text-color);
+        font-size: 0.72rem;
+        font-family: "Exo 2", serif;
+        font-weight: 600;
+        cursor: pointer;
+        white-space: nowrap;
+        transition: border-color 0.13s, background 0.13s;
+        flex-shrink: 0;
+    }
+    .filters-toggle-btn.open {
+        border-color: var(--primary-color);
+        background: color-mix(in srgb, var(--primary-color) 12%, var(--interactive-bg-color));
+    }
+    .filter-toggle-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 16px;
+        height: 16px;
+        padding: 0 4px;
+        border-radius: 8px;
+        background: var(--primary-color);
+        color: #fff;
+        font-size: 0.65rem;
+        font-weight: 700;
+        line-height: 1;
+    }
+    .filter-toggle-chevron {
+        font-size: 0.55rem;
+        opacity: 0.6;
+    }
+
+    .filters-panel {
+        display: none;
+        padding-top: 0.3rem;
+    }
+    .filters-panel.open {
+        display: flex;
+    }
+
     .filter-pills { flex-wrap: wrap; overflow-x: visible; }
     .type-selector { flex-wrap: wrap; }
     .type-grid { flex-wrap: wrap; }
@@ -332,7 +390,6 @@
 @media (max-width: 480px) {
     :host { border-radius: 8px; }
     .dex-filters { border-radius: 6px 6px 0 0; }
-    .dex-header-row { flex-direction: column; gap: 0.4rem; }
     .filter-pills { flex-wrap: wrap; }
     .row { gap: 1rem; padding: 0 1rem 1rem; }
 }

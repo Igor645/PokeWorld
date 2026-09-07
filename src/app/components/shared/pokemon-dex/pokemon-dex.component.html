@@ -21,6 +21,14 @@
       }
     </div>
 
+    <button class="filters-toggle-btn" (click)="filtersOpen = !filtersOpen" [class.open]="filtersOpen">
+      Filters
+      @if (activeFilterCount > 0) { <span class="filter-toggle-badge">{{ activeFilterCount }}</span> }
+      <span class="filter-toggle-chevron">{{ filtersOpen ? '▲' : '▼' }}</span>
+    </button>
+  </div>
+
+  <div class="filters-panel" [class.open]="filtersOpen">
     <div class="filters-bar">
       @if (!preset?.lockedGenId) {
       <div class="filter-group">
@@ -74,23 +82,23 @@
       </div>
       }
     </div>
-  </div>
 
-  @if (!preset?.lockedTypeId && allTypes.length) {
-  <div class="type-selector">
-    <span class="filter-label type-label">Type</span>
-    <div class="type-grid">
-      @for (t of allTypes; track t.id) {
-      <div class="type-badge-wrap" [class.sel-1]="type1Filter === t.id" [class.sel-2]="type2Filter === t.id"
-        [title]="pokemonUtils.getLocalizedNameFromEntity(t, 'typenames')" (click)="onTypeClick(t.id)">
-        <app-pokemon-type [pokemonType]="t" [simpleView]="false" [navigation]="false" />
-        @if (type1Filter === t.id) { <span class="type-badge-num">1</span> }
-        @if (type2Filter === t.id) { <span class="type-badge-num type-badge-num--2">2</span> }
+    @if (!preset?.lockedTypeId && allTypes.length) {
+    <div class="type-selector">
+      <span class="filter-label type-label">Type</span>
+      <div class="type-grid">
+        @for (t of allTypes; track t.id) {
+        <div class="type-badge-wrap" [class.sel-1]="type1Filter === t.id" [class.sel-2]="type2Filter === t.id"
+          [title]="pokemonUtils.getLocalizedNameFromEntity(t, 'typenames')" (click)="onTypeClick(t.id)">
+          <app-pokemon-type [pokemonType]="t" [simpleView]="false" [navigation]="false" />
+          @if (type1Filter === t.id) { <span class="type-badge-num">1</span> }
+          @if (type2Filter === t.id) { <span class="type-badge-num type-badge-num--2">2</span> }
+        </div>
+        }
       </div>
-      }
     </div>
+    }
   </div>
-  }
 </div>
 
 } @else {
