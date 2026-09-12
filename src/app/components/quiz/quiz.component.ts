@@ -82,7 +82,7 @@ export class QuizComponent implements OnInit, OnDestroy {
   availableLangs: { id: number; name: string }[] = [];
 
   private allGroups: QuizGroup[] = [];
-  private nameMap = new Map<string, PokemonSpecies>();
+  private nameMap = new Map<string, PokemonSpecies[]>();
   private timerRef: ReturnType<typeof setInterval> | null = null;
   private cycleRef: ReturnType<typeof setInterval> | null = null;
   private langSub?: Subscription;
@@ -357,16 +357,21 @@ export class QuizComponent implements OnInit, OnDestroy {
   onInput(): void {
     const key = this.norm(this.inputValue);
     if (!key) return;
-    const sp = this.nameMap.get(key);
-    if (!sp || this.guessedIds.has(sp.id)) return;
+    const matches = this.nameMap.get(key);
+    const unguessed = matches?.filter(sp => !this.guessedIds.has(sp.id));
+    if (!unguessed?.length) return;
 
     if (!this.timerStarted) this.startTimer();
     if (!this.cycleRef) this.startCycle();
 
-    this.guessedIds = new Set(this.guessedIds).add(sp.id);
-    this.recentlyGuessedId = sp.id;
+    const next = new Set(this.guessedIds);
+    for (const sp of unguessed) next.add(sp.id);
+    this.guessedIds = next;
+
+    const last = unguessed[unguessed.length - 1];
+    this.recentlyGuessedId = last.id;
     this.inputValue = '';
-    const dp = sp.pokemons?.find(p => p.is_default);
+    const dp = last.pokemons?.find(p => p.is_default);
     if (dp) this.lastGuessedUrl = this.imageUrl(dp);
     this.playCorrectSound();
 
@@ -485,7 +490,10 @@ export class QuizComponent implements OnInit, OnDestroy {
         const sp = s.species;
         for (const n of sp.pokemonspeciesnames ?? []) {
           if (this.guessLangIds.has(n.language_id) && n.name) {
-            this.nameMap.set(this.norm(n.name), sp);
+            const k = this.norm(n.name);
+            const existing = this.nameMap.get(k);
+            if (existing) existing.push(sp);
+            else this.nameMap.set(k, [sp]);
           }
         }
       }

@@ -97,10 +97,15 @@
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   gap: 1.25rem;
+  align-items: start;
 }
 
 .matchup-grid app-expandable-section:not(.expanded) {
-  align-self: start;
+  height: auto;
+}
+
+.matchup-grid app-expandable-section.expanded {
+  align-self: stretch;
 }
 
 /* ── Combinations card ───────────────────────────────────────────────────── */
