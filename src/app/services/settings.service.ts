@@ -59,7 +59,7 @@ export class SettingsService {
   /**
    * Loads settings from localStorage into BehaviorSubjects.
    */
-  private readonly KNOWN_KEYS = ['darkMode', 'language'] as const;
+  private readonly KNOWN_KEYS = ['darkMode', 'language', 'spriteStyle', 'pixelAnimated', 'quizSpriteStyle'] as const;
 
   private loadSettingsFromStorage() {
     if (!isPlatformBrowser(this.platformId)) return;

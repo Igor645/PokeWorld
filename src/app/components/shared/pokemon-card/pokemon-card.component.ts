@@ -9,7 +9,8 @@ import {
   ChangeDetectorRef,
   ChangeDetectionStrategy,
   Optional,
-  Self
+  Self,
+  NgZone
 } from '@angular/core';
 
 import { Subscription } from 'rxjs';
@@ -42,12 +43,13 @@ export class PokemonCardComponent implements OnInit, OnDestroy, AfterViewInit {
 
   @ViewChild('pokemonImage', { static: false }) pokemonImage!: ElementRef<HTMLImageElement>;
 
-  pokemonViewModel = { id: 0, name: '', image: '', generation: '' };
+  pokemonViewModel = { id: 0, name: '', image: '', generation: '', isPixelSprite: false };
   imageLoaded = false;
   eggGone = false;
   eggSwooping = false;
   private languageSubscription!: Subscription;
   private spriteSubscription!: Subscription;
+  private animatedSubscription!: Subscription;
 
   get regionLabel(): string | null {
     if (!this.showRegion || !this.pokemon || this.pokemon.is_default) return null;
@@ -59,6 +61,7 @@ export class PokemonCardComponent implements OnInit, OnDestroy, AfterViewInit {
     private pokemonUtils: PokemonUtilsService,
     private settingsService: SettingsService,
     private cdr: ChangeDetectorRef,
+    private ngZone: NgZone,
     @Self() @Optional() private interactiveHost?: InteractiveHostDirective
   ) { }
 
@@ -86,6 +89,15 @@ export class PokemonCardComponent implements OnInit, OnDestroy, AfterViewInit {
         this.updateViewModel();
         this.cdr.detectChanges();
       });
+
+    this.animatedSubscription = this.settingsService
+      .watchSetting<boolean>('pixelAnimated')
+      .subscribe(() => {
+        this.ngZone.run(() => {
+          this.updateViewModel();
+          this.cdr.markForCheck();
+        });
+      });
   }
 
   ngAfterViewInit(): void { }
@@ -93,14 +105,17 @@ export class PokemonCardComponent implements OnInit, OnDestroy, AfterViewInit {
   ngOnDestroy(): void {
     this.languageSubscription.unsubscribe();
     this.spriteSubscription?.unsubscribe();
+    this.animatedSubscription?.unsubscribe();
   }
 
   private updateViewModel(): void {
+    const style = this.settingsService.getSetting<string>('spriteStyle');
     this.pokemonViewModel = {
       id: this.pokemon?.id || this.pokemonSpecies?.id || 0,
       name: this.pokemonUtils.getLocalizedNameFromEntity(this.pokemonSpecies, 'pokemonspeciesnames') || 'Unknown',
       image: this.imageOverride || this.pokemonUtils.getPokemonOfficialImage(this.pokemon),
       generation: this.pokemonUtils.getLocalizedNameFromEntity(this.pokemonSpecies.generation, 'generationnames') || 'Unknown',
+      isPixelSprite: style === 'pixel',
     };
   }
 

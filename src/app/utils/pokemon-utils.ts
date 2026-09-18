@@ -32,14 +32,25 @@ export class PokemonUtilsService {
    * @param pokemon The Pokémon DTO object.
    * @returns The URL of the Pokémon's official artwork.
    */
-  getPokemonOfficialImage(pokemon: Pokemon | undefined): string {
+  getPokemonOfficialImage(pokemon: Pokemon | undefined, isShiny = false): string {
     const sprites = pokemon?.pokemonsprites?.[0]?.sprites;
+    const shinyKey = isShiny ? 'front_shiny' : 'front_default';
     const style = this.settingsService.getSetting<string>('spriteStyle');
-    if (style === 'home')
-      return sprites?.other?.['home']?.front_default || sprites?.other?.['official-artwork']?.front_default || '/invalid/image.png';
-    if (style === 'pixel')
-      return sprites?.front_default || sprites?.other?.['official-artwork']?.front_default || '/invalid/image.png';
-    return sprites?.other?.['official-artwork']?.front_default || sprites?.other?.['home']?.front_default || '/invalid/image.png';
+    if (style === 'home') {
+      const home = sprites?.other?.['home'];
+      return home?.[shinyKey] || home?.front_default || sprites?.other?.['official-artwork']?.front_default || '/invalid/image.png';
+    }
+    if (style === 'pixel') {
+      const animated = this.settingsService.getSetting<boolean>('pixelAnimated');
+      if (animated) {
+        const animSprites = (sprites as any)?.versions?.['generation-v']?.['black-white']?.animated;
+        const animUrl: string | undefined = animSprites?.[shinyKey] || animSprites?.front_default;
+        if (animUrl) return animUrl;
+      }
+      return sprites?.[shinyKey] || sprites?.front_default || sprites?.other?.['official-artwork']?.front_default || '/invalid/image.png';
+    }
+    const artwork = sprites?.other?.['official-artwork'];
+    return artwork?.[shinyKey] || artwork?.front_default || sprites?.other?.['home']?.front_default || '/invalid/image.png';
   }
 
   /**

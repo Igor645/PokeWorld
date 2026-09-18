@@ -17,6 +17,12 @@
         <button class="seg-btn" [class.active]="spriteStyle === 'pixel'" (click)="setSpriteStyle('pixel')">Pixel</button>
       </div>
     </div>
+    @if (spriteStyle === 'pixel') {
+    <div class="settings-row settings-sub-row">
+      <span class="settings-label settings-sub-label">Animated</span>
+      <mat-slide-toggle [checked]="pixelAnimated" (change)="togglePixelAnimated()"></mat-slide-toggle>
+    </div>
+    }
 
     <div class="settings-row">
       <span class="settings-label">Name Quiz Sprites</span>

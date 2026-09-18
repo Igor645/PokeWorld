@@ -27,7 +27,6 @@ import { PokemonTypeComponent } from '../../../shared/pokemon-type/pokemon-type.
 import { PokemonUtilsService } from '../../../../utils/pokemon-utils';
 import { RecentlyViewedService } from '../../../../services/recently-viewed.service';
 import { SettingsService } from '../../../../services/settings.service';
-import { Sprite } from '../../../../models/sprite.model';
 import { Type } from '../../../../models/type.model';
 import { TypeService } from '../../../../services/type.service';
 import { IndividualVersion, VgOption, VersionStateService } from '../../../../services/version-state.service';
@@ -133,6 +132,9 @@ export class PokemonDetailsComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.rebuildVm());
     this.settingsService.watchSetting<string>('spriteStyle')
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.updateSelectedPokemonImage());
+    this.settingsService.watchSetting<boolean>('pixelAnimated')
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.updateSelectedPokemonImage());
     this.versionState.vgOptions$
@@ -408,22 +410,9 @@ export class PokemonDetailsComponent implements OnInit {
   }
 
   updateSelectedPokemonImage(): void {
-    if (!this.selectedPokemon || !this.selectedPokemon.pokemonsprites?.length) {
-      this.selectedPokemonImage = undefined;
-      return;
-    }
-    const spritesData = this.selectedPokemon.pokemonsprites[0].sprites;
-    const spriteKey: keyof Sprite = this.isShiny ? 'front_shiny' : 'front_default';
-    const style = this.settingsService.getSetting<string>('spriteStyle');
-    const home = spritesData.other?.['home'];
-    const artwork = spritesData.other?.['official-artwork'];
-    if (style === 'home') {
-      this.selectedPokemonImage = home?.[spriteKey] || home?.['front_default'] || artwork?.[spriteKey] || artwork?.['front_default'];
-    } else if (style === 'pixel') {
-      this.selectedPokemonImage = spritesData[spriteKey] || spritesData['front_default'] || artwork?.['front_default'];
-    } else {
-      this.selectedPokemonImage = artwork?.[spriteKey] || artwork?.['front_default'] || home?.[spriteKey] || home?.['front_default'];
-    }
+    this.selectedPokemonImage = this.selectedPokemon
+      ? this.pokemonUtils.getPokemonOfficialImage(this.selectedPokemon, this.isShiny)
+      : undefined;
   }
 
   onImageLoad(): void {

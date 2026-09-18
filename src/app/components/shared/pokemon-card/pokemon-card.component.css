@@ -91,6 +91,11 @@
     image-rendering: -webkit-optimize-contrast;
 }
 
+.pokemonCard__image.pixel-sprite {
+    width: 62%;
+    image-rendering: pixelated;
+}
+
 .pokemonCard__img__container {
     width: 100%;
     position: relative;

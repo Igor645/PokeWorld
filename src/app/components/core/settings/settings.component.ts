@@ -27,6 +27,7 @@ import { SettingsService } from '../../../services/settings.service';
 export class SettingsComponent implements OnInit {
   isDarkMode = false;
   spriteStyle: 'sugimori' | 'home' | 'pixel' = 'sugimori';
+  pixelAnimated = false;
   quizSpriteStyle: 'sugimori' | 'home' | 'pixel' | 'icons' = 'sugimori';
 
   constructor(
@@ -38,6 +39,7 @@ export class SettingsComponent implements OnInit {
   ngOnInit() {
     this.isDarkMode = this.settingsService.getSetting<boolean>('darkMode') ?? false;
     this.spriteStyle = (this.settingsService.getSetting<string>('spriteStyle') as any) || 'sugimori';
+    this.pixelAnimated = this.settingsService.getSetting<boolean>('pixelAnimated') ?? false;
     this.quizSpriteStyle = (this.settingsService.getSetting<string>('quizSpriteStyle') as any) || 'sugimori';
 
     if (isPlatformBrowser(this.platformId)) {
@@ -53,6 +55,11 @@ export class SettingsComponent implements OnInit {
   setSpriteStyle(style: 'sugimori' | 'home' | 'pixel') {
     this.spriteStyle = style;
     this.settingsService.setSetting('spriteStyle', style);
+  }
+
+  togglePixelAnimated() {
+    this.pixelAnimated = !this.pixelAnimated;
+    this.settingsService.setSetting('pixelAnimated', this.pixelAnimated);
   }
 
   setQuizSpriteStyle(style: 'sugimori' | 'home' | 'pixel' | 'icons') {

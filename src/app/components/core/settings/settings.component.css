@@ -67,6 +67,21 @@
   color: var(--text-color);
 }
 
+.settings-sub-row {
+  background: color-mix(in srgb, var(--primary-color) 4%, var(--background-color));
+  padding: 0.35rem 0.75rem 0.35rem 1.5rem;
+}
+
+.settings-sub-label {
+  font-size: 0.78rem;
+  opacity: 0.75;
+}
+
+.settings-sub-row ::ng-deep .mdc-switch {
+  transform: scale(0.78);
+  transform-origin: right center;
+}
+
 /* Keep Material slide toggle on-brand */
 ::ng-deep .mat-mdc-slide-toggle.mat-mdc-slide-toggle-checked:not(.mat-disabled) .mdc-switch__track::after {
   background-color: var(--primary-color) !important;

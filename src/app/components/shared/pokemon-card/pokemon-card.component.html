@@ -20,7 +20,8 @@
   }
 
   <img #pokemonImage [src]="pokemonViewModel.image" (load)="onImageLoad()" (error)="handleImageError($event)"
-    class="pokemonCard__image initial-load" [class.visible]="eggGone" [class.hidden]="!eggGone" />
+    class="pokemonCard__image initial-load" [class.visible]="eggGone" [class.hidden]="!eggGone"
+    [class.pixel-sprite]="pokemonViewModel.isPixelSprite" />
 
   <img src="/images/egg.png" class="pokemonCard__placeholder shaking_egg" [class.shrink-away]="eggSwooping"
     [class.hidden]="eggGone" (animationend)="onEggAnimationEnd()" />

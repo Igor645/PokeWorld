@@ -176,11 +176,7 @@ export class DexOverviewComponent implements OnInit, OnDestroy {
   // ── Sprites ────────────────────────────────────────────────────────────────
 
   getSprite(species: PokemonSpecies): string {
-    const sprites = species.pokemons[0]?.pokemonsprites?.[0]?.sprites;
-    const style = this.settingsService.getSetting<string>('spriteStyle');
-    if (style === 'home')  return sprites?.other?.['home']?.front_default || sprites?.other?.['official-artwork']?.front_default || '';
-    if (style === 'pixel') return sprites?.front_default || '';
-    return sprites?.other?.['official-artwork']?.front_default || sprites?.other?.['home']?.front_default || '';
+    return this.pokemonUtils.getPokemonOfficialImage(species.pokemons[0]) || '';
   }
 
   // ── Private ────────────────────────────────────────────────────────────────
@@ -246,17 +242,11 @@ export class DexOverviewComponent implements OnInit, OnDestroy {
     for (const s of this.allSpecies) {
       if (s.generation?.id) countByGen.set(s.generation.id, (countByGen.get(s.generation.id) ?? 0) + 1);
     }
-    const style = this.settingsService.getSetting<string>('spriteStyle');
     this.genTiles = GENERATION_INFO
       .filter(info => countByGen.has(info.id))
       .map(info => {
         const sp = this.allSpecies.find(s => s.id === info.legendaryId);
-        const sprites = sp?.pokemons?.[0]?.pokemonsprites?.[0]?.sprites;
-        const spriteUrl = style === 'home'
-          ? (sprites?.other?.['home']?.front_default || sprites?.other?.['official-artwork']?.front_default || '')
-          : style === 'pixel'
-            ? (sprites?.front_default || '')
-            : (sprites?.other?.['official-artwork']?.front_default || sprites?.other?.['home']?.front_default || '');
+        const spriteUrl = this.pokemonUtils.getPokemonOfficialImage(sp?.pokemons?.[0]) || '';
         return { ...info, count: countByGen.get(info.id) ?? 0, spriteUrl };
       });
   }

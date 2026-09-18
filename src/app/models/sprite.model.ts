@@ -9,7 +9,11 @@ export interface Sprite {
   back_shiny_female?: string;
 }
 
+export interface AnimatableSprite extends Sprite {
+  animated?: Sprite;
+}
+
 export interface PokemonSprites extends Sprite {
   other?: Record<string, Sprite>;
-  versions?: Record<string, Record<string, Sprite>>;
+  versions?: Record<string, Record<string, AnimatableSprite>>;
 }
