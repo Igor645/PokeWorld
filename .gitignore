@@ -242,3 +242,6 @@ public/images/locations/
 # 🔥 Keep the Git Repository Clean!
 # ===========================
 
+
+# Cached Bulbapedia pages used by scripts/build-*.py
+scripts/.wiki-cache/

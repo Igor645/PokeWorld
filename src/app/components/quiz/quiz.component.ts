@@ -4,20 +4,26 @@ import {
   Component,
   ElementRef,
   HostListener,
+  Inject,
   OnDestroy,
   OnInit,
+  PLATFORM_ID,
   ViewChild,
 } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
+import { Router } from '@angular/router';
 
 import { FormsModule } from '@angular/forms';
 import { MatIcon } from '@angular/material/icon';
-import { Subscription } from 'rxjs';
+import { Subscription, forkJoin } from 'rxjs';
 
 import { PokemonService } from '../../services/pokemon.service';
 import { PokemonUtilsService } from '../../utils/pokemon-utils';
 import { SettingsService } from '../../services/settings.service';
 import { PokemonSpecies } from '../../models/pokemon-species.model';
 import { Pokemon } from '../../models/pokemon.model';
+import { QuizAudio } from './quiz-audio';
+import { launchConfetti } from './quiz-confetti';
 
 interface QuizSlot {
   speciesId: number;
@@ -25,6 +31,8 @@ interface QuizSlot {
   pokemon: Pokemon;
   cycleableForms: Pokemon[];
   sortKey: number;
+  /** Position in the region's own pokédex (Rowlet is #1 in Alola); absent when the region has no single dex. */
+  dexNo?: number;
 }
 
 interface QuizGroup {
@@ -34,6 +42,27 @@ interface QuizGroup {
 }
 
 type QuizPhase = 'select-mode' | 'select-gen' | 'select-type' | 'playing';
+type PopMenu = 'lang' | 'giveup' | 'restart' | null;
+
+/** The pill under the input: what just happened. */
+interface QuizStatus {
+  kind: 'ok' | 'dupe' | 'section' | 'milestone' | 'info';
+  text: string;
+  sub?: string;
+  url?: string;
+  speciesId?: number;
+  seq: number;
+}
+
+interface SavedRun { ids: number[]; seconds: number; total: number; }
+interface BestRun { count: number; total: number; seconds: number; }
+interface QuizStore { runs: Record<string, SavedRun>; best: Record<string, BestRun>; muted: boolean; }
+
+const STORE_KEY = 'pw-quiz-v2';
+/** Guesses closer together than this keep the streak counter alive. */
+const STREAK_WINDOW_MS = 8000;
+/** Typing "mew" on the way to "mewtwo": wait this long before accepting the shorter name. */
+const PREFIX_GRACE_MS = 650;
 
 const LANG_DISPLAY: Record<number, string> = {
   3: '한국어', 4: '繁中', 5: 'Français', 6: 'Deutsch',
@@ -50,16 +79,26 @@ const TYPE_COLORS: Record<string, string> = {
   steel: '#B7B7CE', fairy: '#D685AD',
 };
 
+const RANKS: Array<{ min: number; title: string; line: string }> = [
+  { min: 1,    title: 'Pokémon Master', line: 'Every last one. Professor Oak would be proud.' },
+  { min: 0.9,  title: 'Champion',       line: 'Barely a handful escaped you.' },
+  { min: 0.7,  title: 'Elite Four',     line: 'A serious Pokédex — a few stragglers left.' },
+  { min: 0.5,  title: 'Gym Leader',     line: 'Half the world is in your head. Keep going.' },
+  { min: 0.25, title: 'Ace Trainer',    line: 'A solid start, plenty still to discover.' },
+  { min: 0,    title: 'Rookie',         line: 'Every Champion started with one Pokémon.' },
+];
+
 @Component({
   selector: 'app-quiz',
   standalone: true,
   imports: [FormsModule, MatIcon],
   templateUrl: './quiz.component.html',
-  styleUrls: ['./quiz.component.css'],
+  styleUrls: ['./quiz.component.css', './quiz-board.css', './quiz-menu.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class QuizComponent implements OnInit, OnDestroy {
   @ViewChild('inputEl') inputEl?: ElementRef<HTMLInputElement>;
+  @ViewChild('confettiEl') confettiEl?: ElementRef<HTMLCanvasElement>;
 
   quizPhase: QuizPhase = 'select-mode';
   isLoading = true;
@@ -67,7 +106,7 @@ export class QuizComponent implements OnInit, OnDestroy {
   columns: QuizGroup[][] = [];
   guessedIds = new Set<number>();
   recentlyGuessedId: number | null = null;
-  lastGuessedUrl = '';
+  flashId: number | null = null;
   inputValue = '';
   showSilhouettes = false;
   revealed = false;
@@ -81,20 +120,43 @@ export class QuizComponent implements OnInit, OnDestroy {
   guessLangIds = new Set<number>();
   availableLangs: { id: number; name: string }[] = [];
 
+  status: QuizStatus | null = null;
+  streak = 0;
+  openMenu: PopMenu = null;
+  showResults = false;
+  muted = false;
+  collapsed = new Set<string>();
+  /** Hide everything already named, leaving only the tiles still to find. */
+  onlyMissing = false;
+
   private allGroups: QuizGroup[] = [];
   private nameMap = new Map<string, PokemonSpecies[]>();
+  private groupCounts = new Map<string, number>();
+  private completedGroups = new Set<string>();
+  private hintCache = new Map<number, string>();
+  private modeKey = 'all';
+  private store: QuizStore = { runs: {}, best: {}, muted: false };
+  private lastGuessAt = 0;
+  private statusSeq = 0;
   private timerRef: ReturnType<typeof setInterval> | null = null;
   private cycleRef: ReturnType<typeof setInterval> | null = null;
+  private commitRef: ReturnType<typeof setTimeout> | null = null;
+  private streakRef: ReturnType<typeof setTimeout> | null = null;
+  private popRef: ReturnType<typeof setTimeout> | null = null;
+  private flashRef: ReturnType<typeof setTimeout> | null = null;
+  private resultsRef: ReturnType<typeof setTimeout> | null = null;
+  private stopConfetti: (() => void) | null = null;
   private langSub?: Subscription;
   private spriteStyleSub?: Subscription;
-  private audioCtx: AudioContext | null = null;
+  private readonly audio = new QuizAudio();
+  private readonly browser: boolean;
 
   private readonly REGIONAL_GEN: Record<string, number> = {
     alola: 7, galar: 8, paldea: 9, kitakami: 9,
   };
 
   private readonly GEN_SORT_DEX: Record<number, number> = {
-    1: 2, 2: 7, 3: 15, 4: 6, 5: 9, 6: 0, 7: 21, 8: 27, 9: 31,
+    1: 2, 2: 7, 3: 15, 4: 6, 5: 8, 6: 0, 7: 21, 8: 27, 9: 31,
   };
 
   private readonly REGIONAL_SORT_DEX: Record<string, number> = {
@@ -105,8 +167,12 @@ export class QuizComponent implements OnInit, OnDestroy {
     private pokemonService: PokemonService,
     private pokemonUtils: PokemonUtilsService,
     private settings: SettingsService,
+    private router: Router,
     private cdr: ChangeDetectorRef,
-  ) {}
+    @Inject(PLATFORM_ID) platformId: object,
+  ) {
+    this.browser = isPlatformBrowser(platformId);
+  }
 
   // ── Derived data ──────────────────────────────────────────────────────────────
 
@@ -130,9 +196,26 @@ export class QuizComponent implements OnInit, OnDestroy {
   get megaCount(): number { return this.allGroups.find(g => g.id === 'mega')?.slots.length ?? 0; }
   get gmaxCount(): number { return this.allGroups.find(g => g.id === 'gmax')?.slots.length ?? 0; }
 
+  get percent(): number { return this.totalCount ? this.guessedIds.size / this.totalCount : 0; }
+  get missedCount(): number { return Math.max(0, this.totalCount - this.guessedIds.size); }
+
+  get pace(): string {
+    if (!this.timerSeconds || !this.guessedIds.size) return '–';
+    return (this.guessedIds.size / (this.timerSeconds / 60)).toFixed(1);
+  }
+
+  get rank(): { title: string; line: string } {
+    return RANKS.find(r => this.percent >= r.min) ?? RANKS[RANKS.length - 1];
+  }
+
+  get resultRows(): Array<{ label: string; got: number; total: number }> {
+    return this.groups.map(g => ({ label: g.label, got: this.guessedInGroup(g), total: g.slots.length }));
+  }
+
   // ── Lifecycle ─────────────────────────────────────────────────────────────────
 
   ngOnInit(): void {
+    this.loadStore();
     this.loadSpecies();
     this.langSub = this.pokemonUtils.watchLanguageChanges().subscribe(langId => {
       this.guessLangIds = new Set([langId]);
@@ -145,18 +228,111 @@ export class QuizComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.persist();
     this.clearTimer();
     this.clearCycle();
+    this.clearCommit();
+    for (const t of [this.streakRef, this.popRef, this.flashRef, this.resultsRef]) if (t) clearTimeout(t);
+    this.stopConfetti?.();
     this.langSub?.unsubscribe();
     this.spriteStyleSub?.unsubscribe();
-    this.audioCtx?.close();
+    this.audio.dispose();
+  }
+
+  @HostListener('window:beforeunload')
+  onUnload(): void { this.persist(); }
+
+  // ── Persistence ───────────────────────────────────────────────────────────────
+
+  private loadStore(): void {
+    if (!this.browser) return;
+    try {
+      const raw = localStorage.getItem(STORE_KEY);
+      if (raw) {
+        const p = JSON.parse(raw) as Partial<QuizStore>;
+        this.store = { runs: p.runs ?? {}, best: p.best ?? {}, muted: !!p.muted };
+      }
+    } catch { /* corrupt or blocked storage: start fresh */ }
+    this.muted = this.store.muted;
+    this.audio.muted = this.muted;
+  }
+
+  private saveStore(): void {
+    if (!this.browser) return;
+    try { localStorage.setItem(STORE_KEY, JSON.stringify(this.store)); } catch { /* quota / private mode */ }
+  }
+
+  /** Writes the in-progress run (or drops it once it is over / empty). */
+  private persist(): void {
+    if (this.quizPhase !== 'playing') return;
+    if (this.guessedIds.size > 0 && !this.finished && !this.revealed) {
+      this.store.runs[this.modeKey] = { ids: [...this.guessedIds], seconds: this.timerSeconds, total: this.totalCount };
+    } else {
+      delete this.store.runs[this.modeKey];
+    }
+    this.saveStore();
+  }
+
+  private recordBest(): void {
+    const prev = this.store.best[this.modeKey];
+    const count = this.guessedIds.size;
+    const complete = count >= this.totalCount;
+    const prevComplete = !!prev && prev.count >= prev.total;
+    const better = !prev
+      || (complete && (!prevComplete || this.timerSeconds < prev.seconds))
+      || (!complete && !prevComplete && count > prev.count);
+    if (better) this.store.best[this.modeKey] = { count, total: this.totalCount, seconds: this.timerSeconds };
+    delete this.store.runs[this.modeKey];
+    this.saveStore();
+  }
+
+  /** "In progress" / "Best" summary for a mode, shown on the picker screens. */
+  meta(key: string): { resume?: SavedRun; best?: BestRun } {
+    return { resume: this.store.runs[key], best: this.store.best[key] };
+  }
+
+  toggleMissing(): void {
+    this.onlyMissing = !this.onlyMissing;
+    this.cdr.detectChanges();
+  }
+
+  /** Primary type colour of a slot's form, used for the accent edge of a named tile. */
+  slotColor(slot: QuizSlot): string {
+    const name = (slot.pokemon as any).pokemontypes?.[0]?.type?.name as string | undefined;
+    return name ? this.typeColor(name) : 'transparent';
+  }
+
+  toggleGroup(g: QuizGroup): void {
+    const next = new Set(this.collapsed);
+    if (!next.delete(g.id)) next.add(g.id);
+    this.collapsed = next;
+    this.cdr.detectChanges();
+  }
+
+  toggleMute(): void {
+    this.muted = !this.muted;
+    this.audio.muted = this.muted;
+    this.store.muted = this.muted;
+    this.saveStore();
+    if (!this.muted) this.audio.correct();
+    this.cdr.detectChanges();
   }
 
   // ── Data loading ──────────────────────────────────────────────────────────────
 
   private loadSpecies(): void {
-    this.pokemonService.getQuizPokemonSpecies().subscribe(res => {
-      const all = res.pokemonspecies;
+    forkJoin({
+      species: this.pokemonService.getQuizPokemonSpecies(),
+      dex: this.pokemonService.getQuizDexNumbers(),
+    }).subscribe(({ species, dex }) => {
+      const all = species.pokemonspecies;
+      const byId = new Map<number, Array<{ pokedex_id: number; pokedex_number: number }>>();
+      for (const d of dex) {
+        const list = byId.get(d.pokemon_species_id);
+        if (list) list.push(d);
+        else byId.set(d.pokemon_species_id, [d]);
+      }
+      for (const sp of all) if (!sp.pokemondexnumbers?.length) sp.pokemondexnumbers = byId.get(sp.id) ?? [];
       this.buildGroups(all);
       this.extractTypes(all);
       this.deriveAvailableLangs(all);
@@ -198,13 +374,14 @@ export class QuizComponent implements OnInit, OnDestroy {
           hisuiGroup.slots.push({
             speciesId: sp.id, species: sp, pokemon: c.defaultPokemon,
             cycleableForms: [c.defaultPokemon, ...c.cosmeticForms],
-            sortKey: spDex.get(30) ?? sp.id,
+            sortKey: spDex.get(30) ?? sp.id, dexNo: spDex.get(30),
           });
         } else {
           const sortKey = genSortDex > 0 ? (spDex.get(genSortDex) ?? sp.id * 100000) : sp.id;
           getGenGroup(genId).slots.push({
             speciesId: sp.id, species: sp, pokemon: c.defaultPokemon,
             cycleableForms: [c.defaultPokemon, ...c.cosmeticForms], sortKey,
+            dexNo: genSortDex > 0 ? spDex.get(genSortDex) : undefined,
           });
         }
       }
@@ -214,7 +391,7 @@ export class QuizComponent implements OnInit, OnDestroy {
           if (!forms.length) continue;
           hisuiGroup.slots.push({
             speciesId: sp.id, species: sp, pokemon: forms[0],
-            cycleableForms: forms, sortKey: spDex.get(30) ?? sp.id,
+            cycleableForms: forms, sortKey: spDex.get(30) ?? sp.id, dexNo: spDex.get(30),
           });
           continue;
         }
@@ -222,12 +399,15 @@ export class QuizComponent implements OnInit, OnDestroy {
         if (!targetGenId || !forms.length) continue;
         const targetSortDex = this.GEN_SORT_DEX[targetGenId] ?? 0;
         const regionalDexId = this.REGIONAL_SORT_DEX[suffix];
-        const sortKey = regionalDexId === targetSortDex
-          ? (spDex.get(regionalDexId) ?? sp.id * 100000)
-          : (spDex.get(regionalDexId) ?? sp.id) + 10000;
+        // Regional forms of older species follow the region's own Pokémon (Rowlet first, not Alolan Rattata).
+        const regionalDex = spDex.get(regionalDexId);
+        const sortKey = regionalDex === undefined
+          ? 1e9 + sp.id
+          : regionalDexId === targetSortDex ? regionalDex : regionalDex + 10000;
         getGenGroup(targetGenId).slots.push({
           speciesId: sp.id, species: sp, pokemon: forms[0],
           cycleableForms: forms, sortKey,
+          dexNo: regionalDexId === targetSortDex ? regionalDex : undefined,
         });
       }
 
@@ -286,7 +466,17 @@ export class QuizComponent implements OnInit, OnDestroy {
   selectGen(id: number | 'hisui'): void { this.applyFilter('gen', id); }
   selectType(name: string): void        { this.applyFilter('type', name); }
   goBack(): void     { this.quizPhase = 'select-mode'; this.cdr.detectChanges(); }
-  changeMode(): void { this.clearTimer(); this.clearCycle(); this.quizPhase = 'select-mode'; this.cdr.detectChanges(); }
+
+  changeMode(): void {
+    this.persist();
+    this.clearTimer();
+    this.clearCycle();
+    this.clearCommit();
+    this.openMenu = null;
+    this.showResults = false;
+    this.quizPhase = 'select-mode';
+    this.cdr.detectChanges();
+  }
 
   private applyFilter(kind: string, arg?: any): void {
     let filtered: QuizGroup[];
@@ -329,88 +519,226 @@ export class QuizComponent implements OnInit, OnDestroy {
         break;
     }
 
+    this.modeKey    = kind === 'gen' || kind === 'type' ? `${kind}:${arg}` : kind;
     this.groups     = filtered;
     this.totalCount = new Set(filtered.flatMap(g => g.slots.map(s => s.speciesId))).size;
     const colCount  = Math.min(4, Math.max(1, filtered.length));
     this.columns    = this.distributeToColumns(colCount);
     this.buildNameMap();
 
-    this.guessedIds      = new Set();
-    this.inputValue      = '';
-    this.lastGuessedUrl  = '';
-    this.timerSeconds    = 0;
-    this.timerStarted    = false;
-    this.finished        = false;
-    this.showSilhouettes = false;
-    this.revealed        = false;
-    this.recentlyGuessedId = null;
-    this.cycleIndex      = 0;
-    this.clearTimer();
-    this.clearCycle();
+    this.clearRunState();
+    this.resumeSaved();
+    this.recount();
+    this.completedGroups = new Set(this.groups.filter(g => this.guessedInGroup(g) === g.slots.length).map(g => g.id));
     this.quizPhase = 'playing';
     this.cdr.detectChanges();
     setTimeout(() => this.inputEl?.nativeElement.focus(), 0);
   }
 
+  /** Picks up a saved run for the current mode, if there is one. */
+  private resumeSaved(): void {
+    const saved = this.store.runs[this.modeKey];
+    if (!saved?.ids.length) return;
+    const inScope = new Set(this.groups.flatMap(g => g.slots.map(s => s.speciesId)));
+    const ids = saved.ids.filter(id => inScope.has(id));
+    if (!ids.length || ids.length >= this.totalCount) return;
+    this.guessedIds = new Set(ids);
+    this.timerSeconds = saved.seconds;
+    this.setStatus({ kind: 'info', text: 'Welcome back', sub: `${ids.length} / ${this.totalCount} restored` });
+  }
+
+  private clearRunState(): void {
+    this.clearTimer();
+    this.clearCycle();
+    this.clearCommit();
+    this.guessedIds        = new Set();
+    this.inputValue        = '';
+    this.timerSeconds      = 0;
+    this.timerStarted      = false;
+    this.finished          = false;
+    this.showSilhouettes   = false;
+    this.revealed          = false;
+    this.recentlyGuessedId = null;
+    this.flashId           = null;
+    this.cycleIndex        = 0;
+    this.streak            = 0;
+    this.lastGuessAt       = 0;
+    this.status            = null;
+    this.openMenu          = null;
+    this.showResults       = false;
+    this.completedGroups   = new Set();
+    this.collapsed         = new Set();
+    this.stopConfetti?.();
+    this.stopConfetti = null;
+  }
+
   // ── Quiz actions ──────────────────────────────────────────────────────────────
 
   onInput(): void {
+    this.clearCommit();
     const key = this.norm(this.inputValue);
-    if (!key) return;
-    const matches = this.nameMap.get(key);
-    const unguessed = matches?.filter(sp => !this.guessedIds.has(sp.id));
-    if (!unguessed?.length) return;
+    if (!key || !this.nameMap.get(key)?.length) return;
+    // "mew" is a real name, but so is "mewtwo": give the player a beat to keep typing
+    if (this.hasLongerCandidate(key)) {
+      this.commitRef = setTimeout(() => this.commitGuess(), PREFIX_GRACE_MS);
+      return;
+    }
+    this.commitGuess();
+  }
+
+  /** Enter accepts the current text immediately, skipping the grace period. */
+  onEnter(): void { this.commitGuess(); }
+
+  private commitGuess(): void {
+    this.clearCommit();
+    if (this.finished || this.revealed) return;
+    const key = this.norm(this.inputValue);
+    const matches = key ? this.nameMap.get(key) : undefined;
+    if (!matches?.length) return;
+    this.inputValue = '';
+
+    const unguessed = matches.filter(sp => !this.guessedIds.has(sp.id));
+    if (!unguessed.length) { this.onRepeat(matches[0]); return; }
 
     if (!this.timerStarted) this.startTimer();
     if (!this.cycleRef) this.startCycle();
 
+    const before = this.percent;
+    const now = Date.now();
+    const step = now - this.lastGuessAt < STREAK_WINDOW_MS ? this.streak : 0;
+    this.streak = step + unguessed.length;
+    this.lastGuessAt = now;
+    if (this.streakRef) clearTimeout(this.streakRef);
+    this.streakRef = setTimeout(() => { this.streak = 0; this.cdr.detectChanges(); }, STREAK_WINDOW_MS);
+
     const next = new Set(this.guessedIds);
     for (const sp of unguessed) next.add(sp.id);
     this.guessedIds = next;
+    this.recount();
 
     const last = unguessed[unguessed.length - 1];
-    this.recentlyGuessedId = last.id;
-    this.inputValue = '';
     const dp = last.pokemons?.find(p => p.is_default);
-    if (dp) this.lastGuessedUrl = this.imageUrl(dp);
-    this.playCorrectSound();
+    this.recentlyGuessedId = last.id;
+    this.setStatus({
+      kind: 'ok', text: this.spName(last), sub: `#${String(last.id).padStart(4, '0')}`,
+      url: dp ? this.imageUrl(dp) : '', speciesId: last.id,
+    });
 
-    if (this.guessedIds.size === this.totalCount) {
-      this.finished = true;
-      this.clearTimer();
+    const justDone = this.groups.filter(g => !this.completedGroups.has(g.id) && this.guessedInGroup(g) === g.slots.length);
+    for (const g of justDone) this.completedGroups.add(g.id);
+    const crossed = this.totalCount >= 40
+      && Math.floor(this.percent * 4) > Math.floor(before * 4) && this.percent < 1;
+
+    if (this.guessedIds.size >= this.totalCount) {
+      this.finish();
+    } else if (justDone.length && this.groups.length > 1) {
+      this.audio.sectionDone();
+      this.setStatus({ kind: 'section', text: `${justDone[0].label} complete`, sub: `${this.guessedIds.size} / ${this.totalCount}` });
+    } else if (crossed) {
+      this.audio.milestone();
+      const pct = Math.floor(this.percent * 4) * 25;
+      this.setStatus({ kind: 'milestone', text: pct === 50 ? 'Halfway there' : `${pct}% named`, sub: `${this.guessedIds.size} / ${this.totalCount}` });
+    } else {
+      this.audio.correct();
     }
 
+    if (!this.finished) this.persist();
     this.cdr.detectChanges();
-    setTimeout(() => {
-      this.recentlyGuessedId = null;
-      this.cdr.detectChanges();
-    }, 700);
+    if (this.popRef) clearTimeout(this.popRef);
+    this.popRef = setTimeout(() => { this.recentlyGuessedId = null; this.cdr.detectChanges(); }, 900);
   }
 
-  enableSilhouettes(): void { this.showSilhouettes = true; this.cdr.detectChanges(); }
+  /** Typed something that is already on the board: say so and point at it. */
+  private onRepeat(sp: PokemonSpecies): void {
+    this.audio.already();
+    this.setStatus({ kind: 'dupe', text: `${this.spName(sp)} is already on the board`, speciesId: sp.id });
+    this.flashId = sp.id;
+    if (this.flashRef) clearTimeout(this.flashRef);
+    this.flashRef = setTimeout(() => { this.flashId = null; this.cdr.detectChanges(); }, 1200);
+    this.cdr.detectChanges();
+  }
 
-  revealAll(): void {
+  private finish(): void {
+    this.finished = true;
+    this.clearTimer();
+    this.recordBest();
+    this.audio.victory();
+    this.resultsRef = setTimeout(() => {
+      this.showResults = true;
+      this.cdr.detectChanges();
+      const canvas = this.confettiEl?.nativeElement;
+      if (canvas) this.stopConfetti = launchConfetti(canvas, Object.values(TYPE_COLORS));
+    }, 1100);
+  }
+
+  enableSilhouettes(): void {
+    this.showSilhouettes = !this.showSilhouettes;
+    this.cdr.detectChanges();
+  }
+
+  giveUp(): void {
+    this.openMenu = null;
     this.revealed = true;
     this.clearTimer();
+    this.clearCommit();
     if (!this.cycleRef) this.startCycle();
+    this.recordBest();
+    this.audio.giveUp();
+    this.showResults = true;
     this.cdr.detectChanges();
   }
 
   reset(): void {
-    this.guessedIds      = new Set();
-    this.inputValue      = '';
-    this.lastGuessedUrl  = '';
-    this.timerSeconds    = 0;
-    this.timerStarted    = false;
-    this.finished        = false;
-    this.showSilhouettes = false;
-    this.revealed        = false;
-    this.recentlyGuessedId = null;
-    this.cycleIndex      = 0;
-    this.clearTimer();
-    this.clearCycle();
+    this.openMenu = null;
+    delete this.store.runs[this.modeKey];
+    this.saveStore();
+    this.clearRunState();
+    this.recount();
     this.cdr.detectChanges();
     setTimeout(() => this.inputEl?.nativeElement.focus(), 0);
+  }
+
+  closeResults(): void {
+    this.showResults = false;
+    this.stopConfetti?.();
+    this.stopConfetti = null;
+    this.cdr.detectChanges();
+  }
+
+  openResults(): void { this.showResults = true; this.cdr.detectChanges(); }
+
+  toggleMenu(m: Exclude<PopMenu, null>): void {
+    this.openMenu = this.openMenu === m ? null : m;
+    this.cdr.detectChanges();
+  }
+
+  // ── Board navigation ──────────────────────────────────────────────────────────
+
+  scrollToGroup(g: QuizGroup): void {
+    if (this.collapsed.has(g.id)) this.toggleGroup(g);
+    document.getElementById(`grp-${g.id}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  /** Scrolls the board to where a species lives and pulses it. */
+  locate(speciesId: number | undefined): void {
+    if (!speciesId) return;
+    const hidden = this.groups.filter(g => this.collapsed.has(g.id) && g.slots.some(s => s.speciesId === speciesId));
+    if (hidden.length) {
+      this.collapsed = new Set([...this.collapsed].filter(id => !hidden.some(g => g.id === id)));
+      this.cdr.detectChanges();
+    }
+    const el = document.querySelector(`[data-sid="${speciesId}"]`);
+    el?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    this.flashId = speciesId;
+    if (this.flashRef) clearTimeout(this.flashRef);
+    this.flashRef = setTimeout(() => { this.flashId = null; this.cdr.detectChanges(); }, 1400);
+    this.cdr.detectChanges();
+  }
+
+  openPokemon(slot: QuizSlot): void {
+    if (!this.guessedIds.has(slot.speciesId) && !this.revealed) return;
+    this.persist();
+    void this.router.navigate(['/pokemon', slot.speciesId]);
   }
 
   // ── Classify helpers ──────────────────────────────────────────────────────────
@@ -482,6 +810,7 @@ export class QuizComponent implements OnInit, OnDestroy {
 
   private buildNameMap(): void {
     this.nameMap.clear();
+    this.hintCache.clear();
     const seen = new Set<number>();
     for (const g of this.groups) {
       for (const s of g.slots) {
@@ -498,6 +827,14 @@ export class QuizComponent implements OnInit, OnDestroy {
         }
       }
     }
+  }
+
+  /** True when some other, still-unnamed Pokémon has a name that starts with `key`. */
+  private hasLongerCandidate(key: string): boolean {
+    for (const [k, list] of this.nameMap) {
+      if (k.length > key.length && k.startsWith(key) && list.some(sp => !this.guessedIds.has(sp.id))) return true;
+    }
+    return false;
   }
 
   toggleLang(id: number): void {
@@ -555,11 +892,28 @@ export class QuizComponent implements OnInit, OnDestroy {
 
   @HostListener('document:keydown', ['$event'])
   onDocumentKeydown(e: KeyboardEvent): void {
-    if (this.quizPhase !== 'playing' || this.finished) return;
+    if (e.key === 'Escape') {
+      if (this.showResults) this.closeResults();
+      else if (this.openMenu) { this.openMenu = null; this.cdr.detectChanges(); }
+      return;
+    }
+    if (this.quizPhase !== 'playing' || this.finished || this.revealed || this.showResults) return;
     if (e.ctrlKey || e.metaKey || e.altKey) return;
     const input = this.inputEl?.nativeElement;
     if (!input || document.activeElement === input) return;
+    const tag = (document.activeElement as HTMLElement | null)?.tagName;
+    if (tag === 'INPUT' || tag === 'TEXTAREA') return;
     if (e.key.length === 1) input.focus();
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(e: MouseEvent): void {
+    if (!this.openMenu) return;
+    const el = e.target as HTMLElement | null;
+    if (el?.isConnected && !el.closest('.qh-pop-wrap')) {
+      this.openMenu = null;
+      this.cdr.detectChanges();
+    }
   }
 
   groupLabel(g: QuizGroup): string { return g.label; }
@@ -577,15 +931,55 @@ export class QuizComponent implements OnInit, OnDestroy {
     return this.pokemonUtils.getLocalizedNameFromEntity(sp, 'pokemonspeciesnames');
   }
 
-  guessedInGroup(g: QuizGroup): number {
-    return g.slots.filter(s => this.guessedIds.has(s.speciesId)).length;
+  /** Label of a tile that is not named yet: its regional dex number (national number where the region has none). */
+  dexLabel(slot: QuizSlot): string {
+    return slot.dexNo !== undefined
+      ? String(slot.dexNo).padStart(3, '0')
+      : String(slot.speciesId).padStart(4, '0');
   }
 
-  formatTime(): string {
-    const h = Math.floor(this.timerSeconds / 3600);
-    const m = Math.floor((this.timerSeconds % 3600) / 60);
-    const s = this.timerSeconds % 60;
-    return [h, m, s].map(v => String(v).padStart(2, '0')).join(':');
+  /** Hover text for a slot: the name once known, a letter-count hint while silhouettes are on. */
+  tip(slot: QuizSlot): string | null {
+    if (this.guessedIds.has(slot.speciesId) || this.revealed) {
+      return `${this.formName(slot)} · #${String(slot.speciesId).padStart(4, '0')}`;
+    }
+    if (!this.showSilhouettes) return null;
+    let hint = this.hintCache.get(slot.speciesId);
+    if (hint === undefined) {
+      const name = this.guessNameOf(slot.species);
+      const chars = [...name.replace(/[\s\-.'’:]/g, '')];
+      hint = chars.length ? `${chars[0].toUpperCase()} ${chars.slice(1).map(() => '_').join(' ')}`.trim() + `  (${chars.length})` : '';
+      this.hintCache.set(slot.speciesId, hint);
+    }
+    return hint || null;
+  }
+
+  private guessNameOf(sp: PokemonSpecies): string {
+    for (const lang of this.guessLangIds) {
+      const n = sp.pokemonspeciesnames?.find(x => x.language_id === lang)?.name;
+      if (n) return n;
+    }
+    return this.spName(sp);
+  }
+
+  private recount(): void {
+    this.groupCounts = new Map(this.groups.map(g => [g.id, g.slots.reduce((n, s) => n + (this.guessedIds.has(s.speciesId) ? 1 : 0), 0)]));
+  }
+
+  guessedInGroup(g: QuizGroup): number {
+    return this.groupCounts.get(g.id) ?? 0;
+  }
+
+  private setStatus(s: Omit<QuizStatus, 'seq'>): void {
+    this.status = { ...s, seq: ++this.statusSeq };
+  }
+
+  formatTime(seconds = this.timerSeconds): string {
+    const h = Math.floor(seconds / 3600);
+    const m = Math.floor((seconds % 3600) / 60);
+    const s = seconds % 60;
+    const ss = String(s).padStart(2, '0');
+    return h > 0 ? `${h}:${String(m).padStart(2, '0')}:${ss}` : `${m}:${ss}`;
   }
 
   typeColor(name: string): string { return TYPE_COLORS[name] || '#888'; }
@@ -596,11 +990,19 @@ export class QuizComponent implements OnInit, OnDestroy {
 
   private startTimer(): void {
     this.timerStarted = true;
-    this.timerRef = setInterval(() => { this.timerSeconds++; this.cdr.detectChanges(); }, 1000);
+    this.timerRef = setInterval(() => {
+      this.timerSeconds++;
+      if (this.timerSeconds % 10 === 0) this.persist();
+      this.cdr.detectChanges();
+    }, 1000);
   }
 
   private clearTimer(): void {
     if (this.timerRef) { clearInterval(this.timerRef); this.timerRef = null; }
+  }
+
+  private clearCommit(): void {
+    if (this.commitRef) { clearTimeout(this.commitRef); this.commitRef = null; }
   }
 
   private startCycle(): void {
@@ -609,35 +1011,5 @@ export class QuizComponent implements OnInit, OnDestroy {
 
   private clearCycle(): void {
     if (this.cycleRef) { clearInterval(this.cycleRef); this.cycleRef = null; }
-  }
-
-  private playCorrectSound(): void {
-    try {
-      if (!this.audioCtx) this.audioCtx = new AudioContext();
-      const ctx = this.audioCtx;
-      const play = () => {
-        const t = ctx.currentTime;
-        // Two-note ascending "da-ding" — A5 → E6 (perfect fifth)
-        const notes = [
-          { freq: 880,  delay: 0,     dur: 0.14 },
-          { freq: 1320, delay: 0.07,  dur: 0.22 },
-        ];
-        for (const { freq, delay, dur } of notes) {
-          const osc  = ctx.createOscillator();
-          const gain = ctx.createGain();
-          osc.type = 'sine';
-          osc.frequency.value = freq;
-          gain.gain.setValueAtTime(0, t + delay);
-          gain.gain.linearRampToValueAtTime(0.22, t + delay + 0.008);
-          gain.gain.exponentialRampToValueAtTime(0.001, t + delay + dur);
-          osc.connect(gain);
-          gain.connect(ctx.destination);
-          osc.start(t + delay);
-          osc.stop(t + delay + dur + 0.02);
-        }
-      };
-      if (ctx.state === 'suspended') ctx.resume().then(play);
-      else play();
-    } catch { /* AudioContext unavailable */ }
   }
 }

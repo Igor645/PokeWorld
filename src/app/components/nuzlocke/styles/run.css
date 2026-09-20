@@ -1,0 +1,115 @@
+/* ══════════════════════════════════════════════════════════════════════════
+   Run dashboard: header, stat strip, tabs, party sidebar
+   ══════════════════════════════════════════════════════════════════════════ */
+.nz-head {
+  display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: 'back actions' 'main actions';
+  gap: 0.35rem 1rem; padding: 1rem 1.25rem 1.1rem; background-color: var(--nz-surface);
+  border: 1px solid var(--nz-line-strong); border-radius: var(--nz-r-lg); box-shadow: var(--nz-shadow);
+  background-image: linear-gradient(100deg, color-mix(in srgb, var(--nz-accent) 14%, transparent), transparent 55%);
+}
+.nz-head .nz-back { grid-area: back; }
+.nz-head-main { grid-area: main; min-width: 0; }
+.nz-head-actions { grid-area: actions; display: flex; gap: 0.4rem; align-self: start; }
+.nz-head-sub { display: flex; flex-wrap: wrap; align-items: center; gap: 0.45rem; margin-top: 0.4rem; font-size: 0.85rem; color: var(--nz-muted); }
+
+/* ── Stat strip ─────────────────────────────────────────────────────────── */
+.nz-stats { display: grid; grid-template-columns: 2.2fr repeat(4, minmax(0, 1fr)); gap: 0.75rem; }
+.nz-stat {
+  display: flex; flex-direction: column; justify-content: center; gap: 0.25rem; padding: 0.75rem 1rem; min-width: 0;
+  background-color: var(--nz-surface); border: 1px solid var(--nz-line-strong); border-radius: var(--nz-r-md); box-shadow: var(--nz-shadow);
+}
+.nz-stat strong { font-size: 1.6rem; font-weight: 900; line-height: 1; font-variant-numeric: tabular-nums; }
+.nz-stat strong small { font-size: 0.9rem; font-weight: 700; color: var(--nz-muted); }
+.nz-stat-sub { font-size: 0.75rem; color: var(--nz-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.nz-stat-cap { border-color: color-mix(in srgb, var(--nz-warn) 55%, var(--nz-line-strong)); }
+.nz-stat-cap strong { color: var(--nz-warn); }
+
+/* ── Layout ─────────────────────────────────────────────────────────────── */
+.nz-layout { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 1rem; align-items: start; }
+.nz-main {
+  min-width: 0; background-color: var(--nz-surface); border: 1px solid var(--nz-line-strong);
+  border-radius: var(--nz-r-lg); box-shadow: var(--nz-shadow);
+}
+.nz-side {
+  position: sticky; top: 1rem; display: flex; flex-direction: column; gap: 0.75rem;
+  max-height: calc(100vh - 2rem); overflow-y: auto; scrollbar-width: thin; padding: 2px;
+}
+
+.nz-tabs {
+  position: sticky; top: 0; z-index: 30; display: flex; gap: 0.15rem; padding: 0 0.6rem; overflow-x: auto; scrollbar-width: none;
+  background-color: var(--nz-surface); border-bottom: 1px solid var(--nz-line-strong); border-radius: var(--nz-r-lg) var(--nz-r-lg) 0 0;
+}
+.nz-tabs::-webkit-scrollbar { display: none; }
+.nz-tab {
+  position: relative; display: inline-flex; align-items: center; padding: 0.85rem 0.9rem; border: none; background: none;
+  font-size: 0.88rem; font-weight: 700; color: var(--nz-muted); white-space: nowrap;
+}
+.nz-tab:hover { color: var(--nz-text); }
+.nz-tab-on, .nz-tab-on:hover { color: var(--nz-accent-text); }
+.nz-tab-on::after { content: ''; position: absolute; left: 0.5rem; right: 0.5rem; bottom: -1px; height: 3px; border-radius: 3px 3px 0 0; background-color: var(--nz-accent); }
+
+.nz-pane { display: flex; flex-direction: column; gap: 1.25rem; padding: 1.1rem 1.25rem 1.5rem; min-height: 320px; }
+
+.nz-section { display: flex; flex-direction: column; gap: 0.75rem; }
+.nz-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 0.6rem; }
+.nz-grid-wide { grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); }
+
+/* ── Party sidebar ──────────────────────────────────────────────────────── */
+.nz-card-title { font-size: 0.78rem; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: var(--nz-heading); margin-bottom: 0.7rem; }
+
+.nz-next {
+  display: flex; align-items: center; gap: 0.75rem; padding: 0.7rem 0.9rem; position: relative; overflow: hidden;
+  border-left: 4px solid var(--boss, var(--nz-accent));
+  background-image: linear-gradient(100deg, color-mix(in srgb, var(--boss, var(--nz-accent)) 22%, transparent), transparent 70%);
+}
+.nz-next-ace { width: 56px; height: 56px; image-rendering: pixelated; flex-shrink: 0; filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.4)); }
+.nz-next-body { display: flex; flex-direction: column; min-width: 0; flex: 1; }
+.nz-next-name { font-size: 1.05rem; font-weight: 900; line-height: 1.15; }
+.nz-next-sub { font-size: 0.75rem; color: var(--nz-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.nz-next-cap { display: flex; flex-direction: column; align-items: flex-end; }
+.nz-next-cap strong { font-size: 1.7rem; font-weight: 900; line-height: 1; color: var(--nz-warn); }
+
+.nz-party-group + .nz-party-group { margin-top: 1rem; }
+.nz-party-player { display: flex; justify-content: space-between; margin-bottom: 0.4rem; font-size: 0.85rem; font-weight: 800; color: var(--nz-soul); }
+.nz-party-player span { color: var(--nz-muted); font-weight: 700; }
+.nz-slots { display: flex; flex-direction: column; gap: 0.35rem; }
+
+.nz-slotcard {
+  display: flex; align-items: center; gap: 0.5rem; min-height: 46px; padding: 0.15rem 0.5rem 0.15rem 0.35rem;
+  background-color: var(--nz-well); border: 1px solid var(--nz-line); border-left: 3px solid var(--t, var(--nz-line-strong)); border-radius: var(--nz-r-sm);
+}
+.nz-slotcard:hover { border-color: var(--nz-line-strong); border-left-color: var(--t, var(--nz-line-strong)); }
+.nz-slotcard-sprite { width: 40px; height: 40px; image-rendering: pixelated; flex-shrink: 0; }
+.nz-slotcard-body { display: flex; flex-direction: column; min-width: 0; flex: 1; }
+.nz-slotcard-name { font-size: 0.88rem; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.nz-slotcard-sub { display: flex; align-items: center; gap: 0.25rem; font-size: 0.7rem; color: var(--nz-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.nz-slotcard-lv { font-size: 0.78rem; font-weight: 800; color: var(--nz-muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.nz-slotcard-btn {
+  padding: 0.2rem 0.5rem; border-radius: 6px; border: 1px solid var(--nz-line-strong); background: none;
+  font-size: 0.7rem; font-weight: 700; color: var(--nz-muted); opacity: 0; transition: opacity 0.12s;
+}
+.nz-slotcard:hover .nz-slotcard-btn, .nz-slotcard-btn:focus-visible { opacity: 1; }
+@media (hover: none) { .nz-slotcard-btn { opacity: 1; } }
+.nz-slotcard-btn:hover { border-color: var(--nz-accent); color: var(--nz-text); }
+.nz-slotcard-empty { justify-content: center; border-style: dashed; background: none; font-size: 0.75rem; color: var(--nz-faint); }
+.nz-lv-warn { color: var(--nz-warn) !important; }
+
+.nz-slotcard-hint { display: none; font-size: 0.8rem; color: var(--nz-faint); }
+
+.nz-weak { display: flex; flex-wrap: wrap; align-items: center; gap: 0.3rem; margin-top: 0.6rem; }
+.nz-weak .nz-eyebrow { margin-right: 0.2rem; }
+
+@media (max-width: 1100px) {
+  .nz-layout { grid-template-columns: 1fr; }
+  .nz-side { position: static; max-height: none; order: -1; overflow: visible; }
+  .nz-slots { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); }
+  .nz-slotcard-empty { display: none; }
+  .nz-slotcard-hint { display: block; }
+  .nz-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .nz-stat-progress { grid-column: 1 / -1; }
+}
+@media (max-width: 640px) {
+  .nz-head { grid-template-columns: 1fr; grid-template-areas: 'back' 'main' 'actions'; }
+  .nz-pane { padding: 0.9rem 0.75rem 1.25rem; }
+  .nz-title { font-size: 1.4rem; }
+}

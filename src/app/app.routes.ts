@@ -13,5 +13,6 @@ export const routes: Routes = [
   { path: 'location/:locationIdOrName', component: NotFoundComponent },
   { path: 'quiz', component: QuizComponent },
   { path: 'pokele', component: PokeleComponent },
+  { path: 'nuzlocke', loadChildren: () => import('./components/nuzlocke/nuzlocke.routes').then(m => m.NUZLOCKE_ROUTES) },
   { path: '**', component: NotFoundComponent }
 ];

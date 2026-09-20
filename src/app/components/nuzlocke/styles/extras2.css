@@ -1,0 +1,128 @@
+/* Boss team viewer, live sharing, soullink pairs, party controls */
+/* ── Boss team viewer ───────────────────────────────────────────────────── */
+.nz-bt { margin-top: 0.4rem; padding: 0.8rem 0.9rem; display: flex; flex-direction: column; gap: 0.7rem; background-color: var(--nz-well); border: 1px solid var(--nz-line); border-radius: var(--nz-r-md); }
+.nz-bt-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.4rem 1rem; font-size: 0.85rem; }
+.nz-bt-mons { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 0.6rem; }
+.nz-bt-mon { display: flex; flex-direction: column; gap: 0.4rem; padding: 0.55rem 0.65rem; background-color: var(--nz-surface); border: 1px solid var(--nz-line); border-radius: var(--nz-r-sm); }
+.nz-bt-top { display: flex; align-items: center; gap: 0.5rem; }
+.nz-bt-sprite { width: 56px; height: 56px; image-rendering: pixelated; flex-shrink: 0; }
+.nz-bt-id { display: flex; flex-direction: column; gap: 0.15rem; min-width: 0; }
+.nz-bt-name { font-size: 0.92rem; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.nz-bt-lv { font-size: 0.78rem; font-weight: 800; color: var(--nz-muted); }
+.nz-bt-types { display: flex; flex-wrap: wrap; gap: 0.2rem; }
+.nz-bt-moves { display: flex; flex-wrap: wrap; gap: 0.2rem 0.3rem; font-size: 0.68rem; color: var(--nz-muted); }
+.nz-bt-moves li { padding: 0.05rem 0.4rem; border: 1px solid var(--nz-line); border-radius: 999px; }
+.nz-bt-answer { display: flex; align-items: center; gap: 0.35rem; padding-top: 0.4rem; border-top: 1px dashed var(--nz-line); font-size: 0.74rem; font-weight: 700; min-height: 34px; }
+.nz-bt-asprite { width: 30px; height: 30px; image-rendering: pixelated; }
+.nz-bt-none { color: var(--nz-faint); font-weight: 600; }
+.nz-bt-sum { display: flex; flex-wrap: wrap; gap: 0.3rem 1.5rem; font-size: 0.8rem; color: var(--nz-muted); }
+
+/* ── per-Pokémon notes, coverage, box picks ─────────────────────────────── */
+.nz-detail-edit { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem 0.75rem; margin-top: 0.25rem; }
+.nz-detail-edit .nz-cd-wide { grid-column: 1 / -1; }
+.nz-detail-edit .nz-select { width: 100%; max-width: none; padding: 0.42rem 0.6rem; }
+.nz-bt-picks { display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem 0.6rem; }
+.nz-bt-pick { display: inline-flex; align-items: center; gap: 0.3rem; padding: 0.15rem 0.6rem 0.15rem 0.2rem; border: 1px solid var(--nz-line-strong); border-radius: 999px; background-color: var(--nz-surface); font-size: 0.78rem; font-weight: 700; }
+.nz-bt-pick small { color: var(--nz-muted); font-weight: 600; }
+@media (max-width: 640px) { .nz-detail-edit { grid-template-columns: 1fr; } }
+
+/* ── Live sharing ───────────────────────────────────────────────────────── */
+.nz-share { position: relative; }
+.nz-live { gap: 0.45rem; }
+.nz-live-dot { width: 9px; height: 9px; border-radius: 50%; background-color: var(--nz-faint); display: inline-block; flex-shrink: 0; }
+.nz-live-on .nz-live-dot, .nz-live-dot.nz-live-on { background-color: var(--nz-good); box-shadow: 0 0 0 3px color-mix(in srgb, var(--nz-good) 25%, transparent); }
+.nz-live-bad .nz-live-dot { background-color: var(--nz-bad); }
+.nz-share-pop {
+  position: absolute; right: 0; top: calc(100% + 8px); z-index: 90; width: min(360px, 90vw); display: flex; flex-direction: column; gap: 0.8rem; padding: 1rem;
+  background-color: var(--nz-surface); border: 1.5px solid var(--nz-accent); border-radius: var(--nz-r-md); box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5); text-align: left;
+}
+.nz-share-row { display: flex; flex-direction: column; gap: 0.4rem; }
+.nz-share-code { padding: 0.55rem 0.7rem; background-color: var(--nz-well); border: 1px dashed var(--nz-line-strong); border-radius: var(--nz-r-sm); font-family: ui-monospace, Consolas, monospace; font-size: 1.15rem; font-weight: 800; letter-spacing: 0.08em; text-align: center; user-select: all; }
+.nz-share-btns { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.nz-share-status { display: flex; flex-direction: column; gap: 0.3rem; }
+.nz-share-peers { display: flex; flex-direction: column; gap: 0.2rem; font-size: 0.85rem; font-weight: 600; }
+.nz-share-peers li { display: flex; align-items: center; gap: 0.5rem; }
+.nz-share-help { font-size: 0.72rem; color: var(--nz-muted); line-height: 1.45; }
+.nz-join { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 0.75rem; }
+
+/* ── Soullink pairs (Box tab) ───────────────────────────────────────────── */
+.nz-seg-n { margin-left: 0.35rem; font-size: 0.68rem; font-weight: 800; opacity: 0.7; }
+.nz-pairs { display: grid; grid-template-columns: repeat(auto-fill, minmax(440px, 1fr)); gap: 0.75rem; }
+.nz-pair { display: flex; flex-direction: column; gap: 0.6rem; padding: 0.75rem 0.85rem; background-color: var(--nz-well); border: 1px solid var(--nz-line); border-radius: var(--nz-r-md); }
+.nz-pair-party { border-color: color-mix(in srgb, var(--nz-accent) 55%, transparent); background-color: color-mix(in srgb, var(--nz-accent) 8%, var(--nz-well)); }
+.nz-pair-split, .nz-pair-void { border-color: color-mix(in srgb, #b048cc 55%, transparent); border-style: dashed; }
+.nz-pair-fallen, .nz-pair-half { border-color: color-mix(in srgb, var(--nz-bad) 40%, transparent); background-color: color-mix(in srgb, var(--nz-bad) 6%, var(--nz-well)); }
+.nz-pair-head { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; }
+.nz-pair-body { display: grid; grid-template-columns: minmax(0, 1fr) 30px minmax(0, 1fr); align-items: center; gap: 0.5rem; }
+.nz-pair-side { display: flex; flex-direction: column; gap: 0.2rem; min-width: 0; }
+.nz-pair-mon { display: flex; align-items: center; gap: 0.5rem; min-width: 0; }
+.nz-pair-sprite { width: 56px; height: 56px; image-rendering: pixelated; flex-shrink: 0; }
+.nz-pair-dead .nz-pair-sprite { filter: grayscale(1); opacity: 0.55; }
+.nz-pair-id { display: flex; flex-direction: column; min-width: 0; gap: 0.1rem; }
+.nz-pair-id b { font-size: 0.92rem; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.nz-pair-sub { font-size: 0.72rem; color: var(--nz-muted); }
+.nz-pair-types { display: flex; gap: 3px; }
+.nz-pair-none { font-size: 0.8rem; color: var(--nz-faint); padding: 0.9rem 0; }
+.nz-pair-link { width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; border-radius: 50%; border: 2px solid #b048cc; color: var(--nz-soul); background-color: color-mix(in srgb, #b048cc 14%, var(--nz-surface)); font-size: 0.95rem; }
+.nz-pair-hint { font-size: 0.78rem; color: var(--nz-muted); }
+.nz-pair-actions { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.nz-chip img.nz-chip-sprite + img.nz-chip-sprite { margin-left: -10px; }
+
+@media (max-width: 560px) { .nz-pairs { grid-template-columns: 1fr; } .nz-pair-body { grid-template-columns: 1fr; } .nz-pair-link { margin: 0 auto; } }
+
+/* ── Level / evolve / fell controls (party sidebar + log) ───────────────── */
+nz-mon-controls { display: contents; }
+.nz-mc { position: relative; display: flex; flex-wrap: wrap; align-items: center; gap: 0.35rem; flex-shrink: 0; }
+.nz-lvstep { display: inline-flex; align-items: stretch; border: 1.5px solid var(--nz-line-strong); border-radius: var(--nz-r-sm); overflow: hidden; background-color: var(--nz-well); }
+.nz-lvstep-btn { width: 26px; border: none; background: none; font-size: 1rem; font-weight: 800; line-height: 1; color: var(--nz-muted); }
+.nz-lvstep-btn:hover { background-color: var(--nz-accent-soft); color: var(--nz-text); }
+.nz-lvstep-btn:active { background-color: var(--nz-accent); color: #fff; }
+.nz-lvstep-mid { display: flex; align-items: center; gap: 0.2rem; padding: 0 0.15rem; font-size: 0.66rem; font-weight: 800; color: var(--nz-muted); }
+.nz-lvstep-mid input {
+  width: 38px; padding: 0.3rem 0; text-align: center; background: none; color: var(--nz-text); border: none; outline: none;
+  font-size: 0.9rem; font-weight: 900; appearance: textfield; -moz-appearance: textfield;
+}
+.nz-lvstep-mid input::-webkit-inner-spin-button, .nz-lvstep-mid input::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+.nz-lvstep:focus-within { border-color: var(--nz-accent); }
+.nz-lvstep.nz-lv-warn { border-color: var(--nz-warn); background-color: color-mix(in srgb, var(--nz-warn) 14%, transparent); }
+
+.nz-evo, .nz-die {
+  padding: 0.32rem 0.6rem; border-radius: var(--nz-r-sm); border: 1.5px solid var(--nz-line-strong); background-color: var(--nz-well);
+  font-size: 0.74rem; font-weight: 800; color: var(--nz-muted); white-space: nowrap;
+}
+.nz-evo:hover { border-color: var(--nz-good); color: var(--nz-good); }
+.nz-form { padding: 0.32rem 0.6rem; border-radius: var(--nz-r-sm); border: 1.5px solid var(--nz-line-strong); background-color: var(--nz-well); font-size: 0.74rem; font-weight: 800; color: var(--nz-muted); }
+.nz-form:hover, .nz-form[aria-expanded='true'] { border-color: #b048cc; color: var(--nz-soul); }
+.nz-picker-types { display: flex; gap: 3px; flex-shrink: 0; }
+.nz-evo-ready {
+  border-color: var(--nz-good); color: var(--nz-good); background-color: color-mix(in srgb, var(--nz-good) 16%, transparent);
+  animation: nz-ready 1.6s ease-in-out infinite;
+}
+@keyframes nz-ready { 50% { box-shadow: 0 0 0 4px color-mix(in srgb, var(--nz-good) 22%, transparent); } }
+.nz-die:hover, .nz-die[aria-expanded='true'] { border-color: var(--nz-bad); color: var(--nz-bad); background-color: color-mix(in srgb, var(--nz-bad) 14%, transparent); }
+
+.nz-pop {
+  position: fixed; z-index: 3500; width: min(320px, 88vw); display: flex; flex-direction: column; gap: 0.5rem; padding: 0.7rem 0.8rem;
+  background-color: var(--nz-surface); border: 1.5px solid var(--nz-accent); border-radius: var(--nz-r-md); box-shadow: 0 14px 34px rgba(0, 0, 0, 0.5); text-align: left; white-space: normal;
+}
+.nz-pop-die { border-color: var(--nz-bad); }
+.nz-death-title small { font-weight: 600; color: var(--nz-muted); }
+
+/* party sidebar cards now carry their own controls */
+.nz-slotcard { flex-wrap: wrap; row-gap: 0.35rem; padding-bottom: 0.4rem; }
+.nz-slotcard-ctl { flex: 1 1 100%; }
+.nz-slotcard .nz-mc { flex: 1 1 100%; }
+.nz-slotcard-btn { opacity: 1 !important; }
+.nz-card-headrow { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 0.7rem; }
+.nz-card-headrow .nz-card-title { margin: 0; }
+.nz-mon .nz-mc { margin-left: auto; }
+
+.nz-cd-field { display: flex; flex-direction: column; gap: 0.25rem; min-width: 0; }
+.nz-cd-label { font-size: 0.66rem; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: var(--nz-muted); }
+.nz-cd-input { padding: 0.42rem 0.6rem !important; font-size: 0.85rem !important; }
+
+/* tighter controls inside the 340px party sidebar so Evolve + Form + Fell fit on one line */
+.nz-slotcard .nz-mc { gap: 0.25rem; }
+.nz-slotcard .nz-evo, .nz-slotcard .nz-form, .nz-slotcard .nz-die { padding: 0.3rem 0.42rem; font-size: 0.7rem; }
+.nz-slotcard .nz-lvstep-btn { width: 22px; }
+.nz-slotcard .nz-lvstep-mid input { width: 32px; }

@@ -31,6 +31,7 @@ export class MainLayoutComponent {
         { label: 'Pokéle', route: '/pokele', icon: 'help_outline' },
       ]
     },
+    { type: 'link', label: 'Nuzlocke Tracker', route: '/nuzlocke', icon: 'emoji_events' },
   ];
 
   private readonly destroyRef = inject(DestroyRef);

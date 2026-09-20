@@ -69,6 +69,15 @@ export class PokemonService {
       .pipe(map(res => res ?? EMPTY_POKEMON_SPECIES_RESPONSE), catchError(() => of(EMPTY_POKEMON_SPECIES_RESPONSE)));
   }
 
+  /** Regional pokédex numbers for the quiz board, empty if the request fails (the board falls back to national order). */
+  getQuizDexNumbers(): Observable<Array<{ pokemon_species_id: number; pokedex_id: number; pokedex_number: number }>> {
+    return this.graphQLService
+      .executeQuery<{ pokemondexnumber: Array<{ pokemon_species_id: number; pokedex_id: number; pokedex_number: number }> }>(
+        GraphQLQueries.GetQuizDexNumbers
+      )
+      .pipe(map(res => res?.pokemondexnumber ?? []), catchError(() => of([])));
+  }
+
   getVersionNames(): Observable<Array<{ versionnames: Array<{ name: string; language_id: number }> }>> {
     return this.graphQLService
       .executeQuery<{ version: Array<{ id: number; versionnames: Array<{ name: string; language_id: number }> }> }>(

@@ -1,0 +1,213 @@
+/* ══════════════════════════════════════════════════════════════════════════
+   Encounter board: timeline, area rows, encounter cell, picker, bosses
+   ══════════════════════════════════════════════════════════════════════════ */
+.nz-toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem; }
+.nz-toolbar-info { margin-left: auto; font-size: 0.82rem; color: var(--nz-muted); }
+
+.nz-timeline { position: relative; display: flex; flex-direction: column; gap: 0.5rem; padding-left: 30px; }
+.nz-timeline::before { content: ''; position: absolute; left: 9px; top: 14px; bottom: 14px; width: 2px; background-color: var(--nz-line-strong); }
+
+.nz-step { position: relative; }
+.nz-step:focus-within { z-index: 20; }
+
+.nz-node {
+  position: absolute; left: -30px; top: 15px; width: 20px; height: 20px; border-radius: 50%;
+  background-color: var(--nz-surface); border: 2px solid var(--nz-line-strong); display: flex; align-items: center; justify-content: center;
+}
+.nz-step-done > .nz-node { background-color: var(--nz-good); border-color: var(--nz-good); }
+.nz-step-done > .nz-node::after { content: '✓'; font-size: 0.65rem; font-weight: 900; color: #fff; line-height: 1; }
+.nz-step-current > .nz-node { border-color: var(--nz-accent); box-shadow: 0 0 0 4px var(--nz-accent-soft); }
+.nz-node-boss { border-radius: 5px; transform: rotate(45deg); width: 18px; height: 18px; left: -29px; top: 26px; border-color: var(--nz-warn); }
+.nz-step-done > .nz-node-boss::after { transform: rotate(-45deg); }
+
+/* ── Area row ───────────────────────────────────────────────────────────── */
+.nz-area {
+  display: grid; grid-template-columns: 170px minmax(0, 1fr); gap: 0.4rem 1rem; align-items: start; padding: 0.55rem 0.8rem;
+  background-color: var(--nz-well); border: 1px solid var(--nz-line); border-radius: var(--nz-r-md);
+}
+.nz-step-current > .nz-area { border-color: var(--nz-accent); background-color: color-mix(in srgb, var(--nz-accent) 9%, var(--nz-well)); }
+.nz-area-head { display: flex; align-items: center; flex-wrap: wrap; gap: 0.4rem; min-height: 46px; }
+.nz-area-name { font-size: 0.9rem; font-weight: 800; color: var(--nz-heading); }
+.nz-area-cells { display: flex; flex-direction: column; gap: 0.4rem; min-width: 0; }
+.nz-area-cells.nz-duo { display: grid; grid-template-columns: minmax(0, 1fr) 34px minmax(0, 1fr); gap: 0 0.5rem; }
+.nz-cell-col { display: flex; flex-direction: column; gap: 0.35rem; min-width: 0; }
+.nz-player-label { font-size: 0.66rem; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: var(--nz-muted); }
+
+.nz-linkmark {
+  align-self: start; margin-top: 1.35rem; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  background-color: var(--nz-surface); border: 2px solid var(--nz-line-strong); font-size: 0.95rem; color: var(--nz-faint);
+}
+.nz-link-linked { border-color: #b048cc; color: var(--nz-soul); background-color: color-mix(in srgb, #b048cc 16%, var(--nz-surface)); }
+.nz-link-void { border-color: var(--nz-warn); color: var(--nz-warn); }
+.nz-link-pending { border-style: dashed; }
+
+/* ── Encounter cell ─────────────────────────────────────────────────────── */
+.nz-cell { display: flex; align-items: center; flex-wrap: wrap; gap: 0.5rem 0.6rem; min-width: 0; min-height: 46px; }
+.nz-cell-miss { padding: 0 0.2rem; }
+.nz-cell-hint { font-size: 0.8rem; color: var(--nz-muted); }
+
+.nz-misses { display: flex; gap: 0.3rem; margin-left: auto; }
+.nz-miss {
+  padding: 0.3rem 0.65rem; border-radius: 6px; border: 1px solid var(--nz-line-strong); background: none;
+  font-size: 0.72rem; font-weight: 700; color: var(--nz-muted);
+}
+.nz-miss:hover { border-color: var(--nz-warn); color: var(--nz-text); background-color: color-mix(in srgb, var(--nz-warn) 12%, transparent); }
+
+.nz-quick { display: flex; align-items: center; flex-wrap: wrap; gap: 1px; }
+.nz-quick-btn {
+  width: 38px; height: 38px; padding: 0; display: flex; align-items: center; justify-content: center;
+  background: none; border: 1.5px solid transparent; border-radius: 8px;
+}
+.nz-quick-btn:hover { background-color: var(--nz-accent-soft); border-color: var(--nz-accent); }
+.nz-quick-sprite { width: 34px; height: 34px; image-rendering: pixelated; }
+.nz-quick-more { padding-left: 0.3rem; font-size: 0.72rem; font-weight: 700; color: var(--nz-muted); }
+
+.nz-mon {
+  flex-wrap: nowrap; width: 100%; padding: 0.15rem 0.3rem 0.15rem 0.2rem;
+  background-color: var(--nz-surface); border: 1px solid var(--nz-line); border-radius: var(--nz-r-sm);
+}
+.nz-mon:hover { border-color: var(--nz-line-strong); }
+.nz-mon-sprite { width: 44px; height: 44px; image-rendering: pixelated; flex-shrink: 0; }
+.nz-mon-id { display: flex; flex-direction: column; gap: 0.1rem; min-width: 0; flex: 1; }
+.nz-mon-line { display: flex; align-items: center; flex-wrap: wrap; gap: 0.35rem; min-width: 0; }
+.nz-mon-name { font-size: 0.92rem; font-weight: 800; white-space: nowrap; }
+.nz-nick {
+  width: 100%; max-width: 180px; padding: 0.05rem 0.2rem; background: none; color: var(--nz-text);
+  border: none; border-bottom: 1px dashed var(--nz-line-strong); border-radius: 0; font-size: 0.8rem; font-style: italic; outline: none;
+}
+.nz-nick:focus { border-bottom-style: solid; border-bottom-color: var(--nz-accent); }
+.nz-mon-grave { font-size: 0.78rem; font-weight: 600; color: var(--nz-bad); }
+
+.nz-lv { display: flex; align-items: center; gap: 0.25rem; flex-shrink: 0; font-size: 0.72rem; font-weight: 800; color: var(--nz-muted); }
+.nz-lv input {
+  width: 48px; padding: 0.3rem 0.2rem; text-align: center; background-color: var(--nz-well); color: var(--nz-text);
+  border: 1.5px solid var(--nz-line-strong); border-radius: 6px; font-size: 0.85rem; font-weight: 800; outline: none;
+  appearance: textfield; -moz-appearance: textfield;
+}
+.nz-lv input::-webkit-inner-spin-button, .nz-lv input::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+.nz-lv input:focus { border-color: var(--nz-accent); }
+.nz-lv input:disabled { opacity: 0.5; }
+.nz-lv-warn input { border-color: var(--nz-warn); background-color: color-mix(in srgb, var(--nz-warn) 16%, transparent); }
+
+.nz-slot {
+  flex-shrink: 0; min-width: 52px; padding: 0.3rem 0.65rem; border-radius: 999px; font-size: 0.72rem; font-weight: 800;
+  background-color: var(--nz-well); border: 1.5px solid var(--nz-line-strong); color: var(--nz-muted);
+}
+.nz-slot:hover { border-color: var(--nz-accent); color: var(--nz-text); }
+.nz-slot-party { background-color: var(--nz-accent-soft); border-color: var(--nz-accent); color: var(--nz-accent-text); }
+.nz-slot-party:hover { color: var(--nz-accent-text); }
+
+.nz-cell-tools { display: flex; flex-shrink: 0; gap: 1px; }
+@media (hover: hover) {
+  .nz-cell-tools { opacity: 0; transition: opacity 0.12s; }
+  .nz-mon:hover .nz-cell-tools, .nz-mon:focus-within .nz-cell-tools { opacity: 1; }
+}
+
+.nz-mon-dead { background-color: color-mix(in srgb, var(--nz-bad) 7%, var(--nz-surface)); border-color: color-mix(in srgb, var(--nz-bad) 35%, var(--nz-line)); }
+.nz-mon-dead .nz-mon-sprite { filter: grayscale(1); opacity: 0.55; }
+.nz-mon-dead .nz-mon-name { color: var(--nz-muted); text-decoration: line-through; }
+.nz-mon-void { border-style: dashed; border-color: color-mix(in srgb, #b048cc 55%, transparent); }
+.nz-mon-void .nz-mon-sprite { opacity: 0.55; }
+
+/* ── Death panel ────────────────────────────────────────────────────────── */
+.nz-death {
+  width: 100%; display: flex; flex-direction: column; gap: 0.55rem; padding: 0.7rem 0.8rem;
+  background-color: color-mix(in srgb, var(--nz-bad) 8%, var(--nz-surface)); border: 1px solid color-mix(in srgb, var(--nz-bad) 45%, transparent); border-radius: var(--nz-r-sm);
+}
+.nz-death-title { font-size: 0.85rem; font-weight: 800; color: var(--nz-bad); }
+.nz-death-row { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.nz-death-row .nz-input { flex: 1; min-width: 200px; }
+.nz-death-note { font-size: 0.78rem; font-weight: 600; color: var(--nz-soul); }
+
+/* ── Species picker ─────────────────────────────────────────────────────── */
+.nz-picker { position: relative; flex: 1 1 210px; max-width: 320px; min-width: 170px; }
+.nz-picker-input {
+  width: 100%; height: 38px; padding: 0 1.8rem 0 0.75rem; background-color: var(--nz-surface); color: var(--nz-text);
+  border: 1.5px solid var(--nz-line-strong); border-radius: var(--nz-r-sm); font-size: 0.88rem; font-weight: 600; outline: none;
+  transition: border-color 0.15s;
+}
+.nz-picker-input:hover { border-color: color-mix(in srgb, var(--nz-accent) 55%, var(--nz-line-strong)); }
+.nz-picker-input:focus, .nz-picker-open .nz-picker-input { border-color: var(--nz-accent); box-shadow: 0 0 0 3px var(--nz-accent-soft); }
+.nz-picker-caret { position: absolute; right: 0.7rem; top: 50%; transform: translateY(-50%); font-size: 0.7rem; color: var(--nz-muted); pointer-events: none; }
+
+.nz-picker-menu {
+  position: absolute; top: calc(100% + 4px); left: 0; z-index: 60; width: max(100%, 340px); max-height: 320px; overflow-y: auto; padding: 4px;
+  background-color: var(--nz-surface); border: 1.5px solid var(--nz-accent); border-radius: var(--nz-r-md); box-shadow: 0 14px 36px rgba(0, 0, 0, 0.5);
+}
+.nz-picker-group { padding: 0.5rem 0.55rem 0.2rem; font-size: 0.62rem; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; color: var(--nz-muted); }
+.nz-picker-opt {
+  width: 100%; display: flex; align-items: center; gap: 0.5rem; padding: 0.1rem 0.55rem 0.1rem 0.3rem; text-align: left;
+  background: none; border: none; border-radius: 7px; font-size: 0.88rem; font-weight: 700;
+}
+.nz-picker-active { background-color: var(--nz-accent-soft); box-shadow: inset 0 0 0 1.5px var(--nz-accent); }
+.nz-picker-sprite { width: 36px; height: 36px; image-rendering: pixelated; flex-shrink: 0; }
+.nz-picker-name { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.nz-picker-meta { font-size: 0.7rem; font-weight: 600; color: var(--nz-muted); white-space: nowrap; text-transform: capitalize; }
+.nz-picker-note { padding: 0.8rem 0.7rem; font-size: 0.82rem; color: var(--nz-muted); }
+
+/* ── Boss banner ────────────────────────────────────────────────────────── */
+.nz-boss {
+  position: relative; display: flex; align-items: center; gap: 1rem; min-height: 92px; padding: 0.9rem 1.1rem; overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--boss) 55%, var(--nz-line-strong)); border-radius: 12px;
+  background: linear-gradient(100deg, color-mix(in srgb, var(--boss) 34%, var(--nz-surface)) 0%, color-mix(in srgb, var(--boss) 10%, var(--nz-surface)) 62%, var(--nz-surface) 100%);
+}
+.nz-boss-next { box-shadow: 0 0 0 2px color-mix(in srgb, var(--boss) 75%, transparent), 0 6px 22px color-mix(in srgb, var(--boss) 30%, transparent); }
+.nz-boss-ace {
+  position: absolute; right: 270px; bottom: -22px; width: 132px; height: 132px; image-rendering: pixelated; opacity: 0.45; pointer-events: none;
+  filter: drop-shadow(0 0 18px var(--boss)) drop-shadow(0 4px 8px rgba(0, 0, 0, 0.4)); transition: opacity 0.2s, filter 0.3s;
+}
+.nz-boss:hover .nz-boss-ace { opacity: 0.7; }
+.nz-boss-main { position: relative; display: flex; flex-direction: column; gap: 0.1rem; min-width: 0; flex: 1; }
+.nz-boss-role { font-size: 0.66rem; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: var(--nz-muted); }
+.nz-boss-name { font-size: 1.45rem; font-weight: 900; line-height: 1.1; color: var(--nz-text); }
+.nz-boss-sub { font-size: 0.8rem; color: var(--nz-muted); }
+.nz-boss-cap { position: relative; display: flex; flex-direction: column; align-items: center; gap: 0.2rem; }
+.nz-cap-input {
+  width: 62px; padding: 0.2rem; text-align: center; background-color: color-mix(in srgb, var(--nz-surface) 70%, transparent); color: var(--nz-text);
+  border: 1.5px solid var(--nz-line-strong); border-radius: 8px; font-size: 1.35rem; font-weight: 900; outline: none;
+  appearance: textfield; -moz-appearance: textfield;
+}
+.nz-cap-input::-webkit-inner-spin-button, .nz-cap-input::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+.nz-cap-input:focus { border-color: var(--nz-accent); }
+.nz-boss-btn {
+  position: relative; flex-shrink: 0; padding: 0.55rem 1rem; border-radius: 999px; font-size: 0.82rem; font-weight: 800;
+  background-color: color-mix(in srgb, var(--nz-surface) 70%, transparent); border: 1.5px solid var(--nz-line-strong); color: var(--nz-text);
+}
+.nz-boss-btn:hover { border-color: var(--nz-good); }
+.nz-boss-btn-on, .nz-boss-btn-on:hover { background-color: var(--nz-good); border-color: var(--nz-good); color: #fff; }
+.nz-boss-btn-on, .nz-boss-btn-on * { color: #fff; }
+
+.nz-boss-done { background: linear-gradient(100deg, color-mix(in srgb, var(--nz-good) 22%, var(--nz-surface)) 0%, var(--nz-surface) 100%); border-color: color-mix(in srgb, var(--nz-good) 55%, var(--nz-line-strong)); }
+.nz-boss-done .nz-boss-ace { filter: grayscale(1); opacity: 0.18; }
+.nz-boss-done .nz-boss-name { color: var(--nz-muted); }
+.nz-stamp {
+  position: absolute; right: 390px; top: 50%; transform: translateY(-50%) rotate(-9deg); padding: 0.1rem 0.7rem; pointer-events: none;
+  border: 3px solid var(--nz-good); border-radius: 6px; font-size: 1.15rem; font-weight: 900; letter-spacing: 0.18em; text-transform: uppercase; color: var(--nz-good); opacity: 0.85;
+}
+
+.nz-add-area { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-left: 30px; }
+.nz-add-area .nz-input { flex: 1; min-width: 200px; }
+
+@media (max-width: 900px) {
+  .nz-area { grid-template-columns: 1fr; }
+  .nz-area-head { min-height: 0; }
+  .nz-area-cells.nz-duo { grid-template-columns: 1fr; gap: 0.5rem; }
+  .nz-linkmark { display: none; }
+  .nz-boss { flex-wrap: wrap; }
+  .nz-boss-ace { right: -6px; opacity: 0.25; }
+  .nz-stamp { right: auto; left: 45%; }
+  .nz-misses { margin-left: 0; }
+}
+@media (max-width: 560px) {
+  .nz-timeline { padding-left: 24px; }
+  .nz-node { left: -24px; }
+  .nz-node-boss { left: -23px; }
+  .nz-timeline::before { left: 6px; }
+  .nz-mon { flex-wrap: wrap; }
+}
+
+/* Soullink columns are narrow: let the controls drop under the name */
+.nz-duo .nz-mon { flex-wrap: wrap; row-gap: 0.25rem; }
+.nz-duo .nz-mon-id { flex: 1 1 150px; }
+.nz-duo .nz-lv { margin-left: 52px; }
+.nz-duo .nz-slot, .nz-duo .nz-mon > .nz-link-btn, .nz-duo .nz-mon > .nz-tag { margin-left: auto; }

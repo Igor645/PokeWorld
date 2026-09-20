@@ -1,0 +1,222 @@
+/* ══════════════════════════════════════════════════════════════════════════
+   Nuzlocke tracker: tokens + shared primitives
+   The app sets `* { color: var(--accent-text-color) }`, which beats inherited
+   colour on every element, so everything under .nz opts back into inheritance.
+   ══════════════════════════════════════════════════════════════════════════ */
+/* The app shell centres its routed content both ways; pin this feature to the top. */
+nz-shell { display: block; align-self: flex-start; width: 100%; }
+
+.nz {
+  --nz-text: var(--text-color);
+  --nz-heading: var(--accent-text-color);
+  --nz-muted: color-mix(in srgb, var(--text-color) 66%, transparent);
+  --nz-faint: color-mix(in srgb, var(--text-color) 46%, transparent);
+  --nz-surface: var(--background-color);
+  --nz-well: var(--interactive-bg-color);
+  --nz-well-2: var(--interactive-bg-hover);
+  --nz-line: color-mix(in srgb, var(--text-color) 13%, transparent);
+  --nz-line-strong: color-mix(in srgb, var(--text-color) 26%, transparent);
+  --nz-accent: var(--primary-color);
+  --nz-accent-text: color-mix(in srgb, var(--primary-color) 55%, var(--text-color));
+  --nz-accent-soft: color-mix(in srgb, var(--primary-color) 16%, transparent);
+  --nz-good: var(--valid-color);
+  --nz-bad: var(--error-color);
+  --nz-warn: #e0a030;
+  --nz-soul: color-mix(in srgb, #b048cc 72%, var(--text-color));
+  --nz-r-lg: 14px;
+  --nz-r-md: 10px;
+  --nz-r-sm: 8px;
+  --nz-shadow: 0 6px 24px var(--shadow-color);
+
+  display: block;
+  color: var(--nz-text);
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+.nz *, .nz *::before, .nz *::after { color: inherit; box-sizing: border-box; }
+.nz ::placeholder { color: var(--nz-muted); opacity: 1; }
+.nz :where(h1, h2, h3, p, ul, ol, dl, dd) { margin: 0; padding: 0; }
+.nz :where(ul, ol) { list-style: none; }
+.nz a { text-decoration: none; }
+.nz button { font: inherit; cursor: pointer; }
+.nz button:disabled { cursor: not-allowed; }
+.nz img { -webkit-user-drag: none; }
+.nz nz-encounter-cell, .nz nz-species-picker { display: contents; }
+.nz-page nz-area-board, .nz-page nz-box-view, .nz-page nz-graveyard-view,
+.nz-page nz-insights-view, .nz-page nz-rules-view, .nz-page nz-party-panel { display: contents; }
+
+.nz-page {
+  width: var(--general-width);
+  margin: 1.25rem auto 3rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* ── Surfaces ───────────────────────────────────────────────────────────── */
+.nz-panel, .nz-card {
+  background-color: var(--nz-surface);
+  border: 1px solid var(--nz-line-strong);
+  border-radius: var(--nz-r-lg);
+  box-shadow: var(--nz-shadow);
+}
+.nz-panel { padding: 1.25rem; }
+.nz-card { padding: 1rem; }
+
+/* ── Type ───────────────────────────────────────────────────────────────── */
+.nz-title { font-size: 1.7rem; font-weight: 900; line-height: 1.1; color: var(--nz-heading); }
+.nz-title-lg { font-size: 2.1rem; }
+.nz-eyebrow {
+  font-size: 0.66rem; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; color: var(--nz-muted);
+}
+.nz-label { font-size: 0.78rem; font-weight: 700; color: var(--nz-muted); }
+.nz-section-title {
+  display: flex; align-items: center; gap: 0.5rem;
+  font-size: 0.78rem; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: var(--nz-heading);
+}
+.nz-section-hint { font-size: 0.82rem; color: var(--nz-muted); }
+.nz-good { color: var(--nz-good); }
+.nz-bad { color: var(--nz-bad); }
+
+/* ── Buttons ────────────────────────────────────────────────────────────── */
+.nz-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem;
+  padding: 0.6rem 1.15rem; border-radius: var(--nz-r-sm); border: 1.5px solid transparent;
+  font-size: 0.9rem; font-weight: 700; line-height: 1.1; white-space: nowrap;
+  transition: background-color 0.15s, border-color 0.15s, opacity 0.15s;
+}
+.nz-btn:disabled { opacity: 0.4; }
+.nz-btn-sm { padding: 0.42rem 0.8rem; font-size: 0.8rem; }
+.nz-btn-block { width: 100%; }
+.nz-btn-primary { background-color: var(--nz-accent); color: #fff; }
+.nz-btn-primary:hover:not(:disabled) { background-color: var(--primary-hover-color); }
+.nz-btn-primary, .nz-btn-primary * { color: #fff; }
+.nz-btn-ghost { background-color: var(--nz-well); border-color: var(--nz-line-strong); color: var(--nz-text); }
+.nz-btn-ghost:hover:not(:disabled) { background-color: var(--nz-well-2); border-color: var(--nz-accent); }
+.nz-btn-danger {
+  background-color: color-mix(in srgb, var(--nz-bad) 14%, transparent);
+  border-color: color-mix(in srgb, var(--nz-bad) 45%, transparent); color: var(--nz-bad);
+}
+.nz-btn-danger:hover:not(:disabled) { background-color: color-mix(in srgb, var(--nz-bad) 26%, transparent); }
+
+.nz-link-btn {
+  background: none; border: none; padding: 0.2rem 0.3rem; font-size: 0.8rem; font-weight: 700;
+  color: var(--nz-accent-text); white-space: nowrap;
+}
+.nz-link-btn:hover:not(:disabled) { text-decoration: underline; }
+.nz-link-btn:disabled { opacity: 0.4; }
+
+.nz-icon-btn {
+  width: 30px; height: 30px; display: inline-flex; align-items: center; justify-content: center;
+  background: none; border: 1.5px solid transparent; border-radius: 7px; font-size: 0.95rem; line-height: 1; color: var(--nz-muted);
+}
+.nz-icon-btn:hover { background-color: var(--nz-well-2); border-color: var(--nz-line-strong); color: var(--nz-text); }
+.nz-icon-danger:hover { background-color: color-mix(in srgb, var(--nz-bad) 18%, transparent); border-color: var(--nz-bad); color: var(--nz-bad); }
+
+.nz-back { font-size: 0.85rem; font-weight: 700; color: var(--nz-accent-text); align-self: flex-start; }
+.nz-back:hover { text-decoration: underline; }
+
+/* ── Inputs ─────────────────────────────────────────────────────────────── */
+.nz-input {
+  width: 100%; padding: 0.6rem 0.8rem; background-color: var(--nz-well); color: var(--nz-text);
+  border: 1.5px solid var(--nz-line-strong); border-radius: var(--nz-r-sm); font-size: 0.9rem; outline: none;
+  transition: border-color 0.15s;
+}
+.nz-input:hover { border-color: color-mix(in srgb, var(--nz-accent) 55%, var(--nz-line-strong)); }
+.nz-input:focus { border-color: var(--nz-accent); }
+.nz-field { display: flex; flex-direction: column; gap: 0.35rem; min-width: 0; }
+.nz-field-grow { flex: 1; min-width: 180px; }
+.nz-form-row { display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: flex-end; }
+
+/* ── Tags, chips, type badges ───────────────────────────────────────────── */
+.nz-tag {
+  display: inline-flex; align-items: center; padding: 0.12rem 0.55rem; border-radius: 999px;
+  font-size: 0.68rem; font-weight: 800; letter-spacing: 0.03em; white-space: nowrap;
+  background-color: var(--nz-accent-soft); color: var(--nz-accent-text);
+  border: 1px solid color-mix(in srgb, var(--nz-accent) 40%, transparent);
+}
+.nz-tag-soul, .nz-tag-void { background-color: color-mix(in srgb, #b048cc 16%, transparent); color: var(--nz-soul); border-color: color-mix(in srgb, #b048cc 45%, transparent); }
+.nz-tag-warn, .nz-tag-dupe, .nz-tag-skipped { background-color: color-mix(in srgb, var(--nz-warn) 16%, transparent); color: var(--nz-warn); border-color: color-mix(in srgb, var(--nz-warn) 45%, transparent); }
+.nz-tag-failed { background-color: color-mix(in srgb, var(--nz-bad) 14%, transparent); color: var(--nz-bad); border-color: color-mix(in srgb, var(--nz-bad) 45%, transparent); }
+.nz-tag-now { background-color: var(--nz-accent); color: #fff; border-color: transparent; }
+.nz-tag-now, .nz-tag-now * { color: #fff; }
+
+.nz-chips { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.nz-chip {
+  padding: 0.3rem 0.7rem; border-radius: 999px; font-size: 0.78rem; font-weight: 700;
+  background-color: var(--nz-well); border: 1.5px solid var(--nz-line-strong); color: var(--nz-text);
+}
+.nz-chip:hover { border-color: var(--nz-accent); }
+.nz-chip-on { background-color: var(--nz-accent-soft); border-color: var(--nz-accent); }
+
+.nz-rule-chip {
+  padding: 0.1rem 0.5rem; border-radius: 6px; font-size: 0.7rem; font-weight: 700;
+  background-color: var(--nz-well); border: 1px solid var(--nz-line); color: var(--nz-muted);
+}
+.nz-rule-chip:hover { border-color: var(--nz-accent); color: var(--nz-text); }
+
+.nz-count {
+  display: inline-flex; align-items: center; justify-content: center; min-width: 20px; height: 18px; padding: 0 6px;
+  margin-left: 0.4rem; border-radius: 999px; font-size: 0.68rem; font-weight: 800;
+  background-color: color-mix(in srgb, var(--text-color) 14%, transparent); color: var(--nz-text);
+}
+.nz-count-bad { background-color: color-mix(in srgb, var(--nz-bad) 24%, transparent); color: var(--nz-bad); }
+
+.nz-type {
+  display: inline-flex; align-items: center; padding: 0.08rem 0.45rem; border-radius: 5px;
+  font-size: 0.66rem; font-weight: 800; letter-spacing: 0.02em; text-transform: capitalize; white-space: nowrap;
+  color: #fff; background-color: #777;
+}
+.nz-type, .nz-type * { color: #fff; }
+.nz-t-normal { background-color: #9099A1; } .nz-t-fire { background-color: #FF9C54; }
+.nz-t-water { background-color: #4D90D5; } .nz-t-electric { background-color: #F3D23B; }
+.nz-t-grass { background-color: #63BB5B; } .nz-t-ice { background-color: #74CEC0; }
+.nz-t-fighting { background-color: #CE4069; } .nz-t-poison { background-color: #AB6AC8; }
+.nz-t-ground { background-color: #D97846; } .nz-t-flying { background-color: #89AAE3; }
+.nz-t-psychic { background-color: #F97176; } .nz-t-bug { background-color: #91C12F; }
+.nz-t-rock { background-color: #C5B78C; } .nz-t-ghost { background-color: #5269AC; }
+.nz-t-dragon { background-color: #0A6DC4; } .nz-t-dark { background-color: #5A5366; }
+.nz-t-steel { background-color: #5A8EA1; } .nz-t-fairy { background-color: #EC8FE6; }
+.nz-t-electric, .nz-t-electric *, .nz-t-rock, .nz-t-rock * { color: #2b2b2b; }
+
+.nz-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+/* ── Progress + segmented control ───────────────────────────────────────── */
+.nz-progress { height: 6px; border-radius: 999px; overflow: hidden; background-color: var(--nz-line); }
+.nz-progress > span { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--nz-accent), var(--nz-good)); transition: width 0.4s ease; }
+
+.nz-seg { display: inline-flex; padding: 3px; gap: 2px; background-color: var(--nz-well); border: 1px solid var(--nz-line); border-radius: var(--nz-r-sm); }
+.nz-seg-btn { padding: 0.32rem 0.85rem; border: none; border-radius: 6px; background: none; font-size: 0.8rem; font-weight: 700; color: var(--nz-muted); }
+.nz-seg-btn:hover { color: var(--nz-text); }
+.nz-seg-on, .nz-seg-on:hover { background-color: var(--nz-accent); color: #fff; }
+.nz-seg-on, .nz-seg-on:hover { color: #fff; }
+
+/* ── Empty state, spinner, toast ────────────────────────────────────────── */
+.nz-empty { display: flex; flex-direction: column; align-items: center; gap: 0.5rem; padding: 3rem 1rem; text-align: center; }
+.nz-empty-title { font-size: 1.15rem; font-weight: 800; color: var(--nz-heading); }
+.nz-empty-text { color: var(--nz-muted); max-width: 44ch; margin-bottom: 0.5rem; }
+
+.nz-spinner {
+  display: inline-block; width: 12px; height: 12px; border-radius: 50%; vertical-align: -1px;
+  border: 2px solid var(--nz-line-strong); border-top-color: var(--nz-accent); animation: nz-spin 0.7s linear infinite;
+}
+@keyframes nz-spin { to { transform: rotate(360deg); } }
+
+.nz-toast {
+  position: fixed; left: 50%; bottom: 1.5rem; transform: translateX(-50%); z-index: 3000;
+  display: flex; align-items: center; gap: 1rem; padding: 0.7rem 0.9rem 0.7rem 1.1rem; max-width: min(92vw, 520px);
+  background-color: var(--nz-surface); border: 1px solid var(--nz-line-strong); border-radius: var(--nz-r-md);
+  box-shadow: 0 10px 34px rgba(0, 0, 0, 0.45); font-size: 0.88rem; font-weight: 600; animation: nz-toast-in 0.2s ease;
+}
+.nz-toast-btn { padding: 0.3rem 0.8rem; border-radius: 6px; border: none; background-color: var(--nz-accent); font-size: 0.8rem; font-weight: 800; color: #fff; }
+.nz-toast-btn:hover { background-color: var(--primary-hover-color); }
+@keyframes nz-toast-in { from { opacity: 0; transform: translate(-50%, 8px); } }
+
+.nz-check { display: flex; gap: 0.6rem; align-items: flex-start; font-size: 0.85rem; color: var(--nz-muted); }
+.nz-check input { margin-top: 0.2rem; accent-color: var(--nz-accent); }
+.nz-check strong { color: var(--nz-text); }
+
+@media (prefers-reduced-motion: reduce) {
+  .nz *, .nz *::before, .nz *::after { animation: none !important; transition: none !important; }
+}

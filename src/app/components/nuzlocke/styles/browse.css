@@ -1,0 +1,113 @@
+/* ══════════════════════════════════════════════════════════════════════════
+   Run list + create pages
+   ══════════════════════════════════════════════════════════════════════════ */
+.nz-hero {
+  display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 1.25rem;
+  padding: 2rem 2rem; border-radius: var(--nz-r-lg); border: 1px solid var(--nz-line-strong);
+  background:
+    radial-gradient(120% 140% at 0% 0%, color-mix(in srgb, var(--nz-accent) 26%, transparent), transparent 62%),
+    var(--nz-surface);
+  box-shadow: var(--nz-shadow);
+}
+.nz-hero-title { font-size: 2.6rem; font-weight: 900; line-height: 1.05; color: var(--nz-heading); }
+.nz-hero-sub { margin-top: 0.4rem; color: var(--nz-muted); }
+.nz-hero-actions { display: flex; flex-wrap: wrap; gap: 0.6rem; }
+
+.nz-runs { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1rem; }
+
+.nz-runcard {
+  position: relative; display: flex; flex-direction: column; gap: 0.65rem; padding: 1.1rem 1.15rem;
+  background-color: var(--nz-surface); border: 1px solid var(--nz-line-strong); border-radius: var(--nz-r-lg);
+  box-shadow: var(--nz-shadow); transition: transform 0.15s, border-color 0.15s;
+}
+.nz-runcard:hover, .nz-runcard:focus-within { transform: translateY(-2px); border-color: var(--nz-accent); }
+.nz-runcard-top { display: flex; align-items: center; gap: 0.6rem; }
+.nz-runcard-game { font-size: 0.8rem; color: var(--nz-muted); }
+.nz-runcard-link { font-size: 1.25rem; font-weight: 900; line-height: 1.15; color: var(--nz-heading); padding-right: 1.5rem; }
+.nz-runcard-link::after { content: ''; position: absolute; inset: 0; border-radius: inherit; }
+.nz-runcard-party { display: flex; align-items: center; min-height: 44px; margin: 0 -0.2rem; }
+.nz-runcard-sprite { width: 44px; height: 44px; image-rendering: pixelated; }
+.nz-runcard-none { padding-left: 0.2rem; font-size: 0.82rem; color: var(--nz-faint); }
+.nz-runcard-stats { display: flex; flex-wrap: wrap; gap: 0.3rem 1rem; font-size: 0.8rem; color: var(--nz-muted); }
+.nz-runcard-stats b { font-weight: 800; }
+.nz-runcard-when { margin-left: auto; color: var(--nz-faint); }
+.nz-runcard-del {
+  position: absolute; top: 0.7rem; right: 0.7rem; z-index: 1; width: 28px; height: 28px; border-radius: 7px;
+  border: 1.5px solid transparent; background: none; font-size: 0.8rem; color: var(--nz-faint);
+}
+.nz-runcard-del:hover { border-color: var(--nz-bad); color: var(--nz-bad); background-color: color-mix(in srgb, var(--nz-bad) 14%, transparent); }
+
+/* ── Create ─────────────────────────────────────────────────────────────── */
+.nz-create { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 1rem; align-items: start; }
+.nz-create-form { display: flex; flex-direction: column; gap: 1rem; min-width: 0; }
+.nz-create-side { position: sticky; top: 1rem; }
+.nz-step-card { display: flex; flex-direction: column; gap: 0.9rem; }
+.nz-step-title { display: flex; align-items: center; gap: 0.6rem; font-size: 1.05rem; font-weight: 800; color: var(--nz-heading); }
+.nz-step-num {
+  display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; border-radius: 50%;
+  background-color: var(--nz-accent); font-size: 0.75rem; font-weight: 900; color: #fff;
+}
+
+.nz-gamegrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 0.5rem; }
+.nz-game, .nz-mode {
+  display: flex; flex-direction: column; align-items: flex-start; gap: 0.15rem; padding: 0.7rem 0.85rem; text-align: left;
+  background-color: var(--nz-well); border: 1.5px solid var(--nz-line-strong); border-radius: var(--nz-r-md);
+  transition: border-color 0.15s, background-color 0.15s;
+}
+.nz-game:hover, .nz-mode:hover { border-color: var(--nz-accent); }
+.nz-game strong, .nz-mode strong { font-size: 0.92rem; font-weight: 800; }
+.nz-game span, .nz-mode span { font-size: 0.76rem; color: var(--nz-muted); }
+.nz-game-on, .nz-mode-on { border-color: var(--nz-accent); background-color: var(--nz-accent-soft); box-shadow: 0 0 0 1px var(--nz-accent); }
+.nz-game-custom { border-style: dashed; }
+.nz-mode-soul.nz-mode-on { border-color: #b048cc; background-color: color-mix(in srgb, #b048cc 14%, transparent); box-shadow: 0 0 0 1px #b048cc; }
+
+.nz-modes { display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; }
+.nz-mode { padding: 0.95rem 1rem; gap: 0.3rem; }
+.nz-mode strong { font-size: 1.05rem; }
+
+.nz-summary { display: flex; flex-direction: column; gap: 0.9rem; }
+.nz-summary-list { display: flex; flex-direction: column; gap: 0.55rem; }
+.nz-summary-list > div { display: flex; justify-content: space-between; gap: 1rem; font-size: 0.85rem; }
+.nz-summary-list dt { color: var(--nz-muted); }
+.nz-summary-list dd { font-weight: 700; text-align: right; }
+
+/* ── Ruleset editor (shared with the Rules tab) ─────────────────────────── */
+.nz-presets { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0.5rem; }
+.nz-preset {
+  display: flex; flex-direction: column; gap: 0.2rem; padding: 0.75rem 0.9rem; text-align: left;
+  background-color: var(--nz-well); border: 1.5px solid var(--nz-line-strong); border-radius: var(--nz-r-md);
+}
+.nz-preset:hover { border-color: var(--nz-accent); }
+.nz-preset strong { font-size: 0.95rem; font-weight: 800; }
+.nz-preset span { font-size: 0.76rem; color: var(--nz-muted); }
+.nz-preset-on { border-color: var(--nz-accent); background-color: var(--nz-accent-soft); box-shadow: 0 0 0 1px var(--nz-accent); }
+
+.nz-toggles { display: flex; flex-direction: column; margin-top: 0.75rem; border: 1px solid var(--nz-line); border-radius: var(--nz-r-md); overflow: hidden; }
+.nz-toggles > li + li { border-top: 1px solid var(--nz-line); }
+.nz-toggle { display: flex; align-items: center; gap: 0.85rem; padding: 0.75rem 0.9rem; cursor: pointer; }
+.nz-toggle:hover { background-color: var(--nz-well); }
+.nz-toggle input { position: absolute; opacity: 0; pointer-events: none; }
+.nz-toggle-ui {
+  position: relative; flex-shrink: 0; width: 38px; height: 22px; border-radius: 999px;
+  background-color: var(--nz-line-strong); transition: background-color 0.15s;
+}
+.nz-toggle-ui::after {
+  content: ''; position: absolute; top: 3px; left: 3px; width: 16px; height: 16px; border-radius: 50%;
+  background-color: #fff; transition: transform 0.15s;
+}
+.nz-toggle input:checked + .nz-toggle-ui { background-color: var(--nz-accent); }
+.nz-toggle input:checked + .nz-toggle-ui::after { transform: translateX(16px); }
+.nz-toggle input:focus-visible + .nz-toggle-ui { outline: 2px solid var(--nz-accent-text); outline-offset: 2px; }
+.nz-toggle-text { display: flex; flex-direction: column; gap: 0.1rem; min-width: 0; }
+.nz-toggle-text strong { font-size: 0.9rem; font-weight: 800; }
+.nz-toggle-text span { font-size: 0.78rem; color: var(--nz-muted); }
+
+@media (max-width: 900px) {
+  .nz-create { grid-template-columns: 1fr; }
+  .nz-create-side { position: static; order: -1; }
+}
+@media (max-width: 560px) {
+  .nz-modes { grid-template-columns: 1fr; }
+  .nz-hero { padding: 1.4rem 1.2rem; }
+  .nz-hero-title { font-size: 2rem; }
+}

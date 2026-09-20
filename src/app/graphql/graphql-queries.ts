@@ -257,6 +257,16 @@ export const GraphQLQueries = {
     }
   `,
 
+  // Regional dex positions used to order (and number) the quiz board: kanto, updated-johto, updated-hoenn,
+  // extended-sinnoh, original-unova, updated-alola, galar, hisui, paldea, kitakami
+  GetQuizDexNumbers: gql`
+    query GetQuizDexNumbers {
+      pokemondexnumber(where: { pokedex_id: { _in: [2, 7, 15, 6, 8, 21, 27, 30, 31, 32] } }) {
+        pokemon_species_id pokedex_id pokedex_number
+      }
+    }
+  `,
+
   // Search autocomplete — default form only, no language sub-object
   GetPokemonSpeciesByPrefix: gql`
     query GetPokemonSpeciesByPrefix($search: String!, $languageId: Int!) {
