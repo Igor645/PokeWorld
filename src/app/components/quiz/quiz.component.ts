@@ -5,6 +5,9 @@ import {
   ElementRef,
   HostListener,
   Inject,
+  effect,
+  inject,
+  untracked,
   OnDestroy,
   OnInit,
   PLATFORM_ID,
@@ -24,6 +27,7 @@ import { PokemonSpecies } from '../../models/pokemon-species.model';
 import { Pokemon } from '../../models/pokemon.model';
 import { QuizAudio } from './quiz-audio';
 import { launchConfetti } from './quiz-confetti';
+import { QuizVersusService, QzRound } from './quiz-versus.service';
 
 interface QuizSlot {
   speciesId: number;
@@ -41,8 +45,8 @@ interface QuizGroup {
   slots: QuizSlot[];
 }
 
-type QuizPhase = 'select-mode' | 'select-gen' | 'select-type' | 'playing';
-type PopMenu = 'lang' | 'giveup' | 'restart' | null;
+type QuizPhase = 'select-mode' | 'lobby' | 'playing';
+type PopMenu = 'lang' | 'giveup' | 'restart' | 'hint' | null;
 
 /** The pill under the input: what just happened. */
 interface QuizStatus {
@@ -54,9 +58,9 @@ interface QuizStatus {
   seq: number;
 }
 
-interface SavedRun { ids: number[]; seconds: number; total: number; }
+interface SavedRun { ids: number[]; seconds: number; total: number; assisted?: boolean; score?: number; }
 interface BestRun { count: number; total: number; seconds: number; }
-interface QuizStore { runs: Record<string, SavedRun>; best: Record<string, BestRun>; muted: boolean; }
+interface QuizStore { runs: Record<string, SavedRun>; best: Record<string, BestRun>; muted: boolean; name?: string; blitz?: number; }
 
 const STORE_KEY = 'pw-quiz-v2';
 /** Guesses closer together than this keep the streak counter alive. */
@@ -93,12 +97,15 @@ const RANKS: Array<{ min: number; title: string; line: string }> = [
   standalone: true,
   imports: [FormsModule, MatIcon],
   templateUrl: './quiz.component.html',
-  styleUrls: ['./quiz.component.css', './quiz-board.css', './quiz-menu.css'],
+  providers: [QuizVersusService],
+  styleUrls: ['./quiz.component.css', './quiz-board.css', './quiz-menu.css', './quiz-versus.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class QuizComponent implements OnInit, OnDestroy {
   @ViewChild('inputEl') inputEl?: ElementRef<HTMLInputElement>;
   @ViewChild('confettiEl') confettiEl?: ElementRef<HTMLCanvasElement>;
+
+  readonly mp = inject(QuizVersusService);
 
   quizPhase: QuizPhase = 'select-mode';
   isLoading = true;
@@ -109,6 +116,8 @@ export class QuizComponent implements OnInit, OnDestroy {
   flashId: number | null = null;
   inputValue = '';
   showSilhouettes = false;
+  /** Silhouettes were switched on at some point in this run. One-way: it stays on and the run is recorded apart. */
+  assisted = false;
   revealed = false;
   totalCount = 0;
   timerSeconds = 0;
@@ -125,6 +134,27 @@ export class QuizComponent implements OnInit, OnDestroy {
   openMenu: PopMenu = null;
   showResults = false;
   muted = false;
+  score = 0;
+  timedOut = false;
+  /** Time attack: 0 = no limit, otherwise the run ends when this many seconds are up. */
+  blitz = 0;
+  limitSeconds = 0;
+  readonly blitzOptions = [
+    { v: 0, label: 'Free time' }, { v: 180, label: '3 min' }, { v: 300, label: '5 min' }, { v: 600, label: '10 min' },
+  ];
+
+  // multiplayer
+  mpActive = false;
+  lobbyName = '';
+  lobbyCode = '';
+  lobbyMode = 'all';
+  lobbyLimit = 0;
+  copiedInvite = false;
+  readonly limitOptions = [
+    { v: 0, label: 'No limit' }, { v: 180, label: '3 min' }, { v: 300, label: '5 min' }, { v: 600, label: '10 min' },
+  ];
+  private mpRoundN = 0;
+  private hintDeniedN = 0;
   collapsed = new Set<string>();
   /** Hide everything already named, leaving only the tiles still to find. */
   onlyMissing = false;
@@ -172,6 +202,38 @@ export class QuizComponent implements OnInit, OnDestroy {
     @Inject(PLATFORM_ID) platformId: object,
   ) {
     this.browser = isPlatformBrowser(platformId);
+    // a round started by the host (or by ourselves as host) puts everyone on the same board
+    effect(() => {
+      const round = this.mp.round();
+      untracked(() => this.onMpRound(round));
+    });
+    // slots claimed by anybody appear on our board
+    effect(() => {
+      const claims = this.mp.claims();
+      this.mp.players();
+      untracked(() => this.onMpClaims(claims));
+    });
+    effect(() => {
+      const hint = this.mp.hint();
+      untracked(() => this.onMpHint(hint));
+    });
+    effect(() => {
+      const over = this.mp.over();
+      untracked(() => this.onMpOver(over));
+    });
+    effect(() => {
+      const status = this.mp.status();
+      untracked(() => {
+        if (status === 'error' && this.mpActive) {
+          this.mpActive = false;
+          this.clearTimer();
+          this.finished = false;
+          this.showResults = false;
+          this.quizPhase = 'lobby';
+        }
+        this.cdr.markForCheck();
+      });
+    });
   }
 
   // ── Derived data ──────────────────────────────────────────────────────────────
@@ -250,10 +312,12 @@ export class QuizComponent implements OnInit, OnDestroy {
       const raw = localStorage.getItem(STORE_KEY);
       if (raw) {
         const p = JSON.parse(raw) as Partial<QuizStore>;
-        this.store = { runs: p.runs ?? {}, best: p.best ?? {}, muted: !!p.muted };
+        this.store = { runs: p.runs ?? {}, best: p.best ?? {}, muted: !!p.muted, name: p.name, blitz: p.blitz };
       }
     } catch { /* corrupt or blocked storage: start fresh */ }
     this.muted = this.store.muted;
+    this.lobbyName = this.store.name ?? '';
+    this.blitz = [0, 180, 300, 600].includes(this.store.blitz ?? 0) ? (this.store.blitz ?? 0) : 0;
     this.audio.muted = this.muted;
   }
 
@@ -264,9 +328,9 @@ export class QuizComponent implements OnInit, OnDestroy {
 
   /** Writes the in-progress run (or drops it once it is over / empty). */
   private persist(): void {
-    if (this.quizPhase !== 'playing') return;
-    if (this.guessedIds.size > 0 && !this.finished && !this.revealed) {
-      this.store.runs[this.modeKey] = { ids: [...this.guessedIds], seconds: this.timerSeconds, total: this.totalCount };
+    if (this.quizPhase !== 'playing' || this.mpActive) return;
+    if ((this.guessedIds.size > 0 || this.assisted) && !this.finished && !this.revealed) {
+      this.store.runs[this.modeKey] = { ids: [...this.guessedIds], seconds: this.timerSeconds, total: this.totalCount, assisted: this.assisted, score: this.score };
     } else {
       delete this.store.runs[this.modeKey];
     }
@@ -274,21 +338,31 @@ export class QuizComponent implements OnInit, OnDestroy {
   }
 
   private recordBest(): void {
-    const prev = this.store.best[this.modeKey];
+    if (this.mpActive) return;
+    const bestKey = this.assisted ? `${this.modeKey}~hint` : this.modeKey;
+    const prev = this.store.best[bestKey];
     const count = this.guessedIds.size;
     const complete = count >= this.totalCount;
     const prevComplete = !!prev && prev.count >= prev.total;
     const better = !prev
       || (complete && (!prevComplete || this.timerSeconds < prev.seconds))
       || (!complete && !prevComplete && count > prev.count);
-    if (better) this.store.best[this.modeKey] = { count, total: this.totalCount, seconds: this.timerSeconds };
+    if (better) this.store.best[bestKey] = { count, total: this.totalCount, seconds: this.timerSeconds };
     delete this.store.runs[this.modeKey];
     this.saveStore();
   }
 
   /** "In progress" / "Best" summary for a mode, shown on the picker screens. */
-  meta(key: string): { resume?: SavedRun; best?: BestRun } {
-    return { resume: this.store.runs[key], best: this.store.best[key] };
+  /** "4:12" for a finished run, "97/151" for one that was given up. */
+  bestLabel(b: BestRun): string {
+    return b.count >= b.total ? this.formatTime(b.seconds) : `${b.count}/${b.total}`;
+  }
+
+  isComplete(b: BestRun): boolean { return b.count >= b.total; }
+
+  meta(key: string): { resume?: SavedRun; best?: BestRun; hinted?: BestRun } {
+    const k = key + this.blitzSuffix();
+    return { resume: this.store.runs[k], best: this.store.best[k], hinted: this.store.best[`${k}~hint`] };
   }
 
   toggleMissing(): void {
@@ -307,6 +381,24 @@ export class QuizComponent implements OnInit, OnDestroy {
     if (!next.delete(g.id)) next.add(g.id);
     this.collapsed = next;
     this.cdr.detectChanges();
+  }
+
+  private blitzSuffix(): string { return this.blitz ? `~b${this.blitz}` : ''; }
+
+  setBlitz(v: number): void {
+    this.blitz = v;
+    this.store.blitz = v;
+    this.saveStore();
+    this.cdr.detectChanges();
+  }
+
+  /** What the header clock shows: time left in a time attack or a multiplayer round, time spent otherwise. */
+  get clockSeconds(): number {
+    return this.limitSeconds ? Math.max(0, this.limitSeconds - this.timerSeconds) : this.timerSeconds;
+  }
+
+  get urgent(): boolean {
+    return this.limitSeconds > 0 && this.timerStarted && !this.finished && !this.revealed && this.clockSeconds <= 10;
   }
 
   toggleMute(): void {
@@ -337,6 +429,8 @@ export class QuizComponent implements OnInit, OnDestroy {
       this.extractTypes(all);
       this.deriveAvailableLangs(all);
       this.isLoading = false;
+      const room = this.browser ? new URLSearchParams(location.search).get('room') : null;
+      if (room) { this.lobbyCode = room.toUpperCase().slice(0, 4); this.quizPhase = 'lobby'; }
       this.cdr.detectChanges();
     });
   }
@@ -461,13 +555,11 @@ export class QuizComponent implements OnInit, OnDestroy {
   selectAll(): void    { this.applyFilter('all'); }
   selectMega(): void   { this.applyFilter('mega'); }
   selectGmax(): void   { this.applyFilter('gmax'); }
-  openGenPicker(): void  { this.quizPhase = 'select-gen';  this.cdr.detectChanges(); }
-  openTypePicker(): void { this.quizPhase = 'select-type'; this.cdr.detectChanges(); }
   selectGen(id: number | 'hisui'): void { this.applyFilter('gen', id); }
   selectType(name: string): void        { this.applyFilter('type', name); }
-  goBack(): void     { this.quizPhase = 'select-mode'; this.cdr.detectChanges(); }
 
   changeMode(): void {
+    if (this.mpActive || this.mp.status() !== 'off') { this.mp.leave(); this.mpActive = false; this.mpRoundN = 0; this.limitSeconds = 0; this.finished = false; }
     this.persist();
     this.clearTimer();
     this.clearCycle();
@@ -478,31 +570,42 @@ export class QuizComponent implements OnInit, OnDestroy {
     this.cdr.detectChanges();
   }
 
-  private applyFilter(kind: string, arg?: any): void {
-    let filtered: QuizGroup[];
+  /** The sections of the board that belong to a mode. */
+  private filterFor(kind: string, arg?: any): QuizGroup[] {
     switch (kind) {
-      case 'all':  filtered = this.allGroups; break;
-      case 'mega': filtered = this.allGroups.filter(g => g.id === 'mega'); break;
-      case 'gmax': filtered = this.allGroups.filter(g => g.id === 'gmax'); break;
+      case 'mega': return this.allGroups.filter(g => g.id === 'mega');
+      case 'gmax': return this.allGroups.filter(g => g.id === 'gmax');
       case 'gen': {
         const gid = arg === 'hisui' ? 'hisui' : `gen-${arg}`;
-        filtered = this.allGroups.filter(g => g.id === gid);
-        break;
+        return this.allGroups.filter(g => g.id === gid);
       }
       case 'type': {
         const typeName = arg as string;
-        filtered = this.allGroups
+        return this.allGroups
           .map(g => ({
             ...g,
-            slots: g.slots.filter(s =>
-              (s.pokemon as any).pokemontypes?.some((pt: any) => pt.type.name === typeName)
-            ),
+            slots: g.slots.filter(s => (s.pokemon as any).pokemontypes?.some((pt: any) => pt.type.name === typeName)),
           }))
           .filter(g => g.slots.length > 0);
-        break;
       }
-      default: filtered = this.allGroups;
+      default: return this.allGroups;
     }
+  }
+
+  private countFor(kind: string, arg?: any): number {
+    return new Set(this.filterFor(kind, arg).flatMap(g => g.slots.map(s => s.speciesId))).size;
+  }
+
+  /** "gen:3" -> ['gen', 3]; used to turn the host's board choice back into a filter. */
+  private parseKey(key: string): { kind: string; arg?: any } {
+    if (key.startsWith('gen:')) { const v = key.slice(4); return { kind: 'gen', arg: v === 'hisui' ? 'hisui' : Number(v) }; }
+    if (key.startsWith('type:')) return { kind: 'type', arg: key.slice(5) };
+    return { kind: key };
+  }
+
+  private applyFilter(kind: string, arg?: any, mp = false): void {
+    const filtered = this.filterFor(kind, arg);
+    this.mpActive = mp;
 
     switch (kind) {
       case 'all':  this.currentFilter = { label: 'All Pokémon' }; break;
@@ -519,7 +622,9 @@ export class QuizComponent implements OnInit, OnDestroy {
         break;
     }
 
-    this.modeKey    = kind === 'gen' || kind === 'type' ? `${kind}:${arg}` : kind;
+    const baseKey   = kind === 'gen' || kind === 'type' ? `${kind}:${arg}` : kind;
+    this.modeKey    = mp ? baseKey : baseKey + this.blitzSuffix();
+    this.limitSeconds = mp ? this.limitSeconds : this.blitz;
     this.groups     = filtered;
     this.totalCount = new Set(filtered.flatMap(g => g.slots.map(s => s.speciesId))).size;
     const colCount  = Math.min(4, Math.max(1, filtered.length));
@@ -527,7 +632,7 @@ export class QuizComponent implements OnInit, OnDestroy {
     this.buildNameMap();
 
     this.clearRunState();
-    this.resumeSaved();
+    if (!mp) this.resumeSaved();
     this.recount();
     this.completedGroups = new Set(this.groups.filter(g => this.guessedInGroup(g) === g.slots.length).map(g => g.id));
     this.quizPhase = 'playing';
@@ -538,12 +643,15 @@ export class QuizComponent implements OnInit, OnDestroy {
   /** Picks up a saved run for the current mode, if there is one. */
   private resumeSaved(): void {
     const saved = this.store.runs[this.modeKey];
-    if (!saved?.ids.length) return;
+    if (!saved || (!saved.ids.length && !saved.assisted)) return;
     const inScope = new Set(this.groups.flatMap(g => g.slots.map(s => s.speciesId)));
     const ids = saved.ids.filter(id => inScope.has(id));
-    if (!ids.length || ids.length >= this.totalCount) return;
+    if (ids.length >= this.totalCount) return;
     this.guessedIds = new Set(ids);
     this.timerSeconds = saved.seconds;
+    this.assisted = !!saved.assisted;
+    this.score = saved.score ?? 0;
+    this.showSilhouettes = this.assisted;
     this.setStatus({ kind: 'info', text: 'Welcome back', sub: `${ids.length} / ${this.totalCount} restored` });
   }
 
@@ -557,6 +665,9 @@ export class QuizComponent implements OnInit, OnDestroy {
     this.timerStarted      = false;
     this.finished          = false;
     this.showSilhouettes   = false;
+    this.assisted          = false;
+    this.score             = 0;
+    this.timedOut          = false;
     this.revealed          = false;
     this.recentlyGuessedId = null;
     this.flashId           = null;
@@ -597,8 +708,14 @@ export class QuizComponent implements OnInit, OnDestroy {
     if (!matches?.length) return;
     this.inputValue = '';
 
-    const unguessed = matches.filter(sp => !this.guessedIds.has(sp.id));
+    let unguessed = matches.filter(sp => !this.guessedIds.has(sp.id));
     if (!unguessed.length) { this.onRepeat(matches[0]); return; }
+    if (this.mpActive) {
+      // first to name it claims it; the host decides if two players are within a heartbeat of each other
+      const free = new Set(this.mp.claim(unguessed.map(sp => sp.id)));
+      unguessed = unguessed.filter(sp => free.has(sp.id));
+      if (!unguessed.length) { this.onRepeat(matches[0]); return; }
+    }
 
     if (!this.timerStarted) this.startTimer();
     if (!this.cycleRef) this.startCycle();
@@ -607,6 +724,8 @@ export class QuizComponent implements OnInit, OnDestroy {
     const now = Date.now();
     const step = now - this.lastGuessAt < STREAK_WINDOW_MS ? this.streak : 0;
     this.streak = step + unguessed.length;
+    const gain = unguessed.length * (10 + Math.min(this.streak - 1, 9) * 2);
+    this.score += gain;
     this.lastGuessAt = now;
     if (this.streakRef) clearTimeout(this.streakRef);
     this.streakRef = setTimeout(() => { this.streak = 0; this.cdr.detectChanges(); }, STREAK_WINDOW_MS);
@@ -620,7 +739,7 @@ export class QuizComponent implements OnInit, OnDestroy {
     const dp = last.pokemons?.find(p => p.is_default);
     this.recentlyGuessedId = last.id;
     this.setStatus({
-      kind: 'ok', text: this.spName(last), sub: `#${String(last.id).padStart(4, '0')}`,
+      kind: 'ok', text: this.spName(last), sub: `#${String(last.id).padStart(4, '0')} · +${gain}`,
       url: dp ? this.imageUrl(dp) : '', speciesId: last.id,
     });
 
@@ -630,7 +749,7 @@ export class QuizComponent implements OnInit, OnDestroy {
       && Math.floor(this.percent * 4) > Math.floor(before * 4) && this.percent < 1;
 
     if (this.guessedIds.size >= this.totalCount) {
-      this.finish();
+      if (!this.mpActive) this.finish();
     } else if (justDone.length && this.groups.length > 1) {
       this.audio.sectionDone();
       this.setStatus({ kind: 'section', text: `${justDone[0].label} complete`, sub: `${this.guessedIds.size} / ${this.totalCount}` });
@@ -651,7 +770,8 @@ export class QuizComponent implements OnInit, OnDestroy {
   /** Typed something that is already on the board: say so and point at it. */
   private onRepeat(sp: PokemonSpecies): void {
     this.audio.already();
-    this.setStatus({ kind: 'dupe', text: `${this.spName(sp)} is already on the board`, speciesId: sp.id });
+    const owner = this.mpActive ? this.ownerName(sp.id) : '';
+    this.setStatus({ kind: 'dupe', text: owner ? `${this.spName(sp)} was claimed by ${owner}` : `${this.spName(sp)} is already on the board`, speciesId: sp.id });
     this.flashId = sp.id;
     if (this.flashRef) clearTimeout(this.flashRef);
     this.flashRef = setTimeout(() => { this.flashId = null; this.cdr.detectChanges(); }, 1200);
@@ -671,8 +791,13 @@ export class QuizComponent implements OnInit, OnDestroy {
     }, 1100);
   }
 
-  enableSilhouettes(): void {
-    this.showSilhouettes = !this.showSilhouettes;
+  /** Silhouettes are a one-way switch: once on they stay on, and the run is recorded as assisted. */
+  confirmSilhouettes(): void {
+    this.openMenu = null;
+    if (this.showSilhouettes || this.revealed || this.finished) return;
+    this.showSilhouettes = true;
+    this.assisted = true;
+    this.persist();
     this.cdr.detectChanges();
   }
 
@@ -710,6 +835,159 @@ export class QuizComponent implements OnInit, OnDestroy {
   toggleMenu(m: Exclude<PopMenu, null>): void {
     this.openMenu = this.openMenu === m ? null : m;
     this.cdr.detectChanges();
+  }
+
+  // ── Multiplayer ───────────────────────────────────────────────────────────────
+
+  openLobby(): void {
+    this.quizPhase = 'lobby';
+    this.cdr.detectChanges();
+  }
+
+  /** Every board a host can pick, in a form a <select> can list. */
+  lobbyModes(): Array<{ key: string; label: string }> {
+    return [
+      { key: 'all', label: 'All Pokémon' },
+      ...this.genOptions.map(g => ({ key: `gen:${g.id}`, label: `${g.roman} · ${g.label}` })),
+      ...this.availableTypes.map(t => ({ key: `type:${t.name}`, label: `${this.typeCap(t.name)} type` })),
+      { key: 'mega', label: 'Mega Evolutions' },
+      { key: 'gmax', label: 'Gigantamax' },
+    ];
+  }
+
+  async createRoom(): Promise<void> {
+    this.store.name = this.lobbyName;
+    this.saveStore();
+    await this.mp.create(this.lobbyName);
+  }
+
+  async joinRoom(): Promise<void> {
+    this.store.name = this.lobbyName;
+    this.saveStore();
+    await this.mp.join(this.lobbyCode, this.lobbyName);
+  }
+
+  renameMp(): void {
+    this.store.name = this.lobbyName;
+    this.saveStore();
+    if (this.mp.status() === 'live') this.mp.setName(this.lobbyName);
+  }
+
+  hostStart(): void {
+    const { kind, arg } = this.parseKey(this.lobbyMode);
+    this.mp.startRound(this.lobbyMode, this.lobbyLimit, this.countFor(kind, arg));
+  }
+
+  leaveRoom(): void {
+    this.mp.leave();
+    this.mpActive = false;
+    this.mpRoundN = 0;
+    this.limitSeconds = 0;
+    this.clearTimer();
+    this.finished = false;
+    this.showResults = false;
+    this.quizPhase = 'lobby';
+    this.cdr.detectChanges();
+  }
+
+  async copyInvite(): Promise<void> {
+    const link = `${location.origin}/quiz?room=${this.mp.code()}`;
+    try { await navigator.clipboard.writeText(link); this.copiedInvite = true; } catch { this.copiedInvite = false; }
+    setTimeout(() => { this.copiedInvite = false; this.cdr.markForCheck(); }, 2200);
+    this.cdr.markForCheck();
+  }
+
+  private onMpRound(round: QzRound | null): void {
+    if (!round || this.mp.status() !== 'live' || round.n === this.mpRoundN || !this.allGroups.length) return;
+    this.mpRoundN = round.n;
+    this.hintDeniedN = 0;
+    const { kind, arg } = this.parseKey(round.modeKey);
+    this.limitSeconds = round.limitSec;
+    this.applyFilter(kind, arg, true);
+    this.startTimer();
+    this.setStatus({ kind: 'info', text: 'Go!', sub: 'first to name it claims it' });
+    this.cdr.markForCheck();
+  }
+
+  /** The room agreed to silhouettes (or somebody declined). */
+  private onMpHint(h: { on: boolean; denied: { by: string; n: number } | null }): void {
+    if (!this.mpActive) return;
+    if (h.on && !this.showSilhouettes) {
+      this.showSilhouettes = true;
+      this.assisted = true;
+      this.setStatus({ kind: 'info', text: 'Silhouettes are on for everyone' });
+    }
+    if (h.denied && h.denied.n !== this.hintDeniedN) {
+      this.hintDeniedN = h.denied.n;
+      this.setStatus({ kind: 'dupe', text: `${h.denied.by} declined silhouettes` });
+    }
+    this.cdr.markForCheck();
+  }
+
+  /** A vote is open: who asked, how many agreed, and whether I still have to answer. */
+  get hintVote(): { by: string; yes: number; total: number; mine: boolean; asker: boolean } | null {
+    const h = this.mp.hint();
+    if (!this.mpActive || !h.by || h.on) return null;
+    const me = this.mp.myId();
+    return {
+      by: this.mp.players().find(p => p.id === h.by)?.name ?? 'Someone',
+      yes: Object.keys(h.votes).length,
+      total: this.mp.players().length,
+      mine: me in h.votes,
+      asker: h.by === me,
+    };
+  }
+
+  askForSilhouettes(): void {
+    if (this.showSilhouettes || this.hintVote) return;
+    this.mp.requestHint();
+    this.setStatus({ kind: 'info', text: 'Asked the room about silhouettes', sub: 'everyone has to agree' });
+    this.cdr.markForCheck();
+  }
+
+  private onMpClaims(claims: Map<number, string>): void {
+    if (!this.mpActive) return;
+    this.guessedIds = new Set(claims.keys());
+    this.recount();
+    this.cdr.markForCheck();
+  }
+
+  private onMpOver(over: boolean): void {
+    if (!over || !this.mpActive || this.finished) return;
+    this.finished = true;
+    this.clearTimer();
+    const cleared = this.guessedIds.size >= this.totalCount;
+    if (cleared) this.audio.victory(); else this.audio.sectionDone();
+    this.resultsRef = setTimeout(() => {
+      this.showResults = true;
+      this.cdr.detectChanges();
+      const canvas = this.confettiEl?.nativeElement;
+      if (canvas && this.mpStandings[0]?.id === this.mp.myId()) this.stopConfetti = launchConfetti(canvas, Object.values(TYPE_COLORS));
+    }, 700);
+    this.cdr.markForCheck();
+  }
+
+  /** Players by how many slots they claimed, for the strip in the header and the results. */
+  get mpStandings() {
+    return [...this.mp.players()].sort((a, b) => b.claims - a.claims || b.points - a.points);
+  }
+
+  /** The top two claimed the same number of slots. */
+  get mpTie(): boolean {
+    const s = this.mpStandings;
+    return s.length > 1 && s[0].claims === s[1].claims;
+  }
+
+  isMe(id: string): boolean { return id === this.mp.myId(); }
+
+  ownerName(speciesId: number): string {
+    const pid = this.mp.claims().get(speciesId);
+    return this.mp.players().find(p => p.id === pid)?.name ?? '';
+  }
+
+  ownerColor(slot: QuizSlot): string {
+    const pid = this.mp.claims().get(slot.speciesId);
+    return this.mp.players().find(p => p.id === pid)?.color ?? 'transparent';
   }
 
   // ── Board navigation ──────────────────────────────────────────────────────────
@@ -873,6 +1151,11 @@ export class QuizComponent implements OnInit, OnDestroy {
     return slot.cycleableForms[(this.cycleIndex + slot.speciesId) % slot.cycleableForms.length];
   }
 
+  /** The 96px sprite: silhouettes of a thousand full-size artworks are needlessly heavy to decode and filter. */
+  silUrl(pokemon: Pokemon): string {
+    return pokemon.pokemonsprites?.[0]?.sprites?.front_default || this.imageUrl(pokemon);
+  }
+
   imageUrl(pokemon: Pokemon): string {
     const sprites = pokemon.pokemonsprites?.[0]?.sprites;
     const style = this.settings.getSetting<string>('quizSpriteStyle');
@@ -941,7 +1224,8 @@ export class QuizComponent implements OnInit, OnDestroy {
   /** Hover text for a slot: the name once known, a letter-count hint while silhouettes are on. */
   tip(slot: QuizSlot): string | null {
     if (this.guessedIds.has(slot.speciesId) || this.revealed) {
-      return `${this.formName(slot)} · #${String(slot.speciesId).padStart(4, '0')}`;
+      const by = this.mpActive ? this.ownerName(slot.speciesId) : '';
+      return `${this.formName(slot)} · #${String(slot.speciesId).padStart(4, '0')}${by ? ' · ' + by : ''}`;
     }
     if (!this.showSilhouettes) return null;
     let hint = this.hintCache.get(slot.speciesId);
@@ -989,9 +1273,15 @@ export class QuizComponent implements OnInit, OnDestroy {
   // ── Timer / cycle ─────────────────────────────────────────────────────────────
 
   private startTimer(): void {
+    if (this.timerRef) return;
     this.timerStarted = true;
     this.timerRef = setInterval(() => {
       this.timerSeconds++;
+      if (this.limitSeconds && !this.mpActive && this.timerSeconds >= this.limitSeconds) {
+        this.timedOut = true;
+        this.giveUp();
+        return;
+      }
       if (this.timerSeconds % 10 === 0) this.persist();
       this.cdr.detectChanges();
     }, 1000);

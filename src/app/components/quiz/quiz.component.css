@@ -384,6 +384,30 @@
   flex-shrink: 0;
 }
 
+.assist-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  height: 26px;
+  padding: 0 0.6rem 0 0.4rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--qz-warn) 18%, transparent);
+  color: var(--qz-warn);
+  font-size: 0.72rem;
+  font-weight: 800;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.assist-chip mat-icon {
+  font-size: 0.95rem;
+  width: 0.95rem;
+  height: 0.95rem;
+  color: inherit;
+}
+
+.assist-chip-lg { height: 28px; font-size: 0.74rem; }
+
 /* Popovers */
 .qh-pop-wrap { position: relative; }
 

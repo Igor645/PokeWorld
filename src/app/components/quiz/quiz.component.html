@@ -24,135 +24,208 @@
       <p class="mode-select-sub">Type any Pokémon from memory. Every correct name fills its slot on the board.</p>
     </div>
 
-    <div class="mode-cards">
+    <div class="mode-panel">
+
+      <div class="blitz" role="group" aria-label="Time limit">
+        <span class="blitz-label"><mat-icon>hourglass_top</mat-icon>Time attack</span>
+        @for (o of blitzOptions; track o.v) {
+        <button class="blitz-chip" [class.on]="blitz === o.v" [attr.aria-pressed]="blitz === o.v" (click)="setBlitz(o.v)">{{ o.label }}</button>
+        }
+        <span class="blitz-note">{{ blitz ? 'Name as many as you can before the clock runs out.' : 'No limit — take your time.' }}</span>
+      </div>
 
       @let mAll = meta('all');
-      <button class="mode-card" style="--mc:#6366f1" (click)="selectAll()">
-        <div class="mode-card-icon-wrap">
-          <mat-icon class="mode-card-icon">grid_view</mat-icon>
-        </div>
-        <span class="mode-card-title">All Pokémon</span>
-        <span class="mode-card-desc">Every species across all generations</span>
-        <span class="mode-card-count">{{ allSpeciesCount }} Pokémon</span>
-        @if (mAll.resume; as r) {
-          <span class="mode-card-meta live">In progress · {{ r.ids.length }} / {{ r.total }}</span>
-        } @else if (mAll.best; as b) {
-          <span class="mode-card-meta">Best {{ b.count }} / {{ b.total }} · {{ formatTime(b.seconds) }}</span>
-        }
+      <button class="mode-card mode-feature" (click)="selectAll()">
+        <span class="mf-icon"><mat-icon>grid_view</mat-icon></span>
+        <span class="mf-text">
+          <span class="mf-title">All Pokémon</span>
+          <span class="mf-desc">Every species across all generations · {{ allSpeciesCount }} to find</span>
+          @if (mAll.resume; as r) {
+            <span class="pick-bar"><span class="pick-bar-fill" [style.width.%]="r.ids.length / r.total * 100"></span></span>
+          }
+        </span>
+        <span class="mf-side">
+          @if (mAll.resume; as r) {
+            <span class="mf-state live">Continue · {{ r.ids.length }} / {{ r.total }}</span>
+          } @else if (mAll.best; as b) {
+            <span class="mf-state">Best {{ bestLabel(b) }}</span>
+          } @else if (mAll.hinted; as hh) {
+            <span class="mf-state">With hints {{ bestLabel(hh) }}</span>
+          } @else {
+            <span class="mf-state">Start</span>
+          }
+          <mat-icon class="mf-go">arrow_forward</mat-icon>
+        </span>
       </button>
 
-      <button class="mode-card" style="--mc:#7038F8" (click)="openGenPicker()">
-        <div class="mode-card-icon-wrap">
-          <mat-icon class="mode-card-icon">map</mat-icon>
-        </div>
-        <span class="mode-card-title">Generation</span>
-        <span class="mode-card-desc">Focus on one region at a time</span>
-        <span class="mode-card-count">I · II · III · IV · V · VI · VII · VIII · IX</span>
+      <button class="mode-card mode-together" (click)="openLobby()">
+        <span class="mf-icon"><mat-icon>groups</mat-icon></span>
+        <span class="mf-text">
+          <span class="mf-title">Play together</span>
+          <span class="mf-desc">Share one board with friends. First to name a Pokémon claims it, as a team or against each other.</span>
+        </span>
+        <span class="mf-side"><span class="mf-state live">Multiplayer</span><mat-icon class="mf-go">arrow_forward</mat-icon></span>
       </button>
 
-      <button class="mode-card" style="--mc:#EE8130" (click)="openTypePicker()">
-        <div class="mode-card-icon-wrap">
-          <mat-icon class="mode-card-icon">local_fire_department</mat-icon>
+      <section class="mode-group">
+        <h3 class="mode-group-title">By generation</h3>
+        <div class="gen-pick-grid">
+          @for (g of genOptions; track g.id) {
+          @let m = meta('gen:' + g.id);
+          <button class="gen-pick-btn" (click)="selectGen(g.id)">
+            <span class="gen-pick-head">
+              <span class="gen-pick-roman">{{ g.roman }}</span>
+              <span class="gen-pick-label">{{ g.label }}</span>
+            </span>
+            <span class="gen-pick-count">{{ g.count }} Pokémon</span>
+            @if (m.resume; as r) {
+              <span class="pick-bar"><span class="pick-bar-fill" [style.width.%]="r.ids.length / r.total * 100"></span></span>
+            } @else if (m.best; as b) {
+              <span class="pick-done" [class.partial]="!isComplete(b)"><mat-icon>{{ isComplete(b) ? 'check' : 'flag' }}</mat-icon>{{ bestLabel(b) }}</span>
+            } @else if (m.hinted; as hh) {
+              <span class="pick-done partial"><mat-icon>visibility</mat-icon>{{ bestLabel(hh) }}</span>
+            }
+          </button>
+          }
         </div>
-        <span class="mode-card-title">Type</span>
-        <span class="mode-card-desc">Filter by a single type</span>
-        <span class="mode-card-count">18 types to choose from</span>
-      </button>
+      </section>
 
-      @let mMega = meta('mega');
-      <button class="mode-card" style="--mc:#4080FF" (click)="selectMega()" [disabled]="megaCount === 0">
-        <div class="mode-card-icon-wrap">
-          <mat-icon class="mode-card-icon">auto_awesome</mat-icon>
+      <section class="mode-group">
+        <h3 class="mode-group-title">By type</h3>
+        <div class="type-pick-grid">
+          @for (t of availableTypes; track t.id) {
+          @let m = meta('type:' + t.name);
+          <button class="type-pick-btn" [style.background]="typeColor(t.name)" (click)="selectType(t.name)">
+            <img class="type-pick-icon" [src]="typeIcon(t.name)" [alt]="t.name" />
+            <span class="type-pick-name">{{ typeCap(t.name) }}</span>
+            @if (m.resume; as r) {
+              <span class="type-pick-meta">{{ r.ids.length }}/{{ r.total }}</span>
+            } @else if (m.best; as b) {
+              <span class="type-pick-meta">{{ isComplete(b) ? '✓' : b.count + '/' + b.total }}</span>
+            }
+          </button>
+          }
         </div>
-        <span class="mode-card-title">Mega Evolutions</span>
-        <span class="mode-card-desc">Only Mega-evolved forms</span>
-        <span class="mode-card-count">{{ megaCount }} Mega forms</span>
-        @if (mMega.resume; as r) {
-          <span class="mode-card-meta live">In progress · {{ r.ids.length }} / {{ r.total }}</span>
-        } @else if (mMega.best; as b) {
-          <span class="mode-card-meta">Best {{ b.count }} / {{ b.total }} · {{ formatTime(b.seconds) }}</span>
-        }
-      </button>
+      </section>
 
-      @let mGmax = meta('gmax');
-      <button class="mode-card" style="--mc:#C02000" (click)="selectGmax()" [disabled]="gmaxCount === 0">
-        <div class="mode-card-icon-wrap">
-          <mat-icon class="mode-card-icon">open_in_full</mat-icon>
+      <section class="mode-group">
+        <h3 class="mode-group-title">Special forms</h3>
+        <div class="form-pick-row">
+          @let mMega = meta('mega');
+          <button class="mode-card form-card" (click)="selectMega()" [disabled]="megaCount === 0">
+            <span class="mf-icon"><mat-icon>auto_awesome</mat-icon></span>
+            <span class="mf-text">
+              <span class="mf-title">Mega Evolutions</span>
+              <span class="mf-desc">Only Mega-evolved forms · {{ megaCount }}</span>
+              @if (mMega.resume; as r) {
+                <span class="pick-bar"><span class="pick-bar-fill" [style.width.%]="r.ids.length / r.total * 100"></span></span>
+              }
+            </span>
+            <span class="mf-side">
+              @if (mMega.resume; as r) { <span class="mf-state live">{{ r.ids.length }} / {{ r.total }}</span> }
+              @else if (mMega.best; as b) { <span class="mf-state">Best {{ bestLabel(b) }}</span> }
+              @else if (mMega.hinted; as hh) { <span class="mf-state">Hints {{ bestLabel(hh) }}</span> }
+            </span>
+          </button>
+
+          @let mGmax = meta('gmax');
+          <button class="mode-card form-card" (click)="selectGmax()" [disabled]="gmaxCount === 0">
+            <span class="mf-icon"><mat-icon>open_in_full</mat-icon></span>
+            <span class="mf-text">
+              <span class="mf-title">Gigantamax</span>
+              <span class="mf-desc">Only Gigantamax forms · {{ gmaxCount }}</span>
+              @if (mGmax.resume; as r) {
+                <span class="pick-bar"><span class="pick-bar-fill" [style.width.%]="r.ids.length / r.total * 100"></span></span>
+              }
+            </span>
+            <span class="mf-side">
+              @if (mGmax.resume; as r) { <span class="mf-state live">{{ r.ids.length }} / {{ r.total }}</span> }
+              @else if (mGmax.best; as b) { <span class="mf-state">Best {{ bestLabel(b) }}</span> }
+              @else if (mGmax.hinted; as hh) { <span class="mf-state">Hints {{ bestLabel(hh) }}</span> }
+            </span>
+          </button>
         </div>
-        <span class="mode-card-title">Gigantamax</span>
-        <span class="mode-card-desc">Only Gigantamax forms</span>
-        <span class="mode-card-count">{{ gmaxCount }} G-Max forms</span>
-        @if (mGmax.resume; as r) {
-          <span class="mode-card-meta live">In progress · {{ r.ids.length }} / {{ r.total }}</span>
-        } @else if (mGmax.best; as b) {
-          <span class="mode-card-meta">Best {{ b.count }} / {{ b.total }} · {{ formatTime(b.seconds) }}</span>
-        }
-      </button>
+      </section>
 
     </div>
     <p class="mode-tip">Progress saves automatically — leave and pick up where you stopped.</p>
   </div>
   }
 
-  <!-- ── Generation picker ─────────────────────────────────────── -->
-  @if (!isLoading && quizPhase === 'select-gen') {
-  <div class="sub-select">
-    <div class="sub-select-header">
-      <button class="back-btn" (click)="goBack()">
-        <mat-icon>arrow_back</mat-icon>
-        Back
-      </button>
-      <span class="sub-select-title">Choose a Generation</span>
+  <!-- ── Multiplayer lobby ─────────────────────────────────────── -->
+  @if (!isLoading && quizPhase === 'lobby') {
+  <div class="lobby">
+    <div class="lobby-head">
+      <button class="qh-btn" (click)="changeMode()"><mat-icon>arrow_back</mat-icon>Back</button>
+      <div>
+        <div class="mode-select-eyebrow">Multiplayer</div>
+        <h2 class="lobby-title">Play together</h2>
+      </div>
     </div>
-    <div class="gen-pick-grid">
-      @for (g of genOptions; track g.id) {
-      @let m = meta('gen:' + g.id);
-      <button class="gen-pick-btn" (click)="selectGen(g.id)">
-        <span class="gen-pick-roman">{{ g.roman }}</span>
-        <span class="gen-pick-label">{{ g.label }}</span>
-        <span class="gen-pick-count">{{ g.count }} Pokémon</span>
-        @if (m.resume; as r) {
-          <span class="pick-meta live">{{ r.ids.length }} / {{ r.total }}</span>
-        } @else if (m.best; as b) {
-          <span class="pick-meta">Best {{ b.count }} / {{ b.total }}</span>
-        }
-      </button>
-      }
-    </div>
-  </div>
-  }
+    <p class="lobby-text">Everyone plays the same board at the same time. The first player to name a Pokémon claims its slot for the whole room, so you can race each other or work as a team. Players only ever see claims, never each other's typing.</p>
 
-  <!-- ── Type picker ────────────────────────────────────────────── -->
-  @if (!isLoading && quizPhase === 'select-type') {
-  <div class="sub-select">
-    <div class="sub-select-header">
-      <button class="back-btn" (click)="goBack()">
-        <mat-icon>arrow_back</mat-icon>
-        Back
-      </button>
-      <span class="sub-select-title">Choose a Type</span>
+    <label class="lobby-field">
+      <span>Your name</span>
+      <input class="lobby-input" type="text" maxlength="20" [(ngModel)]="lobbyName" (change)="renameMp()" placeholder="Player" autocomplete="off" />
+    </label>
+
+    @if (mp.status() !== 'live') {
+    <div class="lobby-start">
+      <button class="qh-btn qh-btn-primary lobby-big" (click)="createRoom()" [disabled]="mp.status() === 'connecting'"><mat-icon>add_circle</mat-icon>Create a room</button>
+      <span class="lobby-or">or join one</span>
+      <input class="lobby-input lobby-code" type="text" maxlength="4" [(ngModel)]="lobbyCode" placeholder="CODE" autocomplete="off" aria-label="Room code" />
+      <button class="qh-btn lobby-big" (click)="joinRoom()" [disabled]="mp.status() === 'connecting' || lobbyCode.length < 4"><mat-icon>login</mat-icon>Join</button>
     </div>
-    <div class="type-pick-grid">
-      @for (t of availableTypes; track t.id) {
-      @let m = meta('type:' + t.name);
-      <button class="type-pick-btn" [style.background]="typeColor(t.name)" (click)="selectType(t.name)">
-        <img class="type-pick-icon" [src]="typeIcon(t.name)" [alt]="t.name" />
-        <span class="type-pick-name">{{ typeCap(t.name) }}</span>
-        @if (m.resume; as r) {
-          <span class="type-pick-meta">{{ r.ids.length }}/{{ r.total }}</span>
-        } @else if (m.best; as b) {
-          <span class="type-pick-meta">{{ b.count }}/{{ b.total }}</span>
+    @if (mp.status() === 'connecting') { <p class="lobby-msg">Connecting…</p> }
+    @if (mp.error()) { <p class="lobby-msg lobby-error">{{ mp.error() }}</p> }
+    } @else {
+    <div class="lobby-room">
+      <div class="lobby-bar">
+        <span class="lobby-roomcode" title="Room code">{{ mp.code() }}</span>
+        <button class="qh-btn" (click)="copyInvite()"><mat-icon>{{ copiedInvite ? 'check' : 'link' }}</mat-icon>{{ copiedInvite ? 'Copied!' : 'Copy invite link' }}</button>
+        <span class="lobby-spacer"></span>
+        <button class="qh-btn" (click)="leaveRoom(); mp.leave()"><mat-icon>logout</mat-icon>Leave room</button>
+      </div>
+
+      <ul class="lobby-players">
+        @for (p of mp.players(); track p.id) {
+        <li class="lobby-player" [class.me]="isMe(p.id)" [style.--pc]="p.color">
+          <i class="mp-dot"></i><span class="lobby-pname">{{ p.name }}@if (isMe(p.id)) { <em> (you)</em> }</span>
+          <span class="lobby-ppts">{{ p.points }}<small>pts</small></span>
+        </li>
         }
-      </button>
+      </ul>
+
+      @if (mp.isHost()) {
+      <div class="lobby-setup">
+        <label class="lobby-field">
+          <span>Board</span>
+          <select class="lobby-input" [(ngModel)]="lobbyMode">
+            @for (m of lobbyModes(); track m.key) { <option [value]="m.key">{{ m.label }}</option> }
+          </select>
+        </label>
+        <div class="lobby-field">
+          <span>Time limit</span>
+          <div class="blitz lobby-limits">
+            @for (o of limitOptions; track o.v) {
+            <button class="blitz-chip" [class.on]="lobbyLimit === o.v" (click)="lobbyLimit = o.v">{{ o.label }}</button>
+            }
+          </div>
+        </div>
+        <button class="qh-btn qh-btn-primary lobby-big" (click)="hostStart()"><mat-icon>play_arrow</mat-icon>{{ mp.round() ? 'Start another round' : 'Start the round' }}</button>
+      </div>
+      } @else {
+      <p class="lobby-msg">Waiting for the host to start the round…</p>
       }
     </div>
+    }
   </div>
   }
 
   <!-- ── Playing ───────────────────────────────────────────────── -->
   @if (!isLoading && quizPhase === 'playing') {
 
-  <header class="quiz-header" [class.is-done]="finished">
+  <header class="quiz-header" [class.is-done]="finished" [class.mp]="mpActive">
     <div class="qh-row">
       <button class="icon-btn" (click)="changeMode()" title="Change mode" aria-label="Change mode">
         <mat-icon>arrow_back</mat-icon>
@@ -187,17 +260,39 @@
         <span class="qc-pct">{{ (percent * 100).toFixed(percent > 0 && percent < 0.1 ? 1 : 0) }}%</span>
       </div>
 
-      <div class="quiz-timer" [class.running]="timerStarted && !finished && !revealed" title="Time">
-        <mat-icon>timer</mat-icon>{{ formatTime() }}
+      <div class="quiz-timer" [class.running]="timerStarted && !finished && !revealed" [class.urgent]="urgent"
+        [title]="limitSeconds ? 'Time left' : 'Time'">
+        <mat-icon>{{ limitSeconds ? 'hourglass_top' : 'timer' }}</mat-icon>{{ formatTime(clockSeconds) }}
       </div>
+      @if (assisted) {
+        <span class="assist-chip" title="Silhouettes are on: this run is recorded separately from unassisted runs">
+          <mat-icon>visibility</mat-icon>Hints
+        </span>
+      }
 
       <div class="qh-tools">
-        <button class="icon-btn" [class.on]="showSilhouettes" (click)="enableSilhouettes()"
-          [disabled]="revealed || finished" [attr.aria-pressed]="showSilhouettes"
-          [title]="showSilhouettes ? 'Hide silhouettes' : 'Hint: show silhouettes (hover for first letter and length)'"
-          aria-label="Toggle silhouettes">
-          <mat-icon>{{ showSilhouettes ? 'visibility' : 'contrast' }}</mat-icon>
-        </button>
+        <div class="qh-pop-wrap">
+          <button class="icon-btn" [class.on]="showSilhouettes || openMenu === 'hint' || !!hintVote"
+            (click)="showSilhouettes ? null : (mpActive ? askForSilhouettes() : toggleMenu('hint'))"
+            [disabled]="revealed || finished" [attr.aria-pressed]="showSilhouettes"
+            [title]="showSilhouettes ? (mpActive ? 'Silhouettes are on for the room' : 'Silhouettes are on for this run') : (mpActive ? 'Ask the room to turn on silhouettes' : 'Hint: show silhouettes')"
+            aria-label="Toggle silhouettes">
+            <mat-icon>{{ showSilhouettes ? 'visibility' : 'contrast' }}</mat-icon>
+          </button>
+          @if (openMenu === 'hint') {
+          <div class="qh-pop qh-pop-confirm" role="dialog">
+            <div class="pop-title">Use silhouettes?</div>
+            <div class="pop-note">
+              Every unnamed Pokémon shows its outline, and hovering one gives its first letter and length.
+              This can't be undone in this run, and it is recorded as a run with hints, separate from your unassisted best.
+            </div>
+            <div class="pop-actions">
+              <button class="qh-btn qh-btn-primary" (click)="confirmSilhouettes()">Use hints</button>
+              <button class="qh-btn" (click)="toggleMenu('hint')">Cancel</button>
+            </div>
+          </div>
+          }
+        </div>
 
         <div class="qh-pop-wrap">
           <button class="icon-btn" [class.on]="openMenu === 'lang'" (click)="toggleMenu('lang')"
@@ -230,13 +325,21 @@
           <mat-icon>{{ muted ? 'volume_off' : 'volume_up' }}</mat-icon>
         </button>
 
-        @if (finished || revealed) {
+        @if (mpActive && mp.isHost() && !finished) {
+        <button class="qh-btn" (click)="mp.endNow()" title="End the round for everyone" aria-label="End the round"><mat-icon>stop_circle</mat-icon><span class="qh-btn-label">End round</span></button>
+        }
+
+        @if (mpActive) {
+        <button class="qh-btn" (click)="leaveRoom()" aria-label="Leave the room"><mat-icon>logout</mat-icon><span class="qh-btn-label">Leave</span></button>
+        }
+
+        @if ((finished || revealed) && !mpActive) {
         <button class="icon-btn on" (click)="openResults()" title="Show results" aria-label="Show results">
           <mat-icon>emoji_events</mat-icon>
         </button>
         }
 
-        <div class="qh-pop-wrap">
+        <div class="qh-pop-wrap hide-mp">
           <button class="qh-btn" [class.on]="openMenu === 'giveup'" (click)="toggleMenu('giveup')"
             [disabled]="revealed || finished" aria-label="Give up">
             <mat-icon>flag</mat-icon><span class="qh-btn-label">Give up</span>
@@ -253,7 +356,7 @@
           }
         </div>
 
-        <div class="qh-pop-wrap">
+        <div class="qh-pop-wrap hide-mp">
           <button class="icon-btn" [class.on]="openMenu === 'restart'"
             (click)="guessedIds.size || revealed || finished ? toggleMenu('restart') : reset()"
             title="Restart" aria-label="Restart">
@@ -290,13 +393,26 @@
           }
         } @else {
           <span class="status-idle">
-            @if (showSilhouettes) { Silhouettes on — hover a shape for its first letter } @else { The timer starts with your first answer }
+            @if (showSilhouettes) { Silhouettes on for this run — hover a shape for its first letter } @else { The timer starts with your first answer }
           </span>
         }
         @if (streak >= 3) {
           <span class="streak-chip" title="Answers in a row"><mat-icon>local_fire_department</mat-icon>×{{ streak }}</span>
         }
+        @if (score) {
+          <span class="score-chip" title="Score: 10 per Pokémon, more for a streak"><mat-icon>bolt</mat-icon>{{ score }}</span>
+        }
       </div>
+
+      @if (mpActive) {
+      <div class="mp-strip" aria-label="Players">
+        @for (p of mpStandings; track p.id) {
+        <span class="mp-chip" [class.me]="isMe(p.id)" [style.--pc]="p.color">
+          <i class="mp-dot"></i>{{ p.name }}<b>{{ p.claims }}</b>
+        </span>
+        }
+      </div>
+      }
 
       @if (groups.length > 1) {
       <nav class="qh-nav" aria-label="Jump to section">
@@ -316,6 +432,22 @@
       <div class="qh-bar-fill" [style.width.%]="percent * 100"></div>
     </div>
   </header>
+
+  @if (hintVote; as v) {
+  <div class="mp-vote" role="alertdialog" aria-label="Silhouette vote">
+    <mat-icon class="mp-vote-icon">contrast</mat-icon>
+    <div class="mp-vote-text">
+      <b>{{ v.asker ? 'You asked for silhouettes' : v.by + ' wants silhouettes' }}</b>
+      <span>Every unnamed Pokémon would show its outline for the whole room. Everyone has to agree · {{ v.yes }} of {{ v.total }} so far.</span>
+    </div>
+    @if (!v.mine) {
+    <button class="qh-btn qh-btn-primary" (click)="mp.voteHint(true)"><mat-icon>check</mat-icon>Approve</button>
+    <button class="qh-btn" (click)="mp.voteHint(false)"><mat-icon>close</mat-icon>Decline</button>
+    } @else {
+    <span class="mp-vote-wait">Waiting for the others…</span>
+    }
+  </div>
+  }
 
   <!-- Groups grid -->
   <div class="quiz-body">
@@ -349,7 +481,7 @@
           @let known = guessedIds.has(slot.speciesId);
           @if (!onlyMissing || !known) {
           <div class="quiz-slot" [attr.data-sid]="slot.speciesId" [attr.data-tip]="tip(slot)"
-            [style.--tc]="known ? slotColor(slot) : null"
+            [style.--tc]="known ? slotColor(slot) : null" [style.--own]="mpActive && known ? ownerColor(slot) : null" [class.owned]="mpActive && known"
             [class.guessed]="known"
             [class.linkable]="known || revealed"
             [class.just-guessed]="recentlyGuessedId === slot.speciesId"
@@ -362,7 +494,7 @@
             <img class="slot-img" [class.silhouette]="showSilhouettes && !known && !revealed"
               [class.reveal]="recentlyGuessedId === slot.speciesId"
               [class.missed-img]="revealed && !known"
-              [src]="imageUrl(currentCycleForm(slot))" [alt]="known || revealed ? formName(slot) : ''" loading="lazy" />
+              [src]="showSilhouettes && !known && !revealed ? silUrl(slot.pokemon) : imageUrl(currentCycleForm(slot))" [alt]="known || revealed ? formName(slot) : ''" loading="lazy" />
             }
           </div>
           }
@@ -378,11 +510,41 @@
   </div>
 
   <!-- Results -->
-  @if (showResults) {
+  @if (showResults && mpActive) {
+  <div class="qr-backdrop" (click)="showResults = false" role="dialog" aria-modal="true" aria-label="Round results">
+    <canvas #confettiEl class="qr-confetti"></canvas>
+    <div class="qr-card" (click)="$event.stopPropagation()">
+      <div class="qr-eyebrow">Round {{ mp.round()?.n }} · {{ guessedIds.size >= totalCount ? 'board cleared together' : "time's up" }}</div>
+      <h2 class="qr-rank">{{ mpTie ? "It's a tie" : mpStandings[0]?.name + ' wins' }}</h2>
+      <p class="qr-line">The room named {{ guessedIds.size }} of {{ totalCount }} Pokémon.</p>
+      <ol class="mp-results">
+        @for (p of mpStandings; track p.id; let i = $index) {
+        <li class="mp-result" [class.me]="isMe(p.id)" [style.--pc]="p.color">
+          <span class="mp-rank">{{ i + 1 }}</span>
+          <i class="mp-dot"></i>
+          <span class="mp-name">{{ p.name }}@if (isMe(p.id)) { <em> (you)</em> }</span>
+          <span class="mp-bar"><span class="mp-bar-fill" [style.width.%]="totalCount ? p.claims / totalCount * 100 : 0"></span></span>
+          <span class="mp-claims">{{ p.claims }}</span>
+          <span class="mp-pts">{{ p.points }}<small>pts</small></span>
+        </li>
+        }
+      </ol>
+      <div class="qr-actions">
+        @if (mp.isHost()) { <button class="qh-btn qh-btn-primary" (click)="hostStart()"><mat-icon>replay</mat-icon>Play another round</button> }
+        @else { <span class="mp-waiting">Waiting for the host to start the next round…</span> }
+        <button class="qh-btn" (click)="showResults = false"><mat-icon>grid_view</mat-icon>See the board</button>
+        <button class="qh-btn" (click)="leaveRoom()"><mat-icon>logout</mat-icon>Leave</button>
+      </div>
+    </div>
+  </div>
+  }
+
+  @if (showResults && !mpActive) {
   <div class="qr-backdrop" (click)="closeResults()" role="dialog" aria-modal="true" aria-label="Quiz results">
     <canvas #confettiEl class="qr-confetti"></canvas>
     <div class="qr-card" [class.perfect]="finished" (click)="$event.stopPropagation()">
-      <div class="qr-eyebrow">{{ finished ? 'Board cleared' : 'Run ended' }}</div>
+      <div class="qr-eyebrow">{{ finished ? 'Board cleared' : timedOut ? "Time's up" : 'Run ended' }}</div>
+      @if (assisted) { <span class="assist-chip assist-chip-lg"><mat-icon>visibility</mat-icon>Run with hints — recorded separately</span> }
       <h2 class="qr-rank">{{ rank.title }}</h2>
 
       <div class="qr-ring">
@@ -400,7 +562,7 @@
       <div class="qr-stats">
         <div class="qr-stat"><span class="qr-stat-v">{{ (percent * 100).toFixed(percent === 1 ? 0 : 1) }}%</span><span class="qr-stat-k">Named</span></div>
         <div class="qr-stat"><span class="qr-stat-v">{{ formatTime() }}</span><span class="qr-stat-k">Time</span></div>
-        <div class="qr-stat"><span class="qr-stat-v">{{ pace }}</span><span class="qr-stat-k">Per minute</span></div>
+        <div class="qr-stat"><span class="qr-stat-v">{{ score }}</span><span class="qr-stat-k">Score</span></div>
         <div class="qr-stat"><span class="qr-stat-v">{{ missedCount }}</span><span class="qr-stat-k">Missed</span></div>
       </div>
 

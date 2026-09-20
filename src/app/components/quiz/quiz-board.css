@@ -134,6 +134,9 @@
   justify-content: space-between;
   gap: 2px;
   padding: 0.4rem;
+  /* off-screen sections are not laid out or painted until they are near the viewport */
+  content-visibility: auto;
+  contain-intrinsic-size: auto 480px;
 }
 
 .quiz-empty {
@@ -166,11 +169,14 @@
   border-radius: 8px;
   background: color-mix(in srgb, var(--accent-text-color) 4.5%, transparent);
   cursor: default;
-  transition: background 0.25s;
 }
 
 /* named: no box at all, the sprite glows in its primary type colour instead */
-.quiz-slot.guessed { background: transparent; }
+/* Glow is a plain radial gradient behind the sprite: a per-image drop-shadow filter looked slightly
+   nicer but made scrolling a mostly-named board janky. */
+.quiz-slot.guessed {
+  background: radial-gradient(closest-side, color-mix(in srgb, var(--tc, transparent) 62%, transparent) 0%, color-mix(in srgb, var(--tc, transparent) 22%, transparent) 55%, transparent 100%);
+}
 
 .quiz-slot.linkable { cursor: pointer; }
 
@@ -197,12 +203,6 @@
   object-fit: contain;
   display: block;
   transition: transform 0.15s;
-}
-
-.quiz-slot.guessed .slot-img {
-  filter:
-    drop-shadow(0 0 1.5px var(--tc, transparent))
-    drop-shadow(0 0 5px color-mix(in srgb, var(--tc, transparent) 80%, transparent));
 }
 
 /* new-guess pulse ring */

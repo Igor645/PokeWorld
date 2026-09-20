@@ -1,213 +1,345 @@
-<!-- Pool picker (above card, like gen filter in dex overview) -->
-<div class="pokele-pool-row">
-  <span class="pool-row-label">Pool</span>
-  <div class="pool-row-pills">
-    <button class="pool-pill" [class.active]="genFilter === null" (click)="setGenFilter(null)">All</button>
-    @for (g of availableGenerations; track g) {
-    <button class="pool-pill" [class.active]="genFilter === g" (click)="setGenFilter(g)">{{ genRomanMap[g] }}</button>
-    }
-  </div>
-</div>
+<div class="pk-stage">
+  <canvas class="pk-confetti" #confettiEl aria-hidden="true"></canvas>
 
-<!-- Main card -->
-<div class="pokele-card" [@.disabled]="true">
-
-  <!-- Card header -->
-  <div class="card-header">
-    <div class="card-title-wrap">
-      <span class="card-title">Pokéle</span>
-      <span class="card-subtitle">Guess the mystery Pokémon</span>
+  <!-- ── Header ───────────────────────────────────────────────────────────── -->
+  <header class="pk-head">
+    <div class="pk-brand">
+      <span class="pk-logo" aria-hidden="true"></span>
+      <div class="pk-brand-text">
+        <h1 class="pk-title">Pokéle</h1>
+        <p class="pk-sub">Every wrong guess unlocks a clue</p>
+      </div>
     </div>
-    <div class="lives-row">
-      @for (i of livesArray; track i) {
-      <div class="life-pip" [class.used]="i < wrongCount" [class.just-used]="i === wrongCount - 1 && !solved"></div>
+
+    <div class="pk-tabs" role="tablist" aria-label="Game mode">
+      <button class="pk-tab" role="tab" [class.on]="mode === 'daily'" [attr.aria-selected]="mode === 'daily'" (click)="setMode('daily')">
+        <mat-icon>today</mat-icon>Daily
+      </button>
+      <button class="pk-tab" role="tab" [class.on]="mode === 'free'" [attr.aria-selected]="mode === 'free'" (click)="setMode('free')">
+        <mat-icon>shuffle</mat-icon>Free play
+      </button>
+      <button class="pk-tab" role="tab" [class.on]="mode === 'versus'" [attr.aria-selected]="mode === 'versus'" (click)="setMode('versus')">
+        <mat-icon>groups</mat-icon>Versus
+      </button>
+    </div>
+
+    <div class="pk-lives" [attr.aria-label]="livesLeft + ' lives left'">
+      <span class="pk-lives-label">Lives</span>
+      <div class="pk-balls">
+        @for (i of livesArray; track i) {
+        <span class="pk-ball" [class.used]="i < wrongCount" [class.just-used]="i === wrongCount - 1 && !solved"></span>
+        }
+      </div>
+    </div>
+
+    <div class="pk-stats">
+      <span class="pk-stat" title="Current win streak"><mat-icon>local_fire_department</mat-icon>{{ streak }}</span>
+      <span class="pk-stat" title="Best streak"><mat-icon>emoji_events</mat-icon>{{ bestStreak }}</span>
+      <button class="pk-stat pk-sound" (click)="toggleMute()" [attr.aria-label]="muted ? 'Turn sound on' : 'Turn sound off'" [attr.aria-pressed]="!muted">
+        <mat-icon>{{ muted ? 'volume_off' : 'volume_up' }}</mat-icon>
+      </button>
+    </div>
+  </header>
+
+  <!-- ── Pool / mode line ─────────────────────────────────────────────────── -->
+  @if (mode === 'daily') {
+  <div class="pk-pool">
+    <span class="pk-pool-label">Daily</span>
+    <span class="pk-daily-note">{{ today }} · everyone gets the same Pokémon today, and your board is saved if you leave</span>
+  </div>
+  } @else if (mode === 'free' || (mode === 'versus' && (vs.isHost() || vs.status() !== 'live'))) {
+  <div class="pk-pool">
+    <span class="pk-pool-label">Pool</span>
+    <div class="pk-pool-pills">
+      <button class="pool-pill" [class.active]="genFilter === null" (click)="setGenFilter(null)">All</button>
+      @for (g of availableGenerations; track g) {
+      <button class="pool-pill" [class.active]="genFilter === g" (click)="setGenFilter(g)">{{ genRomanMap[g] }}</button>
       }
     </div>
   </div>
+  }
 
-  <div class="card-divider"></div>
+  <!-- ── Multiplayer lobby ────────────────────────────────────────────────── -->
+  @if (mode === 'versus') {
+  <section class="pk-vs" aria-label="Multiplayer">
+    @if (vs.status() !== 'live') {
+    <div class="pk-vs-start">
+      <div class="pk-vs-intro">
+        <h2 class="pk-vs-title">Race your friends</h2>
+        <p class="pk-vs-text">Everyone gets the same mystery Pokémon and plays at the same time. You see how each other are doing as colours only, never the names. Most lives left and the fastest solve wins the round.</p>
+      </div>
+      <label class="pk-vs-field">
+        <span>Your name</span>
+        <input class="pk-vs-input" type="text" maxlength="20" [(ngModel)]="playerName" (change)="rename()" placeholder="Player" autocomplete="off" />
+      </label>
+      <div class="pk-vs-actions">
+        <button class="pk-btn pk-btn-primary" (click)="createRoom()" [disabled]="vs.status() === 'connecting'">
+          <mat-icon>add_circle</mat-icon>Create a room
+        </button>
+        <span class="pk-vs-or">or</span>
+        <input class="pk-vs-input pk-vs-code" type="text" maxlength="4" [(ngModel)]="roomInput" placeholder="CODE" autocomplete="off" aria-label="Room code" />
+        <button class="pk-btn" (click)="joinRoom()" [disabled]="vs.status() === 'connecting' || roomInput.length < 4">
+          <mat-icon>login</mat-icon>Join
+        </button>
+      </div>
+      @if (vs.status() === 'connecting') { <p class="pk-vs-msg">Connecting…</p> }
+      @if (vs.error()) { <p class="pk-vs-msg pk-vs-error">{{ vs.error() }}</p> }
+    </div>
+    } @else {
+    <div class="pk-vs-room">
+      <div class="pk-vs-bar">
+        <span class="pk-code" title="Room code">{{ vs.code() }}</span>
+        <button class="pk-btn pk-btn-sm" (click)="copyRoomLink()"><mat-icon>link</mat-icon>Copy invite link</button>
+        <label class="pk-vs-field pk-vs-inline">
+          <span>You</span>
+          <input class="pk-vs-input" type="text" maxlength="20" [(ngModel)]="playerName" (change)="rename()" aria-label="Your name" />
+        </label>
+        <span class="pk-vs-spacer"></span>
+        @if (vs.isHost()) {
+        <button class="pk-btn pk-btn-primary" (click)="startVersusRound()" [disabled]="!!vs.round() && !vs.over()">
+          <mat-icon>{{ vs.round() ? 'skip_next' : 'play_arrow' }}</mat-icon>{{ vs.round() ? 'Next round' : 'Start round' }}
+        </button>
+        } @else {
+        <span class="pk-vs-wait">{{ vs.round() ? (vs.over() ? 'Round over — waiting for the host' : 'Round ' + vs.round()!.n) : 'Waiting for the host to start…' }}</span>
+        }
+        <button class="pk-btn pk-btn-sm" (click)="leaveRoom()"><mat-icon>logout</mat-icon>Leave</button>
+      </div>
 
-  <!-- Loading -->
+      <ol class="pk-board">
+        @for (p of standings; track p.id; let i = $index) {
+        <li class="pk-player" [class.me]="isMe(p.id)" [class.won]="p.done === 'won'" [class.lost]="p.done === 'lost'">
+          <span class="pk-rank">{{ i + 1 }}</span>
+          <span class="pk-pname">{{ p.name }}@if (isMe(p.id)) { <em> (you)</em> }</span>
+          <span class="pk-pstatus">{{ statusOf(p) }}@if (p.elapsed !== null) { · {{ seconds(p.elapsed) }} }</span>
+          <span class="pk-mini">
+            @for (r of p.rows; track $index) {
+            <span class="pk-mini-row">@for (c of cells(r); track $index) { <i [class]="'c-' + c"></i> }</span>
+            }
+          </span>
+          <span class="pk-points">{{ p.points }}<small>pts</small>@if (vs.over() && p.gained) { <b class="pk-gained">+{{ p.gained }}</b> }</span>
+        </li>
+        }
+      </ol>
+    </div>
+    }
+  </section>
+  }
+
   @if (isLoading) {
-  <div class="card-loading">
+  <div class="pk-loading">
     <app-loading-spinner [inline]="true" message="Loading Pokédex…" />
   </div>
   } @else {
 
-  <!-- Pokémon display -->
-  <div class="pokemon-display">
-    @if (solved || gameOver) {
-    @if (targetSpriteUrl()) {
-    <img class="pokemon-img reveal-pop" [src]="targetSpriteUrl()" [alt]="targetName()" />
-    }
-    } @else if (showHint6) {
-    <!-- Hint 6 unlocked: center becomes a silhouette -->
-    @if (targetSpriteUrl()) {
-    <img class="pokemon-img pokemon-sil" [src]="targetSpriteUrl()" alt="???" />
-    }
-    } @else {
-    <div class="pokemon-mystery">
-      <mat-icon class="mystery-icon">help_outline</mat-icon>
-    </div>
-    }
-    <div class="pokemon-name-display">{{ solved || gameOver ? targetName() : '???' }}</div>
-  </div>
+  <div class="pk-main">
 
-  <!-- Result banner -->
-  @if (solved) {
-  <div class="result-banner result-win">
-    <mat-icon>emoji_events</mat-icon>
-    <span>
-      It's <strong>{{ targetName() }}</strong>! —
-      {{ wrongCount === 0 ? 'First try!' : wrongCount + ' wrong guess' + (wrongCount !== 1 ? 'es' : '') }}
-    </span>
-  </div>
-  } @else if (gameOver) {
-  <div class="result-banner result-lose">
-    <mat-icon>sentiment_very_dissatisfied</mat-icon>
-    <span>It was <strong>{{ targetName() }}</strong></span>
-  </div>
-  }
-
-  <div class="card-divider"></div>
-
-  <!-- Hint area -->
-  <div class="hints-area">
-
-    @if (!showHint1 && active) {
-    <p class="no-hints-note">Make a wrong guess to start unlocking hints</p>
-    }
-
-    <!-- Hint 1: Size + Weight — vague physical info, gets you thinking without revealing identity -->
-    @if (showHint1) {
-    <div class="hint-chip hint-size-chip">
-      <span class="hint-chip-label">Size &amp; Weight</span>
-      @if (detailsLoading) {
-      <span class="hint-chip-loading">…</span>
-      } @else {
-      <div class="size-row">
-        <div class="size-cell">
-          <mat-icon class="size-icon">height</mat-icon>
-          <span class="size-val">{{ targetHeight() }}</span>
-        </div>
-        <div class="size-sep"></div>
-        <div class="size-cell">
-          <mat-icon class="size-icon">scale</mat-icon>
-          <span class="size-val">{{ targetWeight() }}</span>
+    <!-- ── Left: the mystery + guessing ───────────────────────────────────── -->
+    <section class="pk-play">
+      <div class="pk-orb" [class.pk-orb-open]="finished" [class.pk-orb-win]="solved" [class.pk-orb-lose]="gameOver"
+        [style.--tc]="revealColor()">
+        <span class="pk-orb-ring"></span>
+        <span class="pk-orb-ring pk-orb-ring-2"></span>
+        <div class="pk-orb-core">
+          <svg class="pk-orb-mark" viewBox="0 0 512 512" aria-hidden="true">
+            <path d="M450.46,256.09C449.35,175.17,399.81,102.71,324,73.79,247.59,44.67,157.49,69,105.82,132.13,54.4,195,46.61,285.58,88.49,355.68c41.8,69.95,123.74,106,203.55,91.63,91-16.37,156.14-98.12,158.35-189.14A20.16,20.16,0,0,0,450.46,256.09ZM119.05,174.38C152.76,118,220.23,87,285,99.43c69.4,13.29,120.43,70.47,128.83,139H318.41c-8.26-27.36-32-48-62.62-48-29.65,0-55.15,20.65-63.11,48H97.74A158,158,0,0,1,119.05,174.38ZM286.13,256.1c-2,38.75-60.67,39.4-60.67,0S284.17,217.33,286.13,256.1Zm24,149.79C246.85,428.58,175,408.74,132.3,356.82a157.53,157.53,0,0,1-34.57-83H192.6c7.91,27.39,33.7,48,63.19,48,30.67,0,54.36-20.68,62.62-48h95.45C406.61,333,367.54,385.32,310.14,405.89Z"/>
+          </svg>
+          @if (finished) {
+            @if (targetSpriteUrl()) {
+            <img class="pk-sprite reveal-pop" [src]="targetSpriteUrl()" [alt]="targetName()" />
+            }
+          } @else if (showHint6) {
+            @if (targetSpriteUrl()) {
+            <img class="pk-sprite pk-sil" [src]="targetSpriteUrl()" alt="???" />
+            }
+          } @else {
+            <span class="pk-q">?</span>
+          }
         </div>
       </div>
-      }
-    </div>
-    }
 
-    <!-- Hint 2: Evolution stage — structural info, no images, no identity -->
-    @if (showHint2) {
-    <div class="hint-chip hint-evo-chip">
-      <span class="hint-chip-label">Evolution</span>
-      @if (detailsLoading) {
-      <span class="hint-chip-loading">…</span>
-      } @else {
-      <div class="evo-dots">
-        @for (i of evoRange(); track i) {
-        @if (i > 0) { <span class="evo-dot-sep">→</span> }
-        <div class="evo-dot" [class.evo-dot-me]="i === evoPosition() - 1"></div>
+      <!-- the name as letter boxes -->
+      @if (basicTarget) {
+      <div class="pk-letters" [class.open]="finished" aria-label="Name">
+        @for (s of nameSlots(); track $index) {
+        <span class="pk-letter" [class.sep]="s.sep" [class.show]="s.show">{{ s.show ? s.ch : '' }}</span>
         }
       </div>
-      <span class="evo-stage-label">Stage {{ evoPosition() }} of {{ evoTotal() }}</span>
-      }
-    </div>
-    }
-
-    <!-- Hint 3: Base stats — power tier + stat spread, rewards Pokémon knowledge -->
-    @if (showHint3) {
-    <div class="hint-chip hint-stats-chip">
-      <span class="hint-chip-label">Base stats · BST {{ detailsLoading ? '' : bst() }}</span>
-      @if (detailsLoading || sortedStats().length === 0) {
-      <span class="hint-chip-loading">…</span>
       } @else {
-      <div class="stats-grid">
-        @for (st of sortedStats(); track st.stat.id) {
-        <div class="stat-cell">
-          <span class="stat-name">{{ statAbbr(st.stat.name) }}</span>
-          <span class="stat-val">{{ st.base_stat }}</span>
-          <div class="stat-bar">
-            <div class="stat-bar-fill" [style.width.%]="(st.base_stat / 255) * 100"
-              [class.stat-bar-low]="st.base_stat < 60" [class.stat-bar-mid]="st.base_stat >= 60 && st.base_stat < 100"
-              [class.stat-bar-high]="st.base_stat >= 100"></div>
+      <div class="pk-name">? ? ?</div>
+      }
+
+      @if (solved) {
+      <div class="pk-result pk-result-win">
+        <mat-icon>emoji_events</mat-icon>
+        <span>{{ guesses.length === 1 ? 'First guess!' : 'Solved in ' + guesses.length + ' guesses' }} · {{ livesLeft }} lives left</span>
+      </div>
+      } @else if (gameOver) {
+      <div class="pk-result pk-result-lose">
+        <mat-icon>sentiment_very_dissatisfied</mat-icon>
+        <span>It was {{ targetName() }}@if (mode !== 'versus') { — streak reset }</span>
+      </div>
+      }
+
+      <div class="pk-input-area">
+        @if (waiting) {
+        <p class="pk-wait-note">
+          @if (vs.status() !== 'live') { Create or join a room above to play together. }
+          @else if (vs.isHost()) { Press “Start round” when everyone is in. }
+          @else { Waiting for the host to start the round… }
+        </p>
+        } @else if (finished) {
+        <div class="pk-end-actions">
+          @if (mode === 'daily') {
+          <button class="new-game-btn" (click)="copyShare()"><mat-icon>{{ copied ? 'check' : 'ios_share' }}</mat-icon>{{ copied ? 'Copied!' : 'Copy result' }}</button>
+          <button class="pk-btn pk-btn-block" (click)="setMode('free')"><mat-icon>shuffle</mat-icon>Play free mode</button>
+          } @else if (mode === 'free') {
+          <button class="new-game-btn" (click)="newGame()"><mat-icon>refresh</mat-icon>Next Pokémon</button>
+          <button class="pk-btn pk-btn-block" (click)="copyShare()"><mat-icon>{{ copied ? 'check' : 'ios_share' }}</mat-icon>{{ copied ? 'Copied!' : 'Copy result' }}</button>
+          } @else {
+          <p class="pk-wait-note">{{ vs.over() ? 'Round over — see the scoreboard.' : 'Waiting for the others to finish…' }}</p>
+          }
+        </div>
+        } @else {
+        <div class="input-wrap">
+          <mat-icon class="pk-input-icon">search</mat-icon>
+          <input #inputEl class="pokele-input" type="text" [(ngModel)]="inputValue" (ngModelChange)="onInput()"
+            (keydown)="onKeydown($event)" (blur)="onBlur()" placeholder="Type a Pokémon name…"
+            autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" aria-label="Guess a Pokémon" />
+          @if (showSuggestions) {
+          <div class="suggestions-drop">
+            @for (sp of suggestions; track sp.id; let i = $index) {
+            <button class="sug-item" [class.sug-active]="i === activeIndex" (mousedown)="selectSuggestion(sp)">
+              <img class="sug-spr" [src]="spriteUrl(sp)" alt="" loading="lazy" />
+              <span>{{ spName(sp) }}</span>
+            </button>
+            }
+          </div>
+          }
+        </div>
+        @if (canBuyClue) {
+        <button class="pk-buy" (click)="buyClue()"><mat-icon>lightbulb</mat-icon>Reveal the next clue <small>costs a life</small></button>
+        }
+        }
+        @if (notice) { <div class="pk-notice" role="status">{{ notice }}</div> }
+      </div>
+    </section>
+
+    <!-- ── Middle: guess feedback ─────────────────────────────────────────── -->
+    <section class="pk-table" aria-label="Your guesses">
+      <div class="pk-table-head">
+        <h2 class="pk-table-title">Your guesses</h2>
+        <div class="pk-legend">
+          <span><i class="pk-key v-ok"></i>match</span>
+          <span><i class="pk-key v-part"></i>close / shares a type</span>
+          <span><i class="pk-key v-no"></i>no</span>
+          <span><mat-icon>arrow_upward</mat-icon>the answer is higher</span>
+          <span><mat-icon>arrow_downward</mat-icon>lower</span>
+        </div>
+      </div>
+
+      <div class="pk-cols pk-cols-head">
+        <span>Pokémon</span>
+        @for (k of tileKeys; track k) { <span class="pk-col-h">{{ tileLabel[k] }}</span> }
+      </div>
+
+      @for (g of guesses; track g.id) {
+      <div class="pk-row" [class.pk-row-win]="g.correct">
+        <div class="pk-cell-name">
+          @if (g.sprite) { <img class="pk-row-spr" [src]="g.sprite" alt="" /> }
+          <span>{{ g.name }}</span>
+        </div>
+        @for (t of g.tiles; track t.key; let i = $index) {
+        <div class="pk-tile" [class]="'pk-tile v-' + t.verdict" [style.--i]="i" [attr.data-label]="tileLabel[t.key]">
+          @if (t.key === 'type') {
+            <span class="pk-tchips">
+              @for (ty of g.types; track ty) {
+              <span class="pk-tchip" [style.background]="typeColor(ty)" [title]="typeCap(ty)"><img [src]="typeIcon(ty)" alt="" /><b>{{ typeCap(ty) }}</b></span>
+              }
+            </span>
+          } @else {
+            <span class="pk-tval">{{ g.vals[t.key] }}</span>
+          }
+          @if (t.dir) { <mat-icon class="pk-arrow">{{ t.dir === 'up' ? 'arrow_upward' : 'arrow_downward' }}</mat-icon> }
+        </div>
+        }
+      </div>
+      } @empty {
+      <div class="pk-table-empty">
+        <mat-icon>psychology</mat-icon>
+        <span>Guess any Pokémon — every guess shows how close it is on seven traits, so even a wrong one is a clue.</span>
+      </div>
+      }
+    </section>
+
+    <!-- ── Right: clues ───────────────────────────────────────────────────── -->
+    <section class="pk-hints" aria-label="Clues">
+      <h2 class="pk-hints-title">Clues <span class="pk-hints-count">{{ unlockedCount }} / 6</span></h2>
+      <div class="pk-hint-grid">
+        @for (h of hintSlots; track h.n) {
+        @if (hintOpen(h.n) && basicTarget) {
+        <div class="pk-hint pk-hint-open" [style.--span]="h.span" [style.--ord]="h.n">
+          <div class="pk-hint-label"><mat-icon>{{ h.icon }}</mat-icon>{{ h.label }}</div>
+          <div class="pk-hint-body">
+            @switch (h.n) {
+            @case (1) {
+              @if (dexLoading) { <span class="hint-chip-loading">…</span> }
+              @else if (dexText) { <p class="pk-dex">“{{ dexText }}”</p> }
+              @else { <span class="hint-note">No entry found in your language.</span> }
+            }
+            @case (2) {
+              <button class="pk-cry" [class.playing]="crying" (click)="playCry()">
+                <mat-icon>{{ crying ? 'graphic_eq' : 'play_arrow' }}</mat-icon>
+                <span>{{ crying ? 'Playing…' : 'Play the cry' }}</span>
+              </button>
+            }
+            @case (3) {
+              @if (detailsLoading || sortedStats().length === 0) { <span class="hint-chip-loading">…</span> } @else {
+              <div class="stats-grid">
+                @for (st of sortedStats(); track st.stat.id) {
+                <div class="stat-cell">
+                  <span class="stat-name">{{ statAbbr(st.stat.name) }}</span>
+                  <span class="stat-val">{{ st.base_stat }}</span>
+                  <div class="stat-bar">
+                    <div class="stat-bar-fill" [style.width.%]="(st.base_stat / 255) * 100"
+                      [class.stat-bar-low]="st.base_stat < 60" [class.stat-bar-mid]="st.base_stat >= 60 && st.base_stat < 100"
+                      [class.stat-bar-high]="st.base_stat >= 100"></div>
+                  </div>
+                </div>
+                }
+              </div>
+              <span class="stat-total">Base stat total <strong>{{ bst() }}</strong></span>
+              }
+            }
+            @case (4) {
+              <div class="hint-gen">
+                <span class="hint-gen-roman">{{ firstLetter() }}</span>
+                <span class="hint-gen-region">{{ nameSlots().length }} letters</span>
+              </div>
+            }
+            @case (5) {
+              <dl class="pk-origins">
+                <div><dt>Habitat</dt><dd>{{ originLine('habitat') }}</dd></div>
+                <div><dt>Shape</dt><dd>{{ originLine('shape') }}</dd></div>
+                <div><dt>Egg groups</dt><dd>{{ originLine('eggs') }}</dd></div>
+              </dl>
+            }
+            @case (6) {
+              <span class="hint-note">{{ finished ? 'Revealed above.' : 'The mystery now shows its outline, and its last letter.' }}</span>
+            }
+            }
           </div>
         </div>
+        } @else {
+        <div class="pk-hint pk-hint-locked" [style.--span]="h.span" [style.--ord]="h.n" [class.pk-next]="active && h.n === wrongCount + 1">
+          <mat-icon class="pk-lock">lock</mat-icon>
+          <span class="pk-locked-label">{{ h.label }}</span>
+          <span class="pk-locked-note">After {{ h.n }} lost {{ h.n === 1 ? 'life' : 'lives' }}</span>
+        </div>
+        }
         }
       </div>
-      }
-    </div>
-    }
+    </section>
 
-    <!-- Hint 4: Generation — now earned; size+evo+stats gives enough context to use this well -->
-    @if (showHint4) {
-    <div class="hint-chip hint-gen-chip" [style.--gen-c]="genAccent()">
-      <span class="hint-chip-label">Generation</span>
-      <span class="hint-gen-roman">{{ genRoman() }}</span>
-      <span class="hint-gen-region">{{ genRegion() }}</span>
-    </div>
-    }
-
-    <!-- Hint 5: Types — the sharpest narrowing clue, saved for late game -->
-    @if (showHint5) {
-    <div class="hint-chip hint-types-chip">
-      <span class="hint-chip-label">Types</span>
-      @if (detailsLoading || types().length === 0) {
-      <span class="hint-chip-loading">…</span>
-      } @else {
-      <div class="hint-types-row">
-        @for (type of types(); track type.id) {
-        <app-pokemon-type [pokemonType]="type" [navigation]="false" />
-        }
-      </div>
-      }
-    </div>
-    }
-
-    <!-- Hint 6: Silhouette — handled by center image transform, not a card -->
-
-  </div>
-
-  <div class="card-divider"></div>
-
-  <!-- Input / result action -->
-  <div class="card-bottom">
-    @if (solved || gameOver) {
-    <button class="new-game-btn" (click)="newGame()">
-      <mat-icon>refresh</mat-icon>
-      {{ solved ? 'New game' : 'Try again' }}
-    </button>
-    } @else {
-    <div class="input-wrap">
-      <input #inputEl class="pokele-input" type="text" [(ngModel)]="inputValue" (ngModelChange)="onInput()"
-        (keydown)="onKeydown($event)" (blur)="onBlur()" placeholder="Type a Pokémon name and press Enter…"
-        autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
-      @if (showSuggestions) {
-      <div class="suggestions-drop">
-        @for (sp of suggestions; track sp.id; let i = $index) {
-        <button class="sug-item" [class.sug-active]="i === activeIndex" (mousedown)="selectSuggestion(sp)">
-          <img class="sug-spr" [src]="spriteUrl(sp)" alt="" loading="lazy" />
-          <span>{{ spName(sp) }}</span>
-        </button>
-        }
-      </div>
-      }
-    </div>
-    }
-
-    @if (guesses.length) {
-    <div class="guesses-list">
-      @for (g of guesses; track $index) {
-      <div class="guess-row" [class.g-win]="g.correct" [class.g-miss]="!g.correct">
-        <mat-icon class="g-icon">{{ g.correct ? 'check_circle' : 'cancel' }}</mat-icon>
-        <span>{{ g.displayName }}</span>
-      </div>
-      }
-    </div>
-    }
   </div>
 
   } <!-- end @else isLoading -->

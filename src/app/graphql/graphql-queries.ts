@@ -238,6 +238,33 @@ export const GraphQLQueries = {
     }
   `,
 
+  // Pokéle: everything the guess feedback compares (generation, types, colour, evolution stage, size, class)
+  // plus the origins clue (habitat, shape, egg groups), for every species in one request.
+  GetPokeleAttributes: gql`
+    query GetPokeleAttributes {
+      pokemonspecies(order_by: { id: asc }) {
+        id generation_id evolves_from_species_id is_legendary is_mythical is_baby
+        pokemoncolor { name }
+        pokemonhabitat { name }
+        pokemonshape { name }
+        pokemonegggroups { egggroup { name } }
+        pokemons(where: { is_default: { _eq: true } }) {
+          height weight
+          pokemontypes(order_by: { slot: asc }) { type { id name } }
+        }
+      }
+    }
+  `,
+
+  // Pokéle "Pokédex entry" clue: the flavour texts of one species in the given language (and English).
+  GetPokeleFlavor: gql`
+    query GetPokeleFlavor($id: Int!, $languageId: Int!) {
+      pokemonspeciesflavortext(where: { pokemon_species_id: { _eq: $id }, language_id: { _in: [$languageId, 9] } }) {
+        flavor_text language_id
+      }
+    }
+  `,
+
   // Quiz — fetches ALL language names so the in-game language picker works.
   // No language filter on pokemonspeciesnames; generation names not needed (quiz uses hardcoded labels).
   GetPokemonSpeciesForQuiz: gql`

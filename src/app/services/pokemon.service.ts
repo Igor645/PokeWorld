@@ -78,6 +78,20 @@ export class PokemonService {
       .pipe(map(res => res?.pokemondexnumber ?? []), catchError(() => of([])));
   }
 
+  getPokeleAttributes(): Observable<any[]> {
+    return this.graphQLService
+      .executeQuery<{ pokemonspecies: any[] }>(GraphQLQueries.GetPokeleAttributes)
+      .pipe(map(res => res?.pokemonspecies ?? []), catchError(() => of([])));
+  }
+
+  getPokeleFlavor(id: number, languageId: number): Observable<Array<{ flavor_text: string; language_id: number }>> {
+    return this.graphQLService
+      .executeQuery<{ pokemonspeciesflavortext: Array<{ flavor_text: string; language_id: number }> }>(
+        GraphQLQueries.GetPokeleFlavor, { id, languageId }
+      )
+      .pipe(map(res => res?.pokemonspeciesflavortext ?? []), catchError(() => of([])));
+  }
+
   getVersionNames(): Observable<Array<{ versionnames: Array<{ name: string; language_id: number }> }>> {
     return this.graphQLService
       .executeQuery<{ version: Array<{ id: number; versionnames: Array<{ name: string; language_id: number }> }> }>(

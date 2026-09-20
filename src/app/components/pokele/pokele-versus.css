@@ -1,0 +1,86 @@
+/* ── Multiplayer ─────────────────────────────────────────────────────────── */
+.pk-vs {
+  padding: 1rem 2rem;
+  border-bottom: 1px solid var(--separator-color);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--pk-accent) 9%, transparent), transparent);
+}
+
+.pk-vs-start { display: flex; align-items: flex-end; gap: 1.2rem 1.6rem; flex-wrap: wrap; }
+.pk-vs-intro { flex: 1 1 320px; }
+.pk-vs-title { margin: 0 0 0.25rem; font-size: 1.15rem; font-weight: 800; color: var(--text-color); }
+.pk-vs-text { margin: 0; max-width: 60ch; font-size: 0.84rem; line-height: 1.45; color: var(--accent-text-color); opacity: 0.85; }
+
+.pk-vs-field { display: flex; flex-direction: column; gap: 0.25rem; }
+.pk-vs-field > span { font-size: 0.66rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent-text-color); opacity: 0.65; }
+.pk-vs-inline { flex-direction: row; align-items: center; gap: 0.5rem; }
+
+.pk-vs-input {
+  height: 40px;
+  box-sizing: border-box;
+  padding: 0 0.8rem;
+  border: 1.5px solid var(--separator-color);
+  border-radius: 10px;
+  background: var(--background-color);
+  color: var(--text-color);
+  font-family: inherit;
+  font-size: 0.95rem;
+  outline: none;
+}
+
+.pk-vs-input:focus { border-color: var(--pk-accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--pk-accent) 25%, transparent); }
+.pk-vs-code { width: 86px; text-align: center; font-weight: 800; letter-spacing: 0.25em; text-transform: uppercase; }
+.pk-vs-actions { display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; }
+.pk-vs-or { font-size: 0.78rem; color: var(--accent-text-color); opacity: 0.6; }
+.pk-vs-msg { flex-basis: 100%; margin: 0; font-size: 0.82rem; color: var(--accent-text-color); }
+.pk-vs-error { color: var(--pk-bad); font-weight: 700; }
+
+.pk-vs-bar { display: flex; align-items: center; gap: 0.7rem; flex-wrap: wrap; margin-bottom: 0.8rem; }
+.pk-vs-spacer { flex: 1; }
+.pk-vs-wait { font-size: 0.85rem; font-weight: 700; color: var(--accent-text-color); }
+
+.pk-code {
+  padding: 0.25rem 0.8rem;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--pk-accent) 24%, transparent);
+  color: var(--text-color);
+  font-size: 1.3rem;
+  font-weight: 900;
+  letter-spacing: 0.3em;
+  padding-left: calc(0.8rem + 0.3em);
+}
+
+.pk-board { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.4rem; }
+
+.pk-player {
+  display: grid;
+  grid-template-columns: 1.6rem minmax(90px, 200px) 130px 1fr auto;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 0.5rem 0.9rem;
+  border: 1px solid var(--separator-color);
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--accent-text-color) 3%, transparent);
+  transition: border-color 0.3s, background 0.3s;
+}
+
+.pk-player.me { border-color: color-mix(in srgb, var(--pk-accent) 55%, var(--separator-color)); }
+.pk-player.won { background: color-mix(in srgb, var(--pk-good) 12%, transparent); border-color: var(--pk-good); }
+.pk-player.lost { background: color-mix(in srgb, var(--pk-bad) 9%, transparent); }
+
+.pk-rank { font-size: 1rem; font-weight: 900; color: var(--pk-accent-fg); text-align: center; }
+.pk-pname { font-size: 0.92rem; font-weight: 800; color: var(--text-color); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pk-pname em { font-style: normal; font-weight: 600; opacity: 0.6; }
+.pk-pstatus { font-size: 0.76rem; color: var(--accent-text-color); opacity: 0.8; font-variant-numeric: tabular-nums; }
+.pk-points { font-size: 1.15rem; font-weight: 900; color: var(--text-color); font-variant-numeric: tabular-nums; }
+.pk-points small { margin-left: 0.15rem; font-size: 0.62rem; font-weight: 700; opacity: 0.6; }
+.pk-gained { margin-left: 0.4rem; font-size: 0.8rem; color: var(--pk-good); animation: pkPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+
+@keyframes pkPop { from { transform: scale(0.4); opacity: 0; } to { transform: none; opacity: 1; } }
+
+/* other players' boards as colour squares only */
+.pk-mini { display: flex; flex-wrap: wrap; gap: 4px 10px; min-height: 12px; }
+.pk-mini-row { display: inline-flex; gap: 2px; }
+.pk-mini-row i { width: 11px; height: 11px; border-radius: 3px; display: block; }
+.c-g { background: var(--pk-good); }
+.c-y { background: #e0a526; }
+.c-n { background: color-mix(in srgb, var(--accent-text-color) 22%, transparent); }
